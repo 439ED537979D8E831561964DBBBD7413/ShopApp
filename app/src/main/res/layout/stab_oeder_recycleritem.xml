@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:descendantFocusability="blocksDescendants"
+              android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/recyitem"
+        android:elevation="2dp"
+        android:layout_margin="3dp"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/orderNo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:drawablePadding="5dp"
+                android:drawableRight="@drawable/btn_arrow_r"
+                android:gravity="center"
+                android:text="123456789"
+                android:textColor="@color/text_black"/>
+
+            <TextView
+                android:id="@+id/orderStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="10dp"
+                android:gravity="center"
+                android:text="状态"
+                android:textColor="@color/Orange"/>
+
+        </RelativeLayout>
+
+        <com.yj.shopapp.view.MyRecycleView
+            android:id="@+id/orderItem_Recy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:overScrollMode="never"
+            android:scrollbars="none"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingLeft="5dp">
+
+            <TextView
+                android:id="@+id/total_num"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="共30件商品"
+                android:textSize="12dp"/>
+
+            <TextView
+                android:id="@+id/Amount_payable"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:paddingRight="5dp"
+                android:text="应付金额：￥1500-优惠金额：￥20=实付金额：￥1480"
+                android:textSize="12dp"/>
+        </RelativeLayout>
+    </LinearLayout>
+
+</LinearLayout>

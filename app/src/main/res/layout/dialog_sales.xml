@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textSize="16sp"
+            android:textColor="@color/text_color"
+            android:text="开始时间:"/>
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/dialog_element_start_et"
+            style="@style/input_right_edittext"
+            android:hint="格式:2001-01-01"
+            android:text=""
+            app:met_baseColor="?colorPrimary"
+            app:met_clearButton="true"
+            app:met_floatingLabel="none"
+            app:met_floatingLabelText="开始时间"
+            app:met_primaryColor="?colorPrimary" />
+        
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textSize="16sp"
+            android:textColor="@color/text_color"
+            android:text="结束时间:"/>
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/dialog_element_over_et"
+            style="@style/input_right_edittext"
+            android:hint="格式:2001-01-01"
+            android:text=""
+            android:inputType="numberDecimal"
+            app:met_baseColor="?colorPrimary"
+            app:met_clearButton="true"
+            app:met_floatingLabel="none"
+            app:met_floatingLabelText="结束时间"
+            app:met_primaryColor="?colorPrimary" />
+
+    </LinearLayout>
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/dialog_element_stype1"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_marginLeft="16dp"
+            android:background="@drawable/dialog_sales_choose_stypeing"
+            android:text="条件"/>
+
+        <TextView
+            android:id="@+id/dialog_element_stype2"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp"
+            android:background="@drawable/dialog_sales_choose_stype"
+            android:text="折扣"/>
+
+    </LinearLayout>
+    
+    <LinearLayout
+        android:id="@+id/type1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textSize="16sp"
+                android:gravity="center_vertical"
+                android:textColor="@color/text_color"
+                android:text="满"/>
+
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/dialog_element_disstr_et"
+                style="@style/input_right_edittext"
+                android:hint=""
+                android:text=""
+                app:met_baseColor="?colorPrimary"
+                app:met_clearButton="true"
+                app:met_floatingLabel="none"
+                app:met_primaryColor="?colorPrimary" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textSize="16sp"
+                android:gravity="center_vertical"
+                android:textColor="@color/text_color"
+                android:text="送"/>
+
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/dialog_element_gift_et"
+                style="@style/input_right_edittext"
+                android:hint=""
+                android:text=""
+                app:met_baseColor="?colorPrimary"
+                app:met_clearButton="true"
+                app:met_floatingLabel="none"
+                app:met_primaryColor="?colorPrimary" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/type2"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textSize="16sp"
+            android:gravity="center_vertical"
+            android:textColor="@color/text_color"
+            android:text="折扣"/>
+
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/dialog_element_gift2_et"
+            style="@style/input_right_edittext"
+            android:hint=""
+            android:text=""
+            app:met_baseColor="?colorPrimary"
+            app:met_clearButton="true"
+            app:met_floatingLabel="none"
+            app:met_primaryColor="?colorPrimary" />
+
+    </LinearLayout>
+
+</LinearLayout>

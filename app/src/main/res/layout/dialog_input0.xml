@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/dialog_element_et"
+        style="@style/input_right_edittext"
+        android:hint="请输入库存"
+        android:text=""
+        android:inputType="numberDecimal"
+        app:met_clearButton="true"
+        app:met_floatingLabel="highlight"
+        app:met_floatingLabelText="库存"
+        app:met_primaryColor="?colorPrimary" />
+</LinearLayout>

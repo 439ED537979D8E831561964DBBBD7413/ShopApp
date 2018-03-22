@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/id_drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include
+            android:id="@+id/titlebar"
+            layout="@layout/titlebar" />
+
+        <LinearLayout
+            android:id="@+id/bottom_layout"
+            android:layout_width="match_parent"
+            android:layout_height="49dip"
+            android:layout_alignParentBottom="true"
+            android:background="@color/bottom_line"
+            android:orientation="horizontal"
+            android:paddingTop="1dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/main_tab_bg"
+                android:gravity="center_vertical">
+
+                <LinearLayout
+                    android:id="@+id/allchoose"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="10dp"
+                    android:orientation="horizontal">
+
+                    <!--<ImageView-->
+                        <!--android:id="@+id/choose"-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_marginLeft="@dimen/padding_all"-->
+                        <!--android:layout_marginRight="5dp"-->
+                        <!--android:src="@drawable/ic_shopcart_unhook" />-->
+                    <CheckBox
+                        android:id="@+id/checkBox"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:padding="3dp"
+                        android:button="@drawable/checkbox_style"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="全选"
+                        android:textColor="@color/text_color2"
+                        android:textSize="16dip" />
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="25dp"
+                        android:gravity="center"
+                        android:text="总计："
+                        android:textColor="@color/text_color2"
+                        android:textSize="16dip" />
+
+                    <TextView
+                        android:id="@+id/cart_total_price_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:gravity="bottom"
+                        android:text="0"
+                        android:textColor="@android:color/holo_red_light"
+                        android:textSize="18dip" />
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/submit"
+                android:layout_width="130dp"
+                android:layout_height="match_parent"
+                android:background="@color/red"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="确认删除"
+                    android:textColor="@android:color/white"
+                    android:textSize="18dip" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_refresh_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_above="@+id/bottom_layout"
+            android:layout_below="@+id/titlebar"
+            android:background="@color/color_white">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

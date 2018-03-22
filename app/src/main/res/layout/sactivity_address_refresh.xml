@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/all_bg"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <include
+        layout="@layout/titlebar" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/item_height"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/padding_all"
+        android:layout_marginTop="10dp"
+        android:background="@android:color/white">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/red"
+            android:text="*"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:gravity="left"
+            android:paddingLeft="6dp"
+            android:textColor="@color/gary_6"
+            android:textSize="15sp"
+            android:text="收  件 人" />
+
+        <EditText
+            android:id="@+id/add_address_name_edt"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:background="@null"
+            android:singleLine="true"
+            android:maxLength="10"
+            android:textColor="@color/text_color"
+            android:textSize="15sp"
+            android:layout_height="match_parent"
+            android:hint="姓名" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/line"
+        android:background="@color/center_line"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/item_height"
+        android:gravity="center_vertical"
+        android:layout_marginTop="10dp"
+        android:paddingLeft="@dimen/padding_all"
+        android:background="@android:color/white">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/red"
+            android:text="*"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:gravity="left"
+            android:paddingLeft="6dp"
+            android:text="店       铺"
+            android:textColor="@color/gary_6"
+            android:textSize="15sp" />
+
+        <EditText
+            android:id="@+id/add_address_shopname_edt"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:background="@null"
+            android:singleLine="true"
+            android:hint="店铺名称"
+            android:maxLength="10"
+            android:textSize="15sp"
+            android:textColor="@color/text_color"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/line"
+        android:background="@color/center_line"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/item_height"
+        android:layout_marginTop="10dp"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/padding_all"
+        android:background="@android:color/white">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/red"
+            android:text="*"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:gravity="left"
+            android:paddingLeft="6dp"
+            android:text="手机号码"
+            android:textColor="@color/gary_6"
+            android:textSize="15sp" />
+
+        <EditText
+            android:id="@+id/add_address_phone_edt"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:background="@null"
+            android:hint="11位手机号"
+            android:inputType="phone"
+            android:singleLine="true"
+            android:maxLength="11"
+            android:textSize="15sp"
+            android:textColor="@color/text_color"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/line"
+        android:background="@color/center_line"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/item_height"
+        android:layout_marginTop="10dp"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/padding_all"
+        android:background="@android:color/white">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:gravity="left"
+            android:paddingLeft="10dp"
+            android:text="备用号码"
+            android:textColor="@color/gary_6"
+            android:textSize="15sp" />
+
+        <EditText
+            android:id="@+id/add_address_tel_edt"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:background="@null"
+            android:hint="备用电话 可不填"
+            android:inputType="phone"
+            android:singleLine="true"
+            android:maxLength="11"
+            android:textSize="15sp"
+            android:textColor="@color/text_color"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/line"
+        android:background="@color/center_line"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/item_height"
+        android:layout_marginTop="10dp"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/padding_all"
+        android:background="@android:color/white">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/red"
+            android:text="*"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:gravity="left"
+            android:paddingLeft="6dp"
+            android:text="详细地址"
+            android:textColor="@color/gary_6"
+            android:textSize="15sp" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_weight="1">
+
+            <ImageView
+                android:layout_alignParentRight="true"
+                android:id="@+id/refresh_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="12dp"
+                android:src="@drawable/ic_address"/>
+
+            <EditText
+                android:id="@+id/add_address_detail_edt"
+                android:layout_width="match_parent"
+                android:layout_toLeftOf="@+id/refresh_btn"
+                android:background="@null"
+                android:hint="街道门牌信息"
+                android:paddingRight="5dp"
+                android:textSize="15sp"
+                android:maxLength="20"
+                android:layout_centerVertical="true"
+                android:layout_height="wrap_content" />
+
+
+        </RelativeLayout>
+
+
+    </LinearLayout>
+    <TextView
+        android:id="@+id/submit"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:layout_margin="10dp"
+        android:background="@color/colorPrimary"
+        android:gravity="center"
+        android:text="提      交"
+        android:textColor="@android:color/white"
+        android:textSize="18sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/line"
+        android:background="@color/center_line"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/item_height"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/padding_all"
+        android:visibility="gone"
+        android:background="@android:color/white">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:gravity="left"
+            android:paddingLeft="12dip"
+            android:text="设为默认"
+            android:textColor="@color/gary_6"
+            android:textSize="15sp" />
+
+        <CheckBox
+            android:id="@+id/manager_checkBox"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_weight="1"
+            android:button="@drawable/address_checkbox"
+            android:gravity="center"
+            android:textColor="@color/text_color"
+            android:layout_centerVertical="true"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/line"
+        android:background="@color/center_line"/>
+</LinearLayout>

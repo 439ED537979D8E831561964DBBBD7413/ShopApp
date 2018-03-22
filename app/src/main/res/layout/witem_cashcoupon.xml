@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="120dp"
+    android:background="@drawable/cashcpuponbg"
+    android:backgroundTint="@color/white"
+   >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:layout_centerHorizontal="true"
+        android:padding="@dimen/pandingmin"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:id="@+id/choose_re"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:padding="@dimen/title_to_centent">
+
+            <ImageView
+                android:id="@+id/choose"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/check_false"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true" />
+
+        </LinearLayout>
+        <RelativeLayout
+
+            android:layout_width="wrap_content"
+            android:layout_height="150dp"
+
+            android:layout_alignParentRight="true"
+            android:layout_toRightOf="@+id/choose_re"
+            >
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/title_to_centent"
+                android:layout_alignParentTop="true">
+                <TextView
+                    android:id="@+id/clent_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="全部零售商"
+                    android:layout_marginRight="@dimen/pandingtop"
+                    android:textColor="@color/blue"
+                    android:layout_alignParentRight="true"
+                    />
+
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true">
+                <TextView
+                    android:id="@+id/money_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:textSize="@dimen/adver_font_size0"
+                    android:textColor="@color/blue"
+                    android:layout_centerVertical="true"
+                    android:text="￥15.00"
+                    />
+                <TextView
+                    android:id="@+id/classi_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                   android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:textSize="@dimen/adver_font_size1"
+                    android:layout_marginRight="@dimen/pandingtop"
+                    android:text="纸巾"
+                    />
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true">
+                <TextView
+                    android:id="@+id/condition_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:textSize="@dimen/duihuan_btn"
+                    android:text="满50可用"
+                    />
+                <TextView
+                    android:id="@+id/term_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="@dimen/pandingtop"
+                    android:textSize="@dimen/duihuan_btn"
+                    android:text="2016.11.12-2016.11.32"/>
+            </RelativeLayout>
+
+
+
+    </RelativeLayout>
+    </RelativeLayout>
+</RelativeLayout>

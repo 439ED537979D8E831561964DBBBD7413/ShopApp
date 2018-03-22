@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/save_photoalbum"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@drawable/button_dialog_bg"
+        android:gravity="center"
+        android:text="保存到相册"
+        android:textColor="#38ADFF"
+        android:textSize="17sp"/>
+
+    <TextView
+        android:id="@+id/dialog_cancel"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/button_dialog_bg"
+        android:gravity="center"
+        android:textColor="#7D7D7D"
+        android:text="取    消"
+        android:textSize="16sp"/>
+
+
+</LinearLayout>

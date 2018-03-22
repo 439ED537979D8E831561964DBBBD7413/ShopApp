@@ -1,0 +1,45 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.yj.shopapp.ui.activity.shopkeeper.IntegralBuGoodsFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:background="@color/white">
+
+        <TextView
+            android:id="@+id/hot_img"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="大家在换"
+            android:textColor="@color/red"
+            android:textSize="16sp"/>
+
+        <com.gongwen.marqueen.MarqueeView
+            android:id="@+id/hot_mv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="3dp"
+            android:layout_toRightOf="@id/hot_img"
+            app:marqueeAnimDuration="2000"
+            app:marqueeAnimIn="@anim/right_in"
+            app:marqueeInterval="2500"
+            app:marqueeAnimOut="@anim/lift_out"/>
+
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/my_RecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/all_bg"
+        android:overScrollMode="never"
+        android:padding="3dp"/>
+</LinearLayout>

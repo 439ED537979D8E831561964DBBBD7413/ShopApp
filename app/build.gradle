@@ -1,0 +1,116 @@
+apply plugin: 'com.android.application'
+
+android {
+    lintOptions {
+
+        checkReleaseBuilds false
+        abortOnError false
+        // 21251608
+    }
+    signingConfigs {
+        config {
+            keyAlias 'shop'
+            keyPassword 'diandianshop'
+//            storeFile file('C:/Users/LK/Desktop/shopkey.jks')
+            storePassword 'diandianshop'
+            storeFile file('C:/Users/LK/AndroidStudioProjects/shopkey.jks')
+        }
+    }
+    compileSdkVersion 26
+    buildToolsVersion '26.0.2'
+    defaultConfig {
+        applicationId "com.yj.shopapp"
+        minSdkVersion 16
+        targetSdkVersion 26
+        versionCode 26
+        versionName "v.8.1.0"
+        multiDexEnabled true
+        ndk {
+            // 设置支持的SO库架构
+            abiFilters 'armeabi', 'x86', 'armeabi-v7a', 'x86_64', 'arm64-v8a'
+        }
+        signingConfig signingConfigs.config
+    }
+    buildTypes {
+        debug {
+            minifyEnabled false
+            signingConfig signingConfigs.config
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.config
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+        }
+    }
+    sourceSets {
+        main {
+
+            // assets.srcDirs = ['assets']
+            jniLibs.srcDirs = ['libs']
+        }
+        debug.setRoot('build-types/debug')
+        release.setRoot('build-types/release')
+    }
+    productFlavors {
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    testCompile 'junit:ju' + 'nit:4.12'
+    //    compile('com.github.afollestad.material-dialogs:core:0.8.5.4@aar') {
+    //        transitive = true
+    //    }
+    compile('com.github.afollestad.material-dialogs:core:0.8.5.5@aar') { transitive = true }
+    compile files('libs/afinal_0.5_bin.jar')
+    compile files('libs/zxing.jar')
+    compile project(':slideDateTimePicker')
+    compile files('libs/Msc.jar')
+    compile files('libs/BaiduLBS_Android.jar')
+    compile files('libs/httpmime-4.1.2.jar')
+    compile files('libs/okhttp-2.5.0.jar')
+    compile files('libs/okio-1.13.0.jar')
+    compile 'com.android.support:appcompat-v7:26.1.0'
+    compile 'com.android.support:recyclerview-v7:26.1.0'
+    compile 'com.android.support:cardview-v7:26.1.0'
+    compile 'com.android.support:design:26.1.0'
+    compile 'com.loopj.android:android-async-http:1.4.9'
+    compile 'com.google.code.gson:gson:2.8.0'
+    compile 'com.rengwuxian.materialedittext:library:2.1.4'
+    compile 'com.kaopiz:kprogresshud:1.0.2'
+    compile 'com.diegocarloslima:byakugallery:+@aar'
+    compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.3'
+    compile 'com.google.android.gms:play-services-appindexing:9.8.0'
+    compile 'com.gongwen:marqueelibrary:1.0.4'
+    compile 'com.youth.banner:banner:1.4.9'
+    compile 'com.contrarywind:Android-PickerView:3.2.6'
+    compile 'com.github.bumptech.glide:glide:4.2.0'
+    compile 'jp.wasabeef:glide-transformations:2.0.1'
+    compile 'com.android.support:support-v4:26.1.0'
+    compile 'com.facebook.fresco:fresco:1.5.0'
+    compile 'com.android.support:multidex:1.0.3'
+    compile 'com.alibaba:fastjson:1.2.37'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'org.greenrobot:eventbus:3.0.0'
+    implementation 'com.jakewharton:butterknife:8.8.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+    compile project(':PushSDK')
+    compile 'com.tencent.bugly:crashreport:latest.release'
+    //其中latest.release指代最新Bugly SDK版本号，也可以指定明确的版本号，例如2.1.9
+    compile 'com.tencent.bugly:nativecrashreport:latest.release'
+    //检测内存溢出
+    //    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.4'
+    //    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
+    compile 'com.github.xiaweizi:RoundCornersView:v1.0'
+    compile 'q.rorbin:badgeview:1.1.3'
+}
+
+repositories {
+    maven { url "https://jitpack.io" }
+    google()
+}

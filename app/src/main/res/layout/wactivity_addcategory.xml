@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+    <include
+        android:id="@+id/title_layout"
+        layout="@layout/titlebar"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/activity_horizontal_margin">
+
+
+        <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="请填类别名称:"/>
+        <EditText
+            android:id="@+id/word_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="输入名称"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/color_f2f2f2"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+
+            android:text="请填选择供应商:"/>
+        <Button
+            android:id="@+id/choose_tv"
+
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/qianhui"
+            android:paddingTop="@dimen/activity_horizontal_margin"
+            android:paddingBottom="@dimen/activity_horizontal_margin"
+            android:hint="点击选择供应商"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/color_f2f2f2"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+
+            android:text="请选择图片:"/>
+        <TextView
+            android:id="@+id/chooseimg_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:hint="点击选择图片"
+            android:background="@color/qianhui"
+            android:gravity="center"
+            android:paddingTop="@dimen/activity_horizontal_margin"
+            android:paddingBottom="@dimen/activity_horizontal_margin"
+           />
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/simpleDraweeView"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="12dp"
+            fresco:roundAsCircle="true"
+
+            fresco:placeholderImageScaleType="fitCenter"/>
+
+        <ImageView
+            android:id="@+id/_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/color_f2f2f2"/>
+
+        <RelativeLayout
+            android:id="@+id/choose_re"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:paddingBottom="@dimen/pandingtop"
+            android:paddingTop="@dimen/pandingtop"
+            android:paddingRight="@dimen/pandingtop"
+            >
+
+            <ImageView
+                android:id="@+id/choose"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_centerVertical="true"
+                android:src="@drawable/check_false"/>
+            <TextView
+                android:id="@+id/shopsnameTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/choose"
+                android:textSize="16sp"
+                android:textColor="@color/text_color"
+                android:layout_gravity="center_vertical"
+                android:layout_centerVertical="true"
+                android:text="设置成热门分类"/>
+        </RelativeLayout>
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/submit_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="提交"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:padding="@dimen/activity_horizontal_margin"
+        android:background="@color/color_fd2f2f"/>
+
+
+</LinearLayout>
