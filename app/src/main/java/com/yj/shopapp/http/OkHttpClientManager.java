@@ -262,7 +262,6 @@ public class OkHttpClientManager {
         mDelivery.post(new Runnable() {
             @Override
             public void run() {
-
                 callback.onResponse(request, object);
                 callback.onAfter();
             }

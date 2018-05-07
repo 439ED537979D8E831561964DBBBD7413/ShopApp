@@ -1,6 +1,5 @@
 package com.yj.shopapp.ui.activity.shopkeeper;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -21,11 +20,11 @@ import com.yj.shopapp.loading.ILoadViewImpl;
 import com.yj.shopapp.loading.LoadMoreClickListener;
 import com.yj.shopapp.presenter.BaseRecyclerView;
 import com.yj.shopapp.ubeen.Address;
+import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.ui.activity.adapter.AddressAdapter;
 import com.yj.shopapp.ui.activity.base.BaseActivity;
 import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.JsonHelper;
-import com.yj.shopapp.util.NetUtils;
 import com.yj.shopapp.util.PreferenceUtils;
 import com.yj.shopapp.view.headfootrecycleview.OnRecyclerViewScrollListener;
 import com.yj.shopapp.view.headfootrecycleview.RecyclerViewHeaderFooterAdapter;
@@ -47,10 +46,6 @@ public class SAddressActivity extends BaseActivity implements BaseRecyclerView, 
 
     @BindView(R.id.id_right_btu)
     TextView id_right_btu;
-
-    @BindView(R.id.swipe_refresh_layout)
-    SwipeRefreshLayout swipeRefreshLayout;
-
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
 
@@ -59,16 +54,10 @@ public class SAddressActivity extends BaseActivity implements BaseRecyclerView, 
     private View loadMoreView = null;
 
     private RecyclerViewHeaderFooterAdapter adapter;
-
     private RecyclerView.LayoutManager layoutManager;
-
-    private boolean isRequesting = false;//标记，是否正在刷新或者加载
-
 
     private List<Address> notes = new ArrayList<Address>();
 
-    String uid;
-    String token;
     boolean isEdit = true; //是否可编译
 
     @Override
@@ -78,29 +67,12 @@ public class SAddressActivity extends BaseActivity implements BaseRecyclerView, 
 
     @Override
     protected void initData() {
-        title.setText("修改地址");
+        title.setText("收货地址管理");
         //id_right_btu.setText("添加");
-        if (NetUtils.isNetworkConnected(mContext)) {
-            if (null != swipeRefreshLayout) {
 
-                swipeRefreshLayout.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        swipeRefreshLayout.setRefreshing(true);
-                        refreshRequest();
-                    }
-                }, 200);
-            }
-        } else {
-            showToastShort("网络不给力");
+        if (getIntent().hasExtra("isEdit")) {
+            isEdit = getIntent().getExtras().getBoolean("isEdit");
         }
-        uid = PreferenceUtils.getPrefString(mContext, Contants.Preference.UID, "");
-        token = PreferenceUtils.getPrefString(mContext, Contants.Preference.TOKEN, "");
-
-        isEdit = getIntent().getExtras().getBoolean("isEdit");
-
-        swipeRefreshLayout.setColorSchemeResources(Contants.Refresh.refreshColorScheme);
-        swipeRefreshLayout.setOnRefreshListener(listener);
         AddressAdapter nAdapter = new AddressAdapter(SAddressActivity.this, notes, this, this, isEdit);
 
         layoutManager = new LinearLayoutManager(mContext);
@@ -118,6 +90,14 @@ public class SAddressActivity extends BaseActivity implements BaseRecyclerView, 
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (isNetWork(mContext)) {
+            refreshRequest();
+        }
+
+    }
 
     @Override
     protected void onRestart() {
@@ -136,28 +116,20 @@ public class SAddressActivity extends BaseActivity implements BaseRecyclerView, 
             @Override
             public void onAfter() {
                 super.onAfter();
-                swipeRefreshLayout.setRefreshing(false);
-                isRequesting = false;
-            }
-
-            @Override
-            public void onBefore() {
-                super.onBefore();
-                isRequesting = true;
             }
 
             @Override
             public void onResponse(Request request, String json) {
                 super.onResponse(request, json);
                 notes.clear();
-                System.out.println("m_tagjson" + json);
+                ShowLog.e(json);
                 if (JsonHelper.isRequstOK(json, mContext)) {
                     JsonHelper<Address> jsonHelper = new JsonHelper<Address>(Address.class);
                     notes.addAll(jsonHelper.getDatas(json));
+                    PreferenceUtils.setPrefString(mContext, "addressId", notes.get(0).getId());
                 } else {
                     showToastShort(JsonHelper.errorMsg(json));
                 }
-
                 adapter.notifyDataSetChanged();
             }
 
@@ -203,10 +175,8 @@ public class SAddressActivity extends BaseActivity implements BaseRecyclerView, 
     public void edit(int pos) {
         Bundle bundle = new Bundle();
         bundle.putSerializable("been", notes.get(pos));
-        CommonUtils.goActivityForResult(mContext, SAddressRefreshActivity.class, bundle, 0, false);
+        CommonUtils.goActivity(mContext, SAddressRefreshActivity.class, bundle);
     }
-
-
 
 
     public class mLoadMoreClickListener implements LoadMoreClickListener {
@@ -241,27 +211,6 @@ public class SAddressActivity extends BaseActivity implements BaseRecyclerView, 
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == SAddressRefreshActivity.REFRESHY_MSG) {
-
-            if (null != swipeRefreshLayout) {
-
-                swipeRefreshLayout.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        swipeRefreshLayout.setRefreshing(true);
-
-                        refreshRequest();
-                    }
-                }, 200);
-            }
-
-        }
-    }
-
     public void delectAddres(String id) {
         Map<String, String> params = new HashMap<String, String>();
         params.put("uid", uid);
@@ -287,10 +236,9 @@ public class SAddressActivity extends BaseActivity implements BaseRecyclerView, 
                 super.onResponse(request, json);
 
                 notes.clear();
-                System.out.println("response" + json);
+                ShowLog.e(json);
                 if (JsonHelper.isRequstOK(json, mContext)) {
                     refreshRequest();
-
                 } else {
                     showToastShort(JsonHelper.errorMsg(json));
                 }

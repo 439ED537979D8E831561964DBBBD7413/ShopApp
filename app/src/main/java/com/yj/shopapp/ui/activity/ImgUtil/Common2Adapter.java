@@ -75,4 +75,5 @@ public abstract class Common2Adapter<T> extends RecyclerView.Adapter<RVHolder> {
     public void setOnItemClickListener(AdapterView.OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
     }
+
 }

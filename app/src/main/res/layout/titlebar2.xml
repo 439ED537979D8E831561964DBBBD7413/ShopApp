@@ -1,42 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/title_layout"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/color_theme" >
+    android:layout_height="@dimen/title_height"
+    android:gravity="center_vertical"
+    android:background="@drawable/gradient">
 
-    <RelativeLayout
-        android:id="@+id/title_view"
-        android:layout_width="match_parent"
-        android:layout_height="64dp">
+    <ImageView
+        android:id="@+id/forewadImg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:clickable="true"
+        android:onClick="Forewad"
+        android:paddingLeft="@dimen/default_padding"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_gt" />
 
-        <EditText
-            android:id="@+id/search_edit"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginRight="56dp"
-            android:layout_marginLeft="56dp"
-            android:layout_centerVertical="true"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:imeOptions="actionSearch"
-            android:hint="输入搜索"
-            android:text=""
-            android:singleLine="true"
-            android:textSize="14sp"
-            android:background="@drawable/edittext_bg"
-            android:paddingLeft="5dp"
-            />
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:singleLine="true"
+        android:text=""
+        android:textSize="16sp"
+        android:textColor="@android:color/white" />
 
-        <TextView
-            android:id="@+id/id_right_btu"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:textColor="@color/color_white"
-            android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="16dp"
-            android:text="搜索"/>
-    </RelativeLayout>
+    <ImageView
+        android:id="@+id/id_right_btu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:paddingRight="@dimen/default_padding"
+        android:src="@drawable/search" />
 
 </RelativeLayout>

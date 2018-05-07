@@ -3,7 +3,7 @@ package com.yj.shopapp.ui.activity.adapter;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -79,14 +79,9 @@ public class AddressAdapter implements IRecyclerViewIntermediary {
         holder.managerName.setText(address.getShopname());
         holder.managerPhone.setText(address.getMobile());
         holder.managerAddress.setText(address.getAddress());
-
-
         if (StringHelper.isEmpty(address.getStatus()) || address.getStatus().equals("1")) {
-            holder.managerCheckBox.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_shopcart_hook));
-            holder.managerCheckBox.setVisibility(View.VISIBLE);
-            holder.moren.setTextColor(mContext.getResources().getColor(R.color.color_F37A1C));
-
-            holder.moren.setVisibility(View.VISIBLE);
+            holder.managerCheckBox.setSelected(true);
+            holder.managerCheckBox.setClickable(false);
         } else {
 //            holder.managerCheckBox.setImageDrawable(mContext.getResources().getDrawable(R.drawable.check_false));
             holder.moren.setVisibility(View.GONE);
@@ -106,7 +101,7 @@ public class AddressAdapter implements IRecyclerViewIntermediary {
         @BindView(R.id.manager_line)
         View managerLine;
         @BindView(R.id.manager_checkBox)
-        ImageView managerCheckBox;
+        CheckBox managerCheckBox;
         @BindView(R.id.manager_edit)
         TextView managerEdit;
         @BindView(R.id.moren)
@@ -117,7 +112,7 @@ public class AddressAdapter implements IRecyclerViewIntermediary {
         public HomeFragmentViewHolder(View itemView) {
             super(itemView);
 
-            unbinder=ButterKnife.bind(this, itemView);
+            unbinder = ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(this);
             delect_lin.setOnClickListener(this);
             itemView.setOnLongClickListener(this);

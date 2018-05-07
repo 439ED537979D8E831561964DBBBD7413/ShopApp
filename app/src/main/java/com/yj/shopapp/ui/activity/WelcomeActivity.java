@@ -5,22 +5,21 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.bumptech.glide.Glide;
 import com.squareup.okhttp.Request;
 import com.yj.shopapp.R;
 import com.yj.shopapp.config.Contants;
 import com.yj.shopapp.http.HttpHelper;
 import com.yj.shopapp.http.OkHttpResponseHandler;
 import com.yj.shopapp.ubeen.WelcomeImags;
-import com.yj.shopapp.ui.activity.adapter.WelcomePagerAdpter;
 import com.yj.shopapp.ui.activity.shopkeeper.ClassifyListActivity;
 import com.yj.shopapp.ui.activity.shopkeeper.CommodityDetails;
 import com.yj.shopapp.ui.activity.shopkeeper.SGoodsDetailActivity;
@@ -30,7 +29,6 @@ import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.JsonHelper;
 import com.yj.shopapp.util.NetUtils;
 import com.yj.shopapp.util.PreferenceUtils;
-import com.yj.shopapp.util.load.GlideImageLoader;
 import com.yj.shopapp.wbeen.Login;
 
 import java.util.ArrayList;
@@ -38,24 +36,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import butterknife.ButterKnife;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import cn.bingoogolapple.bgabanner.BGABanner;
 
 /**
  * Created by LK on 2017/11/3.
  */
 
-public class WelcomeActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener, WelcomePagerAdpter.OnPagerClickListener {
+public class WelcomeActivity extends AppCompatActivity {
     @BindView(R.id.CountdownText)
     TextView CountdownText;
     @BindView(R.id.getintohome)
     TextView getintohome;
-    @BindView(R.id.viewpager)
-    ViewPager viewpager;
-    @BindView(R.id.llposition)
-    LinearLayout llposition;
+    @BindView(R.id.banner_guide_foreground)
+    BGABanner bannerGuideForeground;
+
     private Context mContext;
     boolean isReqing;
     private String uType;
@@ -63,15 +61,13 @@ public class WelcomeActivity extends AppCompatActivity implements ViewPager.OnPa
     private String token;
     private List<WelcomeImags> welcomeImags = new ArrayList<>();
     private List<String> imags = new ArrayList<>();
-    private WelcomePagerAdpter pagerAdpter;
-    private int currentIndex = 0;
     Unbinder unbinder;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
-        unbinder=ButterKnife.bind(this);
+        unbinder = ButterKnife.bind(this);
         mContext = getApplicationContext();
         if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
             finish();
@@ -97,10 +93,65 @@ public class WelcomeActivity extends AppCompatActivity implements ViewPager.OnPa
             }
 
         }
-        pagerAdpter = new WelcomePagerAdpter(mContext, new GlideImageLoader());
-        viewpager.setAdapter(pagerAdpter);
-        viewpager.addOnPageChangeListener(this);
-        pagerAdpter.setListener(this);
+        initBanner();
+    }
+
+    private void initBanner() {
+        bannerGuideForeground.setAdapter(new BGABanner.Adapter<ImageView, String>() {
+            @Override
+            public void fillBannerItem(BGABanner banner, ImageView itemView, @Nullable String model, int position) {
+                Glide.with(mContext).load(model).into(itemView);
+            }
+
+        });
+        bannerGuideForeground.setDelegate(new BGABanner.Delegate() {
+            @Override
+            public void onBannerItemClick(BGABanner banner, View itemView, @Nullable Object model, int position) {
+                WelcomeImags imags = welcomeImags.get(position);
+                switch (imags.getType()) {
+                    case "1":
+                        Bundle bundle1 = new Bundle();
+                        bundle1.putString("goodsId", imags.getItemid());
+                        Intent intent1 = new Intent(WelcomeActivity.this, SGoodsDetailActivity.class);
+                        intent1.putExtras(bundle1);
+                        startActivity(intent1);
+
+                        break;
+                    case "2":
+                        Bundle bundle2 = new Bundle();
+                        bundle2.putString("Store_id", imags.getShop_id());
+                        Intent intent2 = new Intent(WelcomeActivity.this, ClassifyListActivity.class);
+                        intent2.putExtras(bundle2);
+                        startActivity(intent2);
+
+                        break;
+                    case "3":
+                        Bundle bundle3 = new Bundle();
+                        bundle3.putString("shop_id", imags.getGoods_id());
+                        Intent intent3 = new Intent(WelcomeActivity.this, CommodityDetails.class);
+                        intent3.putExtras(bundle3);
+                        startActivity(intent3);
+
+                        break;
+                    case "4":
+                        Bundle bundle = new Bundle();
+                        bundle.putString("url", imags.getUrl());
+                        Intent intent4 = new Intent(WelcomeActivity.this, MyWebView.class);
+                        intent4.putExtras(bundle);
+                        startActivity(intent4);
+
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+        bannerGuideForeground.setEnterSkipViewIdAndDelegate(R.id.getintohome, 0, new BGABanner.GuideDelegate() {
+            @Override
+            public void onClickEnterOrSkip() {
+                goActivity();
+            }
+        });
     }
 
     @Override
@@ -121,21 +172,6 @@ public class WelcomeActivity extends AppCompatActivity implements ViewPager.OnPa
 
         }
     };
-
-
-    private void initpoints() {
-        for (int i = 0; i < imags.size(); i++) {
-            View view = new View(getBaseContext());
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(30, 30);
-            params.setMargins(10, 10, 10, 10);
-            view.setBackgroundResource(R.drawable.point_selector);
-            view.setLayoutParams(params);
-            llposition.addView(view);
-        }
-        if (llposition.getChildAt(0) != null) {
-            llposition.getChildAt(0).setSelected(true);
-        }
-    }
 
     private void goActivity() {
         if ("1".equals(uType)) {
@@ -177,7 +213,7 @@ public class WelcomeActivity extends AppCompatActivity implements ViewPager.OnPa
                 super.onResponse(request, json);
                 isReqing = true;
                 PreferenceUtils.setPrefInt(mContext, Contants.Preference.ISLOGGIN, 1);
-                System.out.println("response" + json);
+                ShowLog.e(json);
                 if (JsonHelper.isRequstOK(json, getApplicationContext())) {
                     JsonHelper<Login> jsonHelper = new JsonHelper<Login>(Login.class);
                     final Login uinfo = jsonHelper.getData(json, null);
@@ -188,6 +224,9 @@ public class WelcomeActivity extends AppCompatActivity implements ViewPager.OnPa
                     PreferenceUtils.setPrefString(mContext, Contants.Preference.TOKEN, uinfo.getToken());
                     PreferenceUtils.setPrefString(mContext, Contants.Preference.USER_NAME, userName);
                     PreferenceUtils.setPrefString(mContext, Contants.Preference.USER_PWD, userPwd);
+                    PreferenceUtils.setPrefInt(mContext, "isVip", uinfo.getIs_vip());
+                    PreferenceUtils.setPrefString(mContext, "CustomerService", uinfo.getCustomer_service_phone());
+                    PreferenceUtils.setPrefString(mContext, "address", uinfo.getAddress());
                     uType = uinfo.getUtype();
                     uid = uinfo.getUid();
                     token = uinfo.getToken();
@@ -296,8 +335,9 @@ public class WelcomeActivity extends AppCompatActivity implements ViewPager.OnPa
                         for (WelcomeImags w : welcomeImags) {
                             imags.add(w.getImgurl());
                         }
-                        pagerAdpter.setImags(imags);
-                        initpoints();
+                        if (bannerGuideForeground != null) {
+                            bannerGuideForeground.setData(imags, new ArrayList<String>());
+                        }
                         if (imags.size() == 1) {
                             CountdownText.setVisibility(View.VISIBLE);
                             timer.start();
@@ -328,69 +368,6 @@ public class WelcomeActivity extends AppCompatActivity implements ViewPager.OnPa
                 break;
             case R.id.getintohome:
                 goActivity();
-                break;
-            default:
-                break;
-        }
-    }
-
-    @Override
-    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-    }
-
-    @Override
-    public void onPageSelected(int position) {
-        llposition.getChildAt(currentIndex).setSelected(false);
-        llposition.getChildAt(position).setSelected(true);
-        currentIndex = position;
-        if (position == imags.size() - 1) {
-            getintohome.setVisibility(View.VISIBLE);
-        } else {
-            getintohome.setVisibility(View.GONE);
-        }
-    }
-
-    @Override
-    public void onPageScrollStateChanged(int state) {
-
-    }
-
-    @Override
-    public void onClickView(int position) {
-        WelcomeImags imags = welcomeImags.get(position);
-        switch (imags.getType()) {
-            case "1":
-                Bundle bundle1 = new Bundle();
-                bundle1.putString("goodsId", imags.getItemid());
-                Intent intent1 = new Intent(WelcomeActivity.this, SGoodsDetailActivity.class);
-                intent1.putExtras(bundle1);
-                startActivity(intent1);
-
-                break;
-            case "2":
-                Bundle bundle2 = new Bundle();
-                bundle2.putString("Store_id", imags.getShop_id());
-                Intent intent2 = new Intent(WelcomeActivity.this, ClassifyListActivity.class);
-                intent2.putExtras(bundle2);
-                startActivity(intent2);
-
-                break;
-            case "3":
-                Bundle bundle3 = new Bundle();
-                bundle3.putString("shop_id", imags.getGoods_id());
-                Intent intent3 = new Intent(WelcomeActivity.this, CommodityDetails.class);
-                intent3.putExtras(bundle3);
-                startActivity(intent3);
-
-                break;
-            case "4":
-                Bundle bundle = new Bundle();
-                bundle.putString("url", imags.getUrl());
-                Intent intent4 = new Intent(WelcomeActivity.this, MyWebView.class);
-                intent4.putExtras(bundle);
-                startActivity(intent4);
-
                 break;
             default:
                 break;

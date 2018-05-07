@@ -8,27 +8,40 @@ import android.os.Parcelable;
  */
 public class LookItem implements Parcelable {
 
+
     /**
-     * imgurl : http://u.yee9.net/Public/uploads/20160315/xt_56e7d71e93362.jpg
-     * id : 23
-     * sprice : 12.00
-     * stock : 111
-     * typestr : 通用分类
-     * name : 另外一个
-     * itemnoid : 123456789
-     * cnumber : dfadfa
-     * unit : null
-     * specs : a
-     * brochure : 堶
-     * agentuser : 186
-     * agentname : XX批发部
+     * imgurl : http://u.19diandian.com/Public/uploads/20180325/5ab776494ae40.jpg
+     * id : 199345
+     * sprice : 55.00
+     * stock : 380
+     * industry_name : 0.5元区
+     * class_name : 副食区
+     * typestr : 0.5元区
+     * name : 450ml 蓝色可乐
+     * itemnoid : 6971163470105
+     * cnumber : lskl
+     * unit : 件
+     * specs : 1*15
+     * brochure : 美国蓝色可乐450ML 新品上市，火爆抢购中！
+     * specialnote : 内赠东鹏特饮一瓶
+     * sale_status : 1
+     * bigtypeid : 267
+     * bigtypename : 0.5元区
+     * agentuser : 13999999999
+     * agentname : 测试
      * agenttel :
+     * is_promotion : 1
+     * sales : 3
+     * disstr : 50
+     * gift : null
      */
 
     private String imgurl;
     private String id;
     private String sprice;
     private String stock;
+    private String industry_name;
+    private String class_name;
     private String typestr;
     private String name;
     private String itemnoid;
@@ -36,94 +49,38 @@ public class LookItem implements Parcelable {
     private String unit;
     private String specs;
     private String brochure;
+    private String specialnote;
+    private String sale_status;
+    private String bigtypeid;
+    private String bigtypename;
     private String agentuser;
     private String agentname;
     private String agenttel;
-    private String is_show_price;
-    private String is_show_stock;
-    private String is_promotion;
+    private int is_promotion;
     private String sales;
-    private String sale_status;
-    private String specialnote;
-    private String bigtypeid;
-
-    public String getBigtypeid() {
-        return bigtypeid;
-    }
-
-    public void setBigtypeid(String bigtypeid) {
-        this.bigtypeid = bigtypeid;
-    }
-
     private String disstr;
     private String gift;
+    private String msg;
+    private String bookmark;
 
-    public String getSpecialnote() {
-        return specialnote;
+    public String getBookmark() {
+        return bookmark == null ? "" : bookmark;
     }
 
-    public void setSpecialnote(String specialnote) {
-        this.specialnote = specialnote;
+    public void setBookmark(String bookmark) {
+        this.bookmark = bookmark;
     }
 
-    public String getSale_status() {
-        return sale_status;
+    public String getMsg() {
+        return msg == null ? "" : msg;
     }
 
-    public void setSale_status(String sale_status) {
-        this.sale_status = sale_status;
-    }
-
-    public String getIs_promotion() {
-        return is_promotion;
-    }
-
-    public String getSales() {
-        return sales;
-    }
-
-    public String getDisstr() {
-        return disstr;
-    }
-
-    public String getGift() {
-        return gift;
-    }
-
-    public void setIs_promotion(String is_promotion) {
-        this.is_promotion = is_promotion;
-    }
-
-    public void setSales(String sales) {
-        this.sales = sales;
-    }
-
-    public void setDisstr(String disstr) {
-        this.disstr = disstr;
-    }
-
-    public void setGift(String gift) {
-        this.gift = gift;
-    }
-
-    public String getIs_show_price() {
-        return is_show_price;
-    }
-
-    public void setIs_show_price(String is_show_price) {
-        this.is_show_price = is_show_price;
-    }
-
-    public String getIs_show_stock() {
-        return is_show_stock;
-    }
-
-    public void setIs_show_stock(String is_show_stock) {
-        this.is_show_stock = is_show_stock;
+    public void setMsg(String msg) {
+        this.msg = msg;
     }
 
     public String getImgurl() {
-        return imgurl;
+        return imgurl == null ? "" : imgurl;
     }
 
     public void setImgurl(String imgurl) {
@@ -131,7 +88,7 @@ public class LookItem implements Parcelable {
     }
 
     public String getId() {
-        return id;
+        return id == null ? "" : id;
     }
 
     public void setId(String id) {
@@ -139,7 +96,7 @@ public class LookItem implements Parcelable {
     }
 
     public String getSprice() {
-        return sprice;
+        return sprice == null ? "" : sprice;
     }
 
     public void setSprice(String sprice) {
@@ -147,15 +104,31 @@ public class LookItem implements Parcelable {
     }
 
     public String getStock() {
-        return stock;
+        return stock == null ? "" : stock;
     }
 
     public void setStock(String stock) {
         this.stock = stock;
     }
 
+    public String getIndustry_name() {
+        return industry_name == null ? "" : industry_name;
+    }
+
+    public void setIndustry_name(String industry_name) {
+        this.industry_name = industry_name;
+    }
+
+    public String getClass_name() {
+        return class_name == null ? "" : class_name;
+    }
+
+    public void setClass_name(String class_name) {
+        this.class_name = class_name;
+    }
+
     public String getTypestr() {
-        return typestr;
+        return typestr == null ? "" : typestr;
     }
 
     public void setTypestr(String typestr) {
@@ -163,7 +136,7 @@ public class LookItem implements Parcelable {
     }
 
     public String getName() {
-        return name;
+        return name == null ? "" : name;
     }
 
     public void setName(String name) {
@@ -171,7 +144,7 @@ public class LookItem implements Parcelable {
     }
 
     public String getItemnoid() {
-        return itemnoid;
+        return itemnoid == null ? "" : itemnoid;
     }
 
     public void setItemnoid(String itemnoid) {
@@ -179,7 +152,7 @@ public class LookItem implements Parcelable {
     }
 
     public String getCnumber() {
-        return cnumber;
+        return cnumber == null ? "" : cnumber;
     }
 
     public void setCnumber(String cnumber) {
@@ -187,7 +160,7 @@ public class LookItem implements Parcelable {
     }
 
     public String getUnit() {
-        return unit;
+        return unit == null ? "" : unit;
     }
 
     public void setUnit(String unit) {
@@ -195,7 +168,7 @@ public class LookItem implements Parcelable {
     }
 
     public String getSpecs() {
-        return specs;
+        return specs == null ? "" : specs;
     }
 
     public void setSpecs(String specs) {
@@ -203,15 +176,47 @@ public class LookItem implements Parcelable {
     }
 
     public String getBrochure() {
-        return brochure;
+        return brochure == null ? "" : brochure;
     }
 
     public void setBrochure(String brochure) {
         this.brochure = brochure;
     }
 
+    public String getSpecialnote() {
+        return specialnote == null ? "" : specialnote;
+    }
+
+    public void setSpecialnote(String specialnote) {
+        this.specialnote = specialnote;
+    }
+
+    public String getSale_status() {
+        return sale_status == null ? "" : sale_status;
+    }
+
+    public void setSale_status(String sale_status) {
+        this.sale_status = sale_status;
+    }
+
+    public String getBigtypeid() {
+        return bigtypeid == null ? "" : bigtypeid;
+    }
+
+    public void setBigtypeid(String bigtypeid) {
+        this.bigtypeid = bigtypeid;
+    }
+
+    public String getBigtypename() {
+        return bigtypename == null ? "" : bigtypename;
+    }
+
+    public void setBigtypename(String bigtypename) {
+        this.bigtypename = bigtypename;
+    }
+
     public String getAgentuser() {
-        return agentuser;
+        return agentuser == null ? "" : agentuser;
     }
 
     public void setAgentuser(String agentuser) {
@@ -219,7 +224,7 @@ public class LookItem implements Parcelable {
     }
 
     public String getAgentname() {
-        return agentname;
+        return agentname == null ? "" : agentname;
     }
 
     public void setAgentname(String agentname) {
@@ -227,11 +232,46 @@ public class LookItem implements Parcelable {
     }
 
     public String getAgenttel() {
-        return agenttel;
+        return agenttel == null ? "" : agenttel;
     }
 
     public void setAgenttel(String agenttel) {
         this.agenttel = agenttel;
+    }
+
+    public int getIs_promotion() {
+        return is_promotion;
+    }
+
+    public void setIs_promotion(int is_promotion) {
+        this.is_promotion = is_promotion;
+    }
+
+    public String getSales() {
+        return sales == null ? "" : sales;
+    }
+
+    public void setSales(String sales) {
+        this.sales = sales;
+    }
+
+    public String getDisstr() {
+        return disstr == null ? "" : disstr;
+    }
+
+    public void setDisstr(String disstr) {
+        this.disstr = disstr;
+    }
+
+    public String getGift() {
+        return gift == null ? "" : gift;
+    }
+
+    public void setGift(String gift) {
+        this.gift = gift;
+    }
+
+    public LookItem() {
     }
 
     @Override
@@ -245,6 +285,8 @@ public class LookItem implements Parcelable {
         dest.writeString(this.id);
         dest.writeString(this.sprice);
         dest.writeString(this.stock);
+        dest.writeString(this.industry_name);
+        dest.writeString(this.class_name);
         dest.writeString(this.typestr);
         dest.writeString(this.name);
         dest.writeString(this.itemnoid);
@@ -252,21 +294,19 @@ public class LookItem implements Parcelable {
         dest.writeString(this.unit);
         dest.writeString(this.specs);
         dest.writeString(this.brochure);
+        dest.writeString(this.specialnote);
+        dest.writeString(this.sale_status);
+        dest.writeString(this.bigtypeid);
+        dest.writeString(this.bigtypename);
         dest.writeString(this.agentuser);
         dest.writeString(this.agentname);
         dest.writeString(this.agenttel);
-        dest.writeString(this.is_show_price);
-        dest.writeString(this.is_show_stock);
-        dest.writeString(this.is_promotion);
+        dest.writeInt(this.is_promotion);
         dest.writeString(this.sales);
-        dest.writeString(this.sale_status);
-        dest.writeString(this.specialnote);
-        dest.writeString(this.bigtypeid);
         dest.writeString(this.disstr);
         dest.writeString(this.gift);
-    }
-
-    public LookItem() {
+        dest.writeString(this.msg);
+        dest.writeString(this.bookmark);
     }
 
     protected LookItem(Parcel in) {
@@ -274,6 +314,8 @@ public class LookItem implements Parcelable {
         this.id = in.readString();
         this.sprice = in.readString();
         this.stock = in.readString();
+        this.industry_name = in.readString();
+        this.class_name = in.readString();
         this.typestr = in.readString();
         this.name = in.readString();
         this.itemnoid = in.readString();
@@ -281,21 +323,22 @@ public class LookItem implements Parcelable {
         this.unit = in.readString();
         this.specs = in.readString();
         this.brochure = in.readString();
+        this.specialnote = in.readString();
+        this.sale_status = in.readString();
+        this.bigtypeid = in.readString();
+        this.bigtypename = in.readString();
         this.agentuser = in.readString();
         this.agentname = in.readString();
         this.agenttel = in.readString();
-        this.is_show_price = in.readString();
-        this.is_show_stock = in.readString();
-        this.is_promotion = in.readString();
+        this.is_promotion = in.readInt();
         this.sales = in.readString();
-        this.sale_status = in.readString();
-        this.specialnote = in.readString();
-        this.bigtypeid = in.readString();
         this.disstr = in.readString();
         this.gift = in.readString();
+        this.msg = in.readString();
+        this.bookmark = in.readString();
     }
 
-    public static final Parcelable.Creator<LookItem> CREATOR = new Parcelable.Creator<LookItem>() {
+    public static final Creator<LookItem> CREATOR = new Creator<LookItem>() {
         @Override
         public LookItem createFromParcel(Parcel source) {
             return new LookItem(source);

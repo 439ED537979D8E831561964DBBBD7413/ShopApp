@@ -18,9 +18,10 @@
             android:layout_height="240dp"
             app:layout_scrollFlags="scroll|snap">
 
-            <com.youth.banner.Banner
+            <cn.bingoogolapple.bgabanner.BGABanner
                 android:id="@+id/my_banner"
                 android:layout_width="match_parent"
+                style="@style/BannerDefaultStyle"
                 android:layout_height="240dp"/>
 
             <ImageView

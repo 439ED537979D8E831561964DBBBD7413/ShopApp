@@ -1,5 +1,7 @@
 package com.yj.shopapp.ubeen;
 
+import java.util.Map;
+
 /**
  * Created by LK on 2017/12/28.
  *
@@ -12,8 +14,15 @@ public class EventMassg {
     private String siteid;
     private int cid;
     private String message;
+
     public String getSiteid() {
         return siteid;
+    }
+
+    private Map<String, CartList> map;
+
+    public Map<String, CartList> getMap() {
+        return map;
     }
 
     public EventMassg(String message) {
@@ -35,6 +44,11 @@ public class EventMassg {
         this.status = status;
         this.ischeck = ischeck;
         this.cid = cid;
+    }
+
+    public EventMassg(int status, Map<String, CartList> map) {
+        this.status = status;
+        this.map = map;
     }
 
     public String getMessage() {

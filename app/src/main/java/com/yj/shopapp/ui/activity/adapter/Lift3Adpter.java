@@ -2,16 +2,19 @@ package com.yj.shopapp.ui.activity.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.yj.shopapp.R;
-import com.yj.shopapp.ubeen.Industry;
+import com.yj.shopapp.ubeen.BrandGroup;
 import com.yj.shopapp.view.CircleImageView;
 
-import butterknife.ButterKnife;
+import java.util.List;
+
 import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by LK on 2017/10/29.
@@ -19,11 +22,15 @@ import butterknife.BindView;
  * @author LK
  */
 
-public class Lift3Adpter extends CommonBaseAdapter<Industry> {
-    int defItem = -1;
+public class Lift3Adpter extends CommonBaseAdapter<BrandGroup.ListBean> {
+    int defItem = 0;
 
     public Lift3Adpter(Context context) {
         super(context);
+    }
+
+    public Lift3Adpter(Context context, List<BrandGroup.ListBean> list) {
+        super(context, list);
     }
 
     /**
@@ -34,24 +41,26 @@ public class Lift3Adpter extends CommonBaseAdapter<Industry> {
         notifyDataSetChanged();
     }
 
+    public int getDefItem() {
+        return defItem;
+    }
+
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         ViewHolder holder;
         if (view == null) {
-            view = minflater.inflate(R.layout.textviewandimg, viewGroup, false);
+            view = LayoutInflater.from(context).inflate(R.layout.textviewandimg, viewGroup, false);
             holder = new ViewHolder(view);
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();
         }
         if (defItem == i) {
-            view.setBackgroundColor(context.getResources().getColor(R.color.all_bg));
             holder.verticalLine.setVisibility(View.VISIBLE);
-            holder.commText.setTextColor(context.getResources().getColor(R.color.red));
+            holder.commText.setTextColor(context.getResources().getColor(R.color.color_01ABFF));
         } else {
-            view.setBackgroundColor(context.getResources().getColor(R.color.white));
             holder.verticalLine.setVisibility(View.INVISIBLE);
-            holder.commText.setTextColor(Color.parseColor("#757575"));
+            holder.commText.setTextColor(Color.parseColor("#333333"));
         }
         holder.commText.setText(list.get(i).getName());
         holder.imageView.setVisibility(View.GONE);

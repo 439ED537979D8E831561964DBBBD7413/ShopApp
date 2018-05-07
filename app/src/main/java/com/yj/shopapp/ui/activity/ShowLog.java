@@ -1,6 +1,8 @@
 package com.yj.shopapp.ui.activity;
 
-import android.support.compat.BuildConfig;
+
+import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.util.Log;
 
 /**
@@ -17,8 +19,17 @@ public class ShowLog {
 
     }
 
+    private static Boolean isDebug = null;
+
     public static boolean isDebuggable() {
-        return BuildConfig.DEBUG;
+        return isDebug == null ? false : isDebug.booleanValue();
+    }
+
+    public static void syncIsDebug(Context context) {
+        if (isDebug == null) {
+            isDebug = context.getApplicationInfo() != null &&
+                    (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
+        }
     }
 
     private static void getMethodNames(StackTraceElement[] sElements) {
@@ -37,7 +48,7 @@ public class ShowLog {
 
     //各种Log打印
     public static void e(String msg) {
-        if (isDebuggable())
+        if (!isDebuggable())
             return;
         getMethodNames(new Throwable().getStackTrace());
         Log.e(className, createLog(msg));
@@ -45,7 +56,7 @@ public class ShowLog {
     }
 
     public static void i(String msg) {
-        if (isDebuggable())
+        if (!isDebuggable())
             return;
         getMethodNames(new Throwable().getStackTrace());
         Log.i(className, createLog(msg));
@@ -53,7 +64,7 @@ public class ShowLog {
     }
 
     public static void d(String msg) {
-        if (isDebuggable())
+        if (!isDebuggable())
             return;
         getMethodNames(new Throwable().getStackTrace());
         Log.d(className, createLog(msg));
@@ -61,7 +72,7 @@ public class ShowLog {
     }
 
     public static void w(String msg) {
-        if (isDebuggable())
+        if (!isDebuggable())
             return;
         getMethodNames(new Throwable().getStackTrace());
         Log.w(className, createLog(msg));

@@ -13,6 +13,24 @@ public class PieData {
     private float Percentage;
     private int color;
     private float CurrentStartAngle;
+    private float startX;
+    private float startY;
+
+    public float getStartX() {
+        return startX;
+    }
+
+    public void setStartX(float startX) {
+        this.startX = startX;
+    }
+
+    public float getStartY() {
+        return startY;
+    }
+
+    public void setStartY(float startY) {
+        this.startY = startY;
+    }
 
     public int getColor() {
         return color;

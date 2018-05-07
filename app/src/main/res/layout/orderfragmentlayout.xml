@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white">
@@ -8,58 +7,74 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:padding="@dimen/H8dp">
 
         <ImageView
             android:id="@+id/itemimg"
-            android:layout_width="60dp"
-            android:layout_height="60dp"/>
+            android:layout_width="80dp"
+            android:layout_height="80dp" />
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_marginLeft="5dp"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:paddingBottom="@dimen/H3dp"
+            android:paddingLeft="@dimen/H8dp"
+            android:paddingTop="@dimen/H3dp">
 
             <TextView
                 android:id="@+id/itemname"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="350ml怡宝"
-                android:textColor="@color/skyblue"
-                android:textSize="16sp"/>
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/itemsum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="数量：1"
+                android:textColor="@color/color_999999"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/class_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:text=""
+                android:textColor="@color/color_999999"
+                android:textSize="12sp" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp">
-                <TextView
-                    android:id="@+id/itemsum"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:text="数量：1"
-                    android:textColor="@color/black"/>
-
-                <TextView
-                    android:id="@+id/itemmoery"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="小计：30.50"
-                    android:layout_centerInParent="true"
-                    android:textColor="@color/red"/>
+                android:layout_alignParentBottom="true">
 
                 <TextView
                     android:id="@+id/unitprice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="￥30.50"
+                    android:textColor="@color/black"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/itemmoery"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:textColor="@color/black"/>
+                    android:text="小计：30.50"
+                    android:textColor="@color/black"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
             </RelativeLayout>
 
-        </LinearLayout>
+        </RelativeLayout>
 
     </LinearLayout>
 

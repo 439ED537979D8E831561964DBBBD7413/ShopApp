@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    tools:context=".ui.activity.shopkeeper.HotGoodActivity">
+
+    <include layout="@layout/titlebar2" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colore3e3e3" />
+
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout
+        android:id="@+id/swipe_refresh_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.scwang.smartrefresh.layout.header.ClassicsHeader
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:srlAccentColor="#fff"
+            app:srlPrimaryColor="#444" />
+
+        <ezy.ui.layout.LoadingLayout
+            android:id="@+id/loading"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:llEmptyImage="@drawable/ic_emptyimag">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/my_RecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </ezy.ui.layout.LoadingLayout>
+
+        <com.scwang.smartrefresh.layout.footer.ClassicsFooter
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:srlAccentColor="@color/color_999999"
+            app:srlPrimaryColor="#eeeeee" />
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+
+</LinearLayout>
+

@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app1="http://schemas.android.com/tools"
-              xmlns:fresco="http://schemas.android.com/apk/res-auto"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
+    xmlns:app1="http://schemas.android.com/tools"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/title_view"
         android:layout_width="match_parent"
-        android:layout_height="44dp"
-        android:background="?attr/colorPrimary"
+        android:layout_height="@dimen/title_height"
+        android:background="@drawable/gradient"
         android:orientation="horizontal">
 
         <!--<TextView-->
@@ -38,7 +38,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/scan_code"
                 android:textColor="@color/white"
-                android:textSize="15sp"/>
+                android:textSize="15sp" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -57,7 +57,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="15dp"
                 android:layout_centerVertical="true"
-                android:src="@drawable/search_icon"/>
+                android:src="@drawable/search_icon" />
 
             <TextView
                 android:id="@+id/search_tv"
@@ -68,12 +68,11 @@
                 android:layout_toRightOf="@id/search_img"
                 android:hint="输入商品名或者商品条码"
                 android:textColorHint="#b3b1b1"
-                android:textSize="14sp"/>
+                android:textSize="14sp" />
 
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/msg"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginRight="10dp">
@@ -84,7 +83,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginTop="@dimen/pandingtop"
-                android:src="@drawable/ic_msg"/>
+                android:src="@drawable/ic_msg" />
 
             <TextView
                 android:id="@+id/newcount_tv"
@@ -96,7 +95,7 @@
                 android:background="@drawable/reyuan"
                 android:gravity="center"
                 android:textColor="@color/white"
-                android:visibility="gone"/>
+                android:visibility="gone" />
         </RelativeLayout>
 
     </LinearLayout>
@@ -132,7 +131,7 @@
                         android:layout_margin="12dp"
                         fresco:placeholderImage="@drawable/icon_user2"
                         fresco:placeholderImageScaleType="fitCenter"
-                        fresco:roundAsCircle="true"/>
+                        fresco:roundAsCircle="true" />
 
 
                     <RelativeLayout
@@ -147,7 +146,7 @@
                             android:layout_height="wrap_content"
                             android:text="XXX"
                             android:textColor="@color/color_white"
-                            android:textSize="14sp"/>
+                            android:textSize="14sp" />
 
                         <TextView
                             android:id="@+id/finish_tv"
@@ -157,7 +156,7 @@
                             android:layout_toRightOf="@+id/wname_tx"
                             android:text=""
                             android:textColor="@color/color_white"
-                            android:textSize="14sp"/>
+                            android:textSize="14sp" />
 
                         <TextView
                             android:id="@+id/message_tx"
@@ -166,7 +165,7 @@
                             android:layout_below="@+id/wname_tx"
                             android:text="软件到期"
                             android:textColor="@color/color_white"
-                            android:textSize="14sp"/>
+                            android:textSize="14sp" />
 
                     </RelativeLayout>
 
@@ -174,65 +173,15 @@
 
                 <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="360pt">
+                    android:layout_height="130dp">
 
-                    <com.yj.shopapp.view.MyBanner
-                        android:id="@+id/bannerView"
+                    <cn.bingoogolapple.bgabanner.BGABanner
+                        android:id="@+id/banner_guide_content"
+                        style="@style/BannerDefaultStyle"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        app1:image_scale_type="fit_center"
-                        app1:indicator_drawable_selected="@drawable/check_true"
-                        app1:indicator_drawable_unselected="@drawable/check_false"
-                        app1:indicator_height="5dp"
-                        app1:indicator_margin="3dp"
-                        app1:indicator_width="5dp"
-                        app1:title_background="@color/banback"
-                        app1:title_height="35dp"
-                        app1:title_textcolor="@color/zise">
-
-                    </com.yj.shopapp.view.MyBanner>
-
-
-                    <!--<android.support.v4.view.ViewPager-->
-                    <!--android:id="@+id/vp"-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="180dp" />-->
-
-                    <!--<RelativeLayout-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="match_parent">-->
-
-                    <!--<RelativeLayout-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_alignParentBottom="true"-->
-                    <!--android:background="@color/banback">-->
-
-                    <!--<LinearLayout-->
-                    <!--android:id="@+id/dian_li"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_alignParentLeft="true"-->
-                    <!--android:layout_gravity="bottom|center_horizontal"-->
-                    <!--android:layout_marginBottom="10dp"-->
-                    <!--android:layout_marginLeft="@dimen/pandingtop"-->
-                    <!--android:layout_marginTop="10dip"-->
-                    <!--android:orientation="horizontal">-->
-
-
-                    <!--</LinearLayout>-->
-
-                    <!--<TextView-->
-                    <!--android:id="@+id/word_tv"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_alignParentRight="true"-->
-                    <!--android:layout_centerInParent="true"-->
-                    <!--android:layout_marginRight="@dimen/pandingtop"-->
-                    <!--android:singleLine="true"-->
-                    <!--android:textColor="@color/zise" />-->
-                    <!--</RelativeLayout>-->
-                    <!--</RelativeLayout>-->
+                        app1:banner_pointDrawable="@drawable/selector_banner_unequal"
+                        app1:banner_transitionEffect="accordion" />
 
                 </FrameLayout>
 
@@ -241,7 +190,8 @@
                     android:layout_height="30dp"
                     android:layout_marginBottom="3dp"
                     android:background="@color/white"
-                    android:paddingLeft="@dimen/padding_all">
+                    android:paddingLeft="@dimen/padding_all"
+                    android:visibility="gone">
 
                     <TextView
                         android:id="@+id/banner_tx"
@@ -250,7 +200,7 @@
                         android:gravity="center_vertical"
                         android:maxLines="1"
                         android:text="123"
-                        android:textColor="@color/red"/>
+                        android:textColor="@color/red" />
                 </RelativeLayout>
 
                 <LinearLayout
@@ -272,7 +222,7 @@
                             android:id="@+id/imageView"
                             android:layout_width="45dp"
                             android:layout_height="45dp"
-                            android:src="@drawable/icon_sp"/>
+                            android:src="@drawable/icon_sp" />
 
 
                         <TextView
@@ -281,7 +231,7 @@
                             android:layout_marginTop="8dp"
                             android:text="添加商品"
                             android:textColor="@color/text_gary_4d"
-                            android:textSize="13sp"/>
+                            android:textSize="13sp" />
 
                     </LinearLayout>
 
@@ -296,7 +246,7 @@
                         <ImageView
                             android:layout_width="45dp"
                             android:layout_height="45dp"
-                            android:background="@drawable/sales"/>
+                            android:background="@drawable/sales" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -304,7 +254,7 @@
                             android:layout_marginTop="8dp"
                             android:text="促销商品"
                             android:textColor="@color/text_gary_4d"
-                            android:textSize="13sp"/>
+                            android:textSize="13sp" />
 
                     </LinearLayout>
 
@@ -319,7 +269,7 @@
                         <ImageView
                             android:layout_width="45dp"
                             android:layout_height="45dp"
-                            android:background="@drawable/iconnew"/>
+                            android:background="@drawable/iconnew" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -327,12 +277,11 @@
                             android:layout_marginTop="8dp"
                             android:text="新品上市"
                             android:textColor="@color/text_gary_4d"
-                            android:textSize="13sp"/>
+                            android:textSize="13sp" />
 
                     </LinearLayout>
 
                     <LinearLayout
-                        android:id="@+id/myMarks"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -343,14 +292,14 @@
                         <ImageView
                             android:layout_width="60dp"
                             android:layout_height="60dp"
-                            android:background="@drawable/icon_sp"/>
+                            android:background="@drawable/icon_sp" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="我的收藏"
                             android:textColor="@color/text_color"
-                            android:textSize="12sp"/>
+                            android:textSize="12sp" />
 
                     </LinearLayout>
 
@@ -364,10 +313,9 @@
                         android:visibility="visible">
 
                         <ImageView
-                            android:id="@+id/imageView2"
                             android:layout_width="45dp"
                             android:layout_height="45dp"
-                            android:background="@drawable/btn_promotion"/>
+                            android:background="@drawable/btn_promotion" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -375,7 +323,7 @@
                             android:layout_marginTop="8dp"
                             android:text="暂停销售"
                             android:textColor="@color/text_gary_4d"
-                            android:textSize="13sp"/>
+                            android:textSize="13sp" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -415,15 +363,14 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
                         android:layout_marginTop="5dp"
-                        android:src="@drawable/diandiannot"/>
+                        android:src="@drawable/diandiannot" />
 
                     <com.gongwen.marqueen.MarqueeView
                         android:id="@+id/hot_mv"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_centerVertical="true"
-                        android:layout_toRightOf="@+id/hot_img"
-                        />
+                        android:layout_toRightOf="@+id/hot_img" />
 
 
                 </RelativeLayout>
@@ -518,7 +465,7 @@
                         android:layout_alignTop="@+id/freedinner_title"
                         android:layout_centerVertical="true"
                         android:layout_marginRight="@dimen/pandingtop"
-                        android:background="@color/red"/>
+                        android:background="@color/red" />
 
                     <TextView
                         android:id="@+id/freedinner_title"
@@ -527,7 +474,7 @@
                         android:layout_centerVertical="true"
                         android:layout_toRightOf="@+id/v1"
                         android:text="热门大类"
-                        android:textColor="@color/text_black"/>
+                        android:textColor="@color/text_black" />
 
                     <ImageView
                         android:id="@+id/img_1"
@@ -537,10 +484,9 @@
                         android:layout_centerVertical="true"
                         android:background="@drawable/btn_arrow_r"
                         android:scaleType="centerCrop"
-                        android:visibility="gone"/>
+                        android:visibility="gone" />
 
                     <TextView
-                        android:id="@+id/more_txt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
@@ -548,7 +494,7 @@
                         android:layout_toLeftOf="@+id/img_1"
                         android:padding="@dimen/pandingmin"
                         android:text="更多"
-                        android:visibility="gone"/>
+                        android:visibility="gone" />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -560,7 +506,7 @@
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/classi_gv"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content" />
 
                 </RelativeLayout>
             </LinearLayout>

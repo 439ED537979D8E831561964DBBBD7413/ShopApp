@@ -1,21 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/id_drawer_layout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#60000000"
-                android:fitsSystemWindows="true">
-
-    <!--<include-->
-        <!--android:id="@+id/title_layout"-->
-        <!--layout="@layout/titlebar"/>-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/id_drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/title_layout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/title_height"
-        android:background="?attr/colorPrimary">
+        android:gravity="center_vertical"
+        android:background="@drawable/gradient">
 
         <ImageView
             android:id="@+id/forewadImg"
@@ -26,7 +22,7 @@
             android:onClick="Forewad"
             android:paddingLeft="@dimen/default_padding"
             android:scaleType="fitXY"
-            android:src="@drawable/ic_gt"/>
+            android:src="@drawable/ic_gt" />
 
         <TextView
             android:id="@+id/title"
@@ -39,69 +35,51 @@
             android:singleLine="true"
             android:text=""
             android:textColor="@android:color/white"
-            android:textSize="21sp"/>
+            android:textSize="16sp" />
 
         <ImageView
             android:id="@+id/id_right_btu"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="20dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:paddingRight="@dimen/default_padding"
-            android:src="@drawable/search"/>
+            android:src="@drawable/search" />
 
     </RelativeLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/title_layout"
-        android:background="@color/color_white"
-        android:orientation="vertical">
 
-        <!--<LinearLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:background="@color/color_f2f2f2"-->
-            <!--android:orientation="horizontal">-->
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout
+        android:id="@+id/swipe_refresh_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@color/color_white">
 
-            <!--<com.yj.shopapp.view.TagGroup-->
-                <!--android:id="@+id/tagGroup"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_marginBottom="5dp"-->
-                <!--app:atg_borderColor="@color/color_theme"-->
-                <!--app:atg_pressedBackgroundColor="@android:color/white"-->
-                <!--app:atg_textColor="@color/color_theme"-->
-                <!--app:atg_textSize="12sp"/>-->
+        <com.scwang.smartrefresh.layout.header.ClassicsHeader
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:srlAccentColor="#fff"
+            app:srlPrimaryColor="#444" />
 
+        <ezy.ui.layout.LoadingLayout
+            android:id="@+id/loading"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:llEmptyText=""
+            app:llEmptyImage="@drawable/ic_emptyimag">
 
-        <!--</LinearLayout>-->
+            <com.yj.shopapp.view.headfootrecycleview.RecycleViewEmpty
+                android:id="@+id/recycler_view"
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent" />
+        </ezy.ui.layout.LoadingLayout>
 
-        <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/swipe_refresh_layout"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:background="@color/color_white">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-
-                <com.yj.shopapp.view.headfootrecycleview.RecycleViewEmpty
-                    android:id="@+id/recycler_view"
-                    android:layout_width="fill_parent"
-                    android:layout_height="match_parent"/>
-
-                <include layout="@layout/empty_view"/>
-            </LinearLayout>
-
-
-        </android.support.v4.widget.SwipeRefreshLayout>
-
-    </LinearLayout>
-
+        <com.scwang.smartrefresh.layout.footer.ClassicsFooter
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:srlAccentColor="@color/color_999999"
+            app:srlPrimaryColor="#eeeeee" />
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 
     <LinearLayout
         android:id="@+id/topsearchLy"
@@ -110,13 +88,12 @@
         android:layout_marginTop="48dp"
         android:background="#60000000"
         android:clickable="true"
-        android:orientation="vertical"
-        android:visibility="gone">
+        android:orientation="vertical">
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/color_f2f2f2"/>
+            android:background="@color/color_f2f2f2" />
 
         <RelativeLayout
             android:id="@+id/popupwindow"
@@ -139,7 +116,7 @@
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:layout_gravity="center_vertical"
-                    android:src="@drawable/search_icon"/>
+                    android:src="@drawable/search_icon" />
 
                 <EditText
                     android:id="@+id/value_Et"
@@ -153,7 +130,7 @@
                     android:hint="商品名称搜索"
                     android:singleLine="true"
                     android:textColor="@color/text_color"
-                    android:textSize="14sp"/>
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/submitTv"
@@ -163,7 +140,7 @@
                     android:gravity="center"
                     android:text="搜 索"
                     android:textColor="@android:color/white"
-                    android:textSize="16sp"/>
+                    android:textSize="16sp" />
             </LinearLayout>
 
         </RelativeLayout>
@@ -173,8 +150,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#60000000"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
     </LinearLayout>
 
-</RelativeLayout>
+</LinearLayout>

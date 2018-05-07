@@ -8,6 +8,150 @@ import android.os.Parcelable;
  */
 public class Goods implements Parcelable {
 
+    public String getId() {
+        return id == null ? "" : id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name == null ? "" : name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSpecs() {
+        return specs == null ? "" : specs;
+    }
+
+    public void setSpecs(String specs) {
+        this.specs = specs;
+    }
+
+    public String getPrice() {
+        return price == null ? "" : price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
+    }
+
+    public String getUnitid() {
+        return unitid == null ? "" : unitid;
+    }
+
+    public void setUnitid(String unitid) {
+        this.unitid = unitid;
+    }
+
+    public String getImgurl() {
+        return imgurl == null ? "" : imgurl;
+    }
+
+    public void setImgurl(String imgurl) {
+        this.imgurl = imgurl;
+    }
+
+    public String getUnit() {
+        return unit == null ? "" : unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
+    public String getIs_show_price() {
+        return is_show_price == null ? "" : is_show_price;
+    }
+
+    public void setIs_show_price(String is_show_price) {
+        this.is_show_price = is_show_price;
+    }
+
+    public String getIs_show_stock() {
+        return is_show_stock == null ? "" : is_show_stock;
+    }
+
+    public void setIs_show_stock(String is_show_stock) {
+        this.is_show_stock = is_show_stock;
+    }
+
+    public String getSale_status() {
+        return sale_status == null ? "" : sale_status;
+    }
+
+    public void setSale_status(String sale_status) {
+        this.sale_status = sale_status;
+    }
+
+    public String getCostprice() {
+        return costprice == null ? "" : costprice;
+    }
+
+    public void setCostprice(String costprice) {
+        this.costprice = costprice;
+    }
+
+    public String getItemnumber() {
+        return itemnumber == null ? "" : itemnumber;
+    }
+
+    public void setItemnumber(String itemnumber) {
+        this.itemnumber = itemnumber;
+    }
+
+    public String getBigtypeid() {
+        return bigtypeid == null ? "" : bigtypeid;
+    }
+
+    public void setBigtypeid(String bigtypeid) {
+        this.bigtypeid = bigtypeid;
+    }
+
+    public String getImageurl() {
+        return imageurl == null ? "" : imageurl;
+    }
+
+    public void setImageurl(String imageurl) {
+        this.imageurl = imageurl;
+    }
+
+    public String getSales_price() {
+        return sales_price == null ? "" : sales_price;
+    }
+
+    public void setSales_price(String sales_price) {
+        this.sales_price = sales_price;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
+
+    public String getDate() {
+        return date == null ? "" : date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getItemsum() {
+        return itemsum == null ? "" : itemsum;
+    }
+
+    public void setItemsum(String itemsum) {
+        this.itemsum = itemsum;
+    }
+
     /**
      * id : 1799
      * name : XX饼干
@@ -35,141 +179,18 @@ public class Goods implements Parcelable {
     private String sales_price;
     private boolean isSelected;
     private String date;
+    private String itemsum;
+    private String msg;
 
-    public String getDate() {
-        return date;
+    public String getMsg() {
+        return msg == null ? "" : msg;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setMsg(String msg) {
+        this.msg = msg;
     }
 
-    public boolean isSelected() {
-        return isSelected;
-    }
-
-    public void setSelected(boolean selected) {
-        isSelected = selected;
-    }
-
-    public String getSales_price() {
-        return sales_price;
-    }
-
-    public void setSales_price(String sales_price) {
-        this.sales_price = sales_price;
-    }
-
-    public String getBigtypeid() {
-        return bigtypeid;
-    }
-
-    public void setBigtypeid(String bigtypeid) {
-        this.bigtypeid = bigtypeid;
-    }
-
-    public String getItemnumber() {
-        return itemnumber;
-    }
-
-    public void setItemnumber(String itemnumber) {
-        this.itemnumber = itemnumber;
-    }
-
-    public String getCostprice() {
-        return costprice;
-    }
-
-    public void setCostprice(String costprice) {
-        this.costprice = costprice;
-    }
-
-    public String getSale_status() {
-        return sale_status;
-    }
-
-    public void setSale_status(String sale_status) {
-        this.sale_status = sale_status;
-    }
-
-    public String getIs_show_price() {
-        return is_show_price;
-    }
-
-    public void setIs_show_price(String is_show_price) {
-        this.is_show_price = is_show_price;
-    }
-
-    public String getIs_show_stock() {
-        return is_show_stock;
-    }
-
-    public void setIs_show_stock(String is_show_stock) {
-        this.is_show_stock = is_show_stock;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getSpecs() {
-        return specs;
-    }
-
-    public void setSpecs(String specs) {
-        this.specs = specs;
-    }
-
-    public String getPrice() {
-        return price;
-    }
-
-    public void setPrice(String price) {
-        this.price = price;
-    }
-
-    public String getUnitid() {
-        return unitid;
-    }
-
-    public void setUnitid(String unitid) {
-        this.unitid = unitid;
-    }
-
-    public String getImgurl() {
-        return imgurl;
-    }
-
-    public void setImgurl(String imgurl) {
-        this.imgurl = imgurl;
-    }
-
-    public String getUnit() {
-        return unit;
-    }
-
-    public void setUnit(String unit) {
-        this.unit = unit;
-    }
-
-    public String getImageurl() {
-        return imageurl;
-    }
-
-    public void setImageurl(String imageurl) {
-        this.imageurl = imageurl;
+    public Goods() {
     }
 
     @Override
@@ -196,9 +217,8 @@ public class Goods implements Parcelable {
         dest.writeString(this.sales_price);
         dest.writeByte(this.isSelected ? (byte) 1 : (byte) 0);
         dest.writeString(this.date);
-    }
-
-    public Goods() {
+        dest.writeString(this.itemsum);
+        dest.writeString(this.msg);
     }
 
     protected Goods(Parcel in) {
@@ -219,9 +239,11 @@ public class Goods implements Parcelable {
         this.sales_price = in.readString();
         this.isSelected = in.readByte() != 0;
         this.date = in.readString();
+        this.itemsum = in.readString();
+        this.msg = in.readString();
     }
 
-    public static final Parcelable.Creator<Goods> CREATOR = new Parcelable.Creator<Goods>() {
+    public static final Creator<Goods> CREATOR = new Creator<Goods>() {
         @Override
         public Goods createFromParcel(Parcel source) {
             return new Goods(source);

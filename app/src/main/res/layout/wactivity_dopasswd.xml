@@ -1,77 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="@color/white"
-              android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorf5f5f5"
+    android:orientation="vertical">
 
-    <include layout="@layout/titlebar"/>
-
+    <include layout="@layout/titlebar" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_toLeftOf="@+id/submitTv"
-        android:background="@drawable/ic_default_item_bg"
+        android:layout_marginTop="10dp"
+        android:background="@color/white"
         android:orientation="horizontal"
-        android:paddingLeft="5dp">
+        android:paddingLeft="@dimen/H15dp">
 
         <EditText
             android:id="@+id/passwd_Et"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="10dp"
+            android:layout_height="42dp"
             android:background="@null"
             android:gravity="center_vertical"
-            android:hint="请填写新的密码"
+            android:hint="请输入新密码"
             android:maxLength="16"
             android:singleLine="true"
             android:textColor="@color/text_color"
-            android:textSize="14sp"/>
+            android:textSize="14sp" />
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_toLeftOf="@+id/submitTv"
-        android:background="@drawable/ic_default_item_bg"
+        android:layout_marginTop="2px"
+        android:background="@color/white"
         android:orientation="horizontal"
-        android:paddingLeft="5dp">
+        android:paddingLeft="@dimen/H15dp">
 
         <EditText
             android:id="@+id/surepasswd_Et"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="10dp"
+            android:layout_height="42dp"
             android:background="@null"
             android:gravity="center_vertical"
-            android:hint="请确定新密码"
+            android:hint="再次输入新密码"
             android:maxLength="16"
             android:singleLine="true"
             android:textColor="@color/text_color"
-            android:textSize="14sp"/>
+            android:textSize="14sp" />
     </LinearLayout>
 
     <TextView
         android:id="@+id/Definitemodification"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="42dp"
         android:layout_margin="15dp"
         android:background="@drawable/btn_shape"
         android:gravity="center"
-        android:text="确定修改"
+        android:text="提交"
         android:textColor="@color/white"
-        android:textSize="18sp"/>
+        android:textSize="18sp" />
 
 </LinearLayout>

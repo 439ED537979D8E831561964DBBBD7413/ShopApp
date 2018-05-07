@@ -37,9 +37,7 @@ public class SNewListActivity extends BaseActivity {
     protected void initData() {
         title.setText("我的消息");
         TabAdapter tabAdapter = new TabAdapter(mContext, getSupportFragmentManager());
-
         viewpager.setAdapter(tabAdapter);
-        viewpager.setOffscreenPageLimit(4);
         tabsTl.setupWithViewPager(viewpager);
         tabsTl.setTabMode(TabLayout.MODE_FIXED);
     }

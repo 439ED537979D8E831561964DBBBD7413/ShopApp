@@ -4,9 +4,8 @@ import android.content.Context;
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
-import com.youth.banner.loader.ImageLoaderInterface;
+import com.yj.shopapp.util.load.ImageLoaderInterface;
 
 import java.util.List;
 
@@ -48,16 +47,7 @@ public class WelcomePagerAdpter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, final int position) {
-        ImageView imageView = (ImageView) imageLoader.createImageView(mContext);
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onClickView(position);
-            }
-        });
-        imageLoader.displayImage(mContext, imags.get(position), imageView);
-        container.addView(imageView);
-        return imageView;
+        return "";
     }
 
     @Override

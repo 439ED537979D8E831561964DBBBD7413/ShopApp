@@ -2,7 +2,7 @@ package com.yj.shopapp.ui.activity.adapter;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.yj.shopapp.ubeen.Classify;
 import com.yj.shopapp.ui.activity.shopkeeper.CarListPagerFragment;
@@ -16,7 +16,7 @@ import java.util.List;
  * @author LK
  */
 
-public class CarListViewPagerAdpter extends FragmentPagerAdapter {
+public class CarListViewPagerAdpter extends FragmentStatePagerAdapter {
     private List<Classify> classname = new ArrayList<>();
 
     public CarListViewPagerAdpter(FragmentManager fm) {
@@ -25,7 +25,7 @@ public class CarListViewPagerAdpter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return CarListPagerFragment.newInstance(Integer.parseInt(classname.get(position).getId()), classname.get(position).isSwitch());
+        return CarListPagerFragment.newInstance(Integer.parseInt(classname.get(position).getId()));
     }
 
     @Override
@@ -42,4 +42,9 @@ public class CarListViewPagerAdpter extends FragmentPagerAdapter {
         this.classname = classname;
         notifyDataSetChanged();
     }
+    @Override
+    public int getItemPosition(Object object) {
+        return POSITION_NONE;
+    }
+
 }

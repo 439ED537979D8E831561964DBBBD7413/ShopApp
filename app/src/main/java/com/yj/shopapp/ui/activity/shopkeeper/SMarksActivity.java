@@ -3,10 +3,8 @@ package com.yj.shopapp.ui.activity.shopkeeper;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
@@ -15,6 +13,10 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.squareup.okhttp.Request;
 import com.yj.shopapp.R;
 import com.yj.shopapp.config.Contants;
@@ -30,7 +32,6 @@ import com.yj.shopapp.util.BugGoodsDialog;
 import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.DDecoration;
 import com.yj.shopapp.util.JsonHelper;
-import com.yj.shopapp.util.NetUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,7 +44,7 @@ import butterknife.OnClick;
 /**
  * Created by jm on 2016/5/14.
  */
-public class SMarksActivity extends BaseActivity implements GoodsItemListenter, SwipeRefreshLayout.OnRefreshListener {
+public class SMarksActivity extends BaseActivity implements GoodsItemListenter, OnRefreshListener, OnLoadMoreListener {
 
     @BindView(R.id.title)
     TextView title;
@@ -52,7 +53,7 @@ public class SMarksActivity extends BaseActivity implements GoodsItemListenter, 
     @BindView(R.id.cart_total_price_tv)
     TextView carttotalpriceTv;
     @BindView(R.id.swipe_refresh_layout)
-    SwipeRefreshLayout swipeRefreshLayout;
+    SmartRefreshLayout swipeRefreshLayout;
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
     @BindView(R.id.forewadImg)
@@ -70,7 +71,7 @@ public class SMarksActivity extends BaseActivity implements GoodsItemListenter, 
     String agentuid = ""; //临时批发商ID 做个判断
     boolean isAllChoose = false;
     private SNewGoodsAdpter GoodAdpter;
-    private View FooterView;
+
     @Override
     protected int getLayoutId() {
         return R.layout.sactivity_marks;
@@ -80,9 +81,6 @@ public class SMarksActivity extends BaseActivity implements GoodsItemListenter, 
     protected void initData() {
         title.setText("收藏商品");
         id_right_btu.setVisibility(View.GONE);
-        swipeRefreshLayout.setColorSchemeResources(Contants.Refresh.refreshColorScheme);
-        swipeRefreshLayout.setOnRefreshListener(this);
-
         GoodAdpter = new SNewGoodsAdpter(mContext, true);
         GoodAdpter.setListenter(this);
         if (recyclerView != null) {
@@ -97,25 +95,26 @@ public class SMarksActivity extends BaseActivity implements GoodsItemListenter, 
             });
             recyclerView.setAdapter(GoodAdpter);
         }
-        if (NetUtils.isNetworkConnected(mContext)) {
-            if (null != swipeRefreshLayout) {
-                swipeRefreshLayout.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        swipeRefreshLayout.setRefreshing(true);
-                        refreshRequest();
-                    }
-                }, 200);
-            }
-        } else {
-            showToastShort("网络不给力");
-        }
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        FooterView = LayoutInflater.from(mContext).inflate(R.layout.footerview, null);
-        FooterView.setLayoutParams(lp);
+        Refresh();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (isNetWork(mContext)) {
+            refreshRequest();
+        }
+    }
+
+    private void Refresh() {
+        swipeRefreshLayout.setHeaderHeight(50);
+        swipeRefreshLayout.setFooterHeight(50);
+        swipeRefreshLayout.setOnRefreshListener(this);
+        swipeRefreshLayout.setOnLoadMoreListener(this);
+        swipeRefreshLayout.setDisableContentWhenRefresh(true);//是否在刷新的时候禁止列表的操作
+        swipeRefreshLayout.setDisableContentWhenLoading(true);//是否在加载的时候禁止列表的操作
+        swipeRefreshLayout.setEnableFooterFollowWhenLoadFinished(true);
+    }
 
     public void countMoney() {
         int count = 0;
@@ -191,22 +190,9 @@ public class SMarksActivity extends BaseActivity implements GoodsItemListenter, 
                 del(i, true);
             }
         }
-        if (null != swipeRefreshLayout) { //删除成功重新刷新数据
-            swipeRefreshLayout.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    swipeRefreshLayout.setRefreshing(true);
-                    onRefresh();
-                }
-            }, 200);
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.autoRefresh();
         }
-    }
-
-    @Override
-    public void onRefresh() {
-        goodsList.clear();
-        mCurrentPage = 1;
-        refreshRequest();
     }
 
     @Override
@@ -221,7 +207,21 @@ public class SMarksActivity extends BaseActivity implements GoodsItemListenter, 
                 break;
             case R.id.addcartTv:
                 //showAlertDialog(position);
-                BugGoodsDialog.newInstance(goodsList.get(position)).show(getFragmentManager(),"123");
+                if (getAddressId().equals("")) {
+                    new MaterialDialog.Builder(mContext).title("温馨提示!")
+                            .content("您暂未添加收货地址!")
+                            .positiveText("去完善信息")
+                            .negativeText("下次吧")
+                            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                    CommonUtils.goActivity(mContext, SAddressRefreshActivity.class, null);
+                                    dialog.dismiss();
+                                }
+                            }).show();
+                } else {
+                    BugGoodsDialog.newInstance(goodsList.get(position)).show(getFragmentManager(), "123");
+                }
                 break;
             default:
                 break;
@@ -253,20 +253,8 @@ public class SMarksActivity extends BaseActivity implements GoodsItemListenter, 
         if (resultCode == SChooseAgentActivity.CHOOSEAGENT_TYPE_WHAT) {
             Bundle bundle = new Bundle();
             agentuid = data.getExtras().getString("agentuid");
-            if (NetUtils.isNetworkConnected(mContext)) {
-                if (null != swipeRefreshLayout) {
-
-                    swipeRefreshLayout.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-
-                            swipeRefreshLayout.setRefreshing(true);
-                            refreshRequest();
-                        }
-                    }, 50);
-                }
-            } else {
-                showToastShort("网络不给力");
+            if (isNetWork(mContext)) {
+                swipeRefreshLayout.autoRefresh();
             }
         }
     }
@@ -287,7 +275,12 @@ public class SMarksActivity extends BaseActivity implements GoodsItemListenter, 
             @Override
             public void onAfter() {
                 super.onAfter();
-                swipeRefreshLayout.setRefreshing(false);
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.finishRefresh(true);
+                }
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.finishLoadMore(true);
+                }
                 isRequesting = false;
             }
 
@@ -307,10 +300,19 @@ public class SMarksActivity extends BaseActivity implements GoodsItemListenter, 
                     GoodAdpter.setList(goodsList);
                 } else if (JsonHelper.getRequstOK(json) == 6) {
                     mCurrentPage--;
-                    if (goodsList.size() > 6) {
-                        GoodAdpter.setmFooterView(FooterView);
+                    if (swipeRefreshLayout != null) {
+                        swipeRefreshLayout.finishRefresh(false);
+                    }
+                    if (swipeRefreshLayout != null) {
+                        swipeRefreshLayout.finishLoadMoreWithNoMoreData();
                     }
                 } else {
+                    if (swipeRefreshLayout != null) {
+                        swipeRefreshLayout.finishRefresh(false);
+                    }
+                    if (swipeRefreshLayout != null) {
+                        swipeRefreshLayout.finishLoadMoreWithNoMoreData();
+                    }
                     showToastShort(JsonHelper.errorMsg(json));
                     mCurrentPage--;
                 }
@@ -324,6 +326,12 @@ public class SMarksActivity extends BaseActivity implements GoodsItemListenter, 
                 showToastShort(Contants.NetStatus.NETDISABLEORNETWORKDISABLE);
                 goodsList.clear();
                 mCurrentPage--;
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.finishLoadMore(false);
+                }
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.finishRefresh(false);
+                }
                 GoodAdpter.notifyDataSetChanged();
             }
         });
@@ -385,5 +393,19 @@ public class SMarksActivity extends BaseActivity implements GoodsItemListenter, 
     }
 
 
+    @Override
+    public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+        mCurrentPage++;
+        refreshRequest();
+    }
 
+    @Override
+    public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+        goodsList.clear();
+        mCurrentPage = 1;
+        refreshRequest();
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.setNoMoreData(false);
+        }
+    }
 }

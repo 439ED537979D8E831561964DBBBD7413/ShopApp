@@ -1,7 +1,6 @@
 package com.yj.shopapp.ui.activity;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
@@ -25,8 +24,8 @@ import com.yj.shopapp.http.OkHttpResponseHandler;
 import com.yj.shopapp.ubeen.Province;
 import com.yj.shopapp.ubeen.RegisterClassifi;
 import com.yj.shopapp.ui.activity.base.BaseActivity;
+import com.yj.shopapp.ui.activity.shopkeeper.AddressFragment;
 import com.yj.shopapp.ui.activity.shopkeeper.SMainTabActivity;
-import com.yj.shopapp.ui.activity.wholesale.AreaActivity;
 import com.yj.shopapp.ui.activity.wholesale.WMainTabActivity;
 import com.yj.shopapp.util.CenterDialog;
 import com.yj.shopapp.util.CommonUtils;
@@ -66,14 +65,10 @@ public class RegisterActivity extends BaseActivity implements CenterDialog.OnCen
     List<String> provinceStrList = new ArrayList<>();
     ArrayAdapter<String> provinceAdapter;
 
-
     List<Province> areaList1 = new ArrayList<>();
-
     List<String> areaStrList1 = new ArrayList<>();
     ArrayAdapter<String> areaAdapter1;
-
     List<Province> areaList2 = new ArrayList<>();
-
     List<String> areaStrList2 = new ArrayList<>();
     List<RegisterClassifi> registerClassifiList = new ArrayList<>();
     String classfiId = "";
@@ -149,10 +144,19 @@ public class RegisterActivity extends BaseActivity implements CenterDialog.OnCen
 
     @OnClick(R.id.area_btn)
     public void areaOnclick() {
-        Bundle bundle = new Bundle();
-        bundle.putString("role", role + "");
-        CommonUtils.goActivityForResult(mContext, AreaActivity.class, bundle, requestCode, false);
+//        Bundle bundle = new Bundle();
+//        bundle.putString("role", role + "");
+//        CommonUtils.goActivityForResult(mContext, AreaActivity.class, bundle, requestCode, false);
+        AddressFragment.newInstance(1).setListenter(new AddressFragment.onCitySelectListenter() {
+            @Override
+            public void value(String Cider, String address) {
+                provinceId = Cider;
+                String name = address;
+                areaTv.setText(name);
+            }
+        }).show(getFragmentManager(), "add");
     }
+
     @Override
     protected int getLayoutId() {
         return R.layout.activity_registered;
@@ -418,7 +422,7 @@ public class RegisterActivity extends BaseActivity implements CenterDialog.OnCen
         Map<String, String> params = new HashMap<>();
         params.put("putype", role + "");
         params.put("mobile", getIntent().getStringExtra("phoneNumber"));
-        params.put("areaid", province.getId());
+        params.put("areaid", provinceId);
         params.put("password", passwordEdt.getText().toString().trim().replace(" ", ""));
         HttpHelper.getInstance().post(mContext, Contants.PortA.Doreg, params, new OkHttpResponseHandler<String>(mContext) {
             @Override
@@ -559,6 +563,9 @@ public class RegisterActivity extends BaseActivity implements CenterDialog.OnCen
                     PreferenceUtils.setPrefString(mContext, Contants.Preference.TOKEN, uinfo.getToken());
                     PreferenceUtils.setPrefString(mContext, Contants.Preference.USER_NAME, userName);
                     PreferenceUtils.setPrefString(mContext, Contants.Preference.USER_PWD, userPwd);
+                    PreferenceUtils.setPrefInt(mContext, "isVip", uinfo.getIs_vip());
+                    PreferenceUtils.setPrefString(mContext, "CustomerService", uinfo.getCustomer_service_phone());
+                    PreferenceUtils.setPrefString(mContext, "address", uinfo.getAddress());
                     uid = uinfo.getUid();
                     token = uinfo.getToken();
                     getrewardArea(uinfo.getUid(), uinfo.getToken());
@@ -606,7 +613,7 @@ public class RegisterActivity extends BaseActivity implements CenterDialog.OnCen
 //            return false;
 //
 //        }
-        if (province == null) {
+        if (provinceId.equals("-1")) {
             showToastShort("请选择区域");
             return false;
         }
@@ -617,9 +624,7 @@ public class RegisterActivity extends BaseActivity implements CenterDialog.OnCen
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (data != null) {
-            province = (Province) data.getSerializableExtra("area");
-            String name = data.getStringExtra("name");
-            areaTv.setText(name);
+
         }
     }
 

@@ -64,9 +64,10 @@ public class SNewGoodsAdpter extends CommonAdapter<Goods> implements View.OnClic
         holder.getTextView(R.id.specsTv).setText("规格：" + goods.getSpecs());
         holder.getView(R.id.itemview).setOnClickListener(this);
         holder.getView(R.id.itemview).setTag(position);
+        holder.getTextView(R.id.shopnum).setText(String.format("数量%1$s%2$s", goods.getItemsum(), goods.getUnit()));
         Glide.with(context).load(goods.getImgurl()).apply(new RequestOptions().placeholder(R.drawable.load).centerCrop()).into(holder.getSimpleDraweeView(R.id.simpleDraweeView));
 
-        if (!(goods.getIs_show_price() == null)) {
+        if (!(goods.getIs_show_price().equals(""))) {
             if (Integer.parseInt(goods.getIs_show_price()) == 0) {
                 holder.getTextView(R.id.priceTv).setText("");
             } else {
@@ -76,33 +77,43 @@ public class SNewGoodsAdpter extends CommonAdapter<Goods> implements View.OnClic
             holder.getTextView(R.id.priceTv).setText(Html.fromHtml("<font color=red>" + "￥" + goods.getPrice() + "</font>"));
         }
 
-        if (goods.getSale_status() != null) {
+        if (!goods.getSale_status().equals("")) {
             if (goods.getSale_status().equals("0")) {
+                holder.getSimpleDraweeView(R.id.top_simpleDraweeView).setVisibility(View.VISIBLE);
                 holder.getTextView(R.id.addcartTv).setBackgroundResource(R.drawable.goodcar_bg_2);
+                holder.getTextView(R.id.addcartTv).setText("正在补货中");
                 holder.getTextView(R.id.addcartTv).setClickable(false);
                 holder.getSimpleDraweeView(R.id.top_simpleDraweeView).setImageResource(R.drawable.pause);
             } else {
-                holder.getTextView(R.id.addcartTv).setBackgroundResource(R.drawable.goodcar_bg);
+                holder.getTextView(R.id.addcartTv).setBackgroundResource(R.drawable.goodcar_bg3);
+                holder.getTextView(R.id.addcartTv).setText("加入购物车");
                 if (isshow) {
                     holder.getSimpleDraweeView(R.id.top_simpleDraweeView).setImageResource(R.drawable.img_ic_new);
                 } else {
                     holder.getSimpleDraweeView(R.id.top_simpleDraweeView).setVisibility(View.GONE);
                 }
             }
+        } else {
+            holder.getSimpleDraweeView(R.id.top_simpleDraweeView).setVisibility(View.GONE);
         }
 
         if (num != 0) {
             holder.getTextView(R.id.money_lowgood).setText("特价:");
         }
 
-        if (goods.getSales_price() != null && goods.getSale_status() != null) {
+        if (!goods.getSales_price().equals("") && !goods.getSale_status().equals("")) {
             if (!"0".equals(goods.getSales_price()) && goods.getSale_status().equals("1")) {
                 holder.getSimpleDraweeView(R.id.top_simpleDraweeView).setVisibility(View.VISIBLE);
                 holder.getSimpleDraweeView(R.id.top_simpleDraweeView).setImageResource(R.drawable.img_ic_promotion);
                 holder.getTextView(R.id.priceTv).setText("￥" + goods.getSales_price());
                 holder.getTextView(R.id.sales_price).getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
-                holder.getTextView(R.id.sales_price).setText(goods.getPrice());
+                holder.getTextView(R.id.sales_price).setText("￥" + goods.getPrice());
+            } else {
+                holder.getTextView(R.id.sales_price).setText("");
             }
+        } else {
+            holder.getTextView(R.id.sales_price).setText("");
+            holder.getSimpleDraweeView(R.id.top_simpleDraweeView).setVisibility(View.GONE);
         }
         if (del_btn) {
             holder.getView(R.id.choose_re).setVisibility(View.VISIBLE);

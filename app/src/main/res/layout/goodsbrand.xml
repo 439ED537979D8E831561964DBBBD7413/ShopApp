@@ -7,8 +7,8 @@
     <RelativeLayout
         android:id="@+id/title_view"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="@color/color_theme"
+        android:layout_height="@dimen/title_height"
+        android:background="@drawable/gradient"
         android:gravity="center_vertical">
 
         <TextView
@@ -93,8 +93,8 @@
 
     </RelativeLayout>
 
-    <com.yj.shopapp.util.FloatingLayout
-        android:id="@+id/floatinglayout"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/my_RecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"/>

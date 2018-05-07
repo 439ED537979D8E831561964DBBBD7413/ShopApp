@@ -1,57 +1,59 @@
 package com.yj.shopapp.ubeen;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by LK on 2018/3/19.
  *
  * @author LK
  */
 
-public class OrderRecord {
+public class OrderRecord implements Parcelable {
+
 
     /**
-     * itemcount : 3
-     * unitprice : 30.50
-     * moneysum : 91.50
+     * num : 10
+     * money : 580.00
+     * itemid : 76102
      * unit : 件
-     * specs : 1*15
-     * name : 500ML康师傅每日C橙
-     * itemnumber : 6921294308501
-     * oid : 201803191110010153
-     * addtime : 1521429149
+     * specs : 1*24
+     * name : 250ML东鹏特饮
+     * itemnumber : 6934502300709
+     * imgurl : http://u.19diandian.com/Public/uploads/20170720/979b1f9df6e31b41a0b60469c1074f11.jpg
      */
 
-    private String itemcount;
-    private String unitprice;
-    private String moneysum;
+    private String num;
+    private String money;
+    private String itemid;
     private String unit;
     private String specs;
     private String name;
     private String itemnumber;
-    private String oid;
-    private String addtime;
+    private String imgurl;
 
-    public String getItemcount() {
-        return itemcount;
+    public String getNum() {
+        return num;
     }
 
-    public void setItemcount(String itemcount) {
-        this.itemcount = itemcount;
+    public void setNum(String num) {
+        this.num = num;
     }
 
-    public String getUnitprice() {
-        return unitprice;
+    public String getMoney() {
+        return money;
     }
 
-    public void setUnitprice(String unitprice) {
-        this.unitprice = unitprice;
+    public void setMoney(String money) {
+        this.money = money;
     }
 
-    public String getMoneysum() {
-        return moneysum;
+    public String getItemid() {
+        return itemid;
     }
 
-    public void setMoneysum(String moneysum) {
-        this.moneysum = moneysum;
+    public void setItemid(String itemid) {
+        this.itemid = itemid;
     }
 
     public String getUnit() {
@@ -86,19 +88,54 @@ public class OrderRecord {
         this.itemnumber = itemnumber;
     }
 
-    public String getOid() {
-        return oid;
+    public String getImgurl() {
+        return imgurl;
     }
 
-    public void setOid(String oid) {
-        this.oid = oid;
+    public void setImgurl(String imgurl) {
+        this.imgurl = imgurl;
     }
 
-    public String getAddtime() {
-        return addtime;
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
-    public void setAddtime(String addtime) {
-        this.addtime = addtime;
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.num);
+        dest.writeString(this.money);
+        dest.writeString(this.itemid);
+        dest.writeString(this.unit);
+        dest.writeString(this.specs);
+        dest.writeString(this.name);
+        dest.writeString(this.itemnumber);
+        dest.writeString(this.imgurl);
     }
+
+    public OrderRecord() {
+    }
+
+    protected OrderRecord(Parcel in) {
+        this.num = in.readString();
+        this.money = in.readString();
+        this.itemid = in.readString();
+        this.unit = in.readString();
+        this.specs = in.readString();
+        this.name = in.readString();
+        this.itemnumber = in.readString();
+        this.imgurl = in.readString();
+    }
+
+    public static final Parcelable.Creator<OrderRecord> CREATOR = new Parcelable.Creator<OrderRecord>() {
+        @Override
+        public OrderRecord createFromParcel(Parcel source) {
+            return new OrderRecord(source);
+        }
+
+        @Override
+        public OrderRecord[] newArray(int size) {
+            return new OrderRecord[size];
+        }
+    };
 }

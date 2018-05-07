@@ -1,30 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:background="@color/white"
-              android:gravity="center"
-              android:orientation="vertical"
-              android:padding="5dp">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/itemview"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
-    <com.yj.shopapp.view.CircleImageView
-        android:id="@+id/simpleDraweeView"
-        android:layout_width="45dp"
-        android:layout_height="45dp"/>
-
-    <TextView
-        android:id="@+id/name_tv"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:text=""
-        android:textColor="@color/text_black"/>
+        android:background="@color/white"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="5dp">
 
-    <TextView
-        android:id="@+id/num2money"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:textColor="@color/text_black"
-        android:textSize="12dp"/>
-</LinearLayout>
+        <com.yj.shopapp.view.CircleImageView
+            android:id="@+id/simpleDraweeView"
+            android:layout_width="50dp"
+            android:layout_height="50dp" />
+
+        <TextView
+            android:id="@+id/name_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text=""
+            android:textColor="@color/black" />
+
+        <TextView
+            android:id="@+id/num2money"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textColor="@color/color_999999"
+            android:textSize="12dp" />
+    </LinearLayout>
+
+</RelativeLayout>

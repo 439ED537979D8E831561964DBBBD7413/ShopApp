@@ -1,15 +1,12 @@
 package com.yj.shopapp.ui.activity.adapter;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.yj.shopapp.R;
-
-import butterknife.ButterKnife;
-import butterknife.BindView;
+import com.yj.shopapp.ubeen.BrandGroup;
+import com.yj.shopapp.ubeen.IndustryCatelist;
+import com.yj.shopapp.ui.activity.ImgUtil.Common2Adapter;
+import com.yj.shopapp.ui.activity.ImgUtil.ViewHolder;
 
 /**
  * Created by LK on 2018/3/1.
@@ -17,43 +14,50 @@ import butterknife.BindView;
  * @author LK
  */
 
-public class ScreenLvAdpter extends CommonBaseAdapter<String> {
-    int defItem = 0;
+public class ScreenLvAdpter extends Common2Adapter {
+    private int currposition = 0;
 
     public ScreenLvAdpter(Context context) {
         super(context);
     }
 
-    public void setDefSelect(int position) {
-        this.defItem = position;
-        notifyDataSetChanged();
+    @Override
+    public int onCreateViewLayoutID(int viewType) {
+        return R.layout.listitem;
     }
 
     @Override
-    public View getView(int i, View view, ViewGroup viewGroup) {
-        ViewHolder holder;
-        if (view == null) {
-            view = minflater.inflate(R.layout.listitem, viewGroup, false);
-            holder = new ViewHolder(view);
-            view.setTag(holder);
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        if (list.get(position) instanceof CharSequence) {
+            if (position == currposition) {
+                holder.getTextView(R.id.comm_text).setSelected(true);
+            } else {
+                holder.getTextView(R.id.comm_text).setSelected(false);
+            }
+            holder.getTextView(R.id.comm_text).setText((CharSequence) list.get(position));
+        } else if (list.get(position) instanceof BrandGroup.ListBean) {
+            BrandGroup.ListBean bean = (BrandGroup.ListBean) list.get(position);
+            if (position == currposition) {
+                holder.getTextView(R.id.comm_text).setSelected(true);
+            } else {
+                holder.getTextView(R.id.comm_text).setSelected(false);
+            }
+            holder.getTextView(R.id.comm_text).setText(bean.getName());
         } else {
-            holder = (ViewHolder) view.getTag();
+            IndustryCatelist.DataBean.TagGroup tagGroup = (IndustryCatelist.DataBean.TagGroup) list.get(position);
+            if (position == currposition) {
+                holder.getTextView(R.id.comm_text).setSelected(true);
+            } else {
+                holder.getTextView(R.id.comm_text).setSelected(false);
+            }
+            holder.getTextView(R.id.comm_text).setText(tagGroup.getName());
         }
-        if (defItem == i) {
-            holder.commText.setTextColor(Color.parseColor("#48B4FD"));
-        } else {
-            holder.commText.setTextColor(Color.parseColor("#808080"));
-        }
-        holder.commText.setText(list.get(i));
-        return view;
+
     }
 
-    static class ViewHolder {
-        @BindView(R.id.comm_text)
-        TextView commText;
-
-        ViewHolder(View view) {
-            ButterKnife.bind(this, view);
-        }
+    public void setDef(int position) {
+        currposition = position;
+        notifyDataSetChanged();
     }
+
 }

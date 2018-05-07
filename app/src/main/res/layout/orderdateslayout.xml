@@ -1,193 +1,245 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    android:orientation="vertical">
+    android:background="@color/colorf5f5f5">
 
-
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/appbarlayout"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:fitsSystemWindows="true"
-        app:elevation="0dp">
+        android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/H40dp"
+        android:orientation="vertical">
 
-        <include
-            layout="@layout/titlebar"
-            app:layout_scrollFlags="scroll|snap"/>
+        <include layout="@layout/base_toolbar" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorf5f5f5" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/white"
             android:orientation="vertical"
-            app:layout_scrollFlags="scroll|snap">
+            android:padding="@dimen/H8dp">
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="horizontal">
+                android:paddingBottom="@dimen/H8dp">
 
-                <ImageView
+                <TextView
+                    android:id="@+id/orderid"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/distribution"/>
+                    android:text=""
+                    android:textColor="@color/color333333" />
 
-                <LinearLayout
-                    android:layout_width="0dp"
+                <TextView
+                    android:id="@+id/status"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="@dimen/H15dp"
+                    android:gravity="center"
+                    android:text=""
+                    android:textColor="@color/color_01abff" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/driverdatails"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/image2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/distribution" />
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/image2"
+                    android:paddingLeft="@dimen/H10dp">
 
                     <TextView
-                        android:id="@+id/orderid"
+                        android:id="@+id/driver"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="订单号：354683668468165"
-                        android:textColor="@color/Orange"/>
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:id="@+id/driver"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:text="司机：龙小志"/>
-
-                    </RelativeLayout>
-
+                        android:paddingBottom="@dimen/H3dp"
+                        android:text=""
+                        android:textColor="@color/color333333"
+                        android:textSize="13sp" />
 
                     <TextView
                         android:id="@+id/order_time"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="2017-12-20 19：49"/>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingRight="10dp">
+                        android:layout_below="@id/driver"
+                        android:paddingTop="@dimen/H3dp"
+                        android:text=""
+                        android:textColor="@color/color333333"
+                        android:textSize="13sp" />
 
                     <TextView
-                        android:id="@+id/status"
+                        android:id="@+id/Contact_driver"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:drawablePadding="5dp"
-                        android:drawableRight="@drawable/btn_arrow_r"
-                        android:gravity="center"
-                        android:text="正在配送"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
+                        android:layout_alignBottom="@id/order_time"
+                        android:layout_alignParentRight="true"
                         android:background="@drawable/fillet_tv"
-                        android:padding="4dp"
+                        android:paddingBottom="3dp"
+                        android:paddingLeft="@dimen/H8dp"
+                        android:paddingRight="@dimen/H8dp"
+                        android:paddingTop="3dp"
                         android:text="联系司机"
-                        android:textColor="@color/white"/>
-                </LinearLayout>
+                        android:textColor="@color/color_01abff"
+                        android:textSize="12sp" />
+                </RelativeLayout>
 
 
-            </LinearLayout>
+            </RelativeLayout>
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recycler_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:overScrollMode="never"
-                android:scrollbars="none"/>
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recycler_view_2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:overScrollMode="never"
-                android:scrollbars="none"/>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="3dp"
-                android:background="@color/all_bg"/>
         </LinearLayout>
 
-        <android.support.design.widget.TabLayout
-            android:id="@+id/tab_layout"
+        <View
             android:layout_width="match_parent"
-            android:layout_height="35dp"
-            app:tabIndicatorColor="@color/skyblue"
-            app:tabMode="scrollable"
-            app:tabSelectedTextColor="@color/skyblue"
-            app:tabTextColor="@color/text_tab"/>
+            android:layout_height="6dp"
+            android:background="@color/all_bg" />
 
-    </android.support.design.widget.AppBarLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbars="none"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        <android.support.v4.view.ViewPager
-            android:id="@+id/order_viewpager"
+        <LinearLayout
+            android:id="@+id/tab_viewpager"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <android.support.design.widget.TabLayout
+                android:id="@+id/tab_layout"
+                android:layout_width="match_parent"
+                android:layout_height="36dp"
+                android:background="@color/white"
+                app:tabIndicatorColor="@color/red"
+                app:tabMode="scrollable"
+                app:tabSelectedTextColor="@color/red"
+                app:tabTextColor="@color/black" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/my_RecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/H6dp" />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/buGoods"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:paddingBottom="@dimen/H8dp"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/shopimag"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:paddingLeft="@dimen/H8dp"
+                android:paddingTop="@dimen/H8dp"
+                android:src="@drawable/load" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/H8dp"
+                android:src="@drawable/ic_bugoods" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/shopimag"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/H10dp"
+                android:paddingTop="@dimen/H8dp">
+
+                <TextView
+                    android:id="@+id/bgoodsname"
+                    android:layout_width="wrap_content"
+                    android:layout_height="35dp"
+                    android:paddingTop="@dimen/H3dp"
+                    android:text=""
+                    android:textColor="@color/color333333"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/bgoodsspesc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="@dimen/H4dp"
+                    android:paddingTop="@dimen/H4dp"
+                    android:text=""
+                    android:textColor="@color/color_999999"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/bgoodsprice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:text=""
+                    android:textColor="@color/color333333"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+        </RelativeLayout>
     </LinearLayout>
-
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:background="#FBF995"
-        android:orientation="horizontal"
-        android:padding="10dp">
+        android:layout_height="@dimen/H40dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        android:paddingLeft="@dimen/H10dp"
+        android:paddingRight="@dimen/H10dp">
 
-        <LinearLayout
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/H2dp"
+            android:background="@color/colorf5f5f5" />
+
+        <TextView
+            android:id="@+id/total_package"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_centerVertical="true"
+            android:text=""
+            android:textColor="@color/color333333"
+            android:textSize="13sp" />
 
-            <TextView
-                android:id="@+id/total_package"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="共20件商品"/>
+        <TextView
+            android:id="@+id/discount_money"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+            android:layout_toRightOf="@id/total_package"
+            android:text=""
+            android:textColor="@color/color333333"
+            android:textSize="13sp" />
 
-            <TextView
-                android:id="@+id/discount_money"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="优惠金额 -20"/>
-        </LinearLayout>
-
-        <LinearLayout
+        <TextView
+            android:id="@+id/paid_money"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/meet_money"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="应付金额：1500"/>
-
-            <TextView
-                android:id="@+id/paid_money"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="实付金额：1480"/>
-        </LinearLayout>
+            android:layout_centerVertical="true"
+            android:text=""
+            android:textColor="@color/black"
+            android:textStyle="bold" />
     </RelativeLayout>
 
-</android.support.design.widget.CoordinatorLayout>
+</RelativeLayout>

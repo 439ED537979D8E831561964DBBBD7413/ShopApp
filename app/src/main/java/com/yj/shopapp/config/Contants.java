@@ -17,6 +17,10 @@ public class Contants {
     public static String url_ = u + "index.php/Appa/";
 
     public static String url_2 = u + "index.php/Appu/";
+    //积分
+    public static String url_3 = u + "index.php/Appuintegral/";
+    //抢购
+    public static String url_4 = u + "index.php/Appusales/";
 
     public static String appu = u + "index.php/Appi/cupdate";
 
@@ -194,7 +198,34 @@ public class Contants {
         public final static String TODAYNEWITEMS = url_2 + "TodayNewItems";
         public final static String ORDER_CHART = url_2 + "order_chart";
         public final static String MYORDER = url_2 + "myorder";
-        public final static String DETAILSHISTORY=url_2+"detailsHistory";
+        public final static String DETAILSHISTORY = url_2 + "detailsHistory";
+        public final static String SHOWHISTORY = url_2 + "showHistory";
+        public final static String LIMITEDSALE_INDEX = url_2 + "limitedSale_index";
+        public final static String GETTODAYITEMSNUM = url_2 + "getTodayItemsNum";
+    }
+
+    public static final class PortS {
+        public final static String INDEX = url_3 + "index";
+        public final static String GOODS = url_3 + "goods";
+        public final static String CHANGE_GOODS = url_3 + "change_goods";
+        public final static String CHANGE_HISTORY = url_3 + "change_history";
+        public final static String DETAILS = url_3 + "details";
+        public final static String RULE = url_3 + "rule";
+        public final static String VIP_INDEX = url_3 + "vip_index";
+        public final static String EVERYBODY_CHANGING = url_3 + "everybody_changing";
+        public final static String MONTH = url_3 + "month";
+        public final static String MYCHANNGE_INFO = url_3 + "mychange_info";
+        public final static String CHANNGE_INFO = url_3 + "change_info";
+        public final static String LISTS = url_4 + "lists";
+        public final static String SALES_INFO = url_4 + "sales_info";
+        public final static String DO_SALES = url_4 + "do_sales";
+        public final static String SALES_DETAILS = url_4 + "sales_details";
+        public final static String MSG = url_4 + "msg";
+        public final static String MYSALES = url_4 + "mysales";
+        public final static String CANCEL_SALES = url_4 + "cancel_sales";
+        public final static String HOT_INDEX = url_4 + "hot_index";
+        public final static String SALES_NUM = url_4 + "sales_num";
+        public final static String AINDEX = url_4 + "index";
     }
 
     public static final class LoadView {
@@ -272,11 +303,11 @@ public class Contants {
 
     public static final class PieColor {
         public final static int[] COLORS = {
-                Color.rgb(140, 234, 255), Color.rgb(255, 247, 140)
-                , Color.rgb(255, 208, 140), Color.rgb(140, 234, 255)
-                , Color.rgb(255, 140, 157), Color.rgb(45, 192, 252)
-                , Color.rgb(53, 194, 209), Color.rgb(52, 152, 219)
-                , Color.rgb(255, 255, 240), Color.rgb(192, 255, 140)};
+                Color.rgb(45, 192, 252), Color.rgb(255, 208, 140)
+                , Color.rgb(140, 234, 255), Color.rgb(255, 140, 157)
+                , Color.rgb(140, 234, 255), Color.rgb(53, 194, 209)
+                , Color.rgb(52, 152, 219), Color.rgb(255, 255, 240)
+                , Color.rgb(192, 255, 140), Color.rgb(250, 211, 55)};
     }
 
     public static final class Photo {
@@ -317,9 +348,9 @@ public class Contants {
     public static final String[] SalesStatusString = {"作废", "未开始", "促销中", "已过期"};
     public static final int[] StateImg = {R.drawable.no_begin, R.drawable.no_begin, R.drawable.promotion, R.drawable.expired};
     public static final int[] OrderStatusColor = {R.color.color_999999, R.color.color_F37A1C, R.color.color_DD504C, R.color.color_5EB95E};
-    public static final String[] OrderStadus = {"作废", "已下单", "发货中", "已完成"};
+    public static final String[] OrderStadus = {"作废", "新订单", "配送中", "已完成"};
     public static final String[] StatusList = {"", "新换购", "配送中", "已完成"};
-    public static final String[] OrderState = {"", "下单", "退货", "提现", "奖励", "清零"};
+    public static final String[] OrderState = {"", "下单", "兑换", "返现", "奖励", "清零"};
 
     public static final class Column {
         public static final int THREE = 3;

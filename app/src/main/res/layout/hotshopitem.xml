@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/itemview"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/H8dp"
+    android:orientation="horizontal">
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/shopimag"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:background="@drawable/border1dp"
+        android:padding="@dimen/H1dp"
+        app:pressedStateOverlayImage="@drawable/load"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/H10dp">
+
+        <TextView
+            android:id="@+id/shopname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textColor="@color/color333333" />
+
+        <TextView
+            android:id="@+id/account_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/H3dp"
+            android:text=""
+            android:textColor="@color/color_999999"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/shopnum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/H3dp"
+            android:text=""
+            android:textColor="@color/color_999999"
+            android:textSize="13sp" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/H3dp">
+
+            <TextView
+                android:id="@+id/allprice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text=""
+                android:textColor="@color/color_999999" />
+
+            <TextView
+                android:id="@+id/goCarlist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/H8dp"
+                android:background="@drawable/goodcar_bg3"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="加入购物车"
+                android:textColor="@color/white"
+                android:textSize="12sp" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

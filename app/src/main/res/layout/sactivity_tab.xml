@@ -1,20 +1,21 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/white">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/white"
+              android:orientation="vertical">
 
-    <android.support.v4.view.ViewPager
+    <com.yj.shopapp.view.CustomViewPager
         android:id="@+id/content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/tabs_rg"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:background="@color/all_bg"/>
 
     <RadioGroup
         android:id="@+id/tabs_rg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:elevation="@dimen/H3dp"
         android:background="@drawable/buttonborders"
         android:orientation="horizontal">
 
@@ -40,20 +41,20 @@
             android:text="品牌"
             android:textColor="@color/tab_tx_color"/>
 
-        <TextView
+        <RadioButton
             android:id="@+id/tab_client"
             style="@style/Main_Tab"
-            android:drawableTop="@drawable/tab_car"
+            android:drawableTop="@drawable/tab_shopcar"
             android:text="购物车"
-            android:textColor="@color/text_tab"/>
+            android:textColor="@color/tab_tx_color"/>
 
-        <TextView
+        <RadioButton
             android:id="@+id/tab_mtinfo"
             style="@style/Main_Tab"
-            android:drawableTop="@drawable/tab_mine"
+            android:drawableTop="@drawable/tab_user"
             android:text="我的"
-            android:textColor="@color/text_tab"/>
+            android:textColor="@color/tab_tx_color"/>
 
     </RadioGroup>
 
-</RelativeLayout>
+</LinearLayout>

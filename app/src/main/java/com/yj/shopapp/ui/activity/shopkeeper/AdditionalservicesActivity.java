@@ -1,6 +1,7 @@
 package com.yj.shopapp.ui.activity.shopkeeper;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -9,6 +10,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSONObject;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.squareup.okhttp.Request;
 import com.yj.shopapp.R;
 import com.yj.shopapp.config.Contants;
@@ -22,10 +25,6 @@ import com.yj.shopapp.ui.activity.base.BaseActivity;
 import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.JsonHelper;
 import com.yj.shopapp.util.NetUtils;
-import com.yj.shopapp.view.EasyBanner.GlideImageLoader;
-import com.youth.banner.Banner;
-import com.youth.banner.BannerConfig;
-import com.youth.banner.listener.OnBannerListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,15 +32,16 @@ import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
+import cn.bingoogolapple.bgabanner.BGABanner;
 
-public class AdditionalservicesActivity extends BaseActivity implements OnBannerListener, AdapterView.OnItemClickListener, View.OnClickListener {
+public class AdditionalservicesActivity extends BaseActivity implements AdapterView.OnItemClickListener, View.OnClickListener {
 
     @BindView(R.id.forewadImg)
     ImageView forewadImg;
     @BindView(R.id.title)
     TextView title;
     @BindView(R.id.bannerView)
-    Banner bannerView;
+    BGABanner bannerView;
     @BindView(R.id.my_RecyclerView)
     RecyclerView myRecyclerView;
     @BindView(R.id.compare)
@@ -53,6 +53,7 @@ public class AdditionalservicesActivity extends BaseActivity implements OnBanner
     private List<String> imags = new ArrayList<>();
     private List<String> titles = new ArrayList<>();
     private StoreAdpter adpter;
+
     @Override
     protected int getLayoutId() {
         return R.layout.activity_additionalservices;
@@ -61,17 +62,50 @@ public class AdditionalservicesActivity extends BaseActivity implements OnBanner
     @Override
     protected void initData() {
         title.setText("城市服务");
-        bannerView.setBannerStyle(BannerConfig.CIRCLE_INDICATOR_TITLE);
-        bannerView.setIndicatorGravity(BannerConfig.CENTER);
-        bannerView.setImageLoader(new GlideImageLoader());
-        bannerView.setOnBannerListener(this);
-        bannerView.setDelayTime(5000);
         adpter = new StoreAdpter(mContext);
         myRecyclerView.setLayoutManager(new GridLayoutManager(mContext, 2));
         myRecyclerView.setAdapter(adpter);
         adpter.setOnItemClickListener(this);
         compares.setOnClickListener(this);
         TheDoor.setOnClickListener(this);
+        initBanner();
+    }
+
+    private void initBanner() {
+        bannerView.setAdapter(new BGABanner.Adapter<ImageView, String>() {
+            @Override
+            public void fillBannerItem(BGABanner banner, ImageView itemView, @Nullable String model, int position) {
+                Glide.with(mContext).load(model).apply(new RequestOptions().centerCrop()).into(itemView);
+            }
+        });
+        bannerView.setDelegate(new BGABanner.Delegate() {
+            @Override
+            public void onBannerItemClick(BGABanner banner, View itemView, @Nullable Object model, int position) {
+                int type = Integer.parseInt(advMap.getData().get(position).getType());
+                switch (type) {
+                    case 1:
+                        //跳转至店铺
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("type", Integer.parseInt(advMap.getData().get(position).getType()));
+                        bundle.putString("Store_id", advMap.getData().get(position).getShop_id());
+                        CommonUtils.goActivity(mContext, ClassifyListActivity.class, bundle);
+                        break;
+                    case 2:
+                        //跳转至商品
+                        Bundle bundle2 = new Bundle();
+                        bundle2.putString("shop_id", advMap.getData().get(position).getShop_id());
+                        CommonUtils.goActivity(mContext, CommodityDetails.class, bundle2);
+                        break;
+                    default:
+                        //跳转至案例
+                        Bundle bundle3 = new Bundle();
+                        bundle3.putInt("type", Integer.parseInt(advMap.getData().get(position).getType()));
+                        bundle3.putString("Store_id", advMap.getData().get(position).getShop_id());
+                        CommonUtils.goActivity(mContext, ClassifyListActivity.class, bundle3);
+                        break;
+                }
+            }
+        });
     }
 
 
@@ -84,7 +118,6 @@ public class AdditionalservicesActivity extends BaseActivity implements OnBanner
         } else {
             showToastShort("无网络");
         }
-        bannerView.startAutoPlay();
     }
 
     private void getBannerImag() {
@@ -115,10 +148,11 @@ public class AdditionalservicesActivity extends BaseActivity implements OnBanner
                         for (AdvMap.DataBean bean : advMap.getData()) {
                             imags.add(bean.getImgurl());
                             titles.add(bean.getTitle());
+                            if (bannerView != null) {
+                                bannerView.setData(imags, titles);
+                            }
                         }
-                        bannerView.setBannerTitles(titles);
-                        bannerView.setImages(imags);
-                        bannerView.start();
+
                     } else {
                         showToastShort(object.getString("data"));
                     }
@@ -158,39 +192,6 @@ public class AdditionalservicesActivity extends BaseActivity implements OnBanner
                 super.onAfter();
             }
         });
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        bannerView.stopAutoPlay();
-    }
-
-    @Override
-    public void OnBannerClick(int position) {
-        int type = Integer.parseInt(advMap.getData().get(position).getType());
-        switch (type) {
-            case 1:
-                //跳转至店铺
-                Bundle bundle = new Bundle();
-                bundle.putInt("type", Integer.parseInt(advMap.getData().get(position).getType()));
-                bundle.putString("Store_id", advMap.getData().get(position).getShop_id());
-                CommonUtils.goActivity(mContext, ClassifyListActivity.class, bundle);
-                break;
-            case 2:
-                //跳转至商品
-                Bundle bundle2 = new Bundle();
-                bundle2.putString("shop_id", advMap.getData().get(position).getShop_id());
-                CommonUtils.goActivity(mContext, CommodityDetails.class, bundle2);
-                break;
-            default:
-                //跳转至案例
-                Bundle bundle3 = new Bundle();
-                bundle3.putInt("type", Integer.parseInt(advMap.getData().get(position).getType()));
-                bundle3.putString("Store_id", advMap.getData().get(position).getShop_id());
-                CommonUtils.goActivity(mContext, ClassifyListActivity.class, bundle3);
-                break;
-        }
     }
 
     @Override

@@ -16,8 +16,8 @@ import com.yj.shopapp.wbeen.Goods;
 
 import java.util.List;
 
-import butterknife.ButterKnife;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by huang on 2016/9/19.
@@ -68,7 +68,7 @@ public class WStopGoodsAdapter  implements IRecyclerViewIntermediary {
         HomeFragmentViewHolder holder = (HomeFragmentViewHolder) viewHolder;
         Goods goods = notes.get(position);
         holder.goodsnameTv.setText(goods.getName());
-        holder.addcartTv.setPadding(40,12,40,12);
+        holder.addcartTv.setPadding(60,12,60,12);
         holder.addcartTv.setText("删除");
 //        string is_show_price= PreferenceUtils.getPrefString(mContext, Contants.Preference.IS_SHOW_PRICE, "");
         holder.priceTv.setText(goods.getPrice());

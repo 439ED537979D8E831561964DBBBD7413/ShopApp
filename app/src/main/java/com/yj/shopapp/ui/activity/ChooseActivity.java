@@ -118,7 +118,9 @@ public class ChooseActivity extends BaseActivity implements BaseRecyclerView {
 
         uid = PreferenceUtils.getPrefString(mContext, Contants.Preference.UID, "");
         token = PreferenceUtils.getPrefString(mContext, Contants.Preference.TOKEN, "");
-        number = getIntent().getExtras().getString("GoodsNumber");
+        if (getIntent().hasExtra("GoodsNumber")) {
+            number = getIntent().getExtras().getString("GoodsNumber");
+        }
 
         imglists.add(new Imglist("", "res://com.yj.shopapp/" + R.drawable.select_image_p, "", ""));
         imglists.add(new Imglist("", "res://com.yj.shopapp/" + R.drawable.select_image_x, "", ""));
@@ -347,7 +349,9 @@ public class ChooseActivity extends BaseActivity implements BaseRecyclerView {
             @Override
             public void onAfter() {
                 super.onAfter();
-                swipeRefreshLayout.setRefreshing(false);
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.setRefreshing(false);
+                }
                 isRequesting = false;
             }
 

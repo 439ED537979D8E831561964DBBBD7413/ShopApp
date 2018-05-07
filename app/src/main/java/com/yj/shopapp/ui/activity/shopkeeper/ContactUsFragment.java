@@ -19,7 +19,6 @@ import com.bumptech.glide.Glide;
 import com.yj.shopapp.R;
 import com.yj.shopapp.ubeen.ShopDetails;
 import com.yj.shopapp.ui.activity.ImgUtil.NewBaseFragment;
-import com.yj.shopapp.util.CommonUtils;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -68,10 +67,7 @@ public class ContactUsFragment extends NewBaseFragment {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.Address:
-                Bundle bundle = new Bundle();
-                bundle.putString("storename", bean.getShopname());
-                bundle.putString("address", bean.getAddress());
-                CommonUtils.goActivity(mActivity, MapActivity.class, bundle);
+
                 break;
             case R.id.call_phone:
                 new MaterialDialog.Builder(mActivity).title("提示").positiveText("拨打").negativeText("取消")

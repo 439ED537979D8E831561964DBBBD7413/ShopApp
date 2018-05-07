@@ -16,8 +16,6 @@
 
 package com.mining.app.zxing.decoding;
 
-import java.util.Vector;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -33,6 +31,8 @@ import com.mining.app.zxing.MipcaActivityCapture;
 import com.mining.app.zxing.camera.CameraManager;
 import com.mining.app.zxing.view.ViewfinderResultPointCallback;
 import com.yj.shopapp.R;
+
+import java.util.Vector;
 
 /**
  * This class handles all the messaging which comprises the state machine for capture.

@@ -13,18 +13,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.baidu.location.BDLocation;
+import com.alibaba.fastjson.JSONArray;
 import com.kaopiz.kprogresshud.KProgressHUD;
 import com.squareup.okhttp.Request;
 import com.yj.shopapp.R;
-import com.yj.shopapp.baidu.BaiduTool;
 import com.yj.shopapp.config.AppManager;
 import com.yj.shopapp.config.Contants;
 import com.yj.shopapp.http.HttpHelper;
 import com.yj.shopapp.http.OkHttpResponseHandler;
 import com.yj.shopapp.ubeen.Address;
+import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.ui.activity.base.BaseActivity;
-import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.JsonHelper;
 import com.yj.shopapp.util.NetUtils;
 import com.yj.shopapp.util.PreferenceUtils;
@@ -39,11 +38,13 @@ import butterknife.OnClick;
 /**
  * Created by jm on 2016/5/15.
  */
-public class SAddressRefreshActivity extends BaseActivity implements BaiduTool.BaiduClient {
+public class SAddressRefreshActivity extends BaseActivity {
 
     public static final int REFRESHY_MSG = 2;
+    @BindView(R.id.submit)
+    TextView submit;
 
-    Address mAddress;
+    private Address mAddress;
     @BindView(R.id.title)
     TextView title;
     @BindView(R.id.id_right_btu)
@@ -70,7 +71,7 @@ public class SAddressRefreshActivity extends BaseActivity implements BaiduTool.B
     @BindView(R.id.forewadImg)
     ImageView forewadImg;
     private int back = 0;
-    BaiduTool baiduTool;
+
 
     @OnClick(R.id.refresh_btn)
     public void OnclickRefresh() {
@@ -79,7 +80,7 @@ public class SAddressRefreshActivity extends BaseActivity implements BaiduTool.B
             showContacts();
         } else {
             BprogressDialog.show();
-            baiduTool.start();
+
         }
     }
 
@@ -87,6 +88,7 @@ public class SAddressRefreshActivity extends BaseActivity implements BaiduTool.B
     KProgressHUD BprogressDialog;
 
     private static final int BAIDU_READ_PHONE_STATE = 100;
+
     @Override
     protected int getLayoutId() {
         return R.layout.sactivity_address_refresh;
@@ -94,28 +96,32 @@ public class SAddressRefreshActivity extends BaseActivity implements BaiduTool.B
 
     @Override
     protected void initData() {
-        baiduTool = new BaiduTool(mContext, this);
+
         uid = PreferenceUtils.getPrefString(mContext, Contants.Preference.UID, "");
         token = PreferenceUtils.getPrefString(mContext, Contants.Preference.TOKEN, "");
+
         BprogressDialog = growProgress(Contants.Progress.BAIDU_ING);
-        mAddress = (Address) getIntent().getExtras().getSerializable("been");
-        back = getIntent().getExtras().getInt("back");
+        if (getIntent().hasExtra("been")) {
+            mAddress = (Address) getIntent().getExtras().getSerializable("been");
+        }
+        if (getIntent().hasExtra("back")) {
+            back = getIntent().getExtras().getInt("back");
+        }
         if (back != 0) {
             forewadImg.setVisibility(View.GONE);
         }
-        if (StringHelper.isEmpty(mAddress.getId())) {
+        if (mAddress == null) {
             title.setText("完善地址");
             //idRightBtu.setText("提交");
             addAddressNameEdt.setText("");
             addAddressShopnameEdt.setText("");
             addAddressPhoneEdt.setText("");
             addAddressTelEdt.setText("");
-            addAddressDetailEdt.setText("");
-            mAddress.setStatus("1");
+            ShowLog.e(PreferenceUtils.getPrefString(mContext, "address", ""));
+            addAddressDetailEdt.setText(PreferenceUtils.getPrefString(mContext, "address", ""));
         } else {
             title.setText("修改地址");
             //idRightBtu.setText("提交");
-
             addAddressNameEdt.setText(mAddress.getContacts());
             addAddressShopnameEdt.setText(mAddress.getShopname());
             addAddressPhoneEdt.setText(mAddress.getMobile());
@@ -123,11 +129,11 @@ public class SAddressRefreshActivity extends BaseActivity implements BaiduTool.B
             addAddressDetailEdt.setText(mAddress.getAddress());
         }
 
-        if (mAddress.getStatus().equals("1")) {
-            managerCheckBox.setChecked(true);
-        } else {
-            managerCheckBox.setChecked(false);
-        }
+//        if (mAddress.getStatus().equals("1")) {
+//            managerCheckBox.setChecked(true);
+//        } else {
+//            managerCheckBox.setChecked(false);
+//        }
     }
 
 
@@ -181,22 +187,6 @@ public class SAddressRefreshActivity extends BaseActivity implements BaiduTool.B
         return super.onKeyUp(keyCode, event);
     }
 
-    @Override
-    public void report(int status, String value) {
-        if (status == 0) {
-            addAddressDetailEdt.setText(value);
-        } else {
-            showToastShort("定位失败");
-        }
-        BprogressDialog.dismiss();
-    }
-
-    @Override
-    public void getLocation(BDLocation location) {
-        latAndLot = location.getLatitude() + "," + location.getLongitude();
-    }
-
-
 
     @OnClick(R.id.submit)
     public void onClick() {
@@ -248,8 +238,8 @@ public class SAddressRefreshActivity extends BaseActivity implements BaiduTool.B
         params.put("tel", tel);
         params.put("mobile", phone);
         params.put("address", address);
-        params.put("status", managerCheckBox.isChecked() ? "1" : "0");
-        params.put("id", StringHelper.isEmpty(mAddress.getId()) ? "" : mAddress.getId());
+        params.put("status", "1");
+        params.put("id", mAddress == null ? "" : mAddress.getId());
         params.put("location", StringHelper.isEmpty(latAndLot) ? "" : latAndLot);
 
         HttpHelper.getInstance().post(mContext, Contants.PortU.DoUaddress, params, new OkHttpResponseHandler<String>(mContext) {
@@ -269,11 +259,10 @@ public class SAddressRefreshActivity extends BaseActivity implements BaiduTool.B
             @Override
             public void onResponse(Request request, String json) {
                 super.onResponse(request, json);
-
-                System.out.println("response" + json);
+                ShowLog.e(json);
                 if (JsonHelper.isRequstOK(json, mContext)) {
                     showToastShort("添加成功");
-                    CommonUtils.goResult(mContext, null, REFRESHY_MSG);
+                    refreshRequest();
                 } else {
                     showToastShort(JsonHelper.errorMsg(json));
                 }
@@ -302,7 +291,7 @@ public class SAddressRefreshActivity extends BaseActivity implements BaiduTool.B
             // 申请一个（或多个）权限，并提供用于回调返回的获取码（用户定义）
             ActivityCompat.requestPermissions(SAddressRefreshActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.READ_PHONE_STATE}, BAIDU_READ_PHONE_STATE);
         } else {
-            baiduTool.start();
+
             BprogressDialog.show();
         }
     }
@@ -317,7 +306,7 @@ public class SAddressRefreshActivity extends BaseActivity implements BaiduTool.B
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // 获取到权限，作相应处理（调用定位SDK应当确保相关权限均被授权，否则可能引起定位失败）
                     BprogressDialog.show();
-                    baiduTool.start();
+
                 } else {
                     // 没有获取到权限，做特殊处理
                     Toast.makeText(getApplicationContext(), "获取位置权限失败，请手动开启", Toast.LENGTH_SHORT).show();
@@ -328,5 +317,37 @@ public class SAddressRefreshActivity extends BaseActivity implements BaiduTool.B
         }
     }
 
+    public void refreshRequest() {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("uid", uid);
+        params.put("token", token);
 
+        HttpHelper.getInstance().post(mContext, Contants.PortU.Uaddress, params, new OkHttpResponseHandler<String>(mContext) {
+
+            @Override
+            public void onAfter() {
+                super.onAfter();
+            }
+
+            @Override
+            public void onResponse(Request request, String json) {
+                super.onResponse(request, json);
+                ShowLog.e(json);
+                if (JsonHelper.isRequstOK(json, mContext)) {
+                    Address address = JSONArray.parseArray(json, Address.class).get(0);
+                    PreferenceUtils.setPrefString(mContext, "addressId", address.getId());
+                    finish();
+                } else {
+                    showToastShort(JsonHelper.errorMsg(json));
+                }
+            }
+
+            @Override
+            public void onError(Request request, Exception e) {
+                super.onError(request, e);
+                showToastShort(Contants.NetStatus.NETDISABLEORNETWORKDISABLE);
+            }
+        });
+
+    }
 }

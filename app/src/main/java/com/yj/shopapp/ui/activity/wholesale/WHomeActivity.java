@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
@@ -19,19 +20,18 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.gongwen.marqueen.MarqueeFactory;
 import com.gongwen.marqueen.MarqueeView;
+import com.gongwen.marqueen.util.OnItemClickListener;
 import com.kaopiz.kprogresshud.KProgressHUD;
 import com.mining.app.zxing.MipcaActivityCapture;
 import com.squareup.okhttp.Request;
@@ -56,14 +56,10 @@ import com.yj.shopapp.util.NetUtils;
 import com.yj.shopapp.util.NoticeDialog;
 import com.yj.shopapp.util.NoticeMF;
 import com.yj.shopapp.util.PreferenceUtils;
-import com.yj.shopapp.view.EasyBanner.GlideImageLoader;
-import com.yj.shopapp.view.MyBanner;
 import com.yj.shopapp.view.headfootrecycleview.RecyclerViewHeaderFooterAdapter;
 import com.yj.shopapp.wbeen.BannerInfo;
 import com.yj.shopapp.wbeen.Index;
 import com.yj.shopapp.wbeen.Lookitem;
-import com.youth.banner.BannerConfig;
-import com.youth.banner.Transformer;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -75,12 +71,13 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.bingoogolapple.bgabanner.BGABanner;
 
 
 /**
  * Created by jm on 2016/4/25.
  */
-public class WHomeActivity extends BaseFragment implements GoodsRecyclerView, ViewPager.OnPageChangeListener, NoticeDialog.OnCenterItemClickListener {
+public class WHomeActivity extends BaseFragment implements GoodsRecyclerView, ViewPager.OnPageChangeListener {
 
     @BindView(R.id.classi_gv)
     RecyclerView classiGv;
@@ -88,17 +85,6 @@ public class WHomeActivity extends BaseFragment implements GoodsRecyclerView, Vi
     TextView bannerTx;
     @BindView(R.id.hot_img)
     ImageView hotImg;
-    private NoticeMF mf;
-    private InputMethodManager imm;
-
-    public static WHomeActivity newInstance(WMainTabActivity wHomeActivity) {
-        WHomeActivity newFragment = new WHomeActivity();
-        if (wHomeActivity != null) {
-            newFragment.setwMainTabActivity(wHomeActivity);
-        }
-        return newFragment;
-    }
-
     @BindView(R.id.id_right_btu)
     ImageView idRightBtu;
     @BindView(R.id.title_view)
@@ -117,32 +103,32 @@ public class WHomeActivity extends BaseFragment implements GoodsRecyclerView, Vi
     SimpleDraweeView simpleDraweeView;
     @BindView(R.id.newcount_tv)
     TextView newcount_tv;
-    @BindView(R.id.bannerView)
-    MyBanner bannerView;
     @BindView(R.id.hot_mv)
     MarqueeView hot_mv;
-    int notindex;
+    @BindView(R.id.banner_guide_content)
+    BGABanner bannerGuideContent;
+
     private float notY;
     private String notid;
-    SClassificationAdapter classiAdapter;
+    private SClassificationAdapter classiAdapter;
     private RecyclerViewHeaderFooterAdapter adapter;
-    NoticeDialog notDialog;
-    List<Notice> noticeLists = new ArrayList<>();
-    Handler handler = new Handler();
+    private List<Notice> noticeLists = new ArrayList<>();
     private List<BannerInfo> advers = new ArrayList<>();
-    List<Classise> classises = new ArrayList<>();
-    List<NotMfData> hot_list_1;
-    List<BannerInfo> bannerList = new ArrayList<>();
+    private List<Classise> classises = new ArrayList<>();
+    private List<NotMfData> hot_list_1;
+    private List<BannerInfo> bannerList = new ArrayList<>();
     private ArrayList<Notice> notices = new ArrayList<>();
-    List<String> hot_list;
-    List<String> paths = new ArrayList<>();
-    WMainTabActivity wMainTabActivity;
-    private TextView dtitle, dtitle_tv, dtime_tv, dcontent_tv;
-    private WebView dwebView;
-    String content;
+    private List<String> paths = new ArrayList<>();
+    private String content;
+    private NoticeMF mf;
+    private InputMethodManager imm;
+    private List<String> imags = new ArrayList<>();
 
-    public void setwMainTabActivity(WMainTabActivity wMainTabActivity) {
-        this.wMainTabActivity = wMainTabActivity;
+    public static WHomeActivity newInstance() {
+        Bundle args = new Bundle();
+        WHomeActivity fragment = new WHomeActivity();
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @OnClick(R.id.myinfoLy)
@@ -157,7 +143,7 @@ public class WHomeActivity extends BaseFragment implements GoodsRecyclerView, Vi
             @Override
             public void onInput(@NonNull MaterialDialog dialog, final CharSequence input) {
                 imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
-                handler.postDelayed(new Runnable() {
+                new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         Bundle bundle = new Bundle();
@@ -208,10 +194,10 @@ public class WHomeActivity extends BaseFragment implements GoodsRecyclerView, Vi
         CommonUtils.goActivity(mActivity, WNewListActivity.class, null, false);
     }
 
-    @OnClick(R.id.more_txt)
-    public void moreOnclick() {
-        wMainTabActivity.setOnCheckChange(2);
-    }
+//    @OnClick(R.id.more_txt)
+//    public void moreOnclick() {
+//        wMainTabActivity.setOnCheckChange(2);
+//    }
 
 
     @Override
@@ -223,10 +209,11 @@ public class WHomeActivity extends BaseFragment implements GoodsRecyclerView, Vi
     public void init(Bundle savedInstanceState) {
         imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         mf = new NoticeMF(mActivity);
-        mf.setOnItemClickListener(new MarqueeFactory.OnItemClickListener<RelativeLayout, NotMfData>() {
+        hot_mv.setMarqueeFactory(mf);
+        hot_mv.setOnItemClickListener(new OnItemClickListener() {
             @Override
-            public void onItemClickListener(MarqueeFactory.ViewHolder holder) {
-                holder.mView.setOnTouchListener(new View.OnTouchListener() {
+            public void onItemClickListener(View mView, Object mData, int mPosition) {
+                mView.setOnTouchListener(new View.OnTouchListener() {
                     @Override
                     public boolean onTouch(View v, MotionEvent event) {
                         notY = event.getY();
@@ -234,9 +221,9 @@ public class WHomeActivity extends BaseFragment implements GoodsRecyclerView, Vi
                     }
                 });
                 if (notY < 90) {
-                    notid = hot_list_1.get(holder.position).getNum();
+                    notid = hot_list_1.get(mPosition).getNum();
                 } else {
-                    notid = hot_list_1.get(holder.position).getNum_1();
+                    notid = hot_list_1.get(mPosition).getNum_1();
                 }
                 Bundle bundle = new Bundle();
                 bundle.putString("id", notid);
@@ -244,11 +231,6 @@ public class WHomeActivity extends BaseFragment implements GoodsRecyclerView, Vi
                 CommonUtils.goActivity(mActivity, SMsgDetailActivity.class, bundle);
             }
         });
-        notDialog = new NoticeDialog(mActivity, R.layout.dailog_hot, new int[]{R.id.dialog_next, R.id.dialog_sure, R.id.dialog_up});
-        notDialog.setOnCenterItemClickListener(this);
-
-        bannerView.setOnPageChangeListener(this);
-        bannerView.setRefreshLayout(swipeRefreshLayout);
         swipeRefreshLayout.setColorSchemeResources(Contants.Refresh.refreshColorScheme);
         swipeRefreshLayout.setOnRefreshListener(listener);
 
@@ -258,8 +240,9 @@ public class WHomeActivity extends BaseFragment implements GoodsRecyclerView, Vi
                 swipeRefreshLayout.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-
-                        swipeRefreshLayout.setRefreshing(true);
+                        if (swipeRefreshLayout != null) {
+                            swipeRefreshLayout.setRefreshing(true);
+                        }
                         Refresh();
                     }
                 }, 200);
@@ -276,6 +259,16 @@ public class WHomeActivity extends BaseFragment implements GoodsRecyclerView, Vi
             classiGv.setAdapter(adapter);
         }
         getNotice();
+        bannerGuideContent.setAdapter(new BGABanner.Adapter<ImageView, String>() {
+
+            @Override
+            public void fillBannerItem(BGABanner banner, ImageView itemView, @Nullable String model, int position) {
+                Glide.with(WHomeActivity.this)
+                        .load(model)
+                        .apply(new RequestOptions().centerCrop().dontAnimate())
+                        .into(itemView);
+            }
+        });
     }
 
     SwipeRefreshLayout.OnRefreshListener listener = new SwipeRefreshLayout.OnRefreshListener() {
@@ -287,7 +280,7 @@ public class WHomeActivity extends BaseFragment implements GoodsRecyclerView, Vi
 
 
     private void Refresh() {
-        refreshRequest();
+        //refreshRequest();
         getHotbigtype();
         getAdvinfo();
         noticeSwitchList();
@@ -311,63 +304,17 @@ public class WHomeActivity extends BaseFragment implements GoodsRecyclerView, Vi
                 if (JsonHelper.isRequstOK(json, mActivity)) {
                     JsonHelper<Notice> jsonHelper = new JsonHelper<>(Notice.class);
                     noticeLists = jsonHelper.getDatas(json);
+
                     String yestday = PreferenceUtils.getPrefString(mActivity, "w" + uid, "");
                     String today = DateUtils.getNowDate();
                     if (!yestday.equals(today)) {
-                        notDialog.show();
-                        if (!"1".equals(noticeLists.get(notindex).getClassify())) {
-                            notDialog.hide();
-                        }
-                        dtitle = (TextView) notDialog.findViewById(R.id.notice_tiele);
-                        dtitle_tv = (TextView) notDialog.findViewById(R.id.hot_title);
-                        dtime_tv = (TextView) notDialog.findViewById(R.id.hot_time);
-                        dcontent_tv = (TextView) notDialog.findViewById(R.id.hot_context);
-                        dwebView = (WebView) notDialog.findViewById(R.id.webView);
-                        dwebView.setWebViewClient(new WebViewClient() {
-                            @Override
-                            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                                view.loadUrl(url);
-                                return true;
-                            }
-
-                            @Override
-                            public void onPageFinished(WebView view, String url) {
-                                super.onPageFinished(view, url);
-                                notDialog.show();
-                                showbg();
-                            }
-                        });
-                        setDialogText();
+                        NoticeDialog.newInstance(noticeLists).show(mActivity.getFragmentManager(), "noticeDialog");
                         PreferenceUtils.setPrefString(mActivity, "w" + uid, today);
                     }
 
                 }
             }
         });
-    }
-
-    public void setDialogText() {
-        showbg();
-        Notice notice = noticeLists.get(notindex);
-        if ("1".equals(notice.getClassify())) {
-            // setManager(0);
-            dtitle.setText(notice.getType());
-            dtitle_tv.setText(notice.getTitle());
-            dtime_tv.setText(DateUtils.getDateToLong(notice.getAddtime()));
-            dcontent_tv.setText("\u3000\u3000" + notice.getContent());
-            dtitle_tv.setVisibility(View.VISIBLE);
-            dcontent_tv.setVisibility(View.VISIBLE);
-            dtime_tv.setVisibility(View.VISIBLE);
-            dwebView.setVisibility(View.GONE);
-        } else {
-            //setManager(1);
-            dtitle_tv.setVisibility(View.GONE);
-            dcontent_tv.setVisibility(View.GONE);
-            dtime_tv.setVisibility(View.GONE);
-            dwebView.setVisibility(View.VISIBLE);
-            dwebView.loadUrl(notice.getUrl());
-
-        }
     }
 
     /**
@@ -397,7 +344,7 @@ public class WHomeActivity extends BaseFragment implements GoodsRecyclerView, Vi
             public void onResponse(Request request, String json) {
                 super.onResponse(request, json);
                 ShowLog.e(json);
-                if (JsonHelper.isRequstOK(json, getContext())) {
+                if (JsonHelper.isRequstOK(json, mActivity)) {
                     JsonHelper<Notice> jsonHelper = new JsonHelper<>(Notice.class);
                     notices = (ArrayList<Notice>) jsonHelper.getDatas(json);
                     int size = notices.size();
@@ -413,11 +360,16 @@ public class WHomeActivity extends BaseFragment implements GoodsRecyclerView, Vi
                         }
 
                     }
-                    if (mf != null) {
-                        mf.resetData(hot_list_1);
-                        hot_mv.setMarqueeFactory(mf);
-                        hot_mv.startFlipping();
-                        //getNoticeContentw();
+                    try {
+                        if (mf != null) {
+                            mf.setData(hot_list_1);
+                            if (hot_mv != null) {
+                                hot_mv.startFlipping();
+                            }
+                            //getNoticeContentw();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 }
 
@@ -485,26 +437,22 @@ public class WHomeActivity extends BaseFragment implements GoodsRecyclerView, Vi
             @Override
             public void onBefore() {
                 super.onBefore();
+                imags.clear();
             }
 
             @Override
             public void onResponse(Request request, String response) {
-                System.out.println("response" + response);
-                //{"title":"bsnsns","imgurl":"http:\/\/u.19diandian.com\/Public\/uploads\/20160922\/bb709e943990c779e76a2d08af6f4d20.jpg","tag":"bsbsb"}
+                ShowLog.e(response);
                 if (JsonHelper.isRequstOK(response, mActivity)) {
                     JsonHelper<BannerInfo> adverJsonHelper = new JsonHelper<>(BannerInfo.class);
                     advers = adverJsonHelper.getDatas(response);
                     if (advers != null) {
-                        List<String> imgs = new ArrayList<String>();
-//                        List<string> title = new ArrayList<string>();
                         for (int i = 0; i < advers.size(); i++) {
-                            imgs.add(advers.get(i).getImgurl());
+                            imags.add(advers.get(i).getImgurl());
                         }
-                        bannerView.setBannerStyle(BannerConfig.CIRCLE_INDICATOR);
-                        bannerView.setBannerAnimation(Transformer.Accordion);
-                        bannerView.setImageLoader(new GlideImageLoader());
-                        bannerView.setImages(imgs);
-                        bannerView.start();
+                        if (bannerGuideContent != null) {
+                            bannerGuideContent.setData(imags, new ArrayList<String>());
+                        }
                     }
 
                 } else {
@@ -520,18 +468,6 @@ public class WHomeActivity extends BaseFragment implements GoodsRecyclerView, Vi
 
         });
 
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        bannerView.startAutoPlay();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        bannerView.stopAutoPlay();
     }
 
     private void stringToPaths(String pathString) {
@@ -552,7 +488,9 @@ public class WHomeActivity extends BaseFragment implements GoodsRecyclerView, Vi
             @Override
             public void onAfter() {
                 super.onAfter();
-
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.setRefreshing(false);
+                }
             }
 
             @Override
@@ -632,7 +570,7 @@ public class WHomeActivity extends BaseFragment implements GoodsRecyclerView, Vi
                     } catch (JSONException e) {
                     }
                 } else {
-                    Toast.makeText(mActivity, Contants.NetStatus.NETLOADERROR, Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(mActivity, Contants.NetStatus.NETLOADERROR, Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -715,7 +653,7 @@ public class WHomeActivity extends BaseFragment implements GoodsRecyclerView, Vi
             @Override
             public void onAfter() {
                 super.onAfter();
-                swipeRefreshLayout.setRefreshing(false);
+
             }
 
             @Override
@@ -730,6 +668,7 @@ public class WHomeActivity extends BaseFragment implements GoodsRecyclerView, Vi
                 if (JsonHelper.isRequstOK(response, mActivity)) {
                     JsonHelper<Index> jsonHelper = new JsonHelper<Index>(Index.class);
                     final Index indexInfo = jsonHelper.getData(response, null);
+
                     messageTx.setText("软件到期时间:" + DateUtils.getDateToString4(indexInfo.getUtime() + "000") + ",请及时续费");
                     messageTx.setVisibility(View.GONE);
                     PreferenceUtils.setPrefString(mActivity, Contants.Preference.DUETIME, indexInfo.getUtime());
@@ -844,15 +783,6 @@ public class WHomeActivity extends BaseFragment implements GoodsRecyclerView, Vi
     }
 
     @Override
-    public void onDestroy() {
-        if (notDialog != null) {
-            notDialog.dismiss();
-        }
-        super.onDestroy();
-
-    }
-
-    @Override
     public void CardClick(int postion) {
 
     }
@@ -939,33 +869,4 @@ public class WHomeActivity extends BaseFragment implements GoodsRecyclerView, Vi
     public void onPageScrollStateChanged(int state) {
 
     }
-
-    @Override
-    public void OnCenterItemClick(NoticeDialog dialog, View view) {
-        switch (view.getId()) {
-            case R.id.dialog_sure:
-                dialog.dismiss();
-                hidebg();
-                break;
-            case R.id.dialog_next:
-                if (notindex == noticeLists.size() - 1) {
-                    showToastShort("没有更多内容了");
-                } else if (notindex < noticeLists.size() - 1) {
-                    notindex++;
-                    setDialogText();
-                }
-                break;
-            case R.id.dialog_up:
-                if (notindex == 0) {
-                    showToastShort("没有更多内容了");
-                } else if (notindex >= 0) {
-                    notindex--;
-                    setDialogText();
-                }
-                break;
-            default:
-                break;
-        }
-    }
-
 }

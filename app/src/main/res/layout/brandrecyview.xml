@@ -3,52 +3,24 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="40dp"
-    android:background="@color/all_bg"
+    android:background="@color/colorf5f5f5"
     android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/title_view"
         android:layout_width="match_parent"
         android:layout_height="36dp"
-        android:gravity="center"
+        android:paddingLeft="20dp"
         android:orientation="horizontal">
-
-        <View
-            android:layout_width="50dp"
-            android:layout_height="0.5dp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginRight="5dp"
-            android:background="@color/color_999999"/>
 
         <TextView
             android:id="@+id/itemname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:padding="5dp"
             android:text=""
             android:textColor="@color/black"/>
 
-        <View
-            android:layout_width="50dp"
-            android:layout_height="0.5dp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="5dp"
-            android:background="@color/color_999999"/>
     </LinearLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/itemRecy"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="5dp"
-            android:background="@color/white"
-            android:overScrollMode="never"/>
-    </RelativeLayout>
 
 </LinearLayout>

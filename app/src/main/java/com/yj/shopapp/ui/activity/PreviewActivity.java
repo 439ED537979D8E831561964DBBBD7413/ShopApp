@@ -39,8 +39,12 @@ public class PreviewActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-        imageUrls = getIntent().getExtras().getStringArray("IMAGEURLS");
-        values = getIntent().getExtras().getStringArray("VALUES");
+        if (getIntent().hasExtra("IMAGEURLS")) {
+            imageUrls = getIntent().getExtras().getStringArray("IMAGEURLS");
+        }
+        if (getIntent().hasExtra("VALUES")) {
+            values = getIntent().getExtras().getStringArray("VALUES");
+        }
         initViews();
     }
 

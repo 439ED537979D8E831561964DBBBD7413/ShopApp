@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/layout_bg_shape"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingTop="15dp"
+        android:textSize="16sp"
+        android:text="修改购买数量"
+        android:textColor="@color/color333333" />
+
+    <LinearLayout
+        android:layout_width="150dp"
+        android:layout_height="30dp"
+        android:layout_gravity="center"
+        android:layout_margin="25dp"
+        android:background="@drawable/huiseruanjiao"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/cutdown"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:gravity="center"
+            android:text="-"
+            android:textColor="@color/color333333"
+            android:textStyle="bold" />
+
+        <View
+            android:layout_width="@dimen/line"
+            android:layout_height="match_parent"
+            android:background="@color/colore3e3e3" />
+
+
+        <EditText
+            android:id="@+id/num"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="4"
+            android:background="@null"
+            android:gravity="center"
+            android:inputType="number"
+            android:imeOptions="actionDone"
+            android:selectAllOnFocus="true"
+            android:textColorHighlight="@color/Orange"
+            android:text="1"
+            android:textColor="@color/color333333"
+            android:textSize="14sp" />
+
+        <View
+            android:layout_width="@dimen/line"
+            android:layout_height="match_parent"
+            android:background="@color/colore3e3e3" />
+
+        <TextView
+            android:id="@+id/add"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:gravity="center"
+            android:text="+"
+            android:textColor="@color/color333333" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#cccccc" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/cancel_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="@dimen/H8dp"
+            android:text="取消"
+            android:textSize="16sp"
+            android:textColor="@color/color333333" />
+
+        <TextView
+            android:id="@+id/sure_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/color_e72c21"
+            android:gravity="center"
+            android:padding="@dimen/H8dp"
+            android:text="确定"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+    </LinearLayout>
+</LinearLayout>

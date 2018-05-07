@@ -16,8 +16,6 @@
 
 package com.mining.app.zxing.decoding;
 
-import java.util.Hashtable;
-
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -34,6 +32,8 @@ import com.mining.app.zxing.MipcaActivityCapture;
 import com.mining.app.zxing.camera.CameraManager;
 import com.mining.app.zxing.camera.PlanarYUVLuminanceSource;
 import com.yj.shopapp.R;
+
+import java.util.Hashtable;
 
 final class DecodeHandler extends Handler {
 

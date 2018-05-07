@@ -1,44 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:background="@color/white"
-    android:layout_height="match_parent">
+    android:orientation="vertical">
 
-    <include layout="@layout/titlebar"/>
+    <include layout="@layout/titlebar" />
 
     <!-- Tabs -->
-    <RelativeLayout
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tabs_tl"
         android:layout_width="match_parent"
-        android:layout_height="46dip"
-        android:background="@color/color_white">
+        android:layout_height="@dimen/H40dp"
+        app:tabGravity="fill"
+        app:tabIndicatorColor="@color/color_01ABFF"
+        app:tabMode="fixed"
+        app:tabSelectedTextColor="@color/color_01ABFF"
+        app:tabTextColor="@color/black" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_alignParentBottom="true"
-            android:background="@color/color_f2f2f2"/>
-
-        <android.support.design.widget.TabLayout
-            android:id="@+id/tabs_tl"
-            android:layout_centerHorizontal="true"
-            android:layout_width="match_parent"
-            android:layout_height="46dip"
-            android:background="#00000000"
-            app:tabGravity="fill"
-            app:tabIndicatorColor="@color/colorPrimary"
-            app:tabMode="fixed"
-            app:tabSelectedTextColor="@color/colorPrimary"
-            app:tabTextColor="@color/text_color" />
-
-    </RelativeLayout>
-
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/H6dp"
+        android:background="@color/colorf5f5f5" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/tabs_tl" />
+        android:layout_height="match_parent" />
 
 </LinearLayout>

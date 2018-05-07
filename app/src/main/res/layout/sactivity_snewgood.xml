@@ -1,30 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:id="@+id/id_drawer_layout"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="@color/color_f2f2f2"
-              android:fitsSystemWindows="true"
-              android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
 
-    <include layout="@layout/titlebar"/>
-
-    <android.support.design.widget.TabLayout
-        android:id="@+id/tab_layout"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:tabIndicatorColor="@color/colorPrimary"
-        app:tabSelectedTextColor="@color/colorPrimary"
-        app:tabTextColor="@color/text_color">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    </android.support.design.widget.TabLayout>
+        <include
+            layout="@layout/base_toolbar_blue"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/title_height" />
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/pager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/H40dp"
+            android:background="@drawable/borderbg1dp">
 
-    </android.support.v4.view.ViewPager>
+            <android.support.design.widget.TabLayout
+                android:id="@+id/tab_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:tabIndicatorColor="@color/color_01ABFF"
+                app:tabMode="scrollable"
+                android:paddingRight="20dp"
+                app:tabSelectedTextColor="@color/color_01ABFF"
+                app:tabTextColor="@color/color333333" />
+
+            <RelativeLayout
+                android:id="@+id/screenTv"
+                android:layout_width="@dimen/H40dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:layout_margin="1px"
+                android:background="@color/tab_more_color">
+
+                <View
+                    android:layout_width="1px"
+                    android:layout_height="match_parent"
+                    android:background="@color/colore7e7e7" />
+
+                <ImageView
+                    android:id="@+id/flipping"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/ic_screen" />
+            </RelativeLayout>
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.scwang.smartrefresh.layout.SmartRefreshLayout
+                android:id="@+id/swipe_refresh_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:srlAccentColor="#fff"
+                app:srlPrimaryColor="#444">
+
+                <com.scwang.smartrefresh.layout.header.ClassicsHeader
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <ezy.ui.layout.LoadingLayout
+                    android:id="@+id/loading"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/recycler_view"
+                        android:layout_width="fill_parent"
+                        android:layout_height="match_parent" />
+                </ezy.ui.layout.LoadingLayout>
+
+
+                <com.scwang.smartrefresh.layout.footer.ClassicsFooter
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:srlAccentColor="#999999"
+                    app:srlPrimaryColor="#eeeeee" />
+            </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+
+            <View
+                android:id="@+id/view_transparent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/transparent40"
+                android:visibility="gone" />
+        </RelativeLayout>
+    </LinearLayout>
+
 
 </LinearLayout>

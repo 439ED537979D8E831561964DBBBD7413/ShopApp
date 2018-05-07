@@ -32,6 +32,51 @@ public class CartList {
     private String itemid;
     private boolean isChoosed;
     private String sale_status;
+    private String specs;
+    private String unit;
+    private String cid;
+    private int tabposition;
+    private String unitprice;
+
+    public String getUnitprice() {
+        return unitprice == null ? "" : unitprice;
+    }
+
+    public void setUnitprice(String unitprice) {
+        this.unitprice = unitprice;
+    }
+
+    public int getTabposition() {
+        return tabposition;
+    }
+
+    public void setTabposition(int tabposition) {
+        this.tabposition = tabposition;
+    }
+
+    public String getCid() {
+        return cid == null ? "" : cid;
+    }
+
+    public void setCid(String cid) {
+        this.cid = cid;
+    }
+
+    public String getUnit() {
+        return unit == null ? "" : unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
+    public String getSpecs() {
+        return specs == null ? "" : specs;
+    }
+
+    public void setSpecs(String specs) {
+        this.specs = specs;
+    }
 
     public boolean isChoosed() {
         return isChoosed;
@@ -160,4 +205,5 @@ public class CartList {
     public void setSale_status(String sale_status) {
         this.sale_status = sale_status;
     }
+
 }

@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:fresco="http://schemas.android.com/apk/res-auto"
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:background="@drawable/recyitem">
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/recyitem"
+    android:padding="@dimen/H8dp">
 
     <LinearLayout
         android:id="@+id/itemview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <RelativeLayout
@@ -22,30 +23,30 @@
                 android:id="@+id/checkBox"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:padding="3dp"
-                android:button="@drawable/checkbox_style"/>
+                android:button="@drawable/checkbox_style"
+                android:padding="3dp" />
 
         </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:padding="5dp">
+            android:layout_height="100dp">
 
             <com.facebook.drawee.view.SimpleDraweeView
                 android:id="@+id/simpleDraweeView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent"
+                android:background="@drawable/borderbg1dp"
+                android:padding="@dimen/H1dp" />
 
 
             <com.facebook.drawee.view.SimpleDraweeView
                 android:id="@+id/top_simpleDraweeView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
                 android:layout_gravity="center_vertical"
-                fresco:placeholderImage="@drawable/pause"/>
+                fresco:placeholderImage="@drawable/pause" />
 
         </RelativeLayout>
 
@@ -53,25 +54,35 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="5dp"
-            android:gravity="center_vertical"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingLeft="10dp">
 
             <TextView
                 android:id="@+id/goodsnameTv"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/H2dp"
+                android:singleLine="true"
                 android:text="名字"
-                android:textColor="@color/text_ord_clolr"
-                android:textSize="16sp"/>
+                android:textColor="@color/color333333" />
 
             <TextView
                 android:id="@+id/specsTv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:padding="@dimen/H2dp"
+                android:text="数量："
+                android:textColor="@color/color_999999"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/shopnum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/H2dp"
                 android:text="规格："
-                android:textColor="@color/text_gary"
-                android:textSize="14sp"/>
+                android:textColor="@color/color_999999"
+                android:textSize="13sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -82,36 +93,38 @@
                     android:id="@+id/money_lowgood"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:padding="@dimen/H2dp"
                     android:text="金额："
-                    android:textColor="@color/text_color"
-                    android:textSize="14sp"/>
+                    android:textColor="@color/color_999999"
+                    android:textSize="13sp" />
 
                 <TextView
                     android:id="@+id/priceTv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text=""
-                    android:textColor="@color/red"
-                    android:textSize="15sp"/>
+                    android:textColor="@color/red" />
 
                 <TextView
                     android:id="@+id/sales_price"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:paddingLeft="5dp"
                     android:layout_weight="1"
-                    android:layout_marginLeft="10dp"
                     android:text=""
-                    android:textColor="@color/text_gary"/>
+                    android:textColor="@color/color_999999" />
+
                 <TextView
                     android:id="@+id/addcartTv"
-                    android:layout_width="70dp"
-                    android:layout_height="25dp"
-                    android:layout_marginRight="12dp"
-                    android:background="@drawable/goodcar_bg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/H8dp"
+                    android:background="@drawable/goodcar_bg3"
                     android:gravity="center"
+                    android:padding="@dimen/H5dp"
                     android:text="加入购物车"
                     android:textColor="@android:color/white"
-                    android:textSize="12sp"/>
+                    android:textSize="12sp" />
             </LinearLayout>
         </LinearLayout>
 

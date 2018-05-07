@@ -2,15 +2,12 @@ package com.yj.shopapp.ui.activity.shopkeeper;
 
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.kaopiz.kprogresshud.KProgressHUD;
@@ -30,7 +27,6 @@ import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.DDecoration;
 import com.yj.shopapp.util.JsonHelper;
 import com.yj.shopapp.util.MessageEvent;
-import com.yj.shopapp.util.NetUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -48,40 +44,35 @@ import butterknife.BindView;
  *
  * @author LK
  */
-public class CarListPagerFragment extends NewBaseFragment implements shopcartlistInterface.ModifyCountInterface
-        , SwipeRefreshLayout.OnRefreshListener {
+public class CarListPagerFragment extends NewBaseFragment implements shopcartlistInterface.ModifyCountInterface {
 
     @BindView(R.id.my_RecyclerView)
     RecyclerView myRecyclerView;
-    @BindView(R.id.pullToRefresh)
-    SwipeRefreshLayout pullToRefresh;
-    //    @BindView(R.id.empty_tv)
-//    TextView emptyTv;
-    //    @BindView(R.id.Cempty_view)
-//    NestedScrollView CemptyView;
     private SNewCarListAdapter adapter;
     private List<CartList> cartLists = new ArrayList<>();
     private gMinMax gMinMaxes;
     private CartList mCartList;
     private KProgressHUD kProgressHUD;
     private String siteid;
-    private boolean isRefresh = false;
+    private int type;
+    private Map<String, CartList> map;
 
-    public static CarListPagerFragment newInstance(int type, boolean isSwitch) {
+    public static CarListPagerFragment newInstance(int type) {
         Bundle args = new Bundle();
         args.putInt("type", type);
-        args.putBoolean("switch", isSwitch);
         CarListPagerFragment fragment = new CarListPagerFragment();
         fragment.setArguments(args);
         return fragment;
     }
 
-    private int getTyep() {
-        return getArguments().getInt("type");
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
     }
 
-    private boolean getSwitch() {
-        return getArguments().getBoolean("switch");
+    private int getTyep() {
+        return getArguments().getInt("type");
     }
 
     @Override
@@ -91,27 +82,21 @@ public class CarListPagerFragment extends NewBaseFragment implements shopcartlis
 
     @Override
     protected void initView(View view, Bundle savedInstanceState) {
-        adapter = new SNewCarListAdapter(mActivity, getSwitch());
+        type = getTyep();
+        adapter = new SNewCarListAdapter(mActivity);
         adapter.setModifyCountInterface(this);
         myRecyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
         myRecyclerView.addItemDecoration(new DDecoration(mActivity, getResources().getDrawable(R.drawable.recyviewdecoration3)));
         myRecyclerView.setAdapter(adapter);
-        pullToRefresh.setOnRefreshListener(this);
-        EventBus.getDefault().register(this);
-        //emptyTv.setText("购物车是空的");
     }
 
     @Override
     protected void initData() {
         kProgressHUD = growProgress("正在修改中");
-        if (!isRefresh) {
-            if (NetUtils.isNetworkConnected(mActivity)) {
-                pullToRefresh.setRefreshing(true);
-                onRefresh();
-            } else {
-                showToast("无数据");
-            }
+        if (isNetWork(mActivity)) {
+            refreshRequest();
         }
+
     }
 
 
@@ -125,33 +110,30 @@ public class CarListPagerFragment extends NewBaseFragment implements shopcartlis
         //ShowLog.e("eventbus" + event.getCid());
         switch (event.getStatus()) {
             case 0:
-                if (event.getCid() == getTyep()) {
+                if (event.getCid() == type) {
                     siteid = event.getSiteid();
                     //saveOrder();
                     checkOrderOpen();
                 }
                 break;
-            case 1:
-                if (event.getCid() == getTyep()) {
-                    delCart();
-                }
-                break;
             case 2:
-                if (event.getCid() == getTyep()) {
+                if (event.getCid() == type) {
                     for (CartList i : cartLists) {
                         i.setChoosed(event.isIscheck());
                     }
                     adapter.notifyDataSetChanged();
-                    statistics();
+                    EventBus.getDefault().post(new MessageEvent(3, type, cartLists));
                 }
                 break;
             case 3:
-                if (event.getCid() == getTyep()) {
-                    if (isRefresh) {
-                        pullToRefresh.setRefreshing(true);
-                        onRefresh();
-                    }
+                if (event.getCid() == type) {
+                    // pullToRefresh.setRefreshing(true);
                 }
+                break;
+            case 4:
+                map = event.getMap();
+                setData();
+
                 break;
             default:
                 break;
@@ -206,38 +188,6 @@ public class CarListPagerFragment extends NewBaseFragment implements shopcartlis
         }
     }
 
-    public void delCart() {
-        String idstr;
-        StringBuffer stringBuffer = new StringBuffer();
-        for (CartList cartList : cartLists) {
-            if (cartList.isChoosed()) {
-                stringBuffer.append(cartList.getId() + "|");
-            }
-        }
-        if (stringBuffer.toString().length() > 0) {
-            idstr = stringBuffer.substring(0, stringBuffer.length() - 1);
-            final String finalIdstr = idstr;
-            new MaterialDialog.Builder(mActivity)
-                    .title("提示")
-                    .content("是否删除选中的商品?")
-                    .positiveText("是")
-                    .negativeText("否")
-                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                            delCartReport(finalIdstr);
-                            materialDialog.dismiss();
-                        }
-                    })
-                    .show();
-
-        } else {
-            showToast("请选择商品");
-        }
-
-
-    }
-
     /**********************
      * 网络请求
      ******************/
@@ -246,16 +196,12 @@ public class CarListPagerFragment extends NewBaseFragment implements shopcartlis
         Map<String, String> params = new HashMap<String, String>();
         params.put("uid", uid);
         params.put("token", token);
-        params.put("cid", getTyep() + "");
+        params.put("cid", type + "");
         HttpHelper.getInstance().post(mActivity, Contants.PortU.ListCarr, params, new OkHttpResponseHandler<String>(mActivity) {
 
             @Override
             public void onAfter() {
                 super.onAfter();
-                if (pullToRefresh != null) {
-                    pullToRefresh.setRefreshing(false);
-                    isRefresh = true;
-                }
 
             }
 
@@ -266,23 +212,13 @@ public class CarListPagerFragment extends NewBaseFragment implements shopcartlis
                 cartLists.clear();
                 if (JsonHelper.isRequstOK(json, mActivity)) {
                     cartLists = JSONArray.parseArray(json, CartList.class);
-                    adapter.setList(cartLists);
+                    setData();
                 }
-// else {
-//                    myRecyclerView.setEmptyView(CemptyView);
-//                }
-                statistics();
-                isAllCheck();
-                setTitlePrice();
             }
 
             @Override
             public void onError(Request request, Exception e) {
                 super.onError(request, e);
-                if (pullToRefresh != null) {
-                    pullToRefresh.setRefreshing(false);
-                    isRefresh = true;
-                }
             }
 
             @Override
@@ -290,6 +226,27 @@ public class CarListPagerFragment extends NewBaseFragment implements shopcartlis
                 super.onBefore();
             }
         });
+
+    }
+
+    private void setData() {
+        if (map == null) {
+            adapter.setList(cartLists);
+            EventBus.getDefault().post(new MessageEvent(3, type, cartLists));
+        } else {
+            if (cartLists != null) {
+                for (int i = 0; i < cartLists.size(); i++) {
+                    CartList c = map.get(cartLists.get(i).getId());
+                    if (cartLists.get(i).getId().equals(c.getId())) {
+                        cartLists.set(i, c);
+                    }
+                }
+                adapter.setList(cartLists);
+                isAllCheck();
+            } else {
+                return;
+            }
+        }
 
     }
 
@@ -329,51 +286,6 @@ public class CarListPagerFragment extends NewBaseFragment implements shopcartlis
 
     }
 
-    public void delCartReport(String idstr) {
-        //显示ProgressDialog
-        final KProgressHUD progressDialog = growProgress(Contants.Progress.DELETE_ING);
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("uid", uid);
-        params.put("token", token);
-        params.put("idstr", idstr);
-
-        HttpHelper.getInstance().post(mActivity, Contants.PortU.DelListCart, params, new OkHttpResponseHandler<String>(mActivity) {
-
-            @Override
-            public void onAfter() {
-                super.onAfter();
-                progressDialog.dismiss();
-            }
-
-            @Override
-            public void onBefore() {
-                super.onBefore();
-                progressDialog.show();
-            }
-
-            @Override
-            public void onResponse(Request request, String json) {
-                super.onResponse(request, json);
-                if (JsonHelper.isRequstOK(json, mActivity)) {
-                    showToast("删除成功");
-                    if (NetUtils.isNetworkConnected(mActivity)) {
-                        pullToRefresh.setRefreshing(true);
-                        onRefresh();
-                    } else {
-                        showToast("无网络");
-                    }
-                } else {
-                    showToast(JsonHelper.errorMsg(json));
-                }
-            }
-
-            @Override
-            public void onError(Request request, Exception e) {
-                super.onError(request, e);
-                showToast(Contants.NetStatus.NETDISABLEORNETWORKDISABLE);
-            }
-        });
-    }
 
     /**
      * 请求最大和最小购买数量
@@ -491,23 +403,19 @@ public class CarListPagerFragment extends NewBaseFragment implements shopcartlis
      * 统计数据
      */
     @Override
-    public void statistics() {
-        if (getSwitch()) {
-            double totalPrice = 0.00;
-            if (cartLists.size() > 0) {
-                for (CartList i : cartLists) {
-                    if (i.isChoosed() && i.getSale_status().equals("1")) {
-                        totalPrice += Double.parseDouble(i.getMoneysum());
-                    }
-                }
-                EventBus.getDefault().post(new MessageEvent(0, CommonUtils.decimal(totalPrice)));
-            } else {
-                EventBus.getDefault().post(new MessageEvent(0, CommonUtils.decimal(totalPrice)));
-            }
-        } else {
-            EventBus.getDefault().post(new MessageEvent(1, false));
-        }
+    public void numClick(int position) {
 
+//        double totalPrice = 0.00;
+//        if (cartLists.size() > 0) {
+//            for (CartList i : cartLists) {
+//                if (i.isChoosed() && i.getSale_status().equals("1")) {
+//                    totalPrice += Double.parseDouble(i.getMoneysum());
+//                }
+//            }
+//            EventBus.getDefault().post(new MessageEvent(0, CommonUtils.decimal(totalPrice)));
+//        } else {
+//            EventBus.getDefault().post(new MessageEvent(0, CommonUtils.decimal(totalPrice)));
+//        }
     }
 
     private void setTitlePrice() {
@@ -527,13 +435,13 @@ public class CarListPagerFragment extends NewBaseFragment implements shopcartlis
         if (cartLists.size() != 0) {
             for (CartList i : cartLists) {
                 if (!i.isChoosed() && i.getSale_status().equals("1")) {
-                    EventBus.getDefault().post(new MessageEvent(1, false));
+                    EventBus.getDefault().post(new MessageEvent(1, type, false));
                     return;
                 }
             }
-            EventBus.getDefault().post(new MessageEvent(1, true));
+            EventBus.getDefault().post(new MessageEvent(1, type, true));
         } else {
-            EventBus.getDefault().post(new MessageEvent(1, false));
+            EventBus.getDefault().post(new MessageEvent(1, type, false));
         }
 
     }
@@ -547,19 +455,15 @@ public class CarListPagerFragment extends NewBaseFragment implements shopcartlis
     public void checkGroup(int position, boolean isChecked) {
         cartLists.get(position).setChoosed(isChecked);
         isAllCheck();
-        statistics();
+//        statistics();
+        EventBus.getDefault().post(new MessageEvent(3, type, cartLists));
+
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         EventBus.getDefault().unregister(this);
-    }
-
-    @Override
-    public void onRefresh() {
-        cartLists.clear();
-        refreshRequest();
     }
 
 }

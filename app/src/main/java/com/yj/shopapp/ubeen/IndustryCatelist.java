@@ -1,5 +1,9 @@
 package com.yj.shopapp.ubeen;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -8,7 +12,7 @@ import java.util.List;
  * @author LK
  */
 
-public class IndustryCatelist {
+public class IndustryCatelist implements Parcelable {
 
     /**
      * status : 1
@@ -51,7 +55,16 @@ public class IndustryCatelist {
          */
 
         private String name;
+        private String id;
         private List<TagGroup> list;
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
 
         public String getName() {
             return name;
@@ -69,7 +82,7 @@ public class IndustryCatelist {
             this.list = list;
         }
 
-        public static class TagGroup {
+        public static class TagGroup implements Parcelable {
             /**
              * id : 7
              * name : 方便面
@@ -82,6 +95,16 @@ public class IndustryCatelist {
             private String imgurl;
             private String cid;
             private boolean isSort;
+            private int position;
+            private int index;
+
+            public int getIndex() {
+                return index;
+            }
+
+            public void setIndex(int index) {
+                this.index = index;
+            }
 
             public boolean isSort() {
                 return isSort;
@@ -123,6 +146,14 @@ public class IndustryCatelist {
                 this.cid = cid;
             }
 
+            public int getPosition() {
+                return position;
+            }
+
+            public void setPosition(int position) {
+                this.position = position;
+            }
+
             public TagGroup() {
             }
 
@@ -130,6 +161,89 @@ public class IndustryCatelist {
                 this.name = name;
                 this.isSort = isSort;
             }
+
+            public TagGroup(String name, int index, boolean isSort) {
+                this.name = name;
+                this.index = index;
+                this.isSort = isSort;
+            }
+
+            public TagGroup(String name, int position) {
+                this.name = name;
+                this.position = position;
+            }
+
+            @Override
+            public int describeContents() {
+                return 0;
+            }
+
+            @Override
+            public void writeToParcel(Parcel dest, int flags) {
+                dest.writeString(this.id);
+                dest.writeString(this.name);
+                dest.writeString(this.imgurl);
+                dest.writeString(this.cid);
+                dest.writeByte(this.isSort ? (byte) 1 : (byte) 0);
+                dest.writeInt(this.position);
+                dest.writeInt(this.index);
+            }
+
+            protected TagGroup(Parcel in) {
+                this.id = in.readString();
+                this.name = in.readString();
+                this.imgurl = in.readString();
+                this.cid = in.readString();
+                this.isSort = in.readByte() != 0;
+                this.position = in.readInt();
+                this.index = in.readInt();
+            }
+
+            public static final Parcelable.Creator<TagGroup> CREATOR = new Parcelable.Creator<TagGroup>() {
+                @Override
+                public TagGroup createFromParcel(Parcel source) {
+                    return new TagGroup(source);
+                }
+
+                @Override
+                public TagGroup[] newArray(int size) {
+                    return new TagGroup[size];
+                }
+            };
         }
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.status);
+        dest.writeString(this.info);
+        dest.writeList(this.data);
+    }
+
+    public IndustryCatelist() {
+    }
+
+    protected IndustryCatelist(Parcel in) {
+        this.status = in.readInt();
+        this.info = in.readString();
+        this.data = new ArrayList<DataBean>();
+        in.readList(this.data, DataBean.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<IndustryCatelist> CREATOR = new Parcelable.Creator<IndustryCatelist>() {
+        @Override
+        public IndustryCatelist createFromParcel(Parcel source) {
+            return new IndustryCatelist(source);
+        }
+
+        @Override
+        public IndustryCatelist[] newArray(int size) {
+            return new IndustryCatelist[size];
+        }
+    };
 }

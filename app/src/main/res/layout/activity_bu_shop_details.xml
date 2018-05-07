@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    tools:context="com.yj.shopapp.ui.activity.shopkeeper.BuShopDetailsAcitivity">
+
+    <RelativeLayout
+        android:id="@+id/title_view"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/title_height">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="限量抢购"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colore3e3e3" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#fafafa"
+        android:paddingLeft="@dimen/H15dp"
+        android:paddingTop="@dimen/H10dp">
+
+        <ImageView
+            android:id="@+id/shopimag"
+            android:layout_width="wrap_content"
+            android:layout_height="90dp"
+            android:src="@drawable/load" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:paddingBottom="@dimen/H10dp"
+            android:paddingLeft="@dimen/H15dp"
+            android:paddingRight="@dimen/H15dp">
+
+            <TextView
+                android:id="@+id/shopname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/shopspec"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text=""
+                android:textColor="@color/color_999999" />
+
+            <TextView
+                android:id="@+id/shopprice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:text=""
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/shopnumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:text=""
+                android:textColor="@color/color_999999" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/H15dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="优惠活动"
+            android:textColor="@color/black" />
+
+        <TextView
+            android:id="@+id/Preferential"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="限量抢购"
+            android:textColor="@color/black" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginLeft="@dimen/H15dp"
+        android:layout_marginRight="@dimen/H15dp"
+        android:background="@color/colore3e3e3" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/H15dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="购买数量"
+            android:textColor="@color/black" />
+
+        <TextView
+            android:id="@+id/shopnum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text=""
+            android:textColor="@color/black" />
+    </RelativeLayout>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginLeft="@dimen/H15dp"
+        android:layout_marginRight="@dimen/H15dp"
+        android:background="@color/colore3e3e3" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:padding="@dimen/H15dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="应付金额"
+            android:textColor="@color/black" />
+
+        <TextView
+            android:id="@+id/Amount_payable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="￥71.6"
+            android:textColor="@color/red" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginLeft="@dimen/H15dp"
+        android:layout_marginRight="@dimen/H15dp"
+        android:background="@color/colore3e3e3" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:padding="@dimen/H15dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_warning"
+            android:drawablePadding="@dimen/H5dp"
+            android:text="限量抢购须知"
+            android:textColor="@color/red"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <FrameLayout
+            android:id="@+id/addwebView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="15dp" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/submit_tv"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/H40dp"
+        android:background="@color/red"
+        android:gravity="center"
+        android:text="好的,我知道了"
+        android:textColor="@color/white" />
+</LinearLayout>

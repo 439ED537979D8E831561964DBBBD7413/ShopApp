@@ -1,7 +1,16 @@
 package com.yj.shopapp.ui.activity;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSONObject;
@@ -20,8 +29,10 @@ import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.JsonHelper;
 import com.yj.shopapp.util.NetUtils;
 import com.yj.shopapp.util.PreferenceUtils;
+import com.yj.shopapp.util.SoftKeyInputHidWidget;
 import com.yj.shopapp.util.StringHelper;
 import com.yj.shopapp.view.ClearEditText;
+import com.yj.shopapp.view.KeyboardLayout;
 import com.yj.shopapp.wbeen.Login;
 
 import java.util.HashMap;
@@ -47,10 +58,23 @@ public class LoginActivity extends BaseActivity {
     TextView regTv;
     @BindView(R.id.forget_password_tv)
     TextView forgetPasswordTv;
+    @BindView(R.id.bgView)
+    LinearLayout bgView;
+    @BindView(R.id.scroll)
+    ScrollView scroll;
+    @BindView(R.id.mainLl)
+    KeyboardLayout mainLl;
     private KProgressHUD progressDialog;
     int index;
     boolean isReqing;
     private int status;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        //StatusBarUtil.setTranslucent(this);
+        super.onCreate(savedInstanceState);
+    }
+
     @Override
     protected int getLayoutId() {
         return R.layout.activity_login;
@@ -63,6 +87,44 @@ public class LoginActivity extends BaseActivity {
         String userpwd = PreferenceUtils.getPrefString(mContext, Contants.Preference.USER_PWD, "");
         userNameEt.setText(username);
         userPasswordEt.setText(userpwd);
+        userPasswordEt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                //完成
+                login();
+                return true;
+            }
+        });
+        mainLl.setKeyboardListener(new KeyboardLayout.KeyboardLayoutListener() {
+            @Override
+            public void onKeyboardStateChanged(boolean isActive, int keyboardHeight) {
+                if (isActive) {
+                    scrollToBottom();
+                }
+            }
+        });
+        setHideOrShowSoftInput(userNameEt);
+        setHideOrShowSoftInput(userPasswordEt);
+    }
+
+    /**
+     * 弹出软键盘时将SVContainer滑到底
+     */
+    private void scrollToBottom() {
+        if (scroll != null) {
+            scroll.postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    scroll.smoothScrollTo(0, scroll.getBottom() + SoftKeyInputHidWidget.getStatusBarHeight(LoginActivity.this));
+                }
+            }, 100);
+        }
+    }
+
+    @Override
+    protected void setStatusBar() {
+
     }
 
     //注册
@@ -71,7 +133,6 @@ public class LoginActivity extends BaseActivity {
 
         Bundle bundle = new Bundle();
         bundle.putString(VerificationPhoneActivity.ACTION_KEY, VerificationPhoneActivity.REGISTER);
-
         CommonUtils.goActivity(mContext, VerificationPhoneActivity.class, bundle);
 
 
@@ -203,7 +264,7 @@ public class LoginActivity extends BaseActivity {
                 super.onResponse(request, json);
                 isReqing = true;
                 PreferenceUtils.setPrefInt(mContext, Contants.Preference.ISLOGGIN, 1);
-                System.out.println("response" + json);
+                ShowLog.e(json);
                 if (JsonHelper.isRequstOK(json, mContext)) {
                     JsonHelper<Login> jsonHelper = new JsonHelper<Login>(Login.class);
                     final Login uinfo = jsonHelper.getData(json, null);
@@ -214,14 +275,17 @@ public class LoginActivity extends BaseActivity {
                     PreferenceUtils.setPrefString(mContext, Contants.Preference.TOKEN, uinfo.getToken());
                     PreferenceUtils.setPrefString(mContext, Contants.Preference.USER_NAME, userName);
                     PreferenceUtils.setPrefString(mContext, Contants.Preference.USER_PWD, userPwd);
-
+                    PreferenceUtils.setPrefInt(mContext, "isVip", uinfo.getIs_vip());
+                    PreferenceUtils.setPrefString(mContext, "CustomerService", uinfo.getCustomer_service_phone());
+                    PreferenceUtils.setPrefString(mContext, "address", uinfo.getAddress());
+                    ShowLog.e(uinfo.getAddress());
                     if ("1".equals(uinfo.getUtype())) {
                         getrewardArea(uinfo.getUid(), uinfo.getToken());
                     } else {
                         CommonUtils.goActivity(mContext, WMainTabActivity.class, null, true);
                     }
                 } else {
-                    showToastShort(JsonHelper.errorMsg(json));
+                    showToastShort(JSONObject.parseObject(json).getString("info"));
                 }
 
             }
@@ -234,5 +298,29 @@ public class LoginActivity extends BaseActivity {
         });
     }
 
+    private void setHideOrShowSoftInput(View v) {
+        if (!(v instanceof EditText)) {
+            v.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    hideSoftKeyboard(LoginActivity.this);
+//                    mHolder.ll_settings.setFocusable(true);
+//                    mHolder.ll_settings.requestFocus();
+                    return false;
+                }
+            });
+        }
+        if (v instanceof ViewGroup) {
+            for (int i = 0; i < ((ViewGroup) v).getChildCount(); i++) {
+                View innerView = ((ViewGroup) v).getChildAt(i);
+                setHideOrShowSoftInput(innerView);
+            }
+        }
+    }
 
+    public void hideSoftKeyboard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity
+                .INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+    }
 }

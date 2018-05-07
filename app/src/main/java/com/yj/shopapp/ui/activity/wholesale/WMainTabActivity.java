@@ -1,21 +1,11 @@
 package com.yj.shopapp.ui.activity.wholesale;
 
 
-import android.Manifest;
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.RadioButton;
@@ -26,18 +16,15 @@ import com.yj.shopapp.config.AppManager;
 import com.yj.shopapp.config.Contants;
 import com.yj.shopapp.ui.activity.LoginActivity;
 import com.yj.shopapp.ui.activity.base.BaseTabActivity;
-import com.yj.shopapp.ui.activity.upversion.Callback;
-import com.yj.shopapp.ui.activity.upversion.ConfirmDialog;
 import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.PreferenceUtils;
-import com.yj.shopapp.util.VersionUpdata;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import butterknife.ButterKnife;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 /**
@@ -59,58 +46,53 @@ public class WMainTabActivity extends BaseTabActivity implements View.OnClickLis
 
     private int currentTab = 0;
     Unbinder unbinder;
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        checkAndUpdate(mContext);
-    }
 
-    private void checkAndUpdate(Context context) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            VersionUpdata.getInstance(false, mContext,getFragmentManager()).updateVersion();
+//    private void checkAndUpdate(Context context) {
+//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+//            VersionUpdata.getInstance(false, mContext,getFragmentManager()).updateVersion();
+//
+//        } else {
+//            if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+//                    == PackageManager.PERMISSION_GRANTED) {
+//
+//                VersionUpdata.getInstance(false, mContext,getFragmentManager()).updateVersion();
+//            } else {//申请权限
+//                ActivityCompat.requestPermissions((Activity) context,
+//                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+//            }
+//        }
+//    }
 
-        } else {
-            if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    == PackageManager.PERMISSION_GRANTED) {
-
-                VersionUpdata.getInstance(false, mContext,getFragmentManager()).updateVersion();
-            } else {//申请权限
-                ActivityCompat.requestPermissions((Activity) context,
-                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-            }
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case 1:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    VersionUpdata.getInstance(false, mContext,getFragmentManager()).updateVersion();
-                } else {
-                    new ConfirmDialog(this, new Callback() {
-                        @Override
-                        public void callback(int position) {
-                            if (position == 1) {
-                                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                                intent.setData(Uri.parse("package:" + getPackageName())); // 根据包名打开对应的设置界面
-                                startActivity(intent);
-                            }
-                        }
-                    }).setContent("暂无读写SD卡权限\n是否前往设置？").show();
-                }
-                break;
-            default:
-                break;
-        }
-    }
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        switch (requestCode) {
+//            case 1:
+//                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                    VersionUpdata.getInstance(false, mContext,getFragmentManager()).updateVersion();
+//                } else {
+//                    new ConfirmDialog(this, new Callback() {
+//                        @Override
+//                        public void callback(int position) {
+//                            if (position == 1) {
+//                                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+//                                intent.setData(Uri.parse("package:" + getPackageName())); // 根据包名打开对应的设置界面
+//                                startActivity(intent);
+//                            }
+//                        }
+//                    }).setContent("暂无读写SD卡权限\n是否前往设置？").show();
+//                }
+//                break;
+//            default:
+//                break;
+//        }
+//    }
 
     @Override
     protected void init(Bundle savedInstanceState) {
         setContentView(R.layout.wactivity_tab);
-        unbinder=ButterKnife.bind(this);
-        mFragments.add(WHomeActivity.newInstance(this));
+        unbinder = ButterKnife.bind(this);
+        mFragments.add(WHomeActivity.newInstance());
         mFragments.add(new WOrderActivity());
         mFragments.add(new WTestActivity());
 

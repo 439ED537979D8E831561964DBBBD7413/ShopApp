@@ -11,6 +11,33 @@ public class Login {
     private String islogin;
     private String agentuid;
     private String areaid;
+    private int is_vip;
+    private String customer_service_phone;
+    private String address;
+
+    public String getAddress() {
+        return address == null ? "" : address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getCustomer_service_phone() {
+        return customer_service_phone == null ? "" : customer_service_phone;
+    }
+
+    public void setCustomer_service_phone(String customer_service_phone) {
+        this.customer_service_phone = customer_service_phone;
+    }
+
+    public int getIs_vip() {
+        return is_vip;
+    }
+
+    public void setIs_vip(int is_vip) {
+        this.is_vip = is_vip;
+    }
 
     public String getIslogin() {
         return islogin;

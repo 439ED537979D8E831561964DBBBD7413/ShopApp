@@ -1,57 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:animateLayoutChanges="true"
-              android:background="@color/white"
-              android:focusable="true"
-              android:focusableInTouchMode="true"
-              android:orientation="vertical"
-              tools:context="com.yj.shopapp.ui.activity.shopkeeper.SSecondActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:background="@color/white"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical"
+    tools:context="com.yj.shopapp.ui.activity.shopkeeper.SSecondActivity">
 
-    <include
-        android:id="@+id/title_layout"
-        layout="@layout/titlebar"/>
+    <include layout="@layout/base_toolbar_blue_tv" />
 
-    <LinearLayout
-        android:id="@+id/search_layout"
+    <!--<LinearLayout-->
+    <!--android:id="@+id/search_layout"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_margin="5dp"-->
+    <!--android:background="@drawable/ic_default_item_bg"-->
+    <!--android:orientation="horizontal"-->
+    <!--android:paddingLeft="5dp">-->
+
+    <!--<ImageView-->
+    <!--android:layout_width="25dp"-->
+    <!--android:layout_height="25dp"-->
+    <!--android:layout_gravity="center_vertical"-->
+    <!--android:src="@drawable/search_icon"/>-->
+
+    <!--<com.yj.shopapp.view.ClearEditText-->
+    <!--android:id="@+id/value_Et"-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="32dp"-->
+    <!--android:layout_weight="1"-->
+    <!--android:background="@null"-->
+    <!--android:gravity="center"-->
+    <!--android:hint="品牌搜索"-->
+    <!--android:singleLine="true"-->
+    <!--android:paddingRight="5dp"-->
+    <!--android:textColor="@color/text_color"-->
+    <!--android:textSize="14sp"/>-->
+    <!--</LinearLayout>-->
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:background="@drawable/ic_default_item_bg"
-        android:orientation="horizontal"
-        android:paddingLeft="5dp">
+        android:layout_height="@dimen/H40dp"
+        android:background="@drawable/borderbg1dp"
+        android:orientation="horizontal">
 
-        <ImageView
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_gravity="center_vertical"
-            android:src="@drawable/search_icon"/>
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tab_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingRight="20dp"
+            app:tabIndicatorColor="@color/color_01ABFF"
+            app:tabMode="scrollable"
+            app:tabSelectedTextColor="@color/color_01ABFF"
+            app:tabTextColor="@color/color333333" />
 
-        <com.yj.shopapp.view.ClearEditText
-            android:id="@+id/value_Et"
-            android:layout_width="0dp"
-            android:layout_height="32dp"
-            android:layout_weight="1"
-            android:background="@null"
-            android:gravity="center"
-            android:hint="品牌搜索"
-            android:singleLine="true"
-            android:paddingRight="5dp"
-            android:textColor="@color/text_color"
-            android:textSize="14sp"/>
-    </LinearLayout>
+        <RelativeLayout
+            android:id="@+id/more"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_margin="@dimen/H1dp"
+            android:background="@color/tab_more_color">
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_refresh_layout"
+            <View
+                android:layout_width="1px"
+                android:layout_height="match_parent"
+                android:background="@color/colore7e7e7" />
+
+            <ImageView
+                android:id="@+id/image2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:src="@drawable/ic_screen" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycler_view"
+        <ezy.ui.layout.LoadingLayout
+            android:id="@+id/loading"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:overScrollMode="never" />
+        </ezy.ui.layout.LoadingLayout>
+
+        <View
+            android:id="@+id/bgView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:overScrollMode="never"/>
-    </android.support.v4.widget.SwipeRefreshLayout>
+            android:background="@color/color_60000000"
+            android:visibility="gone" />
+    </RelativeLayout>
+
 </LinearLayout>

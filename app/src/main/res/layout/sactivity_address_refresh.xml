@@ -6,23 +6,22 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
-    <include
-        layout="@layout/titlebar" />
+    <include layout="@layout/titlebar" />
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/item_height"
-        android:gravity="center_vertical"
-        android:paddingLeft="@dimen/padding_all"
         android:layout_marginTop="10dp"
-        android:background="@android:color/white">
+        android:background="@android:color/white"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/padding_all">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/red"
-            android:text="*"/>
+            android:text="*"
+            android:textColor="@color/red" />
 
         <TextView
             android:layout_width="match_parent"
@@ -30,41 +29,43 @@
             android:layout_weight="3"
             android:gravity="left"
             android:paddingLeft="6dp"
+            android:text="收  件 人"
             android:textColor="@color/gary_6"
-            android:textSize="15sp"
-            android:text="收  件 人" />
+            android:textSize="15sp" />
 
         <EditText
             android:id="@+id/add_address_name_edt"
             android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@null"
-            android:singleLine="true"
+            android:hint="姓名"
             android:maxLength="10"
+            android:singleLine="true"
             android:textColor="@color/text_color"
-            android:textSize="15sp"
-            android:layout_height="match_parent"
-            android:hint="姓名" />
+            android:textSize="15sp" />
 
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/line"
-        android:background="@color/center_line"/>
+        android:background="@color/center_line" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/item_height"
-        android:gravity="center_vertical"
         android:layout_marginTop="10dp"
-        android:paddingLeft="@dimen/padding_all"
-        android:background="@android:color/white">
+        android:background="@android:color/white"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/padding_all">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/red"
-            android:text="*"/>
+            android:text="*"
+            android:textColor="@color/red" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -78,34 +79,35 @@
         <EditText
             android:id="@+id/add_address_shopname_edt"
             android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@null"
-            android:singleLine="true"
             android:hint="店铺名称"
             android:maxLength="10"
-            android:textSize="15sp"
+            android:singleLine="true"
             android:textColor="@color/text_color"
-            android:layout_height="match_parent" />
+            android:textSize="15sp" />
 
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/line"
-        android:background="@color/center_line"/>
+        android:background="@color/center_line" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/item_height"
         android:layout_marginTop="10dp"
+        android:background="@android:color/white"
         android:gravity="center_vertical"
-        android:paddingLeft="@dimen/padding_all"
-        android:background="@android:color/white">
+        android:paddingLeft="@dimen/padding_all">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/red"
-            android:text="*"/>
+            android:text="*"
+            android:textColor="@color/red" />
 
         <TextView
             android:layout_width="match_parent"
@@ -120,29 +122,30 @@
         <EditText
             android:id="@+id/add_address_phone_edt"
             android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@null"
             android:hint="11位手机号"
             android:inputType="phone"
-            android:singleLine="true"
             android:maxLength="11"
-            android:textSize="15sp"
+            android:singleLine="true"
             android:textColor="@color/text_color"
-            android:layout_height="match_parent" />
+            android:textSize="15sp" />
 
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/line"
-        android:background="@color/center_line"/>
+        android:background="@color/center_line" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/item_height"
         android:layout_marginTop="10dp"
+        android:background="@android:color/white"
         android:gravity="center_vertical"
-        android:paddingLeft="@dimen/padding_all"
-        android:background="@android:color/white">
+        android:paddingLeft="@dimen/padding_all">
 
         <TextView
             android:layout_width="match_parent"
@@ -157,35 +160,36 @@
         <EditText
             android:id="@+id/add_address_tel_edt"
             android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@null"
             android:hint="备用电话 可不填"
             android:inputType="phone"
-            android:singleLine="true"
             android:maxLength="11"
-            android:textSize="15sp"
+            android:singleLine="true"
             android:textColor="@color/text_color"
-            android:layout_height="match_parent" />
+            android:textSize="15sp" />
 
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/line"
-        android:background="@color/center_line"/>
+        android:background="@color/center_line" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/item_height"
         android:layout_marginTop="10dp"
+        android:background="@android:color/white"
         android:gravity="center_vertical"
-        android:paddingLeft="@dimen/padding_all"
-        android:background="@android:color/white">
+        android:paddingLeft="@dimen/padding_all">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/red"
-            android:text="*"/>
+            android:text="*"
+            android:textColor="@color/red" />
 
         <TextView
             android:layout_width="match_parent"
@@ -200,34 +204,35 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:gravity="center_vertical">
 
             <ImageView
-                android:layout_alignParentRight="true"
                 android:id="@+id/refresh_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
                 android:layout_marginRight="12dp"
-                android:src="@drawable/ic_address"/>
+                android:src="@drawable/ic_address"
+                android:visibility="gone" />
 
             <EditText
                 android:id="@+id/add_address_detail_edt"
                 android:layout_width="match_parent"
-                android:layout_toLeftOf="@+id/refresh_btn"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
                 android:background="@null"
                 android:hint="街道门牌信息"
-                android:paddingRight="5dp"
-                android:textSize="15sp"
                 android:maxLength="20"
-                android:layout_centerVertical="true"
-                android:layout_height="wrap_content" />
+                android:paddingRight="@dimen/H10dp"
+                android:textSize="15sp" />
 
 
         </RelativeLayout>
 
 
     </LinearLayout>
+
     <TextView
         android:id="@+id/submit"
         android:layout_width="match_parent"
@@ -242,15 +247,15 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/line"
-        android:background="@color/center_line"/>
+        android:background="@color/center_line" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/item_height"
+        android:background="@android:color/white"
         android:gravity="center_vertical"
         android:paddingLeft="@dimen/padding_all"
-        android:visibility="gone"
-        android:background="@android:color/white">
+        android:visibility="gone">
 
         <TextView
             android:layout_width="match_parent"
@@ -266,16 +271,16 @@
             android:id="@+id/manager_checkBox"
             android:layout_width="match_parent"
             android:layout_height="20dp"
+            android:layout_centerVertical="true"
             android:layout_weight="1"
             android:button="@drawable/address_checkbox"
             android:gravity="center"
-            android:textColor="@color/text_color"
-            android:layout_centerVertical="true"/>
+            android:textColor="@color/text_color" />
 
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/line"
-        android:background="@color/center_line"/>
+        android:background="@color/center_line" />
 </LinearLayout>

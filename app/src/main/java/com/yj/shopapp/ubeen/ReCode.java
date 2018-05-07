@@ -7,10 +7,24 @@ package com.yj.shopapp.ubeen;
  */
 
 public class ReCode {
+    private int status;
     private String code;
 
     public ReCode(String code) {
         this.code = code;
+    }
+
+    public ReCode(int status, String code) {
+        this.status = status;
+        this.code = code;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public String getCode() {

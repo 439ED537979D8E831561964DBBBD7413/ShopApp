@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorf5f5f5"
+    android:orientation="vertical"
+    tools:context=".ui.activity.shopkeeper.GoodsRecordDatails">
+
+    <include layout="@layout/base_toolbar_blue" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:padding="@dimen/H8dp">
+
+        <ImageView
+            android:id="@+id/shopimag"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:background="@drawable/borderbg1dp"
+            android:padding="@dimen/H1dp"
+            android:layout_marginLeft="@dimen/H10dp"
+            android:src="@drawable/load" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/shopimag"
+            android:orientation="vertical"
+            android:paddingLeft="30dp">
+
+            <TextView
+                android:id="@+id/shopname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/H2dp"
+                android:textColor="@color/color474747"
+                android:text=""
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/shopnum"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/H2dp"
+                android:textColor="@color/color909090"
+                android:text=""
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/shopspec"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/H2dp"
+                android:textColor="@color/color909090"
+                android:text=""
+                android:textSize="12sp" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/my_RecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/H6dp" />
+</LinearLayout>

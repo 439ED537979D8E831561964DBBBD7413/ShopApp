@@ -2,19 +2,16 @@ package com.yj.shopapp.ui.activity.adapter;
 
 import android.content.Context;
 import android.net.Uri;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.yj.shopapp.R;
 import com.yj.shopapp.ubeen.Classise;
 
-import java.net.URI;
 import java.util.List;
 
 /**

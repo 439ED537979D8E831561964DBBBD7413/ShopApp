@@ -6,20 +6,29 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kaopiz.kprogresshud.KProgressHUD;
 import com.umeng.message.PushAgent;
+import com.yj.shopapp.R;
 import com.yj.shopapp.config.AppManager;
 import com.yj.shopapp.config.Contants;
 import com.yj.shopapp.config.MyApplication;
 import com.yj.shopapp.util.CommonUtils;
+import com.yj.shopapp.util.NetUtils;
 import com.yj.shopapp.util.PreferenceUtils;
+import com.yj.shopapp.util.StatusBarUtil;
+
+import java.lang.reflect.Field;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -44,7 +53,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected boolean mIsActivityGroupBase = false;
     Unbinder unbinder;
     private Bundle bundle;
-
+    //private ImmersionBar mImmersionBar;
     public Bundle getBundle() {
         return bundle;
     }
@@ -57,11 +66,15 @@ public abstract class BaseActivity extends AppCompatActivity {
         setContentView(getLayoutId());
         unbinder = ButterKnife.bind(this);
         mContext = this;
+        setStatusBar();
+//        mImmersionBar = ImmersionBar.with(this).fitsSystemWindows(true).statusBarColor(R.color.colorPrimary);
+//        mImmersionBar.init();   //所有子类都将继承这些相同的属性
         uid = PreferenceUtils.getPrefString(mContext, Contants.Preference.UID, "");
         token = PreferenceUtils.getPrefString(mContext, Contants.Preference.TOKEN, "");
         WId = PreferenceUtils.getPrefString(mContext, Contants.Preference.AGENTUID, "");
         agentuid = PreferenceUtils.getPrefString(mContext, Contants.Preference.AGENTUID, "");
         userPhone = PreferenceUtils.getPrefString(mContext, Contants.Preference.USER_NAME, "");
+
         verCode = CommonUtils.getVerCode(mContext);
         myApplication = (MyApplication) getApplication();
         // 添加Activity到堆栈
@@ -70,8 +83,16 @@ public abstract class BaseActivity extends AppCompatActivity {
             AppManager.getAppManager().addActivity(this);
         }
         initData();
+
     }
 
+    protected String getAddressId() {
+        return PreferenceUtils.getPrefString(mContext, "addressId", "");
+    }
+
+    protected void setStatusBar() {
+        StatusBarUtil.setColor(this, getResources().getColor(R.color.color_01ABFF), 30);
+    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -118,15 +139,43 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * 检测网络
+     *
+     * @param context
+     * @return
+     */
+    protected boolean isNetWork(Context context) {
+        if (NetUtils.isNetworkConnected(context)) {
+            return true;
+        } else {
+            showToastShort("无网络");
+            return false;
+        }
+    }
+
     private Toast mToast = null;
 
     public void toast(String msg, int duration) {
+        TextView toastTv = null;
         if (mToast == null) {
-            mToast = Toast.makeText(mContext.getApplicationContext(), msg, duration);
-        } else {
-            mToast.setText(msg);
+            //mToast = Toast.makeText(mContext.getApplicationContext(), msg, duration);
+            View toastRoot = LayoutInflater.from(mContext).inflate(R.layout.view_toast, null);
+            toastTv = toastRoot.findViewById(R.id.toast_tv);
+            toastTv.setText(msg);
+            mToast = new Toast(mContext.getApplicationContext());
+            //获取屏幕高度
+            WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+            int height = wm.getDefaultDisplay().getHeight();
+            //Toast的Y坐标是屏幕高度的1/3，不会出现不适配的问题
+            mToast.setGravity(Gravity.TOP, 0, height / 2);
             mToast.setDuration(duration);
+            mToast.setView(toastRoot);
+        } else {
+            toastTv = mToast.getView().findViewById(R.id.toast_tv);
+            toastTv.setText(msg);
         }
+        //mToast.setGravity(Gravity.CENTER, 0, 0);
         mToast.show();
     }
 
@@ -158,6 +207,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (mToast != null) {
             mToast.cancel();
         }
+//        if (mImmersionBar != null) {
+//            mImmersionBar.destroy();
+//        }
         unbinder.unbind();
         // 结束Activity&从堆栈中移除
         AppManager.getAppManager().removeActivityFromStack(this);
@@ -185,6 +237,56 @@ public abstract class BaseActivity extends AppCompatActivity {
         lp.alpha = 1.0f;
         getWindow().setAttributes(lp);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+    }
+
+    public void reflex(final TabLayout tabLayout, final int margin) {
+        //了解源码得知 线的宽度是根据 tabView的宽度来设置的
+        tabLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    //拿到tabLayout的mTabStrip属性
+                    LinearLayout mTabStrip = (LinearLayout) tabLayout.getChildAt(0);
+
+                    int dp10 = CommonUtils.dip2px(tabLayout.getContext(), margin == 0 ? 10 : margin);
+
+                    for (int i = 0; i < mTabStrip.getChildCount(); i++) {
+                        View tabView = mTabStrip.getChildAt(i);
+
+                        //拿到tabView的mTextView属性  tab的字数不固定一定用反射取mTextView
+                        Field mTextViewField = tabView.getClass().getDeclaredField("mTextView");
+                        mTextViewField.setAccessible(true);
+
+                        TextView mTextView = (TextView) mTextViewField.get(tabView);
+
+                        tabView.setPadding(0, 0, 0, 0);
+
+                        //因为我想要的效果是   字多宽线就多宽，所以测量mTextView的宽度
+                        int width = 0;
+                        width = mTextView.getWidth();
+                        if (width == 0) {
+                            mTextView.measure(0, 0);
+                            width = mTextView.getMeasuredWidth();
+                        }
+
+                        //设置tab左右间距为10dp  注意这里不能使用Padding 因为源码中线的宽度是根据 tabView的宽度来设置的
+                        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) tabView.getLayoutParams();
+                        params.width = width;
+                        params.leftMargin = dp10;
+                        params.rightMargin = dp10;
+                        tabView.setLayoutParams(params);
+
+                        tabView.invalidate();
+                    }
+
+                } catch (NoSuchFieldException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
     }
 
 }

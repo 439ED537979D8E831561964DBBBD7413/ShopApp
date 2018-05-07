@@ -4,9 +4,9 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.squareup.okhttp.Request;
@@ -18,6 +18,7 @@ import com.yj.shopapp.loading.ILoadView;
 import com.yj.shopapp.loading.ILoadViewImpl;
 import com.yj.shopapp.loading.LoadMoreClickListener;
 import com.yj.shopapp.presenter.BaseRecyclerView;
+import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.ui.activity.adapter.WNewGoodsAdapter;
 import com.yj.shopapp.ui.activity.base.BaseActivity;
 import com.yj.shopapp.util.CommonUtils;
@@ -42,30 +43,28 @@ import butterknife.BindView;
 public class WNewGoodAcitvity extends BaseActivity implements BaseRecyclerView {
 
 
-    @BindView(R.id.forewadImg)
-    ImageView forewadImg;
-    @BindView(R.id.title)
-    TextView title;
-    @BindView(R.id.id_right_btu)
-    TextView idRightBtu;
-    @BindView(R.id.first_low)
-    TextView firstLow;
-    @BindView(R.id.first_high)
-    TextView firstHigh;
+    //    @BindView(R.id.first_low)
+//    TextView firstLow;
+//    @BindView(R.id.first_high)
+//    TextView firstHigh;
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
     @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout swipeRefreshLayout;
-    @BindView(R.id.sort_price)
-    TextView sortPrice;
-    @BindView(R.id.IndustryList)
-    RecyclerView IndustryList;
-    @BindView(R.id.hide_view)
-    LinearLayout hideView;
-    @BindView(R.id.screenTv)
-    TextView screenTv;
+    //    @BindView(R.id.sort_price)
+//    TextView sortPrice;
+//    @BindView(R.id.IndustryList)
+//    RecyclerView IndustryList;
+//    @BindView(R.id.hide_view)
+    // LinearLayout hideView;
     @BindView(R.id.view_transparent)
     View viewTransparent;
+    @BindView(R.id.content_tv)
+    TextView contentTv;
+    @BindView(R.id.right_tv)
+    ImageView rightTv;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
     private ILoadView iLoadView = null;
     private View loadMoreView = null;
 
@@ -86,6 +85,7 @@ public class WNewGoodAcitvity extends BaseActivity implements BaseRecyclerView {
     String token;
     String username = "";
     String type = "";
+
     @Override
     protected int getLayoutId() {
         return R.layout.wactivity_wnewgood;
@@ -93,8 +93,15 @@ public class WNewGoodAcitvity extends BaseActivity implements BaseRecyclerView {
 
     @Override
     protected void initData() {
-        title.setText("新品上市");
-        hideView.setVisibility(View.GONE);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        contentTv.setVisibility(View.GONE);
         uid = PreferenceUtils.getPrefString(mContext, Contants.Preference.UID, "");
         token = PreferenceUtils.getPrefString(mContext, Contants.Preference.TOKEN, "");
 
@@ -138,8 +145,8 @@ public class WNewGoodAcitvity extends BaseActivity implements BaseRecyclerView {
         } else {
             showToastShort("网络不给力");
         }
+        //setTabLayout();
     }
-
 
     public void refreshRequest() {
         mCurrentPage = 1;
@@ -168,7 +175,7 @@ public class WNewGoodAcitvity extends BaseActivity implements BaseRecyclerView {
                 super.onResponse(request, json);
 
                 goodsList.clear();
-                System.out.println("response" + json);
+                ShowLog.e(json);
                 if (JsonHelper.isRequstOK(json, mContext)) {
                     JsonHelper<Goods> jsonHelper = new JsonHelper<Goods>(Goods.class);
 
@@ -318,7 +325,6 @@ public class WNewGoodAcitvity extends BaseActivity implements BaseRecyclerView {
     public void showToastShort(String msg) {
         super.showToastShort(msg);
     }
-
 
 
     @Override

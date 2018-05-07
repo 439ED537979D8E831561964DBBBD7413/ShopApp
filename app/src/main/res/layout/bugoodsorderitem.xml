@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white">
+
+    <ImageView
+        android:id="@+id/image2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/H5dp"
+        android:src="@drawable/ic_bugoods" />
+
+    <LinearLayout
+        android:id="@+id/bgView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/image2"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/H3dp">
+
+            <TextView
+                android:id="@+id/orderNumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableRight="@drawable/btn_arrow_r"
+                android:padding="@dimen/H2dp"
+                android:drawablePadding="5dp"
+                android:paddingLeft="5dp"
+                android:text=""
+                android:textColor="@color/color333333" />
+
+            <TextView
+                android:id="@+id/order_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:paddingRight="20dp"
+                android:text=""
+                android:textColor="@color/color_01abff" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="20dp"
+            android:paddingTop="@dimen/H3dp">
+
+            <ImageView
+                android:id="@+id/shopimag"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:src="@drawable/load" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/shopimag"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/H10dp">
+
+                <TextView
+                    android:id="@+id/bgoodsname"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textColor="@color/color333333"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/bgoodsspesc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="@dimen/H4dp"
+                    android:paddingTop="@dimen/H4dp"
+                    android:text=""
+                    android:textColor="@color/color_999999"
+                    android:textSize="11sp" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/bgoodsprice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textColor="@color/color333333"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/bgoodsnum"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:text=""
+                        android:textColor="@color/color_999999"
+                        android:textSize="12sp" />
+                </RelativeLayout>
+
+            </LinearLayout>
+        </RelativeLayout>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/bgView"
+        android:paddingBottom="@dimen/H5dp"
+        android:paddingRight="20dp"
+        android:paddingTop="3dp">
+
+        <TextView
+            android:id="@+id/allnum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/H10dp"
+            android:text=""
+            android:textColor="@color/color333333"
+            android:textSize="11sp" />
+
+        <TextView
+            android:id="@+id/allmonry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text=""
+            android:textColor="@color/color333333"
+            android:textSize="11sp" />
+    </RelativeLayout>
+</RelativeLayout>

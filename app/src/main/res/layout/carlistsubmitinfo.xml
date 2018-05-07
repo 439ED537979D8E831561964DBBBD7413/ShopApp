@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_frame"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="温馨提示"
+        android:textColor="@color/black"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/onetext"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:gravity="center"
+        android:text="平台配送金额500元起送"
+        android:textColor="@color/colorc666666"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/Single_amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="您本次下单金额为388.1元"
+        android:textColor="@color/colorc666666"
+        android:textSize="16sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:gravity="center"
+        android:text="未达平台配送标准"
+        android:textColor="@color/color_e72c21"
+        android:textSize="15sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/colorf5f5f5" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/H40dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/finish_tv"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="返回"
+            android:textColor="@color/black" />
+
+
+        <TextView
+            android:id="@+id/exit_tv"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/color_01ABFF"
+            android:gravity="center"
+            android:text="我知道了"
+            android:textColor="@color/white" />
+    </LinearLayout>
+
+</LinearLayout>

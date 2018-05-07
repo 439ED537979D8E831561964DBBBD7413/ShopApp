@@ -1,73 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:id="@+id/activity_sintegral_change"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="@color/all_bg"
-              android:orientation="vertical"
-              tools:context="com.yj.shopapp.ui.activity.shopkeeper.SIntegralChangeActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    tools:context="com.yj.shopapp.ui.activity.shopkeeper.SIntegralChangeActivity">
 
-    <LinearLayout
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/item_height"
-        android:background="@color/white"
-        android:orientation="horizontal">
+        android:layout_height="@dimen/title_height"
+        app:navigationIcon="@drawable/ic_lift_arrayblack">
 
         <TextView
-            android:id="@+id/yearBt"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@color/white"
-            android:gravity="center"
-            android:text="年份筛选"/>
-
-        <View
-            android:layout_width="@dimen/line"
-            android:layout_height="match_parent"
-            android:background="@color/line3"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="积分明细"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
 
         <TextView
-            android:id="@+id/monthBt"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@color/white"
+            android:id="@+id/screenTime"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
             android:gravity="center"
-            android:text="月份筛选"/>
-
-        <View
-            android:layout_width="@dimen/line"
-            android:layout_height="match_parent"
-            android:background="@color/line3"/>
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@color/white"
-            android:gravity="center"
-            android:text="季度筛选"/>
-    </LinearLayout>
+            android:text="筛选"
+            android:textColor="@color/black"
+            android:textSize="15sp" />
+    </android.support.v7.widget.Toolbar>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/all_bg"/>
+        android:background="@color/colore3e3e3" />
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout
         android:id="@+id/pullToRefresh"
         android:layout_width="match_parent"
         android:layout_height="fill_parent">
+
+        <com.scwang.smartrefresh.layout.header.ClassicsHeader
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:srlAccentColor="#fff"
+            app:srlPrimaryColor="#444" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:overScrollMode="never"
-            android:padding="8dp"/>
+            android:padding="8dp" />
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 
 </LinearLayout>

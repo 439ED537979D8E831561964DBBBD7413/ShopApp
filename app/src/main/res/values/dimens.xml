@@ -10,28 +10,34 @@
     <dimen name="MIN_FRAME_HEIGHT">240dp</dimen>
     <dimen name="MAX_FRAME_WIDTH">240dp</dimen>
     <dimen name="MAX_FRAME_HEIGHT">240dp</dimen>
-    <dimen name="adver_font_size">50sp</dimen>
     <dimen name="adver_font_size0">40sp</dimen>
     <dimen name="adver_font_size1">20sp</dimen>
-    <dimen name="zhengwen">15sp</dimen>
     <dimen name="item_height">40dp</dimen>
     <dimen name="top">5dp</dimen>
     <dimen name="line_w">2dp</dimen>
     <dimen name="title_to_centent">20.5dp</dimen>
-    <dimen name="margin_top">35dp</dimen>
     <dimen name="selerdec">18sp</dimen>
     <dimen name="duihuan_btn">16sp</dimen>
-    <dimen name="zhengwen_fontsize">18sp</dimen>
 
 
     <dimen name="padding_top">10dp</dimen>
     <dimen name="default_padding">10dp</dimen>
     <dimen name="line">0.5dp</dimen>
-    <dimen name="padding_center">10dp</dimen>
     <dimen name="padding_all">12dp</dimen>
-    <dimen name="fillet">2dp</dimen>
     <dimen name="height_40dp">50dp</dimen>
     <dimen name="H40dp">40dp</dimen>
-    <dimen name="title_height">44dp</dimen>
+    <dimen name="title_height">40dp</dimen>
     <dimen name="height_5dp">5dp</dimen>
+    <dimen name="H1dp">1dp</dimen>
+    <dimen name="H2dp">2dp</dimen>
+    <dimen name="H3dp">3dp</dimen>
+    <dimen name="H4dp">4dp</dimen>
+    <dimen name="H5dp">5dp</dimen>
+    <dimen name="H6dp">6dp</dimen>
+    <dimen name="H8dp">8dp</dimen>
+    <dimen name="H9dp">9dp</dimen>
+    <dimen name="H10dp">10dp</dimen>
+    <dimen name="H100dp">100dp</dimen>
+    <dimen name="H50dp">50dp</dimen>
+    <dimen name="H15dp">15dp</dimen>
 </resources>

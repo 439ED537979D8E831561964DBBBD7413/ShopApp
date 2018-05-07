@@ -19,8 +19,8 @@ import com.yj.shopapp.wbeen.Worder;
 
 import java.util.List;
 
-import butterknife.ButterKnife;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by huanghao on 2016/12/15.

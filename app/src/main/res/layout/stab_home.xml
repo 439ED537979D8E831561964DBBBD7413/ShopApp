@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app1="http://schemas.android.com/apk/res-auto"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="@color/all_bg"
-              android:orientation="vertical">
+    xmlns:app1="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/all_bg"
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/title_view"
         android:layout_width="match_parent"
-        android:layout_height="44dp"
-        android:background="?attr/colorPrimary">
+        android:layout_height="@dimen/title_height"
+        android:background="@drawable/gradient">
 
         <RelativeLayout
             android:id="@+id/searchBtn"
@@ -22,7 +22,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:padding="5dp"
-                android:src="@drawable/scan_code"/>
+                android:src="@drawable/scan_code" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -40,7 +40,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
                 android:layout_centerVertical="true"
-                android:src="@drawable/search_icon"/>
+                android:src="@drawable/search_icon" />
 
             <TextView
                 android:id="@+id/search_tv"
@@ -51,7 +51,7 @@
                 android:layout_toRightOf="@id/search_img"
                 android:hint="输入商品名或者商品条码"
                 android:textColorHint="#b3b1b1"
-                android:textSize="13sp"/>
+                android:textSize="13sp" />
 
         </RelativeLayout>
 
@@ -67,10 +67,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:padding="5dp"
-                android:src="@drawable/ic_msg"/>
+                android:src="@drawable/ic_msg" />
         </RelativeLayout>
     </LinearLayout>
-
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh_layout"
@@ -88,43 +87,31 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <FrameLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="120dp">
+                    android:layout_height="130dp">
 
-                    <com.yj.shopapp.view.MyBanner
-                        android:id="@+id/bannerView"
+                    <cn.bingoogolapple.bgabanner.BGABanner
+                        android:id="@+id/banner_guide_content"
+                        style="@style/BannerDefaultStyle"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        app1:image_scale_type="center_crop"
-                        app1:indicator_drawable_selected="@drawable/banner_indicator_s"
-                        app1:indicator_drawable_unselected="@drawable/banner_indicator_u"
-                        app1:indicator_height="2dp"
-                        app1:indicator_width="15dp"/>
-                </FrameLayout>
+                        app1:banner_pointDrawable="@drawable/selector_banner_unequal"
+                        app1:banner_transitionEffect="accordion" />
+                </RelativeLayout>
 
-                <!--<TextView-->
-                <!--android:id="@+id/banner_tx"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="30dp"-->
-                <!--android:background="@color/white"-->
-                <!--android:gravity="center_vertical"-->
-                <!--android:maxLines="1"-->
-                <!--android:paddingLeft="10dp"-->
-                <!--android:text=""-->
-                <!--android:visibility=""-->
-                <!--android:textColor="@color/red"/>-->
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
-                    android:background="@color/all_bg"/>
+                    android:background="@color/all_bg" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="75dp"
+                    android:layout_height="wrap_content"
                     android:background="@color/white"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:padding="10dp">
 
                     <LinearLayout
                         android:id="@+id/integral_rl"
@@ -141,7 +128,7 @@
                             android:drawableTop="@drawable/integral"
                             android:text="积分兑现"
                             android:textColor="@color/text_gary_4d"
-                            android:textSize="13sp"/>
+                            android:textSize="12sp" />
 
                     </LinearLayout>
 
@@ -158,7 +145,7 @@
                             android:id="@+id/reward_img"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/reference"/>
+                            android:background="@drawable/reference" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -166,7 +153,7 @@
                             android:layout_marginTop="3dp"
                             android:text="推荐奖励"
                             android:textColor="@color/text_gary_4d"
-                            android:textSize="13sp"/>
+                            android:textSize="12sp" />
 
                     </LinearLayout>
 
@@ -186,9 +173,9 @@
                             android:drawablePadding="3dp"
                             android:drawableTop="@drawable/btn_new"
                             android:gravity="center"
-                            android:text="新品上市"
+                            android:text="每日新品"
                             android:textColor="@color/text_gary_4d"
-                            android:textSize="13sp"/>
+                            android:textSize="12sp" />
                     </RelativeLayout>
 
                     <LinearLayout
@@ -203,7 +190,7 @@
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/btn_clearance"/>
+                            android:background="@drawable/btn_clearance" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -211,7 +198,7 @@
                             android:layout_marginTop="4dp"
                             android:text="清仓特价"
                             android:textColor="@color/text_gary_4d"
-                            android:textSize="13sp"/>
+                            android:textSize="12sp" />
 
                     </LinearLayout>
 
@@ -232,7 +219,7 @@
                             android:drawableTop="@drawable/btn_promotion"
                             android:text="促销特价"
                             android:textColor="@color/text_gary_4d"
-                            android:textSize="13sp"/>
+                            android:textSize="12sp" />
 
                     </LinearLayout>
 
@@ -240,46 +227,46 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="80dp"
-                    android:layout_marginTop="5dp"
+                    android:layout_height="90dp"
+                    android:layout_marginTop="7dp"
                     android:orientation="horizontal">
 
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_marginRight="2dp"
+                        android:layout_marginRight="3dp"
                         android:layout_weight="1"
-                        android:background="@drawable/bg_hotmv"
+                        android:background="@color/white"
                         android:orientation="vertical">
 
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/ic_notice"/>
+                            android:src="@drawable/ic_notice" />
 
                         <com.gongwen.marqueen.MarqueeView
                             android:id="@+id/hot_mv"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"/>
+                            android:layout_height="match_parent" />
 
                     </LinearLayout>
 
                     <RelativeLayout
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_marginLeft="2dp"
+                        android:layout_marginLeft="3dp"
                         android:layout_weight="1">
 
                         <ImageView
                             android:id="@+id/service_imag"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:scaleType="centerCrop"/>
+                            android:scaleType="centerCrop" />
 
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/urbanservice"/>
+                            android:src="@drawable/urbanservice" />
 
                     </RelativeLayout>
 
@@ -287,63 +274,107 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="110dp"
-                    android:layout_marginTop="5dp"
+                    android:layout_height="120dp"
+                    android:layout_marginTop="7dp"
                     android:orientation="horizontal">
 
-                    <LinearLayout
+                    <RelativeLayout
+                        android:id="@+id/limitBuGood"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
+                        android:layout_marginRight="3dp"
                         android:layout_weight="1"
-                        android:layout_marginRight="2dp"
                         android:background="@color/white"
                         android:orientation="vertical">
 
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:src="@drawable/limitedpurchase"/>
-
-                        <android.support.v7.widget.RecyclerView
+                        <LinearLayout
+                            android:id="@+id/goto_sales"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"/>
-                    </LinearLayout>
+                            android:layout_height="match_parent"
+                            android:layout_below="@+id/labellayout"
+                            android:gravity="center"
+                            android:orientation="horizontal">
 
+                            <include layout="@layout/view_flashsale" />
+                        </LinearLayout>
 
-                    <LinearLayout
+                        <ImageView
+                            android:id="@+id/bugood_bg"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/bg_bugood"
+                            android:visibility="gone" />
+
+                        <LinearLayout
+                            android:id="@id/labellayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/limitedpurchase" />
+
+                            <TextView
+                                android:id="@+id/sales_time"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text=""
+                                android:textColor="@color/black"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </RelativeLayout>
+
+                    <RelativeLayout
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
+                        android:layout_marginLeft="3dp"
                         android:layout_weight="1"
-                        android:layout_marginLeft="2dp"
                         android:background="@color/white"
                         android:orientation="vertical">
 
+                        <LinearLayout
+                            android:id="@+id/goto_hot"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_below="@+id/placeholder2"
+                            android:gravity="center"
+                            android:orientation="horizontal">
+
+                            <include layout="@layout/hotindexitem" />
+                        </LinearLayout>
+
                         <ImageView
+                            android:id="@+id/hotGoods_bg"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/bg_hotgoods"
+                            android:visibility="gone" />
+
+                        <ImageView
+                            android:id="@id/placeholder2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:src="@drawable/ic_hot"/>
-
-                        <android.support.v7.widget.RecyclerView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"/>
-                    </LinearLayout>
+                            android:src="@drawable/ic_hot" />
+                    </RelativeLayout>
                 </LinearLayout>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="7dp"
                     android:background="@color/white"
-                    android:layout_marginTop="5dp"
                     android:descendantFocusability="blocksDescendants">
 
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/classi_gv"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:overScrollMode="never"
-                        android:scrollbars="none"/>
+                        android:scrollbars="none" />
                 </RelativeLayout>
             </LinearLayout>
 

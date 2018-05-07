@@ -23,6 +23,11 @@ public abstract class CommonBaseAdapter<T> extends BaseAdapter {
         minflater = LayoutInflater.from(context);
     }
 
+    public CommonBaseAdapter(Context context, List<T> list) {
+        this.context = context;
+        this.list = list;
+    }
+
     @Override
     public int getCount() {
         return null == list ? 0 : list.size();

@@ -140,7 +140,9 @@ public class WOrderViewActivity extends BaseFragment implements BaseRecyclerView
             @Override
             public void onAfter() {
                 super.onAfter();
-                swipeRefreshLayout.setRefreshing(false);
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.setRefreshing(false);
+                }
                 isRequesting = false;
             }
 

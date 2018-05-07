@@ -1,15 +1,23 @@
 package com.yj.shopapp.ui.activity.shopkeeper;
 
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.os.Handler;
+import android.support.design.widget.TabLayout;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.support.v7.widget.RecyclerView.OnScrollListener;
+import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSONArray;
@@ -21,13 +29,15 @@ import com.yj.shopapp.http.HttpHelper;
 import com.yj.shopapp.http.OkHttpResponseHandler;
 import com.yj.shopapp.ubeen.BrandGroup;
 import com.yj.shopapp.ubeen.IndustryCatelist;
+import com.yj.shopapp.ui.activity.Interface.OnItemChildViewOnClickListener;
 import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.ui.activity.adapter.SBrandAdapter;
+import com.yj.shopapp.ui.activity.adapter.ScreenLvAdpter;
 import com.yj.shopapp.ui.activity.base.BaseActivity;
 import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.JsonHelper;
-import com.yj.shopapp.util.NetUtils;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,20 +45,27 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import ezy.ui.layout.LoadingLayout;
 
-public class SSecondActivity extends BaseActivity implements AdapterView.OnItemClickListener {
-    @BindView(R.id.title)
-    TextView title;
+public class SSecondActivity extends BaseActivity implements AdapterView.OnItemClickListener, OnItemChildViewOnClickListener {
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
-    @BindView(R.id.id_right_btu)
-    TextView idRightBtu;
-    @BindView(R.id.swipe_refresh_layout)
-    SwipeRefreshLayout swipeRefreshLayout;
-    @BindView(R.id.search_layout)
-    LinearLayout searchLayout;
-    @BindView(R.id.value_Et)
-    EditText valueEt;
+    @BindView(R.id.tab_layout)
+    TabLayout tabLayout;
+    @BindView(R.id.content_tv)
+    TextView contentTv;
+    @BindView(R.id.right_tv)
+    TextView rightTv;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.more)
+    RelativeLayout more;
+    @BindView(R.id.image2)
+    ImageView image2;
+    @BindView(R.id.bgView)
+    View bgView;
+    @BindView(R.id.loading)
+    LoadingLayout loading;
     private GridLayoutManager layoutManager;
     boolean isBrang;
     private IndustryCatelist industryCatelist;
@@ -58,8 +75,17 @@ public class SSecondActivity extends BaseActivity implements AdapterView.OnItemC
     private List<IndustryCatelist.DataBean.TagGroup> groups = new ArrayList<>();
     private List<BrandGroup.ListBean> NewlistBeans = new ArrayList<>();
     private List<IndustryCatelist.DataBean.TagGroup> Newgroups = new ArrayList<>();
+    private List<BrandGroup.ListBean> tabname_brand = new ArrayList<>();
+    private List<IndustryCatelist.DataBean.TagGroup> tabname_classify = new ArrayList<>();
     private boolean isSereen;
     private boolean isRefresh;
+    private int brandindex = 0, classifyindex = 0;
+    private View rootView;
+    private PopupWindow pw;
+    private int currposition = 0, classifyposition = 0;
+    private ScreenLvAdpter screenLvAdpter;
+    private RecyclerView pwRecy;
+
     @Override
     protected int getLayoutId() {
         return R.layout.activity_ssecond;
@@ -67,130 +93,250 @@ public class SSecondActivity extends BaseActivity implements AdapterView.OnItemC
 
     @Override
     protected void initData() {
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
         if (getIntent().hasExtra("Name")) {
-            title.setText(getIntent().getStringExtra("Name"));
+            contentTv.setText(getIntent().getStringExtra("Name"));
         }
         brandAdapter = new SBrandAdapter(mContext);
-        idRightBtu.setText("品牌");
-        swipeRefreshLayout.setColorSchemeResources(Contants.Refresh.refreshColorScheme);
-        swipeRefreshLayout.setOnRefreshListener(listener);
+        rightTv.setText("品牌");
         layoutManager = new GridLayoutManager(mContext, 4);
         if (recyclerView != null) {
             recyclerView.setLayoutManager(layoutManager);
             recyclerView.setAdapter(brandAdapter);
         }
         brandAdapter.setOnItemClickListener(this);
-        valueEt.addTextChangedListener(new TextWatcher() {
+        screenLvAdpter = new ScreenLvAdpter(mContext);
+        screenLvAdpter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (!"".equals(s.toString())) {
-                    if (isBrang) {
-                        for (BrandGroup.ListBean bean : listBeans) {
-                            if (!bean.isSort()) {
-                                if (bean.getName().contains(s.toString())) {
-                                    NewlistBeans.add(bean);
-                                }
-                            } else {
-                                NewlistBeans.add(bean);
-                            }
-                        }
-                        List<BrandGroup.ListBean> list = new ArrayList<>();
-                        for (int i = 0; i < NewlistBeans.size(); i++) {
-                            if (i == NewlistBeans.size() - 1) {
-                                if (NewlistBeans.get(i).isSort()) {
-                                    continue;
-                                } else {
-                                    list.add(NewlistBeans.get(i));
-                                    continue;
-                                }
-                            }
-                            if (NewlistBeans.get(i).isSort() && !NewlistBeans.get(i + 1).isSort()
-                                    || !NewlistBeans.get(i).isSort() && NewlistBeans.get(i + 1).isSort()
-                                    || !NewlistBeans.get(i).isSort() && !NewlistBeans.get(i + 1).isSort()) {
-                                list.add(NewlistBeans.get(i));
-                            }
-                        }
-                        NewlistBeans = list;
-                        brandAdapter.setList(NewlistBeans);
-                    } else {
-                        for (IndustryCatelist.DataBean.TagGroup group : groups) {
-                            if (!group.isSort()) {
-                                if (group.getName().contains(s.toString())) {
-                                    Newgroups.add(group);
-                                }
-                            } else {
-                                Newgroups.add(group);
-                            }
-                        }
-                        List<IndustryCatelist.DataBean.TagGroup> list = new ArrayList<>();
-                        for (int i = 0; i < Newgroups.size(); i++) {
-                            if (i == Newgroups.size() - 1) {
-                                if (Newgroups.get(i).isSort()) {
-                                    continue;
-                                } else {
-                                    list.add(Newgroups.get(i));
-                                    continue;
-                                }
-                            }
-                            if (Newgroups.get(i).isSort() && !Newgroups.get(i + 1).isSort()
-                                    || !Newgroups.get(i).isSort() && Newgroups.get(i + 1).isSort()
-                                    || !Newgroups.get(i).isSort() && !Newgroups.get(i + 1).isSort()) {
-                                list.add(Newgroups.get(i));
-                            }
-                        }
-                        Newgroups = list;
-                        brandAdapter.setList(Newgroups);
-                    }
-                    isSereen = true;
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                currposition = position;
+                tabLayout.getTabAt(position).select();
+                //这里就可以根据业务需求处理点击事件了。
+                if (isBrang) {
+                    ((LinearLayoutManager) recyclerView.getLayoutManager()).scrollToPositionWithOffset(tabname_brand.get(position).getPosition(), 0);
                 } else {
-                    isSereen = false;
-                    if (isBrang) {
-                        brandAdapter.setList(listBeans);
-                    } else {
-                        brandAdapter.setList(groups);
-                    }
+                    classifyposition = position;
+                    ((LinearLayoutManager) recyclerView.getLayoutManager()).scrollToPositionWithOffset(tabname_classify.get(position).getPosition(), 0);
                 }
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
+                pw.dismiss();
             }
         });
-        if (NetUtils.isNetworkConnected(mContext)) {
-            if (null != swipeRefreshLayout) {
+//        valueEt.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                if (!"".equals(s.toString())) {
+//                    if (isBrang) {
+//                        for (BrandGroup.ListBean bean : listBeans) {
+//                            if (!bean.isSort()) {
+//                                if (bean.getName().contains(s.toString())) {
+//                                    NewlistBeans.add(bean);
+//                                }
+//                            } else {
+//                                NewlistBeans.add(bean);
+//                            }
+//                        }
+//                        List<BrandGroup.ListBean> list = new ArrayList<>();
+//                        for (int i = 0; i < NewlistBeans.size(); i++) {
+//                            if (i == NewlistBeans.size() - 1) {
+//                                if (NewlistBeans.get(i).isSort()) {
+//                                    continue;
+//                                } else {
+//                                    list.add(NewlistBeans.get(i));
+//                                    continue;
+//                                }
+//                            }
+//                            if (NewlistBeans.get(i).isSort() && !NewlistBeans.get(i + 1).isSort()
+//                                    || !NewlistBeans.get(i).isSort() && NewlistBeans.get(i + 1).isSort()
+//                                    || !NewlistBeans.get(i).isSort() && !NewlistBeans.get(i + 1).isSort()) {
+//                                list.add(NewlistBeans.get(i));
+//                            }
+//                        }
+//                        NewlistBeans = list;
+//                        brandAdapter.setList(NewlistBeans);
+//                    } else {
+//                        for (IndustryCatelist.DataBean.TagGroup group : groups) {
+//                            if (!group.isSort()) {
+//                                if (group.getName().contains(s.toString())) {
+//                                    Newgroups.add(group);
+//                                }
+//                            } else {
+//                                Newgroups.add(group);
+//                            }
+//                        }
+//                        List<IndustryCatelist.DataBean.TagGroup> list = new ArrayList<>();
+//                        for (int i = 0; i < Newgroups.size(); i++) {
+//                            if (i == Newgroups.size() - 1) {
+//                                if (Newgroups.get(i).isSort()) {
+//                                    continue;
+//                                } else {
+//                                    list.add(Newgroups.get(i));
+//                                    continue;
+//                                }
+//                            }
+//                            if (Newgroups.get(i).isSort() && !Newgroups.get(i + 1).isSort()
+//                                    || !Newgroups.get(i).isSort() && Newgroups.get(i + 1).isSort()
+//                                    || !Newgroups.get(i).isSort() && !Newgroups.get(i + 1).isSort()) {
+//                                list.add(Newgroups.get(i));
+//                            }
+//                        }
+//                        Newgroups = list;
+//                        brandAdapter.setList(Newgroups);
+//                    }
+//                    isSereen = true;
+//                } else {
+//                    isSereen = false;
+//                    if (isBrang) {
+//                        brandAdapter.setList(listBeans);
+//                    } else {
+//                        brandAdapter.setList(groups);
+//                    }
+//                }
+//
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//
+//            }
+//        });
+        recyclerView.addOnScrollListener(new OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+                //判断是当前layoutManager是否为LinearLayoutManager
+                // 只有LinearLayoutManager才有查找第一个和最后一个可见view位置的方法
+                if (layoutManager instanceof LinearLayoutManager) {
+                    LinearLayoutManager linearManager = (LinearLayoutManager) layoutManager;
+                    //获取第一个可见view的位置
+                    int firstItemPosition = linearManager.findFirstVisibleItemPosition();
+                    if (firstItemPosition == -1) return;
+                    if (isBrang) {
+                        if (listBeans.size() > 0) {
+                            if (listBeans.get(firstItemPosition).isSort()) {
+                                tabLayout.setFocusable(true);
+                                tabLayout.setFocusableInTouchMode(true);
+                                if (!tabLayout.getTabAt(listBeans.get(firstItemPosition).getIndex()).isSelected()) {
+                                    tabLayout.getTabAt(listBeans.get(firstItemPosition).getIndex()).select();
+                                    currposition = listBeans.get(firstItemPosition).getIndex();
+                                }
+                            }
+                        }
+                    } else {
+                        if (groups.size() > 0) {
+                            if (groups.get(firstItemPosition).isSort()) {
+                                tabLayout.setFocusable(true);
+                                tabLayout.setFocusableInTouchMode(true);
+                                if (!tabLayout.getTabAt(groups.get(firstItemPosition).getIndex()).isSelected()) {
+                                    tabLayout.getTabAt(groups.get(firstItemPosition).getIndex()).select();
+                                    classifyposition = groups.get(firstItemPosition).getIndex();
 
-                swipeRefreshLayout.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        swipeRefreshLayout.setRefreshing(true);
-                        industry();
-                        getBrand();
+                                }
+                            }
+                        }
                     }
-                }, 200);
+                }
             }
-        } else {
-            showToastShort("网络不给力");
-        }
-    }
-
-    SwipeRefreshLayout.OnRefreshListener listener = new SwipeRefreshLayout.OnRefreshListener() {
-        @Override
-        public void onRefresh() {
+        });
+        initPw();
+        if (isNetWork(mContext)) {
             industry();
             getBrand();
         }
-    };
+    }
+
+    private void initPw() {
+        rootView = LayoutInflater.from(mContext).inflate(R.layout.searchandclassify, null);
+        pwRecy = rootView.findViewById(R.id.my_RecyclerView);
+        pwRecy.setLayoutManager(new GridLayoutManager(mContext, 4));
+        pwRecy.setAdapter(screenLvAdpter);
+    }
+
+    /**
+     * 显示弹出窗
+     */
+    private void showPW() {
+        image2.setRotation(180);
+        pw = new PopupWindow(rootView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
+        pw.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        pw.setOutsideTouchable(true);
+        pw.setTouchable(true);
+        pw.showAsDropDown(more);
+        pw.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                image2.setRotation(0);
+                bgView.setVisibility(View.GONE);
+            }
+        });
+        if (isBrang) {
+            screenLvAdpter.setDef(currposition);
+            screenLvAdpter.setList(tabname_brand);
+        } else {
+            screenLvAdpter.setDef(classifyposition);
+            screenLvAdpter.setList(tabname_classify);
+        }
+        bgView.setVisibility(View.VISIBLE);
+    }
+
+    private void setTablayoutclick() {
+        for (int i = 0; i < tabLayout.getTabCount(); i++) {
+            TabLayout.Tab tab = tabLayout.getTabAt(i);
+            if (tab == null) return;
+            //这里使用到反射，拿到Tab对象后获取Class
+            Class c = tab.getClass();
+            try {
+                //Filed “字段、属性”的意思,c.getDeclaredField 获取私有属性。
+                //"mView"是Tab的私有属性名称(可查看TabLayout源码),类型是 TabView,TabLayout私有内部类。
+                Field field = c.getDeclaredField("mView");
+                //值为 true 则指示反射的对象在使用时应该取消 Java 语言访问检查。值为 false 则指示反射的对象应该实施 Java 语言访问检查。
+                //如果不这样会报如下错误
+                // java.lang.IllegalAccessException:
+                //Class com.test.accessible.Main
+                //can not access
+                //a member of class com.test.accessible.AccessibleTest
+                //with modifiers "private"
+                field.setAccessible(true);
+                final View view = (View) field.get(tab);
+                if (view == null) return;
+                view.setTag(i);
+                view.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int position = (int) view.getTag();
+                        currposition = position;
+                        classifyposition = position;
+                        //这里就可以根据业务需求处理点击事件了。
+                        if (isBrang) {
+                            ((LinearLayoutManager) recyclerView.getLayoutManager()).scrollToPositionWithOffset(tabname_brand.get(position).getPosition(), 0);
+                        } else {
+                            ((LinearLayoutManager) recyclerView.getLayoutManager()).scrollToPositionWithOffset(tabname_classify.get(position).getPosition(), 0);
+                        }
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     private void industry() {
-        if (isRefresh)return;
+        if (isRefresh) return;
         groups.clear();
+        tabname_classify.clear();
+        classifyindex = 0;
         Map<String, String> params = new HashMap<String, String>();
         params.put("uid", uid);
         params.put("token", token);
@@ -199,17 +345,11 @@ public class SSecondActivity extends BaseActivity implements AdapterView.OnItemC
             @Override
             public void onError(Request request, Exception e) {
                 super.onError(request, e);
-                if (swipeRefreshLayout != null) {
-                    swipeRefreshLayout.setRefreshing(false);
-                }
             }
 
             @Override
             public void onAfter() {
                 super.onAfter();
-                if (swipeRefreshLayout != null) {
-                    swipeRefreshLayout.setRefreshing(false);
-                }
                 Mosaic();
             }
 
@@ -223,35 +363,52 @@ public class SSecondActivity extends BaseActivity implements AdapterView.OnItemC
                         industryCatelist = object.toJavaObject(IndustryCatelist.class);
                         for (int i = 0; i < industryCatelist.getData().size(); i++) {
                             IndustryCatelist.DataBean bean = industryCatelist.getData().get(i);
-                            groups.add(new IndustryCatelist.DataBean.TagGroup(bean.getName(), true));
-                            groups.addAll(industryCatelist.getData().get(i).getList());
+                            tabname_classify.add(new IndustryCatelist.DataBean.TagGroup(bean.getName(), classifyindex));
+                            groups.add(new IndustryCatelist.DataBean.TagGroup(bean.getName(), i, true));
+                            for (IndustryCatelist.DataBean.TagGroup t : bean.getList()) {
+                                t.setIndex(i);
+                                groups.add(t);
+                            }
+                            classifyindex += bean.getList().size() + 1;
                         }
+
                     } else {
                         showToastShort(object.getString("info"));
                     }
 
                 }
             }
+
         });
     }
 
-    @OnClick({R.id.forewadImg, R.id.id_right_btu})
+    @OnClick({R.id.right_tv, R.id.more})
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.forewadImg:
-                finish();
-                break;
-            case R.id.id_right_btu:
+
+            case R.id.right_tv:
                 isBrang = !isBrang;
-                idRightBtu.setText(isBrang ? "分类" : "品牌");
-                valueEt.setHint(isBrang ? "分类搜索" : "品牌搜索");
+                rightTv.setText(isBrang ? "分类" : "品牌");
+                //valueEt.setHint(isBrang ? "分类搜索" : "品牌搜索");
+                tabLayout.removeAllTabs();
                 if (isBrang) {
                     brandAdapter.setList(listBeans);
-                    ShowLog.e(listBeans.size() + "");
+                    for (BrandGroup.ListBean s : tabname_brand) {
+                        tabLayout.addTab(tabLayout.newTab().setText(s.getName()));
+                    }
+                    addEmptyView();
                 } else {
                     brandAdapter.setList(groups);
-                    ShowLog.e(groups.size() + "");
+                    for (IndustryCatelist.DataBean.TagGroup s : tabname_classify) {
+                        tabLayout.addTab(tabLayout.newTab().setText(s.getName()));
+                    }
+                    addEmptyView();
                 }
+                setTablayoutclick();
+                reflex(tabLayout, 0);
+                break;
+            case R.id.more:
+                showPW();
                 break;
             default:
                 break;
@@ -259,8 +416,10 @@ public class SSecondActivity extends BaseActivity implements AdapterView.OnItemC
     }
 
     public void getBrand() {
-        if (isRefresh)return;
+        if (isRefresh) return;
         listBeans.clear();
+        tabname_brand.clear();
+        brandindex = 0;
         Map<String, String> params = new HashMap<String, String>();
         params.put("uid", uid);
         params.put("token", token);
@@ -274,6 +433,9 @@ public class SSecondActivity extends BaseActivity implements AdapterView.OnItemC
             @Override
             public void onAfter() {
                 super.onAfter();
+                if (loading != null) {
+                    loading.showContent();
+                }
                 Mosaic();
             }
 
@@ -292,8 +454,13 @@ public class SSecondActivity extends BaseActivity implements AdapterView.OnItemC
                         brandGroup = JSONArray.parseArray(json, BrandGroup.class);
                         for (int i = 0; i < brandGroup.size(); i++) {
                             BrandGroup group = brandGroup.get(i);
-                            listBeans.add(new BrandGroup.ListBean(group.getName(), true));
-                            listBeans.addAll(group.getList());
+                            tabname_brand.add(new BrandGroup.ListBean(group.getName(), brandindex));
+                            listBeans.add(new BrandGroup.ListBean(group.getName(), i, true));
+                            for (BrandGroup.ListBean b : group.getList()) {
+                                b.setIndex(i);
+                                listBeans.add(b);
+                            }
+                            brandindex += group.getList().size() + 1;
                         }
                     }
                 }
@@ -301,16 +468,39 @@ public class SSecondActivity extends BaseActivity implements AdapterView.OnItemC
         });
     }
 
-    /**
-     * 组装list
-     */
     private void Mosaic() {
-        if (isBrang) {
-            brandAdapter.setList(listBeans);
-        } else {
-            brandAdapter.setList(groups);
+        if (tabLayout != null) {
+            tabLayout.removeAllTabs();
+            if (isBrang) {
+                brandAdapter.setList(listBeans);
+                for (BrandGroup.ListBean s : tabname_brand) {
+                    tabLayout.addTab(tabLayout.newTab().setText(s.getName()));
+                }
+                addEmptyView();
+            } else {
+                brandAdapter.setList(groups);
+                for (IndustryCatelist.DataBean.TagGroup s : tabname_classify) {
+                    tabLayout.addTab(tabLayout.newTab().setText(s.getName()));
+                }
+                addEmptyView();
+            }
+
+            isRefresh = false;
+            setTablayoutclick();
         }
-        isRefresh=false;
+    }
+
+    private void addEmptyView() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT
+                        , (int) (CommonUtils.screenHeight(mContext) * 0.7));
+                View view = new View(mContext);
+                view.setLayoutParams(layoutParams);
+                brandAdapter.setFoootView(view);
+            }
+        }, 300);
     }
 
     @Override
@@ -352,5 +542,23 @@ public class SSecondActivity extends BaseActivity implements AdapterView.OnItemC
         }
     }
 
+    @Override
+    public void onChildViewClickListener(View view, int position) {
+        pw.dismiss();
+        currposition = position;
+        if (isBrang) {
+            ((LinearLayoutManager) recyclerView.getLayoutManager()).scrollToPositionWithOffset(tabname_brand.get(position).getPosition(), 0);
+        } else {
+            ((LinearLayoutManager) recyclerView.getLayoutManager()).scrollToPositionWithOffset(tabname_classify.get(position).getPosition(), 0);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        pw = null;
+        rootView = null;
+        pwRecy = null;
+    }
 
 }

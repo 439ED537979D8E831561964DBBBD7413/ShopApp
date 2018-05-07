@@ -8,11 +8,11 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.PermissionChecker;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
@@ -28,16 +28,17 @@ import com.yj.shopapp.config.Contants;
 import com.yj.shopapp.http.HttpHelper;
 import com.yj.shopapp.http.OkHttpResponseHandler;
 import com.yj.shopapp.ubeen.Address;
+import com.yj.shopapp.ui.activity.ImgUtil.NewBaseFragment;
 import com.yj.shopapp.ui.activity.LoginActivity;
 import com.yj.shopapp.ui.activity.ShowLog;
-import com.yj.shopapp.ui.activity.base.BaseActivity;
 import com.yj.shopapp.util.BottomDialog;
 import com.yj.shopapp.util.CenterDialog;
 import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.CustomPopDialog2;
-import com.yj.shopapp.util.DialogUtils;
 import com.yj.shopapp.util.JsonHelper;
+import com.yj.shopapp.util.NetUtils;
 import com.yj.shopapp.util.PreferenceUtils;
+import com.yj.shopapp.util.StatusBarUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -58,9 +59,7 @@ import butterknife.OnClick;
  *
  * @author LK
  */
-public class SMyInfoActivity extends BaseActivity implements CenterDialog.OnCenterItemClickListener, BottomDialog.OnCenterItemClickListener {
-    @BindView(R.id.title)
-    TextView title;
+public class SMyInfoActivity extends NewBaseFragment implements CenterDialog.OnCenterItemClickListener, BottomDialog.OnCenterItemClickListener {
     @BindView(R.id.photo)
     ImageView photo;
     @BindView(R.id.account_tv)
@@ -79,103 +78,82 @@ public class SMyInfoActivity extends BaseActivity implements CenterDialog.OnCent
     RelativeLayout mSales;
     @BindView(R.id.expand)
     RelativeLayout expand;
-    @BindView(R.id.app_updata)
-    RelativeLayout appUpdata;
-    @BindView(R.id.Cancellation)
-    RelativeLayout Cancellation;
     @BindView(R.id.exit_esc)
     TextView exitEsc;
     @BindView(R.id.Recommender)
     RelativeLayout Recommender;
-    @BindView(R.id.VersionHints)
-    TextView VersionHints;
+    @BindView(R.id.bgView)
+    RelativeLayout bgView;
+    @BindView(R.id.Customer_service)
+    TextView CustomerService;
     private CenterDialog centerDialog;
     private BottomDialog bottomDialog;
     private TextView tv;
     private EditText editText;
     private static final int REQUEST_CODE = 1;
     private List<Address> notes = new ArrayList<Address>();
-    private Bitmap bitmap;
-    String cameraPath;
+    private String cameraPath;
     String pw = "";
+    private final int REQUEST_CODEC = 0x1001;
 
     @Override
-    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-        super.onSaveInstanceState(outState, outPersistentState);
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
         outState.putString("cameraPath", cameraPath);
     }
+
     @Override
     protected int getLayoutId() {
         return R.layout.sactivity_myinfo;
     }
 
     @Override
-    protected void initData() {
-        title.setText("个人中心");
-        int index = PreferenceUtils.getPrefInt(mContext, Contants.Preference.CHECKNUM, 0);
+    protected void initView(View view, Bundle savedInstanceState) {
+        StatusBarUtils.from(getActivity())
+                .setActionbarView(bgView)
+                .setTransparentStatusbar(true)
+                .setLightStatusBar(false)
+                .process();
+        int index = PreferenceUtils.getPrefInt(mActivity, Contants.Preference.CHECKNUM, 0);
         if (index == 1) {
             Recommender.setVisibility(View.VISIBLE);
         }
-        String account = PreferenceUtils.getPrefString(mContext, Contants.Preference.USER_NAME, "");
+        String account = PreferenceUtils.getPrefString(mActivity, Contants.Preference.USER_NAME, "");
         accountTv.setText(account);
         if (getBundle() != null) {
             cameraPath = getBundle().getString("cameraPath");
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            if (ContextCompat.checkSelfPermission(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     != PackageManager.PERMISSION_GRANTED) {
                 requestAlertWindowPermission();
             }
         }
-        centerDialog = new CenterDialog(mContext, R.layout.recommenderactivity, new int[]{R.id.dialog_cancel, R.id.dialog_sure});
-        centerDialog.setOnCenterItemClickListener(this);
-        bottomDialog = new BottomDialog(mContext, R.layout.bottom_dialog, new int[]{R.id.save_photoalbum, R.id.dialog_cancel});
-        bottomDialog.setOnCenterItemClickListener(this);
-        //VersionUpdata.getInstance(false, mContext, getFragmentManager()).setCallback(this).updateVersion();
-    }
+        CustomerService.setText(PreferenceUtils.getPrefString(mActivity, "CustomerService", ""));
 
-
-    private void requestAlertWindowPermission() {
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE);
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        refreshRequest();
+    protected void initData() {
+        centerDialog = new CenterDialog(mActivity, R.layout.recommenderactivity, new int[]{R.id.dialog_cancel, R.id.dialog_sure});
+        centerDialog.setOnCenterItemClickListener(this);
+        bottomDialog = new BottomDialog(mActivity, R.layout.bottom_dialog, new int[]{R.id.save_photoalbum, R.id.dialog_cancel});
+        bottomDialog.setOnCenterItemClickListener(this);
+
     }
 
-    @OnClick(R.id.Cancellation)
-    public void CancellationOnclick() {
-        DialogUtils dialogUtils = new DialogUtils();
-        dialogUtils.getMaterialDialog(mContext, "重要提示", "是否注销账号，一旦注销账号，该账号将不能再使用", new MaterialDialog.SingleButtonCallback() {
-            @Override
-            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (NetUtils.isNetworkConnected(mActivity)) {
+            refreshRequest();
+        } else {
+            showToast("无网络");
+        }
+    }
 
-                DialogUtils inputDialogUtils = new DialogUtils();
-                inputDialogUtils.getInputMaterialDialog(mContext, "请输入密码", "输入密码", new MaterialDialog.InputCallback() {
-                    @Override
-                    public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
-                        pw = input.toString().trim().replace(" ", "");
-
-                        String pasword = PreferenceUtils.getPrefString(mContext, Contants.Preference.USER_PWD, "");
-                        if (pasword.equals(pw)) {
-                            showToastShort("密码正确！");
-                            Cancellation();
-                        } else {
-                            showToastShort("密码错误！");
-                        }
-
-                    }
-                }, null, null);
-
-                inputDialogUtils.show();
-            }
-        }, null);
-
-        dialogUtils.show();
-
-
+    private void requestAlertWindowPermission() {
+        ActivityCompat.requestPermissions(mActivity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE);
     }
 
     /**
@@ -183,7 +161,7 @@ public class SMyInfoActivity extends BaseActivity implements CenterDialog.OnCent
      */
     @OnClick(R.id.updateInfo)
     public void clickupdateInfo() {
-        CommonUtils.goActivity(mContext, SUserInfoActivity.class, null, false);
+        CommonUtils.goActivity(mActivity, SUserInfoActivity.class, null, false);
     }
 
     /**
@@ -191,13 +169,13 @@ public class SMyInfoActivity extends BaseActivity implements CenterDialog.OnCent
      */
     @OnClick(R.id.updatePwd)
     public void clickupdatePwd() {
-        CommonUtils.goActivity(mContext, SDoPasswdActivity.class, null, false);
+        CommonUtils.goActivity(mActivity, SDoPasswdActivity.class, null, false);
     }
 
 
     @OnClick(R.id.news)
     public void clicknews() {
-        CommonUtils.goActivity(mContext, SNewListActivity.class, null, false);
+        CommonUtils.goActivity(mActivity, SNewListActivity.class, null, false);
     }
 
 
@@ -205,7 +183,7 @@ public class SMyInfoActivity extends BaseActivity implements CenterDialog.OnCent
     public void onClicksales() {
         Bundle bundle = new Bundle();
         bundle.putString("choosetype", "1");
-        CommonUtils.goActivity(mContext, SChooseAgentActivity.class, bundle, false);
+        CommonUtils.goActivity(mActivity, SChooseAgentActivity.class, bundle, false);
     }
 
     /**
@@ -213,7 +191,7 @@ public class SMyInfoActivity extends BaseActivity implements CenterDialog.OnCent
      */
     @OnClick(R.id.marks)
     public void onClickMarks() {
-        CommonUtils.goActivity(mContext, SMarksActivity.class, null, false);
+        CommonUtils.goActivity(mActivity, SMarksActivity.class, null, false);
     }
 
     /**
@@ -222,85 +200,46 @@ public class SMyInfoActivity extends BaseActivity implements CenterDialog.OnCent
     @OnClick(R.id.address)
     public void onClickaddress() {
         if (notes.size() <= 0) {
-            Bundle bundle = new Bundle();
-            bundle.putSerializable("been", new Address());
-            CommonUtils.goActivityForResult(mContext, SAddressRefreshActivity.class, bundle, 0, false);
+            CommonUtils.goActivity(mActivity, SAddressRefreshActivity.class, null);
         } else {
             Bundle bundle = new Bundle();
             bundle.putBoolean("isEdit", true);
-            CommonUtils.goActivity(mContext, SAddressActivity.class, bundle, false);
+            CommonUtils.goActivity(mActivity, SAddressActivity.class, bundle, false);
         }
 
     }
 
     @OnClick(R.id.expand)
     public void onClickExpand() {
-        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.two_code);// 这里是获取图片Bitmap，也可以传入其他参数到Dialog中
-        CustomPopDialog2.Builder dialogBuild = new CustomPopDialog2.Builder(mContext, bitmap);
-        dialogBuild.setLongclick(new CustomPopDialog2.Builder.onLongclick() {
+        CustomPopDialog2 dialog2 = new CustomPopDialog2(mActivity);
+        dialog2.setCanceledOnTouchOutside(true);
+        dialog2.setLongClick(new CustomPopDialog2.onLongClick() {
             @Override
             public void onLClick(View view) {
                 bottomDialog.show();
             }
         });
-        CustomPopDialog2 dialog = dialogBuild.create();
-        dialog.setCanceledOnTouchOutside(true);// 点击外部区域关闭
-        dialog.show();
+        dialog2.show();
     }
 
 
     private void saveImg(Bitmap bitmap) {
-        String path = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "imgbitmap", "");
+        String path = MediaStore.Images.Media.insertImage(mActivity.getContentResolver(), bitmap, "imgbitmap", "");
         ShowLog.e(path);
         //通知图库刷新
-        showToastShort("保存成功");
-        this.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse(path)));
+        showToast("保存成功");
+        mActivity.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse(path)));
     }
 
-    /**********************
-     * 操作
-     *********************/
-    private void Cancellation() {
-        Map<String, String> params = new HashMap<>();
-        params.put("uid", uid);
-        params.put("token", token);
-        HttpHelper.getInstance().post(mContext, Contants.PortU.Delaccount, params, new OkHttpResponseHandler<String>(mContext) {
-            @Override
-            public void onBefore() {
-                super.onBefore();
-            }
-
-            @Override
-            public void onAfter() {
-                super.onAfter();
-            }
-
-            @Override
-            public void onError(Request request, Exception e) {
-                super.onError(request, e);
-            }
-
-            @Override
-            public void onResponse(Request request, String json) {
-                super.onResponse(request, json);
-                if (JsonHelper.isRequstOK(json, mContext)) {
-                    showToastShort("注销成功");
-                    PreferenceUtils.remove(mContext, Contants.Preference.UID);
-                    PreferenceUtils.remove(mContext, Contants.Preference.UTYPE);
-                    PreferenceUtils.remove(mContext, Contants.Preference.TOKEN);
-                    CommonUtils.goActivity(mContext, LoginActivity.class, null, true);
-                }
-            }
-        });
-
-    }
-
+    /**
+     * 获取地址
+     */
     private void refreshRequest() {
 
         Map<String, String> params = new HashMap<String, String>();
         params.put("uid", uid);
         params.put("token", token);
-        HttpHelper.getInstance().post(mContext, Contants.PortU.Uaddress, params, new OkHttpResponseHandler<String>(mContext) {
+        HttpHelper.getInstance().post(mActivity, Contants.PortU.Uaddress, params, new OkHttpResponseHandler<String>(mActivity) {
 
             @Override
             public void onAfter() {
@@ -318,13 +257,13 @@ public class SMyInfoActivity extends BaseActivity implements CenterDialog.OnCent
             public void onResponse(Request request, String json) {
                 super.onResponse(request, json);
                 notes.clear();
-                System.out.println("m_tagjson" + json);
-                if (JsonHelper.isRequstOK(json, mContext)) {
+                ShowLog.e(json);
+                if (JsonHelper.isRequstOK(json, mActivity)) {
                     JsonHelper<Address> jsonHelper = new JsonHelper<Address>(Address.class);
                     notes.addAll(jsonHelper.getDatas(json));
                     //adapter.notifyDataSetChanged();
                 } else {
-                    showToastShort(JsonHelper.errorMsg(json));
+                    showToast(JsonHelper.errorMsg(json));
                 }
 
             }
@@ -332,7 +271,7 @@ public class SMyInfoActivity extends BaseActivity implements CenterDialog.OnCent
             @Override
             public void onError(Request request, Exception e) {
                 super.onError(request, e);
-                showToastShort(Contants.NetStatus.NETDISABLEORNETWORKDISABLE);
+                showToast(Contants.NetStatus.NETDISABLEORNETWORKDISABLE);
                 notes.clear();
             }
         });
@@ -340,22 +279,71 @@ public class SMyInfoActivity extends BaseActivity implements CenterDialog.OnCent
     }
 
 
-    @OnClick({R.id.app_updata, R.id.exit_esc})
+    @OnClick({R.id.exit_esc, R.id.call_phone})
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.app_updata:
-                //VersionUpdata.getInstance(true, mContext, getFragmentManager()).updateVersion();
-                break;
             case R.id.exit_esc:
-                PreferenceUtils.remove(mContext, Contants.Preference.UID);
-                PreferenceUtils.remove(mContext, Contants.Preference.UTYPE);
-                PreferenceUtils.remove(mContext, Contants.Preference.TOKEN);
-                PreferenceUtils.setPrefInt(mContext, Contants.Preference.ISLOGGIN, 0);
-                CommonUtils.goActivity(this, LoginActivity.class, null, true);
+                PreferenceUtils.remove(mActivity, Contants.Preference.UID);
+                PreferenceUtils.remove(mActivity, Contants.Preference.UTYPE);
+                PreferenceUtils.remove(mActivity, Contants.Preference.TOKEN);
+                PreferenceUtils.setPrefInt(mActivity, Contants.Preference.ISLOGGIN, 0);
+                CommonUtils.goActivity(mActivity, LoginActivity.class, null, true);
                 break;
+            case R.id.call_phone:
+                new MaterialDialog.Builder(mActivity).title("提示").positiveText("拨打").negativeText("取消")
+                        .content("是否要拨打客服电话?")
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                //拨打电话
+                                if (Build.VERSION.SDK_INT >= 23) {
+                                    //判断有没有拨打电话权限
+                                    if (PermissionChecker.checkSelfPermission(mActivity, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                                        //请求拨打电话权限
+                                        requestPermissions(new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CODEC);
+
+                                    } else {
+                                        callPhone();
+                                    }
+
+                                } else {
+                                    callPhone();
+                                }
+                            }
+                        }).show();
+                break;
+
             default:
                 break;
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_CODEC && PermissionChecker.checkSelfPermission(mActivity, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
+            showToast("授权成功");
+            callPhone();
+        } else {
+            showToast("授权失败");
+        }
+    }
+
+    private void callPhone() {
+        if (ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
+            Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + CustomerService.getText().toString()));
+            startActivity(intent);
+        } else {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(mActivity, Manifest.permission.CALL_PHONE)) {
+                //已经禁止提示了
+                showToast("您已禁止该权限，需要重新开启");
+            } else {
+                ActivityCompat.requestPermissions(mActivity, new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CODE);
+
+            }
+
+        }
+
     }
 
     /**
@@ -364,7 +352,6 @@ public class SMyInfoActivity extends BaseActivity implements CenterDialog.OnCent
     @OnClick(R.id.Recommender)
     public void onViewClicked() {
         centerDialog.show();
-        showbg();
         ((TextView) centerDialog.findViewById(R.id.dialog_cancel)).setText("我是自己注册的");
         centerDialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
         centerDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
@@ -382,7 +369,7 @@ public class SMyInfoActivity extends BaseActivity implements CenterDialog.OnCent
         params.put("uid", this.uid);
         params.put("token", this.token);
         params.put("referee", phone);
-        HttpHelper.getInstance().post(mContext, Contants.PortU.MYEXTEND, params, new OkHttpResponseHandler<String>(mContext) {
+        HttpHelper.getInstance().post(mActivity, Contants.PortU.MYEXTEND, params, new OkHttpResponseHandler<String>(mActivity) {
             @Override
             public void onError(Request request, Exception e) {
                 super.onError(request, e);
@@ -392,14 +379,12 @@ public class SMyInfoActivity extends BaseActivity implements CenterDialog.OnCent
             public void onResponse(Request request, String json) {
                 super.onResponse(request, json);
                 ShowLog.e(json);
-                if (JsonHelper.isRequstOK(json, mContext)) {
+                if (JsonHelper.isRequstOK(json, mActivity)) {
                     try {
                         JSONObject object = new JSONObject(json);
-                        showToastShort(object.getString("info"));
                         ShowLog.e(object.getString("info"));
                         if (object.getString("status").equals("1")) {
                             centerDialog.dismiss();
-                            hidebg();
                             Recommender.setVisibility(View.GONE);
                         }
 
@@ -428,7 +413,6 @@ public class SMyInfoActivity extends BaseActivity implements CenterDialog.OnCent
         switch (view.getId()) {
             case R.id.dialog_cancel:
                 dialog.dismiss();
-                hidebg();
                 break;
             case R.id.dialog_sure:
                 if (isChinaPhoneLegal(editText.getText().toString())) {
@@ -454,7 +438,7 @@ public class SMyInfoActivity extends BaseActivity implements CenterDialog.OnCent
 
         switch (view.getId()) {
             case R.id.save_photoalbum:
-                saveImg(bitmap);
+                saveImg(BitmapFactory.decodeResource(getResources(), R.drawable.two_code_2));
                 break;
             case R.id.dialog_cancel:
 
@@ -464,21 +448,4 @@ public class SMyInfoActivity extends BaseActivity implements CenterDialog.OnCent
         }
     }
 
-
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
-//    @Override
-//    public void LatestVersion() {
-//        VersionHints.setText("已是最新版");
-//        VersionHints.setClickable(false);
-//    }
-//
-//    @Override
-//    public void NotTheLatestEdition() {
-//        VersionHints.setText("有新版本");
-//    }
 }

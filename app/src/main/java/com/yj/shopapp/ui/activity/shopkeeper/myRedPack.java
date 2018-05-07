@@ -110,7 +110,10 @@ public class myRedPack extends BaseFragment {
             @Override
             public void onAfter() {
                 super.onAfter();
-                swipeRefreshLayout.setRefreshing(false);
+                if (swipeRefreshLayout!=null){
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+
             }
 
             @Override

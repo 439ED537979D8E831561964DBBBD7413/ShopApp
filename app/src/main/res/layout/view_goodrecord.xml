@@ -1,95 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/itemview"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/H5dp"
+        android:paddingLeft="@dimen/H10dp"
+        android:paddingRight="@dimen/H10dp"
+        android:paddingTop="@dimen/H5dp">
+
+        <TextView
+            android:id="@+id/shopname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:drawableLeft="@drawable/ic_dd"
+            android:drawablePadding="@dimen/H8dp"
+            android:drawableRight="@drawable/btn_arrow_r"
+            android:text=""
+            android:textColor="@color/color_1ca5f5"
+            android:textSize="13sp" />
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="5dp"
-        android:orientation="horizontal">
+        android:background="#fafafa"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="@dimen/H8dp">
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:paddingLeft="15dp">
+
+            <ImageView
+                android:id="@+id/shopimag"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:src="@drawable/load" />
+
+        </RelativeLayout>
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="7.5"
+            android:layout_weight="7"
             android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/shopname"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:textColor="@color/skyblue"
-                android:textSize="13sp"/>
-
-            <TextView
-                android:id="@+id/orderNumber"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:textColor="@color/black"
-                android:textSize="12sp"/>
-
 
             <TextView
                 android:id="@+id/shopnumber"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:padding="@dimen/H2dp"
                 android:text=""
-                android:textColor="@color/black"
-                android:textSize="12sp"/>
-
-            <TextView
-                android:id="@+id/order_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:textColor="@color/black"
-                android:textSize="12sp"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2.5"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/shopsum"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:textColor="@color/black"
-                android:textSize="12sp"/>
+                android:textColor="@color/color909090"
+                android:textSize="13sp" />
 
             <TextView
                 android:id="@+id/shopspec"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:padding="@dimen/H2dp"
                 android:text=""
-                android:textColor="@color/black"
-                android:textSize="12sp"/>
+                android:textColor="@color/color909090"
+                android:textSize="13sp" />
 
-            <TextView
-                android:id="@+id/shopprice"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text=""
-                android:textColor="@color/black"
-                android:textSize="12sp"/>
+                android:padding="@dimen/H2dp">
 
-            <TextView
-                android:id="@+id/shoptotal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:textColor="@color/black"
-                android:textSize="12sp"/>
+                <TextView
+                    android:id="@+id/shopsum"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textColor="@color/color909090"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/shoptotal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="30dp"
+                    android:text=""
+                    android:textColor="@color/color909090"
+                    android:textSize="13sp" />
+            </LinearLayout>
 
         </LinearLayout>
+
     </LinearLayout>
 
-</RelativeLayout>
+</LinearLayout>

@@ -8,54 +8,33 @@ package com.yj.shopapp.ubeen;
 
 public class AccountBook {
 
+
     /**
-     * id : 62211
-     * type : 1
-     * money : 10000
-     * orderid : 213
-     * integral : 10000
-     * remark : 下单积分
-     * time : 1520387505
+     * month : 2018-03
+     * integral : 4200
+     * rule : 0.00
+     * money : 0.00
+     * status : 1
+     * dotime : 1520513458
+     * changetype : 1
+     * account :
      */
 
-    private String id;
-    private String type;
-    private String money;
-    private String orderid;
+    private String month;
     private String integral;
-    private String remark;
-    private String time;
+    private String rule;
+    private String money;
+    private String status;
+    private String dotime;
+    private String changetype;
+    private String account;
 
-    public String getId() {
-        return id;
+    public String getMonth() {
+        return month;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getMoney() {
-        return money;
-    }
-
-    public void setMoney(String money) {
-        this.money = money;
-    }
-
-    public String getOrderid() {
-        return orderid;
-    }
-
-    public void setOrderid(String orderid) {
-        this.orderid = orderid;
+    public void setMonth(String month) {
+        this.month = month;
     }
 
     public String getIntegral() {
@@ -66,19 +45,51 @@ public class AccountBook {
         this.integral = integral;
     }
 
-    public String getRemark() {
-        return remark;
+    public String getRule() {
+        return rule;
     }
 
-    public void setRemark(String remark) {
-        this.remark = remark;
+    public void setRule(String rule) {
+        this.rule = rule;
     }
 
-    public String getTime() {
-        return time;
+    public String getMoney() {
+        return money;
     }
 
-    public void setTime(String time) {
-        this.time = time;
+    public void setMoney(String money) {
+        this.money = money;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getDotime() {
+        return dotime;
+    }
+
+    public void setDotime(String dotime) {
+        this.dotime = dotime;
+    }
+
+    public String getChangetype() {
+        return changetype;
+    }
+
+    public void setChangetype(String changetype) {
+        this.changetype = changetype;
+    }
+
+    public String getAccount() {
+        return account;
+    }
+
+    public void setAccount(String account) {
+        this.account = account;
     }
 }

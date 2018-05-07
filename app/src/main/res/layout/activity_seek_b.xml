@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="@color/white"
-              android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
 
 
     <LinearLayout
         android:id="@+id/popupwindow"
         android:layout_width="match_parent"
-        android:layout_height="44dp"
-        android:background="?attr/colorPrimary"
+        android:layout_height="@dimen/title_height"
+        android:background="@drawable/gradient"
         android:gravity="center"
         android:orientation="horizontal">
 
@@ -18,7 +18,7 @@
             android:id="@+id/exit_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/arraw_lift"/>
+            android:drawableLeft="@drawable/arraw_lift" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -27,27 +27,29 @@
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:layout_weight="1"
-            android:background="@drawable/buttonborders3"
+            android:background="@drawable/tv_bg_shape_4"
             android:orientation="horizontal"
             android:paddingLeft="5dp">
 
             <ImageView
-                android:layout_width="25dp"
-                android:layout_height="25dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:src="@drawable/search_icon"/>
+                android:src="@drawable/magnifier_white" />
 
             <EditText
                 android:id="@+id/value_Et"
                 android:layout_width="0dp"
-                android:layout_height="30dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@null"
                 android:gravity="center_vertical"
                 android:hint="商品名称搜索"
+                android:padding="@dimen/H4dp"
+                android:paddingLeft="@dimen/H10dp"
                 android:singleLine="true"
                 android:textColor="@color/text_color"
-                android:textSize="14sp"/>
+                android:textSize="13sp" />
 
         </LinearLayout>
 
@@ -58,9 +60,10 @@
             android:layout_marginRight="8dp"
             android:background="@drawable/tv_bg_shape_4"
             android:gravity="center"
-            android:padding="5dp"
+            android:padding="@dimen/H3dp"
             android:text="搜索"
-            android:textColor="@color/black"/>
+            android:textColor="@color/color333333"
+            android:textSize="13sp" />
     </LinearLayout>
 
     <android.support.v7.widget.RecyclerView

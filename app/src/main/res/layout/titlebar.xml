@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/title_height"
-                android:background="?attr/colorPrimary">
+                android:background="@drawable/gradient">
 
 
     <ImageView
@@ -24,11 +24,10 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:layout_marginLeft="36dip"
-        android:maxWidth="240dp"
         android:singleLine="true"
         android:text=""
         android:textColor="@android:color/white"
-        android:textSize="21sp"/>
+        android:textSize="16sp"/>
 
     <TextView
         android:id="@+id/id_right_btu"
@@ -36,10 +35,11 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
+        android:padding="@dimen/H5dp"
         android:layout_marginRight="@dimen/default_padding"
         android:text=""
         android:textColor="@android:color/white"
-        android:textSize="17sp"/>
+        android:textSize="15sp"/>
 
 
 </RelativeLayout>

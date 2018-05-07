@@ -43,9 +43,10 @@ public class Recommend extends BaseActivity {
     @BindView(R.id.id_right_btu)
     TextView idRightBtu;
     private myAdapter adapter;
+
     @Override
     protected int getLayoutId() {
-        return R.layout.sactivity_snewgood;
+        return R.layout.activity_recommended_awards;
     }
 
     @Override
@@ -59,7 +60,6 @@ public class Recommend extends BaseActivity {
         tabLayout.setupWithViewPager(pager);
         pager.setOffscreenPageLimit(2);
     }
-
 
 
     @OnClick(R.id.id_right_btu)
@@ -93,7 +93,7 @@ public class Recommend extends BaseActivity {
                         //跳转到提现界面
                         Bundle bundle = new Bundle();
                         bundle.putString("reward_type", object.getString("reward_id"));
-                        bundle.putString("reward",object.getString("reward"));
+                        bundle.putString("reward", object.getString("reward"));
                         CommonUtils.goActivity(mContext, RedPackReFlect.class, bundle);
                     }
                 } catch (JSONException e) {
@@ -102,7 +102,6 @@ public class Recommend extends BaseActivity {
             }
         });
     }
-
 
 
     public class myAdapter extends FragmentPagerAdapter {

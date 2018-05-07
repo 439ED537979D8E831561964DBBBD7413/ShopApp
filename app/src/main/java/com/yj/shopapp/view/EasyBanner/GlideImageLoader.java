@@ -5,7 +5,8 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.youth.banner.loader.ImageLoader;
+import com.yj.shopapp.util.load.ImageLoader;
+
 
 public class GlideImageLoader extends ImageLoader {
     @Override
@@ -19,11 +20,6 @@ public class GlideImageLoader extends ImageLoader {
          */
         imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
         Glide.with(context).load(path.toString()).apply(new RequestOptions().centerCrop()).into(imageView);
-
-        //用fresco加载图片简单用法，记得要写下面的createImageView方法
-//        Uri uri = Uri.parse((string) path);
-//        imageView.setScaleType(SimpleDraweeView.ScaleType.CENTER_INSIDE);
-//        imageView.setImageURI(uri);
     }
 
     //提供createImageView 方法，如果不用可以不重写这个方法，主要是方便自定义ImageView的创建

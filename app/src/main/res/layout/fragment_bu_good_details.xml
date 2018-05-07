@@ -1,0 +1,35 @@
+<com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipe_refresh_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorf5f5f5"
+    tools:context="com.yj.shopapp.ui.activity.shopkeeper.BuGoodDetailsFragment">
+
+    <com.scwang.smartrefresh.layout.header.ClassicsHeader
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:srlAccentColor="#fff"
+        app:srlPrimaryColor="#444" />
+
+    <ezy.ui.layout.LoadingLayout
+        android:id="@+id/loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:llEmptyImage="@drawable/ic_emptyimag"
+        app:llEmptyText="">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </ezy.ui.layout.LoadingLayout>
+
+
+    <com.scwang.smartrefresh.layout.footer.ClassicsFooter
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:srlAccentColor="@color/color_999999"
+        app:srlPrimaryColor="#eeeeee" />
+</com.scwang.smartrefresh.layout.SmartRefreshLayout>

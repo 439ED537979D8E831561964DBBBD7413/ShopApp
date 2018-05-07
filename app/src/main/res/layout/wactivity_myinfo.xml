@@ -221,7 +221,6 @@
                 android:visibility="gone" />
 
             <RelativeLayout
-                android:id="@+id/cashcouponmanager_rl"
                 android:layout_width="match_parent"
                 android:layout_height="42dp"
                 android:visibility="gone">
@@ -238,7 +237,6 @@
 
 
             <RelativeLayout
-                android:id="@+id/cashcouponauto_rl"
                 android:layout_width="match_parent"
                 android:layout_height="42dp"
                 android:visibility="gone">
@@ -324,36 +322,6 @@
                     android:drawableLeft="@drawable/generalize"
                     android:drawablePadding="8dp"
                     android:text="推广App"
-                    android:textColor="@color/text_color"
-                    android:textSize="16sp" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="@dimen/default_padding"
-                    android:src="@drawable/btn_arrow_r" />
-
-            </RelativeLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/color_f2f2f2" />
-
-            <RelativeLayout
-                android:id="@+id/w_updata"
-                android:layout_width="match_parent"
-                android:layout_height="42dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:drawableLeft="@drawable/updata"
-                    android:drawablePadding="8dp"
-                    android:text="检测更新"
                     android:textColor="@color/text_color"
                     android:textSize="16sp" />
 

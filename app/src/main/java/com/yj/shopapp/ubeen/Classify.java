@@ -18,18 +18,19 @@ public class Classify {
     private String id;
     private String name;
     private String money;
-    private boolean isSwitch;
+    private int page;
+    private boolean isSelect;
 
-    public boolean isSwitch() {
-        return isSwitch;
+    public boolean isSelect() {
+        return isSelect;
     }
 
-    public void setSwitch(boolean aSwitch) {
-        isSwitch = aSwitch;
+    public void setSelect(boolean select) {
+        isSelect = select;
     }
 
     public String getId() {
-        return id;
+        return id == null ? "" : id;
     }
 
     public void setId(String id) {
@@ -37,7 +38,7 @@ public class Classify {
     }
 
     public String getName() {
-        return name;
+        return name == null ? "" : name;
     }
 
     public void setName(String name) {
@@ -45,20 +46,27 @@ public class Classify {
     }
 
     public String getMoney() {
-        return money;
+        return money == null ? "" : money;
     }
 
     public void setMoney(String money) {
         this.money = money;
     }
 
+    public int getPage() {
+        return page;
+    }
+
+    public void setPage(int page) {
+        this.page = page;
+    }
+
     public Classify() {
     }
 
-    public Classify(String id, String name, String money, boolean isSwitch) {
+    public Classify(String id, String name, String money) {
         this.id = id;
         this.name = name;
         this.money = money;
-        this.isSwitch = isSwitch;
     }
 }

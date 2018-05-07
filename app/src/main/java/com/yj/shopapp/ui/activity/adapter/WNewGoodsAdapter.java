@@ -18,8 +18,8 @@ import com.yj.shopapp.wbeen.Goods;
 
 import java.util.List;
 
-import butterknife.ButterKnife;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by Administrator on 2016/8/30.

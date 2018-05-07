@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:background="@drawable/dialog_frame"
-              android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_frame"
+    android:orientation="vertical">
 
     <TextView
         android:layout_width="wrap_content"
@@ -12,35 +12,38 @@
         android:layout_margin="15dp"
         android:gravity="center"
         android:text="填写推荐人"
-        android:textColor="#38ADFF"
-        android:textSize="18sp"/>
+        android:textColor="@color/color_01ABFF"
+        android:textSize="16sp" />
 
     <EditText
         android:id="@+id/ecit_phone"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@null"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/H10dp"
+        android:layout_marginRight="@dimen/H10dp"
+        android:background="@drawable/buttonborders2"
         android:hint="请输入推荐人手机号码"
         android:inputType="phone"
         android:maxLength="11"
-        android:paddingLeft="20dp"
-        android:textSize="16sp"/>
+        android:padding="@dimen/H10dp"
+        android:textColor="#bbbbbb"
+        android:textSize="14sp" />
 
     <TextView
         android:id="@+id/prompt_tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:textSize="14sp"/>
+        android:textSize="14sp" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/all_bg"/>
+        android:background="@color/all_bg" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="45dp"
         android:orientation="horizontal">
 
         <TextView
@@ -50,13 +53,13 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text=""
-            android:textColor="#6FBF6A"
-            android:textSize="18sp"/>
+            android:textColor="@color/color333333"
+            android:textSize="16sp" />
 
         <View
             android:layout_width="1dp"
             android:layout_height="match_parent"
-            android:background="#cecece"/>
+            android:background="#cccccc" />
 
         <TextView
             android:id="@+id/dialog_sure"
@@ -65,8 +68,8 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="确定"
-            android:textColor="#6FBF6A"
-            android:textSize="18sp"/>
+            android:textColor="@color/color_01ABFF"
+            android:textSize="16sp" />
 
 
     </LinearLayout>

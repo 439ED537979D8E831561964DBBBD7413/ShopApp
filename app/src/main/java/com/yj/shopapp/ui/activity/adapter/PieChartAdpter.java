@@ -27,10 +27,10 @@ public class PieChartAdpter extends CommonAdapter<OrderChart.ListBean> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        OrderChart.ListBean bean=list.get(position);
+        OrderChart.ListBean bean = list.get(position);
         holder.getTextView(R.id.name_tv).setText(bean.getClassX());
-        holder.getTextView(R.id.money_tv).setText(bean.getMoney());
+        holder.getTextView(R.id.money_tv).setText(String.format("￥%s", bean.getMoney()));
         holder.getTextView(R.id.pressent).setText(bean.getPercentage());
-        ((RoundView)holder.getView(R.id.roundView)).setBgColor(Contants.PieColor.COLORS[position]);
+        ((RoundView) holder.getView(R.id.roundView)).setBgColor(Contants.PieColor.COLORS[position]);
     }
 }

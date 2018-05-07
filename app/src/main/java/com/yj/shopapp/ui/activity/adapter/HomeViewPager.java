@@ -6,6 +6,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 import com.yj.shopapp.ui.activity.shopkeeper.BrandFragment;
 import com.yj.shopapp.ui.activity.shopkeeper.SHomeActivity;
+import com.yj.shopapp.ui.activity.shopkeeper.SMyInfoActivity;
+import com.yj.shopapp.ui.activity.shopkeeper.SNewCartListActivity;
 import com.yj.shopapp.ui.activity.shopkeeper.SOrderActivity;
 
 /**
@@ -28,12 +30,17 @@ public class HomeViewPager extends FragmentPagerAdapter {
                 return new SOrderActivity();
             case 2:
                 return new BrandFragment();
+            case 3:
+                return new SNewCartListActivity();
+            case 4:
+                return new SMyInfoActivity();
         }
         return null;
     }
 
     @Override
     public int getCount() {
-        return 3;
+        return 5;
     }
+
 }

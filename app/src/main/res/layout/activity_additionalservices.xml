@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,19 +8,17 @@
     android:orientation="vertical"
     tools:context="com.yj.shopapp.ui.activity.shopkeeper.AdditionalservicesActivity">
 
-    <include layout="@layout/titlebar"/>
+    <include layout="@layout/titlebar" />
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="240dp">
 
-        <com.youth.banner.Banner
+        <cn.bingoogolapple.bgabanner.BGABanner
             android:id="@+id/bannerView"
+            style="@style/BannerDefaultStyle"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:image_scale_type="fit_center"
-            app:indicator_drawable_selected="@drawable/check_true"
-            app:indicator_drawable_unselected="@drawable/check_false"/>
+            android:layout_height="match_parent" />
     </FrameLayout>
 
     <LinearLayout
@@ -36,12 +33,12 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="我的订单"
-            android:textColor="@color/skyblue"/>
+            android:textColor="@color/skyblue" />
 
         <View
             android:layout_width="1dp"
             android:layout_height="match_parent"
-            android:background="@color/all_bg"/>
+            android:background="@color/all_bg" />
 
         <TextView
             android:id="@+id/The_door"
@@ -50,13 +47,13 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="购物车"
-            android:textColor="@color/skyblue"/>
+            android:textColor="@color/skyblue" />
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/all_bg"/>
+        android:background="@color/all_bg" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/my_RecyclerView"
@@ -65,5 +62,5 @@
         android:overScrollMode="never"
         android:paddingTop="5dp"
         android:scrollbars="none"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 </LinearLayout>

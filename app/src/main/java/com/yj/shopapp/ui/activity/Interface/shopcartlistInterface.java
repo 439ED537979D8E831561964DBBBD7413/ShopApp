@@ -28,7 +28,7 @@ public class shopcartlistInterface {
         /**
          * 统计数据
          */
-        void statistics();
+        void numClick(int position);
 
         /**
          * 组选框状态改变触发的事件

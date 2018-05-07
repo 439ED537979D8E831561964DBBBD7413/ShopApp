@@ -19,7 +19,8 @@
             android:drawablePadding="@dimen/height_5dp"
             android:ellipsize="end"
             android:padding="3dp"
-            android:singleLine="true"/>
+            android:singleLine="true"
+            android:textSize="12sp"/>
 
         <TextView
             android:id="@+id/mf_content_1"
@@ -30,7 +31,8 @@
             android:ellipsize="end"
             android:padding="3dp"
             android:singleLine="true"
-            android:text=""/>
+            android:text=""
+            android:textSize="12sp"/>
 
     </LinearLayout>
 

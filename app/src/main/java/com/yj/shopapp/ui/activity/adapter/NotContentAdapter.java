@@ -1,6 +1,7 @@
 package com.yj.shopapp.ui.activity.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
@@ -12,8 +13,8 @@ import com.yj.shopapp.R;
 import com.yj.shopapp.ubeen.Notice;
 import com.yj.shopapp.util.DateUtils;
 
-import butterknife.ButterKnife;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by LK on 2017/9/28.
@@ -62,10 +63,12 @@ public class NotContentAdapter extends CommonBaseAdapter<Notice> {
         holder.touchLl.setTag(i);
         if (currentItem == i) {
             holder.NotHidecontent.setVisibility(View.VISIBLE);
-            holder.notImg.setImageResource(R.drawable.button_arr);
+            holder.notImg.setImageResource(R.drawable.ic_button_arraw);
+            holder.noticeTitle.setTextColor(Color.parseColor("#1ca5f5"));
         } else {
             holder.NotHidecontent.setVisibility(View.GONE);
-            holder.notImg.setImageResource(R.drawable.right_arr);
+            holder.notImg.setImageResource(R.drawable.ic_right_black);
+            holder.noticeTitle.setTextColor(Color.parseColor("#000000"));
         }
         holder.touchLl.setOnClickListener(new View.OnClickListener() {
             @Override

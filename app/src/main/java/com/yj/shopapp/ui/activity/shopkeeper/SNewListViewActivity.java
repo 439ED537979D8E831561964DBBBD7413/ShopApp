@@ -1,28 +1,28 @@
 package com.yj.shopapp.ui.activity.shopkeeper;
 
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.AdapterView;
 
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.squareup.okhttp.Request;
 import com.yj.shopapp.R;
 import com.yj.shopapp.config.Contants;
 import com.yj.shopapp.http.HttpHelper;
 import com.yj.shopapp.http.OkHttpResponseHandler;
-import com.yj.shopapp.loading.ILoadView;
-import com.yj.shopapp.loading.ILoadViewImpl;
-import com.yj.shopapp.loading.LoadMoreClickListener;
-import com.yj.shopapp.presenter.BaseRecyclerView;
+import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.ui.activity.adapter.NewsAdapter;
 import com.yj.shopapp.ui.activity.base.BaseFragment;
 import com.yj.shopapp.util.CommonUtils;
+import com.yj.shopapp.util.DDecoration;
 import com.yj.shopapp.util.JsonHelper;
 import com.yj.shopapp.util.NetUtils;
-import com.yj.shopapp.util.PreferenceUtils;
-import com.yj.shopapp.view.headfootrecycleview.OnRecyclerViewScrollListener;
-import com.yj.shopapp.view.headfootrecycleview.RecyclerViewHeaderFooterAdapter;
 import com.yj.shopapp.wbeen.Msgs;
 
 import java.util.ArrayList;
@@ -35,33 +35,21 @@ import butterknife.BindView;
 /**
  * Created by jm on 2016/5/16.
  */
-public class SNewListViewActivity extends BaseFragment implements BaseRecyclerView {
+public class SNewListViewActivity extends BaseFragment implements OnRefreshListener, OnLoadMoreListener {
 
 
     @BindView(R.id.swipe_refresh_layout)
-    SwipeRefreshLayout swipeRefreshLayout;
-
+    SmartRefreshLayout swipeRefreshLayout;
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
-
-    private RecyclerViewHeaderFooterAdapter adapter;
-
-    private RecyclerView.LayoutManager layoutManager;
 
     private boolean isRequesting = false;//标记，是否正在刷新或者加载
 
     private int mCurrentPage = 0;
 
     private List<Msgs> megsList = new ArrayList<>();
-
-    String uid;
-    String token;
     String mtype = "0";
-
-    private ILoadView iLoadView = null;
-    private View loadMoreView = null;
-
-
+    private NewsAdapter nAdapter;
 
     public static SNewListViewActivity newInstance(String content) {
         SNewListViewActivity fragment = new SNewListViewActivity();
@@ -72,67 +60,61 @@ public class SNewListViewActivity extends BaseFragment implements BaseRecyclerVi
     @Override
     public void init(Bundle savedInstanceState) {
 
+        nAdapter = new NewsAdapter(mActivity, megsList);
 
-        uid = PreferenceUtils.getPrefString(mActivity, Contants.Preference.UID,"");
-        token = PreferenceUtils.getPrefString(mActivity,Contants.Preference.TOKEN,"");
-
-        swipeRefreshLayout.setColorSchemeResources(Contants.Refresh.refreshColorScheme);
-        swipeRefreshLayout.setOnRefreshListener(listener);
-
-        NewsAdapter nAdapter = new NewsAdapter(mActivity,megsList,this);
-
-        layoutManager = new LinearLayoutManager(mActivity);
-
-        adapter = new RecyclerViewHeaderFooterAdapter(layoutManager,nAdapter);
-
-        iLoadView = new ILoadViewImpl(mActivity, new mLoadMoreClickListener());
-
-        loadMoreView = iLoadView.inflate();
-
-        recyclerView.addOnScrollListener(new MyScrollListener());
-
-
-        if(recyclerView != null) {
-            recyclerView.setLayoutManager(layoutManager);
-            recyclerView.setAdapter(adapter);
+        if (recyclerView != null) {
+            recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
+            recyclerView.addItemDecoration(new DDecoration(mActivity, getResources().getDrawable(R.drawable.recyviewdecoration4)));
+            recyclerView.setAdapter(nAdapter);
         }
-
-        if (NetUtils.isNetworkConnected(mActivity)) {
-            if (null != swipeRefreshLayout) {
-
-                swipeRefreshLayout.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        swipeRefreshLayout.setRefreshing(true);
-
-                        refreshRequest();
-                    }
-                }, 200);
+        nAdapter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                megsList.get(position).setStatus("0");
+                Bundle bundle = new Bundle();
+                bundle.putString("id", megsList.get(position).getId());
+                CommonUtils.goActivity(mActivity, SMyNewsDetailActivity.class, bundle, false);
             }
-        }else{
+        });
+        Refresh();
+    }
+
+    private void Refresh() {
+        swipeRefreshLayout.setHeaderHeight(50);
+        swipeRefreshLayout.setFooterHeight(50);
+        swipeRefreshLayout.setOnRefreshListener(this);
+        swipeRefreshLayout.setOnLoadMoreListener(this);
+        swipeRefreshLayout.setDisableContentWhenRefresh(true);//是否在刷新的时候禁止列表的操作
+        swipeRefreshLayout.setDisableContentWhenLoading(true);//是否在加载的时候禁止列表的操作
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (NetUtils.isNetworkConnected(mActivity)) {
+            megsList.clear();
+            refreshRequest();
+        } else {
             showToastShort("网络不给力");
         }
-
     }
 
     public void refreshRequest() {
-
         mCurrentPage = 1;
-
         Map<String, String> params = new HashMap<String, String>();
         params.put("uid", uid);
         params.put("token", token);
         params.put("p", String.valueOf(mCurrentPage));
         params.put("mtype", mtype);
-        adapter.removeFooter(loadMoreView);
         HttpHelper.getInstance().post(mActivity, Contants.PortU.Msgs, params, new OkHttpResponseHandler<String>(mActivity) {
 
             @Override
             public void onAfter() {
                 super.onAfter();
-                swipeRefreshLayout.setRefreshing(false);
                 isRequesting = false;
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.finishRefresh();
+                }
             }
 
             @Override
@@ -144,24 +126,17 @@ public class SNewListViewActivity extends BaseFragment implements BaseRecyclerVi
             @Override
             public void onResponse(Request request, String json) {
                 super.onResponse(request, json);
-
                 megsList.clear();
-                System.out.println("response"+json);
-                if(JsonHelper.isRequstOK(json,mActivity)){
+                ShowLog.e(json);
+                if (JsonHelper.isRequstOK(json, mActivity)) {
                     JsonHelper<Msgs> jsonHelper = new JsonHelper<Msgs>(Msgs.class);
-
                     megsList.addAll(jsonHelper.getDatas(json));
+                } else if (JsonHelper.getRequstOK(json) == 6) {
 
-                    if (megsList.size() >= 20) {
-                        adapter.addFooter(loadMoreView);
-                    }
-                }else if(JsonHelper.getRequstOK(json)==6){
-                    adapter.removeFooter(loadMoreView);
-                }else{
+                } else {
                     showToastShort(JsonHelper.errorMsg(json));
                 }
-
-                adapter.notifyDataSetChanged();
+                nAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -169,21 +144,18 @@ public class SNewListViewActivity extends BaseFragment implements BaseRecyclerVi
                 super.onError(request, e);
                 showToastShort(Contants.NetStatus.NETDISABLEORNETWORKDISABLE);
                 megsList.clear();
-                adapter.notifyDataSetChanged();
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.finishRefresh(false);
+                }
             }
         });
 
     }
 
-    public void loadMoreRequest(){
-        if(isRequesting)
+    public void loadMoreRequest() {
+        if (isRequesting)
             return;
-        if (megsList.size() < 20) {
-            return;
-        }
         mCurrentPage++;
-
-        iLoadView.showLoadingView(loadMoreView);
 
         Map<String, String> params = new HashMap<String, String>();
         params.put("uid", uid);
@@ -197,6 +169,9 @@ public class SNewListViewActivity extends BaseFragment implements BaseRecyclerVi
             public void onAfter() {
                 super.onAfter();
                 isRequesting = false;
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.finishLoadMore();
+                }
             }
 
             @Override
@@ -209,20 +184,22 @@ public class SNewListViewActivity extends BaseFragment implements BaseRecyclerVi
             public void onResponse(Request request, String json) {
                 super.onResponse(request, json);
 
-                System.out.println("response"+json);
-                if(JsonHelper.isRequstOK(json,mActivity)){
+                ShowLog.e(json);
+                if (JsonHelper.isRequstOK(json, mActivity)) {
                     JsonHelper<Msgs> jsonHelper = new JsonHelper<Msgs>(Msgs.class);
 
-                    if(jsonHelper.getDatas(json).size() == 0){
-                        iLoadView.showFinishView(loadMoreView);
-                    }else {
+                    if (jsonHelper.getDatas(json).size() == 0) {
+                        if (swipeRefreshLayout != null) {
+                            swipeRefreshLayout.finishLoadMoreWithNoMoreData();
+                        }
+                    } else {
                         megsList.addAll(jsonHelper.getDatas(json));
                     }
-                }else{
+                } else {
                     showToastShort(JsonHelper.errorMsg(json));
                 }
+                nAdapter.notifyDataSetChanged();
 
-                adapter.notifyDataSetChanged();
             }
 
             @Override
@@ -230,65 +207,23 @@ public class SNewListViewActivity extends BaseFragment implements BaseRecyclerVi
                 super.onError(request, e);
                 showToastShort(Contants.NetStatus.NETDISABLEORNETWORKDISABLE);
                 mCurrentPage--;
-                iLoadView.showErrorView(loadMoreView);
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.finishLoadMore(false);
+                }
             }
         });
     }
 
-    SwipeRefreshLayout.OnRefreshListener listener = new SwipeRefreshLayout.OnRefreshListener() {
-        @Override
-        public void onRefresh() {
-
-            refreshRequest();
-        }
-    };
+    @Override
+    public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+        loadMoreRequest();
+    }
 
     @Override
-    public void onItemClick(int position) {
-        megsList.get(position).setStatus("0");
-        Bundle bundle = new Bundle();
-        bundle.putString("id",megsList.get(position).getId());
-        CommonUtils.goActivity(mActivity,SMyNewsDetailActivity.class,bundle,false);
-        adapter.notifyDataSetChanged();
-    }
-
-
-    @Override
-    public void onLongItemClick(int position) {
-//        showToastShort("changan"+position);
-    }
-
-
-    public class mLoadMoreClickListener implements LoadMoreClickListener {
-
-        @Override
-        public void clickLoadMoreData() {
-            loadMoreRequest();
-        }
-    }
-
-
-
-    public class MyScrollListener extends OnRecyclerViewScrollListener {
-
-        @Override
-        public void onScrollUp() {
-
-        }
-
-        @Override
-        public void onScrollDown() {
-
-        }
-
-        @Override
-        public void onBottom() {
-            loadMoreRequest();
-        }
-
-        @Override
-        public void onMoved(int distanceX, int distanceY) {
-
+    public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+        refreshRequest();
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.setNoMoreData(false);
         }
     }
 
@@ -296,4 +231,5 @@ public class SNewListViewActivity extends BaseFragment implements BaseRecyclerVi
     public int getLayoutID() {
         return R.layout.activity_newslist;
     }
+
 }

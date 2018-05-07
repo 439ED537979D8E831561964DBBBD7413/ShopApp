@@ -1,5 +1,6 @@
 package com.yj.shopapp.ui.activity.ImgUtil;
 
+import android.os.CountDownTimer;
 import android.util.SparseArray;
 import android.view.View;
 import android.widget.Button;
@@ -16,6 +17,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 public class ViewHolder {
     private SparseArray<View> viewHolder;
     private View view;
+    public CountDownTimer countDownTimer;
 
     public static ViewHolder getViewHolder(View view) {
         ViewHolder viewHolder = (ViewHolder) view.getTag();
@@ -71,4 +73,7 @@ public class ViewHolder {
         return get(id);
     }
 
+    public CountDownTimer getCountDown() {
+        return countDownTimer;
+    }
 }

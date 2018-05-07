@@ -2,10 +2,8 @@ package com.yj.shopapp.ui.activity.shopkeeper;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.widget.NestedScrollView;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -13,6 +11,12 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.squareup.okhttp.Request;
 import com.yj.shopapp.R;
 import com.yj.shopapp.config.Contants;
@@ -20,7 +24,6 @@ import com.yj.shopapp.http.HttpHelper;
 import com.yj.shopapp.http.OkHttpResponseHandler;
 import com.yj.shopapp.ubeen.Goods;
 import com.yj.shopapp.ui.activity.Interface.GoodsItemListenter;
-import com.yj.shopapp.ui.activity.Interface.OnViewScrollListenter;
 import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.ui.activity.adapter.SNewGoodsAdpter;
 import com.yj.shopapp.ui.activity.base.BaseActivity;
@@ -29,6 +32,7 @@ import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.DDecoration;
 import com.yj.shopapp.util.JsonHelper;
 import com.yj.shopapp.util.NetUtils;
+import com.yj.shopapp.util.StatusBarUtils;
 import com.yj.shopapp.view.headfootrecycleview.RecycleViewEmpty;
 import com.yj.shopapp.wbeen.Itemtype;
 
@@ -39,18 +43,19 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import ezy.ui.layout.LoadingLayout;
 
 /**
  * Created by jm on 2016/4/25.
  * <p/>
  * 我的商品
  */
-public class SGoodsActivity extends BaseActivity implements GoodsItemListenter, SwipeRefreshLayout.OnRefreshListener {
+public class SGoodsActivity extends BaseActivity implements GoodsItemListenter, OnRefreshListener, OnLoadMoreListener {
 
     @BindView(R.id.recycler_view)
     RecycleViewEmpty recyclerView;
     @BindView(R.id.swipe_refresh_layout)
-    SwipeRefreshLayout swipeRefreshLayout;
+    SmartRefreshLayout swipeRefreshLayout;
     @BindView(R.id.title)
     TextView title;
     @BindView(R.id.id_right_btu)
@@ -62,21 +67,16 @@ public class SGoodsActivity extends BaseActivity implements GoodsItemListenter, 
     EditText valueEt;
     @BindView(R.id.topsearchLy)
     LinearLayout topsearchLy;
-    @BindView(R.id.id_drawer_layout)
-    RelativeLayout idDrawerLayout;
     @BindView(R.id.bgView)
     View bgView;
-    //    @BindView(R.id.tagGroup)
-//    TagGroup tagGroup;
     String categoryId;//商品分类ID
     String keyWord;//首页关键词搜索
     @BindView(R.id.popupwindow)
     RelativeLayout popupwindow;
-    @BindView(R.id.empty_tv)
-    TextView emptyTv;
-    @BindView(R.id.Cempty_view)
-    NestedScrollView CemptyView;
-
+    @BindView(R.id.loading)
+    LoadingLayout loading;
+    @BindView(R.id.title_layout)
+    RelativeLayout titleLayout;
 
     private boolean isRequesting = false;//标记，是否正在刷新
     private int mCurrentPage = 1;
@@ -90,7 +90,7 @@ public class SGoodsActivity extends BaseActivity implements GoodsItemListenter, 
     private String cid = "";
     private int isSet = 0;
     private SNewGoodsAdpter GoodAdpter;
-    private View FooterView;
+
     @Override
     protected int getLayoutId() {
         return R.layout.stab_goods;
@@ -125,14 +125,12 @@ public class SGoodsActivity extends BaseActivity implements GoodsItemListenter, 
         }
         agentuid = myApplication.getAgentuid();
         agentuName = myApplication.getAgentuname();
-        emptyTv.setText("此品牌没有商品");
         title.setText(titlename);
         if (getIntent().hasExtra("bigtypeName")) {
             title.setText(getIntent().getStringExtra("bigtypeName"));
         }
 
-        swipeRefreshLayout.setColorSchemeResources(Contants.Refresh.refreshColorScheme);
-        swipeRefreshLayout.setOnRefreshListener(this);
+        Refresh();
 
         GoodAdpter = new SNewGoodsAdpter(mContext);
         GoodAdpter.setListenter(this);
@@ -140,37 +138,32 @@ public class SGoodsActivity extends BaseActivity implements GoodsItemListenter, 
             recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
             recyclerView.addItemDecoration(new DDecoration(mContext));
             recyclerView.setAdapter(GoodAdpter);
-            recyclerView.addOnScrollListener(new OnViewScrollListenter() {
-                @Override
-                public void onBottom() {
-                    mCurrentPage++;
-                    refreshRequest();
-                }
-            });
         }
-
-        if (NetUtils.isNetworkConnected(mContext)) {
-            if (null != swipeRefreshLayout) {
-
-                swipeRefreshLayout.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        swipeRefreshLayout.setRefreshing(true);
-                        refreshRequest();
-                    }
-                }, 200);
-            }
-        } else {
-            showToastShort("网络不给力");
+        if (isNetWork(mContext)) {
+            mCurrentPage = 1;
+            goodsList.clear();
+            refreshRequest();
         }
-
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        FooterView = LayoutInflater.from(mContext).inflate(R.layout.footerview, null);
-        FooterView.setLayoutParams(lp);
     }
 
+    @Override
+    protected void setStatusBar() {
+        StatusBarUtils.from(SGoodsActivity.this)
+                .setActionbarView(titleLayout)
+                .setTransparentStatusbar(true)
+                .setLightStatusBar(false)
+                .process();
+    }
+
+
+    private void Refresh() {
+        swipeRefreshLayout.setHeaderHeight(50);
+        swipeRefreshLayout.setFooterHeight(50);
+        swipeRefreshLayout.setOnRefreshListener(this);
+        swipeRefreshLayout.setOnLoadMoreListener(this);
+        swipeRefreshLayout.setDisableContentWhenRefresh(true);//是否在刷新的时候禁止列表的操作
+        swipeRefreshLayout.setDisableContentWhenLoading(true);//是否在加载的时候禁止列表的操作
+    }
 
     @OnClick(R.id.id_right_btu)
     public void openRightDrawer() {
@@ -192,14 +185,6 @@ public class SGoodsActivity extends BaseActivity implements GoodsItemListenter, 
 
     }
 
-    @Override
-    public void onRefresh() {
-        goodsList.clear();
-        mCurrentPage = 1;
-        refreshRequest();
-    }
-
-
     /**
      * 右侧事件操作
      **/
@@ -214,14 +199,7 @@ public class SGoodsActivity extends BaseActivity implements GoodsItemListenter, 
 
         if (NetUtils.isNetworkConnected(mContext)) {
             if (null != swipeRefreshLayout) {
-
-                swipeRefreshLayout.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        swipeRefreshLayout.setRefreshing(true);
-                        refreshRequest();
-                    }
-                }, 50);
+                swipeRefreshLayout.autoRefresh(300, 300, 1.5f);
             }
         } else {
             showToastShort("网络不给力");
@@ -233,7 +211,6 @@ public class SGoodsActivity extends BaseActivity implements GoodsItemListenter, 
      ***********************************************************/
 
     public void refreshRequest() {
-        if (isRequesting) return;
         Map<String, String> params = new HashMap<String, String>();
         params.put("uid", uid);
         params.put("token", token);
@@ -251,9 +228,9 @@ public class SGoodsActivity extends BaseActivity implements GoodsItemListenter, 
             public void onAfter() {
                 super.onAfter();
                 if (swipeRefreshLayout != null) {
-                    swipeRefreshLayout.setRefreshing(false);
+                    swipeRefreshLayout.finishRefresh();
+                    swipeRefreshLayout.finishLoadMore();
                 }
-                isRequesting = false;
             }
 
             @Override
@@ -269,26 +246,34 @@ public class SGoodsActivity extends BaseActivity implements GoodsItemListenter, 
                     JsonHelper<Goods> jsonHelper = new JsonHelper<Goods>(Goods.class);
                     goodsList.addAll(jsonHelper.getDatas(json));
                     GoodAdpter.setList(goodsList);
+                    if (loading != null) {
+                        loading.showContent();
+                    }
                 } else if (JsonHelper.getRequstOK(json) == 6) {
                     mCurrentPage--;
                     showToastShort(JsonHelper.errorMsg(json));
                     if (goodsList.size() == 0) {
-                        recyclerView.setEmptyView(CemptyView);
+                        if (loading != null) {
+                            loading.showEmpty();
+                        }
                     } else {
-                        if (goodsList.size() > 6) {
-                            GoodAdpter.setmFooterView(FooterView);
+                        if (swipeRefreshLayout != null) {
+                            swipeRefreshLayout.finishLoadMoreWithNoMoreData();
                         }
                     }
                 } else {
                     showToastShort(JsonHelper.errorMsg(json));
                     mCurrentPage--;
                 }
-                GoodAdpter.notifyDataSetChanged();
             }
 
             @Override
             public void onError(Request request, Exception e) {
                 super.onError(request, e);
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.finishRefresh(false);
+                    swipeRefreshLayout.finishLoadMore(false);
+                }
                 mCurrentPage--;
                 showToastShort(Contants.NetStatus.NETDISABLEORNETWORKDISABLE);
                 goodsList.clear();
@@ -308,15 +293,7 @@ public class SGoodsActivity extends BaseActivity implements GoodsItemListenter, 
                 if (NetUtils.isNetworkConnected(mContext)) {
                     if (null != swipeRefreshLayout) {
 
-                        swipeRefreshLayout.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-
-                                swipeRefreshLayout.setRefreshing(true);
-                                refreshRequest();
-                                //loadItemtype(false);
-                            }
-                        }, 200);
+                        swipeRefreshLayout.autoRefresh(300, 300, 1.5f);
                     }
                 } else {
                     showToastShort("网络不给力");
@@ -327,15 +304,7 @@ public class SGoodsActivity extends BaseActivity implements GoodsItemListenter, 
                 keyWord = "";
                 if (NetUtils.isNetworkConnected(mContext)) {
                     if (null != swipeRefreshLayout) {
-
-                        swipeRefreshLayout.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                isRequesting = false;
-                                swipeRefreshLayout.setRefreshing(true);
-                                onRefresh();
-                            }
-                        }, 200);
+                        swipeRefreshLayout.autoRefresh(300, 300, 1.5f);
                     }
                 } else {
                     showToastShort("网络不给力");
@@ -346,15 +315,7 @@ public class SGoodsActivity extends BaseActivity implements GoodsItemListenter, 
                 brandid = "";
                 if (NetUtils.isNetworkConnected(mContext)) {
                     if (null != swipeRefreshLayout) {
-
-                        swipeRefreshLayout.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                isRequesting = false;
-                                swipeRefreshLayout.setRefreshing(true);
-                                onRefresh();
-                            }
-                        }, 200);
+                        swipeRefreshLayout.autoRefresh(300, 300, 1.5f);
                     }
                 } else {
                     showToastShort("网络不给力");
@@ -369,6 +330,7 @@ public class SGoodsActivity extends BaseActivity implements GoodsItemListenter, 
 
     @Override
     public void onClick(View V, int position) {
+        if (isRequesting) return;
         switch (V.getId()) {
             case R.id.itemview:
                 Bundle bundle = new Bundle();
@@ -377,7 +339,21 @@ public class SGoodsActivity extends BaseActivity implements GoodsItemListenter, 
                 CommonUtils.goActivityForResult(mContext, SGoodsDetailActivity.class, bundle, 19, false);
                 break;
             case R.id.addcartTv:
-                BugGoodsDialog.newInstance(goodsList.get(position)).show(getFragmentManager(), "123");
+                if (getAddressId().equals("")) {
+                    new MaterialDialog.Builder(mContext).title("温馨提示!")
+                            .content("您暂未添加收货地址!")
+                            .positiveText("去完善信息")
+                            .negativeText("下次吧")
+                            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                    CommonUtils.goActivity(mContext, SAddressRefreshActivity.class, null);
+                                    dialog.dismiss();
+                                }
+                            }).show();
+                } else {
+                    BugGoodsDialog.newInstance(goodsList.get(position)).show(getFragmentManager(), "123");
+                }
                 break;
             default:
                 break;
@@ -389,5 +365,21 @@ public class SGoodsActivity extends BaseActivity implements GoodsItemListenter, 
 
     }
 
+
+    @Override
+    public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+        mCurrentPage++;
+        refreshRequest();
+    }
+
+    @Override
+    public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+        if (isNetWork(mContext)) {
+            goodsList.clear();
+            mCurrentPage = 1;
+            refreshRequest();
+            swipeRefreshLayout.setNoMoreData(false);
+        }
+    }
 
 }

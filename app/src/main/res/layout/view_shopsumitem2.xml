@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center">
+
+    <TextView
+        android:id="@+id/itemsum"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/fillet_tv_white"
+        android:gravity="center"
+        android:minHeight="25dp"
+        android:textSize="13sp"
+        android:minWidth="50dp"
+        android:text=""/>
+</RelativeLayout>

@@ -71,7 +71,6 @@ public class WGoodsDetailActivity extends BaseActivity {
     TextView title;
     @BindView(R.id.id_right_btu)
     TextView idRightBtu;
-
     @BindView(R.id.simpleDraweeView)
     SimpleDraweeView simpleDraweeView;
     @BindView(R.id.goodsclassify_Tx)
@@ -298,7 +297,7 @@ public class WGoodsDetailActivity extends BaseActivity {
             @Override
             public void onResponse(Request request, String json) {
                 super.onResponse(request, json);
-                System.out.println("response" + json);
+                ShowLog.e(json);
 
                 if (JsonHelper.isRequstOK(json, mContext)) {
                     JsonHelper<Itemunit> jsonHelper = new JsonHelper<Itemunit>(Itemunit.class);
@@ -337,7 +336,7 @@ public class WGoodsDetailActivity extends BaseActivity {
             @Override
             public void onResponse(Request request, String json) {
                 super.onResponse(request, json);
-                System.out.println("response" + json);
+                ShowLog.e(json);
 
                 if (JsonHelper.isRequstOK(json, mContext)) {
 
@@ -393,7 +392,7 @@ public class WGoodsDetailActivity extends BaseActivity {
             public void onResponse(Request request, String json) {
                 super.onResponse(request, json);
 
-                System.out.println("response" + json);
+                ShowLog.e(json);
                 if (JsonHelper.isRequstOK(json, mContext)) {
                     JsonHelper<UserGroup> jsonHelper = new JsonHelper<UserGroup>(UserGroup.class);
                     userGroupList = jsonHelper.getDatas(json);

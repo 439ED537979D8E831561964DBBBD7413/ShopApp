@@ -3,8 +3,9 @@ package com.yj.shopapp.ui.activity.wholesale;
 
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
-import android.util.Log;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -14,9 +15,10 @@ import com.yj.shopapp.config.Contants;
 import com.yj.shopapp.http.HttpHelper;
 import com.yj.shopapp.http.OkHttpResponseHandler;
 import com.yj.shopapp.ubeen.TagGroup;
+import com.yj.shopapp.ui.activity.ShowLog;
+import com.yj.shopapp.ui.activity.adapter.BrandAdapter;
 import com.yj.shopapp.ui.activity.base.BaseActivity;
 import com.yj.shopapp.util.CommonUtils;
-import com.yj.shopapp.util.FloatingLayout;
 import com.yj.shopapp.util.JsonHelper;
 import com.yj.shopapp.util.NetUtils;
 
@@ -26,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
@@ -43,12 +46,14 @@ public class WBrandActivity extends BaseActivity {
     TextView submitTv;
     @BindView(R.id.value_Et)
     EditText valueEt;
-    @BindView(R.id.floatinglayout)
-    FloatingLayout floatinglayout;
+
     GridLayoutManager layoutManager;
+    @BindView(R.id.my_RecyclerView)
+    RecyclerView myRecyclerView;
 
     private List<TagGroup> datas = new ArrayList<>();
-    String name="";
+    String name = "";
+    private BrandAdapter adapter;
     @Override
     protected int getLayoutId() {
         return R.layout.goodsbrand;
@@ -63,9 +68,12 @@ public class WBrandActivity extends BaseActivity {
         } else {
             showToastShort("无网络");
         }
-        floatinglayout.setOnItemCheckedChangeListener(new FloatingLayout.OnItemCheckedChangeListener() {
+        adapter=new BrandAdapter(mContext);
+        myRecyclerView.setLayoutManager(layoutManager);
+        myRecyclerView.setAdapter(adapter);
+        adapter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemCheckedChange(int position) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String name = datas.get(position).getName();
                 String bid = datas.get(position).getId();
                 Bundle b = new Bundle();
@@ -75,7 +83,6 @@ public class WBrandActivity extends BaseActivity {
             }
         });
     }
-
 
 
     /**
@@ -106,11 +113,11 @@ public class WBrandActivity extends BaseActivity {
             @Override
             public void onResponse(Request request, String json) {
                 super.onResponse(request, json);
-                Log.e("m_tag", json);
+                ShowLog.e(json);
                 if (JsonHelper.isRequstOK(json, mContext)) {
                     JsonHelper<TagGroup> jsonHelper = new JsonHelper<TagGroup>(TagGroup.class);
                     datas.addAll(jsonHelper.getDatas(json));
-                    floatinglayout.setTags(datas, "getName");
+                    adapter.setList(datas);
                 } else {
                     showToastShort(JsonHelper.errorMsg(json));
                 }
@@ -137,4 +144,10 @@ public class WBrandActivity extends BaseActivity {
     }
 
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // TODO: add setContentView(...) invocation
+        ButterKnife.bind(this);
+    }
 }

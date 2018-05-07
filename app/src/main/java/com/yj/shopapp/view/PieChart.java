@@ -50,13 +50,15 @@ public class PieChart extends View {
     /**
      * 绘制方式
      */
-    private int mDrawWay = PART;
+    private int mDrawWay = COUNT;
     public static final int PART = 0;//分布绘制
     public static final int COUNT = 1;//连续绘制
     private int centerX, centerY;//中心坐标
     private int offset = 6;
     private float r = 0;
     private Random random = new Random();
+    float stopX = 0;
+    float stopY = 0;
     /**
      * 自定义动画
      */
@@ -86,10 +88,10 @@ public class PieChart extends View {
         mTvPaint = new Paint();
         mTvPaint.setStyle(Paint.Style.FILL);
         mTvPaint.setColor(Color.GRAY);
-        mTvPaint.setTextSize(CommonUtils.dip2px(getContext(),12));
+        mTvPaint.setTextSize(CommonUtils.dip2px(getContext(), 12));
         //初始化动画
-        mAnimation = new PieChartAnimation();
-        mAnimation.setDuration(ANIMATION_DURATION);
+//        mAnimation = new PieChartAnimation();
+//        mAnimation.setDuration(ANIMATION_DURATION);
     }
 
     /**
@@ -131,7 +133,7 @@ public class PieChart extends View {
         sumValue = 0;
         this.mData = mData;
         initData(mData);
-        startAnimation(mAnimation);
+        //startAnimation(mAnimation);
         invalidate();
     }
 
@@ -183,6 +185,7 @@ public class PieChart extends View {
             data.setAngle(angle);
             currentStartAngle += angle;
         }
+
     }
 
     @Override
@@ -215,12 +218,86 @@ public class PieChart extends View {
         r = (float) (Math.min(mWidth, mHeight) / 2 * 0.6);
         float r1 = r / 2;
         float r2 = r / 1.8f;
-        float stopX = 0;
-        float stopY = 0;
+
+        //记录上一个的Y坐标
+        float beforeY = 0;
+        float currentY = 0;
+        float nextY = 0;
         //4.确定饼图的矩形大小
         RectF rectF = new RectF(-r, -r, r, r);
         RectF rectF1 = new RectF(-r1, -r1, r1, r1);
         RectF rectF2 = new RectF(-r2, -r2, r2, r2);
+        for (int i = 0; i < mData.size(); i++) {
+            PieData data = mData.get(i);
+            stopX = (float) ((r + 20) * Math.cos((2 * currentStartAngle + data.getAngle()) / 2 * Math.PI / 180));
+            stopY = (float) ((r + 20) * Math.sin((2 * currentStartAngle + data.getAngle()) / 2 * Math.PI / 180));
+            data.setStartX(stopX);
+            data.setStartY(stopY);
+            currentStartAngle += data.getAngle();
+        }
+        currentStartAngle = mStartAngle;
+        PieData currdata;
+        int size = 30;
+        for (int i = 0; i < mData.size(); i++) {
+            PieData data = mData.get(i);
+            if (i == 0) {
+//                beforeY = mData.get(mData.size() - 1).getStartY();
+//                currentY = data.getStartY();
+//                if (currentY + Math.abs(beforeY) < 100) {
+//                    data.setStartY(100);
+//                }
+            } else {
+                currdata = mData.get(i - 1);
+                beforeY = mData.get(i - 1).getStartY();
+                currentY = data.getStartY();
+                if (data.getStartX() > 0 && currdata.getStartX() > 0) {
+                    if (currentY - beforeY > CommonUtils.dp2px(getContext(), 35)) {
+                        if (i == mData.size() - 1) {
+
+                        } else {
+                            data.setStartY(currentY - CommonUtils.dp2px(getContext(), 16));
+                            data.setStartX(data.getStartX() + size);
+                        }
+                    } else {
+                        data.setStartY(beforeY + CommonUtils.dp2px(getContext(), 16));
+                        data.setStartX(data.getStartX() + size);
+                    }
+                } else if (data.getStartX() > 0 && currdata.getStartX() < 0) {
+                    if (Math.abs(data.getStartY()) < centerY * 0.5) {
+                        data.setStartY(currentY - CommonUtils.dp2px(getContext(), 16));
+                    }
+                    data.setStartX(data.getStartX() + size);
+                }
+            }
+            if (data.getStartX() > 0) {
+                if (data.getStartY() > 0) {
+                    if (Math.abs(data.getStartY()) > centerY * 0.65) {
+                        data.setStartX(data.getStartX() + CommonUtils.dp2px(getContext(), 10));
+                        data.setStartY(data.getStartY() + CommonUtils.dp2px(getContext(), 15));
+                    }
+                } else {
+                    if (Math.abs(data.getStartY()) > centerY * 0.65) {
+                        data.setStartX(data.getStartX() + CommonUtils.dp2px(getContext(), 10));
+                        data.setStartY(data.getStartY() - CommonUtils.dp2px(getContext(), 15));
+                    }
+                }
+            } else {
+                //x小于 y大于
+                if (data.getStartY() > 0) {
+                    if (Math.abs(data.getStartY()) > centerY * 0.65) {
+                        data.setStartX(data.getStartX() - CommonUtils.dp2px(getContext(), 10));
+                        data.setStartY(data.getStartY() + CommonUtils.dp2px(getContext(), 15));
+                    }
+                } else {
+                    if (Math.abs(data.getStartY()) > centerY * 0.65) {
+                        data.setStartX(data.getStartX() - CommonUtils.dp2px(getContext(), 10));
+                        data.setStartY(data.getStartY() - CommonUtils.dp2px(getContext(), 15));
+                    }
+                }
+
+            }
+
+        }
         for (int i = 0; i < mData.size(); i++) {
             PieData data = mData.get(i);
             //5.设置颜色
@@ -233,66 +310,40 @@ public class PieChart extends View {
                 mPaint.setColor(data.getColor());
                 stopX = (float) ((r + 20) * Math.cos((2 * currentStartAngle + data.getAngle()) / 2 * Math.PI / 180));
                 stopY = (float) ((r + 20) * Math.sin((2 * currentStartAngle + data.getAngle()) / 2 * Math.PI / 180));
-                //ShowLog.e(stopY + "");
                 canvas.drawCircle(stopX, stopY, 10, mPaint);
                 //7.绘制下一块扇形时先将角度加上当前扇形的角度
-
+                currentStartAngle += data.getAngle();
             }
-            //画横线
-            int dx;
+
             // 判断横线是画在左边还是右边
             int endX;
-            float zx;
-            float zy;
-            if (stopX > 0) {
+            int dx;
+            float zx = 0, zy = 0;
+            if (data.getStartX() > 0) {
                 endX = (centerX - getPaddingRight() - 20);
-                zx = stopX + 30;
             } else {
                 endX = (-centerX + getPaddingLeft() + 20);
-                zx = stopX - 30;
             }
-            if (stopY > 0) {
-                zy = stopY + 50;
-            } else {
-                zy = stopY - 50;
-            }
-            mPaint.setStrokeWidth(CommonUtils.dip2px(getContext(),1));
-            if (Math.abs(stopY) > centerY * 0.6) {
-                canvas.drawLine(stopX, stopY, zx, zy, mPaint);
-                //画横线
-                canvas.drawLine(zx, zy, endX, zy, mPaint);
-                dx = (int) (endX - stopX);
-                //测量文字大小
-                Rect rect = new Rect();
-                String text = data.getText();
-                mTvPaint.getTextBounds(text, 0, text.length(), rect);
-                int w = rect.width();
-                int h = rect.height();
-                canvas.drawText(text, 0, text.length(), dx > 0 ? endX - offset - w : endX + offset, zy + h + offset, mTvPaint);
-                String value = String.valueOf(data.getValue());
-                mTvPaint.getTextBounds(value, 0, value.length(), rect);
-                int w2 = rect.width();
-                canvas.drawText(value, 0, value.length(), dx > 0 ? endX - offset - w2 : endX + offset, zy - offset, mTvPaint);
-                currentStartAngle += data.getAngle();
-                continue;
-            }
-            //画横线
-            canvas.drawLine(stopX, stopY, endX, stopY, mPaint);
+
+            mPaint.setStrokeWidth(CommonUtils.dip2px(getContext(), 1));
+            canvas.drawLine(stopX, stopY, data.getStartX(), data.getStartY(), mPaint);
+            canvas.drawLine(data.getStartX(), data.getStartY(), endX, data.getStartY(), mPaint);
             dx = (int) (endX - stopX);
             //测量文字大小
             Rect rect = new Rect();
-            String text = data.getText();
-            mTvPaint.getTextBounds(text, 0, text.length(), rect);
-            int w = rect.width();
-            int h = rect.height();
-            canvas.drawText(text, 0, text.length(), dx > 0 ? endX - offset - w : endX + offset, stopY + h + offset, mTvPaint);
-            String value = String.valueOf(data.getValue());
-            mTvPaint.getTextBounds(value, 0, value.length(), rect);
-            int w2 = rect.width();
-            canvas.drawText(value, 0, value.length(), dx > 0 ? endX - offset - w2 : endX + offset, stopY - offset, mTvPaint);
-            currentStartAngle += data.getAngle();
-
-
+            String text = data.getText() + "  " + String.valueOf(data.getValue());
+            try {
+                mTvPaint.getTextBounds(text, 0, text.length(), rect);
+                int w = rect.width();
+                int h = rect.height();
+                canvas.drawText(text, 0, text.length(), dx > 0 ? endX - offset - w : endX + offset, data.getStartY()- offset, mTvPaint);
+//                String value = String.valueOf(data.getValue());
+//                mTvPaint.getTextBounds(value, 0, value.length(), rect);
+//                int w2 = rect.width();
+//                canvas.drawText(value, 0, value.length(), dx > 0 ? endX - offset - w2 : endX + offset, data.getStartY() - offset, mTvPaint);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         //绘制中心空白处
         mPaint.setColor(0x11000000);
@@ -303,9 +354,6 @@ public class PieChart extends View {
         //绘制文字
         mPaint.setColor(0xEEFF4567);
         mPaint.setTextSize(80);
-//        Rect textRect = new Rect();
-//        mPaint.getTextBounds(str, 0, str.length(), textRect);
-        // canvas.drawText("", -textRect.width() / 2, 0, mPaint);
     }
 
 

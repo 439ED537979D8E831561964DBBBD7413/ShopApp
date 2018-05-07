@@ -1,33 +1,31 @@
 package com.yj.shopapp.ui.activity.shopkeeper;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.widget.NestedScrollView;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.LinearLayout;
 
 import com.alibaba.fastjson.JSONArray;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.squareup.okhttp.Request;
 import com.yj.shopapp.R;
 import com.yj.shopapp.config.Contants;
 import com.yj.shopapp.http.HttpHelper;
 import com.yj.shopapp.http.OkHttpResponseHandler;
-import com.yj.shopapp.ubeen.EventMassg;
 import com.yj.shopapp.ubeen.NewOrder;
 import com.yj.shopapp.ubeen.RefreshListCar;
 import com.yj.shopapp.ui.activity.ImgUtil.NewBaseFragment;
-import com.yj.shopapp.ui.activity.Interface.OnViewScrollListenter;
 import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.ui.activity.adapter.SNewOrderAdpter;
 import com.yj.shopapp.util.CommonUtils;
+import com.yj.shopapp.util.DDecoration;
 import com.yj.shopapp.util.JsonHelper;
-import com.yj.shopapp.util.NetUtils;
-import com.yj.shopapp.view.headfootrecycleview.RecycleViewEmpty;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -39,26 +37,25 @@ import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
+import ezy.ui.layout.LoadingLayout;
 
 /**
  * Created by jm on 2016/4/25.
  */
-public class SOrderViewActivity extends NewBaseFragment implements SwipeRefreshLayout.OnRefreshListener {
+public class SOrderViewActivity extends NewBaseFragment implements OnRefreshListener, OnLoadMoreListener {
 
 
     @BindView(R.id.recycler_view)
-    RecycleViewEmpty recyclerView;
+    RecyclerView recyclerView;
     @BindView(R.id.pullToRefresh)
-    SwipeRefreshLayout pullToRefresh;
-    @BindView(R.id.Cempty_view)
-    NestedScrollView CemptyView;
+    SmartRefreshLayout pullToRefresh;
+    @BindView(R.id.loading)
+    LoadingLayout loading;
     private SNewOrderAdpter adapter;
-    //标记，是否正在刷新
-    private boolean isRefresh = false;
     private int mCurrentPage = 1;
     private List<NewOrder> orderList = new ArrayList<>();
-    private View FooterView;
     private String keyword = "";
+    private boolean isFirst = true;
 
     public static SOrderViewActivity newInstance(int type) {
         Bundle args = new Bundle();
@@ -82,36 +79,34 @@ public class SOrderViewActivity extends NewBaseFragment implements SwipeRefreshL
         adapter = new SNewOrderAdpter(mActivity, orderList);
         if (recyclerView != null) {
             recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
+            recyclerView.addItemDecoration(new DDecoration(mActivity, getResources().getDrawable(R.drawable.recyviewdecoration3)));
             recyclerView.setAdapter(adapter);
-            recyclerView.addOnScrollListener(new OnViewScrollListenter() {
+            //recyclerView.setEmptyView(CemptyView);
+        }
+        try {
+            adapter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
-                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                    super.onScrolled(recyclerView, dx, dy);
-                    int topRowVerticalPosition =
-                            (recyclerView == null || recyclerView.getChildCount() == 0) ? 0 : recyclerView.getChildAt(0).getTop();
-                    pullToRefresh.setEnabled(topRowVerticalPosition >= 0);
-                }
-
-                @Override
-                public void onBottom() {
-                    mCurrentPage++;
-                    refreshRequest();
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    if (orderList.size() > 0) {
+                        Bundle bundle = new Bundle();
+                        bundle.putString("oid", orderList.get(position).getOid());
+                        CommonUtils.goActivity(mActivity, SOrderDatesActivity.class, bundle);
+                    }
                 }
             });
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        adapter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Bundle bundle = new Bundle();
-                bundle.putString("oid", orderList.get(position).getOid());
-                CommonUtils.goActivity(mActivity, SOrderDatesActivity.class, bundle);
-            }
-        });
+        Refresh();
+    }
+
+    private void Refresh() {
+        pullToRefresh.setHeaderHeight(50);
+        pullToRefresh.setFooterHeight(50);
         pullToRefresh.setOnRefreshListener(this);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        FooterView = LayoutInflater.from(mActivity).inflate(R.layout.footerview, null);
-        FooterView.setLayoutParams(lp);
+        pullToRefresh.setOnLoadMoreListener(this);
+        pullToRefresh.setDisableContentWhenRefresh(true);//是否在刷新的时候禁止列表的操作
+        pullToRefresh.setDisableContentWhenLoading(true);//是否在加载的时候禁止列表的操作
     }
 
     @Override
@@ -122,58 +117,39 @@ public class SOrderViewActivity extends NewBaseFragment implements SwipeRefreshL
 
     @Override
     protected void initData() {
-        if (orderList.size() > 0) {
-            adapter.setList(orderList);
-        } else {
-            if (NetUtils.isNetworkConnected(mActivity)) {
-                pullToRefresh.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        pullToRefresh.setRefreshing(true);
-                        refreshRequest();
-                    }
-                }, 200);
-            } else {
-                showToast("无网络");
-            }
+        if (isNetWork(mActivity)) {
+            mCurrentPage = 1;
+            orderList.clear();
+            refreshRequest(0);
         }
-
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(RefreshListCar car) {
-        if (NetUtils.isNetworkConnected(mActivity)) {
-            pullToRefresh.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    pullToRefresh.setRefreshing(true);
-                    onRefresh();
+        switch (car.getStatus()) {
+            case 1:
+                if (isNetWork(mActivity)) {
+                    orderList.clear();
+                    keyword = car.getKw();
+                    if (loading != null) {
+                        loading.showLoading();
+                    }
+                    refreshRequest(0);
                 }
-            }, 200);
-        } else {
-            showToast("无网络");
+                break;
+            default:
+                if (!isFirst && gettype() == 0) {
+                    if (isNetWork(mActivity)) {
+                        orderList.clear();
+                        refreshRequest(0);
+                    }
+                }
+                break;
         }
+
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMesage(EventMassg msg) {
-        keyword = msg.getMessage();
-        if (NetUtils.isNetworkConnected(mActivity)) {
-            pullToRefresh.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    pullToRefresh.setRefreshing(true);
-                    onRefresh();
-                }
-            }, 200);
-        } else {
-            showToast("无网络");
-        }
-    }
-
-
-    public void refreshRequest() {
-        if (isRefresh) return;
+    public void refreshRequest(final int status) {
         final Map<String, String> params = new HashMap<String, String>();
         params.put("uid", uid);
         params.put("token", token);
@@ -185,11 +161,14 @@ public class SOrderViewActivity extends NewBaseFragment implements SwipeRefreshL
             public void onError(Request request, Exception e) {
                 super.onError(request, e);
                 mCurrentPage--;
-                isRefresh = false;
                 showToast(Contants.NetStatus.NETDISABLEORNETWORKDISABLE);
                 if (pullToRefresh != null) {
-                    pullToRefresh.setRefreshing(false);
+                    pullToRefresh.finishLoadMore(false);
                 }
+                if (pullToRefresh != null) {
+                    pullToRefresh.finishRefresh(false);
+                }
+
             }
 
             @Override
@@ -197,15 +176,30 @@ public class SOrderViewActivity extends NewBaseFragment implements SwipeRefreshL
                 super.onResponse(request, json);
                 ShowLog.e(json);
                 if (JsonHelper.isRequstOK(json, mActivity)) {
-                    orderList.addAll(JSONArray.parseArray(json, NewOrder.class));
-                    adapter.setList(orderList);
+                    if (status == 0) {
+                        orderList.clear();
+                        orderList.addAll(JSONArray.parseArray(json, NewOrder.class));
+                        adapter.setList(orderList);
+                    } else {
+                        orderList.addAll(JSONArray.parseArray(json, NewOrder.class));
+                        adapter.setList(orderList);
+                    }
+                    if (loading != null) {
+                        loading.showContent();
+                    }
                 }
                 if (JsonHelper.getRequstOK(json) == 6) {
                     if (orderList.size() == 0) {
-                        recyclerView.setEmptyView(CemptyView);
+                        if (pullToRefresh != null) {
+                            pullToRefresh.finishRefresh();
+                            pullToRefresh.finishLoadMoreWithNoMoreData();
+                        }
+                        if (loading != null) {
+                            loading.showEmpty();
+                        }
                     } else {
-                        if (orderList.size() > 6) {
-                            adapter.setmFooterView(FooterView);
+                        if (pullToRefresh != null) {
+                            pullToRefresh.finishLoadMoreWithNoMoreData();
                         }
                     }
                     mCurrentPage--;
@@ -213,18 +207,13 @@ public class SOrderViewActivity extends NewBaseFragment implements SwipeRefreshL
             }
 
             @Override
-            public void onBefore() {
-                super.onBefore();
-                isRefresh = true;
-            }
-
-            @Override
             public void onAfter() {
                 super.onAfter();
-                isRefresh = false;
                 if (pullToRefresh != null) {
-                    pullToRefresh.setRefreshing(false);
+                    pullToRefresh.finishLoadMore();
+                    pullToRefresh.finishRefresh();
                 }
+                isFirst = false;
             }
         });
     }
@@ -236,11 +225,19 @@ public class SOrderViewActivity extends NewBaseFragment implements SwipeRefreshL
     }
 
     @Override
-    public void onRefresh() {
+    public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+        mCurrentPage++;
+        refreshRequest(1);
+    }
+
+    @Override
+    public void onRefresh(@NonNull RefreshLayout refreshLayout) {
         mCurrentPage = 1;
         keyword = "";
         orderList.clear();
-        refreshRequest();
+        refreshRequest(0);
+        if (pullToRefresh != null) {
+            pullToRefresh.setNoMoreData(false);
+        }
     }
-
 }

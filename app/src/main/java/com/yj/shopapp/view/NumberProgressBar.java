@@ -428,7 +428,7 @@ public class NumberProgressBar extends View {
             setProgress(getProgress() + by);
         }
 
-        if(mListener != null){
+        if (mListener != null) {
             mListener.onProgressChange(getProgress(), getMax());
         }
     }
@@ -499,7 +499,7 @@ public class NumberProgressBar extends View {
         return mIfDrawText;
     }
 
-    public void setOnProgressBarListener(OnProgressBarListener listener){
+    public void setOnProgressBarListener(OnProgressBarListener listener) {
         mListener = listener;
     }
 }

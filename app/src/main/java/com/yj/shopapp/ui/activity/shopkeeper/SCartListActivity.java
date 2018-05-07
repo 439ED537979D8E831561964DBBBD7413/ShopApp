@@ -36,7 +36,6 @@ import com.yj.shopapp.ui.activity.base.BaseActivity;
 import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.JsonHelper;
 import com.yj.shopapp.util.NetUtils;
-import com.yj.shopapp.util.PreferenceUtils;
 import com.yj.shopapp.view.headfootrecycleview.OnRecyclerViewScrollListener;
 import com.yj.shopapp.view.headfootrecycleview.RecyclerViewHeaderFooterAdapter;
 
@@ -62,13 +61,10 @@ public class SCartListActivity extends BaseActivity implements CardListRecyclerV
 
     @BindView(R.id.title)
     TextView title;
-    //    @BindView(R.id.id_right_btu)
-//    TextView idRightBtu;
-
     @BindView(R.id.choose)
     ImageView choose;
     @BindView(R.id.cart_total_price_tv)
-    public TextView carttotalpriceTv;
+    TextView carttotalpriceTv;
     @BindView(R.id.bottom_layout)
     LinearLayout bottomLayout;
     @BindView(R.id.recycler_view)
@@ -90,17 +86,6 @@ public class SCartListActivity extends BaseActivity implements CardListRecyclerV
     ScashCoupon scashCoupon;
     int CashCouponRequestCode = 007;
     private boolean isload = false;
-
-//    @OnClick(R.id.id_right_btu)
-//    public void openRightDrawer() {
-//        if (!isRequesting) {
-//            Bundle bundle = new Bundle();
-//            bundle.putString("choosetype", "0");
-//            CommonUtils.goActivityForResult(mContext, SChooseAgentActivity.class, bundle, 0, false);
-//        }
-//    }
-
-
     private RecyclerViewHeaderFooterAdapter adapter;
 
     private RecyclerView.LayoutManager layoutManager;
@@ -113,17 +98,12 @@ public class SCartListActivity extends BaseActivity implements CardListRecyclerV
     private List<Address> notes = new ArrayList<Address>();
     private List<gMinMax> gMinMaxes = new ArrayList<>();
 
-    String uid;
-    String token;
     String agentuid = "";
     boolean isAllChoose = false;
     String idstr = "";
     String addressid = "";
     String minnum, maxnum;
-//    @OnClick(R.id.refund_btu)
-//    public void refund() {
-//        CommonUtils.goActivity(mContext, SRefundCarList.class, null);
-//    }
+
 
     @OnClick(R.id.allchoose)
     public void AllChoose() {
@@ -218,9 +198,7 @@ public class SCartListActivity extends BaseActivity implements CardListRecyclerV
 
     @Override
     protected void initData() {
-        setResult(SMainTabActivity.CARLIST);
-        uid = PreferenceUtils.getPrefString(mContext, Contants.Preference.UID, "");
-        token = PreferenceUtils.getPrefString(mContext, Contants.Preference.TOKEN, "");
+       // setResult(SMainTabActivity.CARLIST);
         swipeRefreshLayout.setColorSchemeResources(Contants.Refresh.refreshColorScheme);
         swipeRefreshLayout.setOnRefreshListener(listener);
 
@@ -291,7 +269,6 @@ public class SCartListActivity extends BaseActivity implements CardListRecyclerV
                     maxnum = jsonObject.getString("maxnum");
                     gMinMax gMinMax = new gMinMax(minnum, maxnum, "");
                     gMinMaxes.add(gMinMax);
-                    Log.d("m_tag", gMinMaxes.size() + "");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -360,7 +337,6 @@ public class SCartListActivity extends BaseActivity implements CardListRecyclerV
         String a = new DecimalFormat("###,###,###.##").format(count);
         carttotalpriceTv.setText(a);
     }
-
 
 
     @OnClick(R.id.title)
@@ -637,7 +613,7 @@ public class SCartListActivity extends BaseActivity implements CardListRecyclerV
                     //添加
                     //showChooseify();
                 } else {
-                    showToastShort("没有收货地址");
+                    showToastShort("暂无收货地址");
                 }
             }
 

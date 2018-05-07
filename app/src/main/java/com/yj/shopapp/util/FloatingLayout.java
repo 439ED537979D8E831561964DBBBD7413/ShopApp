@@ -248,18 +248,18 @@ public class FloatingLayout extends ViewGroup {
     }
 
     private void createTagView(String str, int position) {
-        TextView tv = new TextView(context);
-        LayoutParams lp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        TextView tv = new TextView(getContext());
+        MarginLayoutParams lp = new MarginLayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        lp.setMargins(20,30,20,30);
         tv.setLayoutParams(lp);
         tv.setText(str);
-        tv.setTextSize(20);
-        tv.setPadding(50, 5, 50, 5);
-        ColorStateList csl = context.getResources().getColorStateList(R.color.tag_tx_color);
+        tv.setTextSize(14);
+        tv.setPadding(35, 10, 35, 10);
+        ColorStateList csl = (ColorStateList) getContext().getResources().getColorStateList(R.color.tag_tx_color);
         tv.setTextColor(csl);
-        tv.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.tag_bg));
+        tv.setBackgroundDrawable(getContext().getResources().getDrawable(R.drawable.tag_bg));
         tv.setTag(position);
         addView(tv);
-        tv.setOnClickListener(itemOnClick);
     }
 
     /**

@@ -2,6 +2,7 @@ package com.yj.shopapp.ui.activity;
 
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
@@ -23,6 +24,7 @@ public class MyWebView extends BaseActivity {
     TextView titleView;
     private String url;
     private WebView mWebView;
+
     @Override
     protected int getLayoutId() {
         return R.layout.wactivity_mywebview;
@@ -43,16 +45,23 @@ public class MyWebView extends BaseActivity {
                 return true;
             }
         });
+        mWebView.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onReceivedTitle(WebView view, String title) {
+                super.onReceivedTitle(view, title);
+                titleView.setText(title);
+            }
+        });
+        mWebView.setVerticalScrollBarEnabled(false);
         mWebView.loadUrl(url);
+        mWebView.getTitle();
     }
-
 
 
     @OnClick(R.id.forewadImg)
     public void onViewClicked() {
-            finish();
+        finish();
     }
-
 
 
     @Override

@@ -1,39 +1,39 @@
 package com.yj.shopapp.ui.activity.shopkeeper;
 
-import android.Manifest;
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
-import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSONArray;
+import com.squareup.okhttp.Request;
 import com.yj.shopapp.R;
 import com.yj.shopapp.config.AppManager;
+import com.yj.shopapp.config.Contants;
+import com.yj.shopapp.http.HttpHelper;
+import com.yj.shopapp.http.OkHttpResponseHandler;
+import com.yj.shopapp.ubeen.Address;
 import com.yj.shopapp.ui.activity.LoginActivity;
+import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.ui.activity.adapter.HomeViewPager;
 import com.yj.shopapp.ui.activity.base.BaseTabActivity;
-import com.yj.shopapp.ui.activity.upversion.Callback;
-import com.yj.shopapp.ui.activity.upversion.ConfirmDialog;
 import com.yj.shopapp.util.CommonUtils;
-import com.yj.shopapp.util.VersionUpdata;
+import com.yj.shopapp.util.JsonHelper;
+import com.yj.shopapp.util.MessageEvent;
+import com.yj.shopapp.util.PreferenceUtils;
+import com.yj.shopapp.view.CustomViewPager;
+
+import org.greenrobot.eventbus.EventBus;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import butterknife.Unbinder;
 
 /**
@@ -43,29 +43,37 @@ import butterknife.Unbinder;
 public class SMainTabActivity extends BaseTabActivity implements RadioGroup.OnCheckedChangeListener, ViewPager.OnPageChangeListener {
     public final static int CARLIST = 2135;
     @BindView(R.id.content)
-    ViewPager content;
+    CustomViewPager content;
     @BindView(R.id.tab_home)
     RadioButton tabHome;
     @BindView(R.id.tab_order)
     RadioButton tabOrder;
     @BindView(R.id.tab_client)
-    TextView tabClient;
+    RadioButton tabClient;
     @BindView(R.id.tab_mtinfo)
-    TextView tabMtinfo;
+    RadioButton tabMtinfo;
     @BindView(R.id.tabs_rg)
     RadioGroup tabsRg;
     private HomeViewPager viewPager;
     Unbinder unbinder;
+    public String uid;
+    public String token;
+
     @Override
     protected void init(Bundle savedInstanceState) {
         setContentView(R.layout.sactivity_tab);
-        unbinder= ButterKnife.bind(this);
-        //checkAndUpdate(mContext);
+        unbinder = ButterKnife.bind(this);
         viewPager = new HomeViewPager(getSupportFragmentManager());
+        content.setOffscreenPageLimit(4);
+        content.setScanScroll(false);
+        content.setOpenAnimation(false);
         content.setAdapter(viewPager);
         content.addOnPageChangeListener(this);
         tabsRg.setOnCheckedChangeListener(this);
         exitLoginActivity();
+        uid = PreferenceUtils.getPrefString(mContext, Contants.Preference.UID, "");
+        token = PreferenceUtils.getPrefString(mContext, Contants.Preference.TOKEN, "");
+        getSite();
 
     }
 
@@ -77,6 +85,7 @@ public class SMainTabActivity extends BaseTabActivity implements RadioGroup.OnCh
 
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {
+        EventBus.getDefault().post(new MessageEvent(2, ""));
         switch (checkedId) {
             case R.id.tab_home:
                 content.setCurrentItem(0);
@@ -87,37 +96,64 @@ public class SMainTabActivity extends BaseTabActivity implements RadioGroup.OnCh
             case R.id.tab_brand:
                 content.setCurrentItem(2);
                 break;
-            default:
-                break;
-        }
-    }
-
-    @OnClick({R.id.tab_client, R.id.tab_mtinfo})
-    public void onViewClicked(View view) {
-        switch (view.getId()) {
             case R.id.tab_client:
-                CommonUtils.goActivity(mContext, SNewCartListActivity.class, null, false);
+                content.setCurrentItem(3);
+                EventBus.getDefault().post(new MessageEvent());
                 break;
             case R.id.tab_mtinfo:
-                CommonUtils.goActivity(mContext, SMyInfoActivity.class, null, false);
+                content.setCurrentItem(4);
                 break;
             default:
                 break;
         }
     }
 
-    private void checkAndUpdate(Context context) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            VersionUpdata.getInstance(false, mContext, getFragmentManager()).updateVersion();
-        } else {
-            if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    == PackageManager.PERMISSION_GRANTED) {
-                VersionUpdata.getInstance(false, mContext, getFragmentManager()).updateVersion();
-            } else {//申请权限
-                ActivityCompat.requestPermissions((Activity) context,
-                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    /**
+     * 获取地址
+     */
+    private void getSite() {
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("uid", uid);
+        params.put("token", token);
+        HttpHelper.getInstance().post(mContext, Contants.PortU.Uaddress, params, new OkHttpResponseHandler<String>(mContext) {
+
+            @Override
+            public void onAfter() {
+                super.onAfter();
+
             }
-        }
+
+            @Override
+            public void onBefore() {
+                super.onBefore();
+
+            }
+
+            @Override
+            public void onResponse(Request request, String json) {
+                super.onResponse(request, json);
+                ShowLog.e(json);
+                if (JsonHelper.isRequstOK(json, mContext)) {
+                    Address object = JSONArray.parseArray(json, Address.class).get(0);
+                    PreferenceUtils.setPrefString(mContext, "addressId", object.getId());
+                } else if (JsonHelper.getRequstOK(json) == 6) {
+                    PreferenceUtils.remove(mContext, "addressId");
+                }
+            }
+
+            @Override
+            public void onError(Request request, Exception e) {
+                super.onError(request, e);
+                showToastShort(Contants.NetStatus.NETDISABLEORNETWORKDISABLE);
+            }
+        });
+
     }
 
     @Override
@@ -140,31 +176,6 @@ public class SMainTabActivity extends BaseTabActivity implements RadioGroup.OnCh
                     backPressedToExitOnce = false;
                 }
             }, 2000);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case 1:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    VersionUpdata.getInstance(false, mContext, getFragmentManager()).updateVersion();
-                } else {
-                    new ConfirmDialog(this, new Callback() {
-                        @Override
-                        public void callback(int position) {
-                            if (position == 1) {
-                                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                                intent.setData(Uri.parse("package:" + getPackageName())); // 根据包名打开对应的设置界面
-                                startActivity(intent);
-                            }
-                        }
-                    }).setContent("暂无读写SD卡权限\n是否前往设置？").show();
-                }
-                break;
-            default:
-                break;
         }
     }
 
@@ -194,6 +205,12 @@ public class SMainTabActivity extends BaseTabActivity implements RadioGroup.OnCh
             case 2:
                 tabsRg.check(R.id.tab_brand);
                 break;
+            case 3:
+                tabsRg.check(R.id.tab_client);
+                break;
+            case 4:
+                tabsRg.check(R.id.tab_mtinfo);
+                break;
         }
 
     }
@@ -205,7 +222,9 @@ public class SMainTabActivity extends BaseTabActivity implements RadioGroup.OnCh
 
     @Override
     protected void onDestroy() {
+        CommonUtils.fixInputMethodManagerLeak(SMainTabActivity.this);
         super.onDestroy();
         unbinder.unbind();
     }
+
 }

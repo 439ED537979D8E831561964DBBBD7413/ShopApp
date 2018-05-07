@@ -1,8 +1,8 @@
 package com.yj.shopapp.ui.activity.adapter;
 
 import android.content.Context;
+import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.yj.shopapp.R;
 import com.yj.shopapp.config.Contants;
 import com.yj.shopapp.ubeen.IntegralDetail;
@@ -17,8 +17,7 @@ import com.yj.shopapp.util.DateUtils;
  * Beautiful Life ～
  */
 
-public class IntegralAdapter extends CommonAdapter<IntegralDetail.DataBean> {
-
+public class IntegralAdapter extends CommonAdapter<IntegralDetail> {
     public IntegralAdapter(Context context) {
         super(context);
     }
@@ -30,14 +29,22 @@ public class IntegralAdapter extends CommonAdapter<IntegralDetail.DataBean> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        IntegralDetail.DataBean detail = list.get(position);
-        Glide.with(context).load(detail.getImgurl()).into(holder.getImageView(R.id.shopimag));
-        holder.getTextView(R.id.shopname).setText(detail.getName());
-        holder.getTextView(R.id.addtiem).setText(DateUtils.timet(detail.getAddtime()));
-        holder.getTextView(R.id.integral).setText(detail.getIntegral() + "积分");
-        holder.getTextView(R.id.status).setText(Contants.StatusList[Integer.parseInt(detail.getStatus())]);
-        holder.getTextView(R.id.shopsum).setText("数量：" + detail.getNum());
-        holder.getTextView(R.id.sumintegral).setText("总积分：" + detail.getSumintegral());
+        IntegralDetail integral = list.get(position);
+
+        holder.getTextView(R.id.order_time).setText(DateUtils.timet(integral.getTime()));
+
+        holder.getTextView(R.id.orderStatus).setText(String.format("【%1$s】  %2$s", Contants.OrderState[Integer.parseInt(integral.getType())], integral.getRemark()));
+
+        holder.getTextView(R.id.ordermoney).setText(String.format("[金额] %s元", integral.getMoney()));
+        TextView tv = holder.getTextView(R.id.integral);
+        if ('-' == integral.getIntegral().charAt(0)) {
+            tv.setTextColor(context.getResources().getColor(R.color.color3fb03e));
+            tv.setText(integral.getIntegral());
+        } else {
+            tv.setTextColor(context.getResources().getColor(R.color.colorf3302e));
+            tv.setText(String.format("+%s", integral.getIntegral()));
+        }
+
 
     }
 

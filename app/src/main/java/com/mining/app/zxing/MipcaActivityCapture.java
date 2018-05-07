@@ -76,10 +76,15 @@ public class MipcaActivityCapture extends BaseActivity implements Callback {
 
         id_right_btu = (TextView) findViewById(R.id.id_right_btu);
 
-
-        ScanType = getIntent().getExtras().getInt(Contants.ScanValueType.KEY);
-//        type = getIntent().getStringExtra("checkGoods") ;
-
+        if (getIntent().hasExtra(Contants.ScanValueType.KEY)) {
+            ScanType = getIntent().getExtras().getInt(Contants.ScanValueType.KEY);
+        }
+        if (getIntent().hasExtra("type")) {
+            type = getIntent().getStringExtra("type");
+        }
+        if (type.equals("goodsRecord")) {
+            id_right_btu.setVisibility(View.GONE);
+        }
         if (ScanType == Contants.ScanValueType.original_type) {
 
         } else if (ScanType == Contants.ScanValueType.W_type || ScanType == Contants.ScanValueType.S_type) {
@@ -181,7 +186,12 @@ public class MipcaActivityCapture extends BaseActivity implements Callback {
         playBeepSoundAndVibrate();
         String resultString = result.getText();
         //onResultHandler(resultString, barcode);
-        EventBus.getDefault().postSticky(new ReCode(resultString));
+        if (type.equals("home")) {
+            EventBus.getDefault().postSticky(new ReCode(1, resultString));
+        } else {
+            EventBus.getDefault().postSticky(new ReCode(2, resultString));
+        }
+
         finish();
     }
 

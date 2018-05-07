@@ -2,6 +2,7 @@ package com.yj.shopapp.ui.activity.adapter;
 
 import android.content.Context;
 
+import com.bumptech.glide.Glide;
 import com.yj.shopapp.R;
 import com.yj.shopapp.ubeen.IntegralChange;
 import com.yj.shopapp.ui.activity.ImgUtil.CommonAdapter;
@@ -15,8 +16,8 @@ import com.yj.shopapp.util.DateUtils;
  * Beautiful Life ～
  */
 
-public class IntegralChangeAdapter extends CommonAdapter<IntegralChange> {
-    private String[] status = {"未审核", "提现中", "兑现成功", "兑现失败"};
+public class IntegralChangeAdapter extends CommonAdapter<IntegralChange.DataBean> {
+
 
     public IntegralChangeAdapter(Context context) {
         super(context);
@@ -25,17 +26,17 @@ public class IntegralChangeAdapter extends CommonAdapter<IntegralChange> {
     @Override
     public int onCreateViewLayoutID(int viewType) {
         return R.layout.item_integral_change;
+
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        IntegralChange integral = list.get(position);
-        holder.getTextView(R.id.account_tv).setText(integral.getAccountnumber());
-        holder.getTextView(R.id.integral_tv).setText(integral.getIntegral());
-        holder.getTextView(R.id.money_tv).setText(integral.getRmb());
-        holder.getTextView(R.id.change_type_tv).setText(integral.getChangetype() == 1 ? "支付宝" : "微信");
-        holder.getTextView(R.id.status_tv).setText(status[integral.getStatus() - 1]);
-        holder.getTextView(R.id.time_tv).setText(DateUtils.timet(integral.getChangetime() + ""));
-        holder.getTextView(R.id.content_tv).setText(integral.getRemark() == null ? "" : "(" + integral.getRemark() + ")");
+        IntegralChange.DataBean detail = list.get(position);
+        Glide.with(context).load(detail.getImgurl()).into(holder.getImageView(R.id.shopimag));
+        holder.getTextView(R.id.shopname).setText(detail.getName());
+        holder.getTextView(R.id.addtiem).setText(DateUtils.timet(detail.getAddtime(), "yyyy-MM-dd  HH:mm"));
+        holder.getTextView(R.id.integral).setText("-" + detail.getIntegral());
+        holder.getTextView(R.id.shopsum).setText(String.format("数量：%s件", detail.getNum()));
+
     }
 }

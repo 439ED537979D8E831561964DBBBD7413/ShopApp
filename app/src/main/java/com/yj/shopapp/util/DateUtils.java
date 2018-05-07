@@ -1,6 +1,9 @@
 package com.yj.shopapp.util;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
+
+import com.yj.shopapp.ui.activity.ShowLog;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -71,13 +74,16 @@ public class DateUtils {
     /**
      * 获取小时
      */
-    public static boolean getHour(long pasttime) {
-        if (pasttime != 0) {
-            long time = System.currentTimeMillis();
-            return time - pasttime > 7200000 ? true : false;
-        } else {
-            return false;
-        }
+    public static int getHour(long pasttime) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date(pasttime));
+        return cal.get(Calendar.HOUR_OF_DAY);
+    }
+
+    public static int getDay(long time) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date(time));
+        return cal.get(Calendar.DAY_OF_MONTH);
     }
 
     /*时间戳转换成字符窜*/
@@ -104,12 +110,37 @@ public class DateUtils {
         return times;
     }
 
+    public static String timet(String time, String pattern) {
+        SimpleDateFormat sdr = new SimpleDateFormat(pattern);
+        @SuppressWarnings("unused")
+        long lcc = Long.valueOf(time);
+        int i = Integer.parseInt(time);
+        String times = sdr.format(new Date(i * 1000L));
+        return times;
+    }
+
     public static String timed(String time) {
         SimpleDateFormat sdr = new SimpleDateFormat("yyyy.MM.dd");
         @SuppressWarnings("unused")
         long lcc = Long.valueOf(time);
         int i = Integer.parseInt(time);
         String times = sdr.format(new Date(i * 1000L));
+        return times;
+    }
+
+    @SuppressLint("DefaultLocale")
+    public static String timed(Long time) {
+        long hours = (time / (1000 * 60 * 60));
+        long minutes = (time % (1000 * 60 * 60)) / (1000 * 60);
+        long seconds = (time % (1000 * 60)) / 1000;
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+    }
+
+    @SuppressLint("DefaultLocale")
+    public static String timed(Long time, String pattern) {
+        SimpleDateFormat sdr = new SimpleDateFormat(pattern);
+        @SuppressWarnings("unused")
+        String times = sdr.format(new Date(time));
         return times;
     }
 
@@ -204,6 +235,7 @@ public class DateUtils {
 
     /**
      * 对比两个日期大小
+     *
      * @param time1
      * @param time2
      * @return
@@ -215,25 +247,39 @@ public class DateUtils {
     }
 
     /**
+     * 对比时间大小
+     *
+     * @param time
+     * @return
+     */
+    public static long ContrastTime(long time) {
+        long times = System.currentTimeMillis();
+        long currtime = 1000 * time - times;
+        if (currtime > 0) {
+            return currtime;
+        } else {
+            return -1;
+        }
+    }
+
+    /**
      * 计算两个日期之间相差的天数
      *
-     * @param smdate 较小的时间
-     * @param bdate  较大的时间
      * @return 相差天数
      * @throws ParseException
      */
-    public static int longBetween(String smdate, String bdate) {
-
-
-        Date d1 = strToDate("yyyy-MM-dd", smdate);
-        Date d2 = strToDate("yyyy-MM-dd", bdate);
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(d1);
-        long time1 = cal.getTimeInMillis();
-        cal.setTime(d2);
-        long time2 = cal.getTimeInMillis();
-        long between_sss = (time2 - time1);
-        return Integer.parseInt(String.valueOf(between_sss));
+    public static int longBetween(String time) {
+        //跨年的情况会出现问题哦
+        //如果时间为：2016-03-18 11:59:59 和 2016-03-19 00:00:01的话差值为 1
+        Date oDate = strToDate("yyyy-MM-dd", time);
+        ShowLog.e(oDate.toString());
+        Calendar aCalendar = Calendar.getInstance();
+        int day1 = getCurrentDay();
+        aCalendar.setTime(oDate);
+        int day2 = aCalendar.get(Calendar.DAY_OF_YEAR);
+        int days = day2 - day1;
+        ShowLog.e(day1 + "|" + day2);
+        return days;
     }
 
     /**
@@ -287,11 +333,11 @@ public class DateUtils {
      * @param intervals intervals天内
      * @return 日期数组
      */
-    public static ArrayList<String> test(int intervals) {
+    public static ArrayList<String> test(int intervals, String patter) {
         ArrayList<String> pastDaysList = new ArrayList<>();
         ArrayList<String> fetureDaysList = new ArrayList<>();
         for (int i = 0; i < intervals; i++) {
-            pastDaysList.add(getPastDate(i));
+            pastDaysList.add(getPastDate(i, patter));
             fetureDaysList.add(getFetureDate(i));
         }
         return pastDaysList;
@@ -303,11 +349,11 @@ public class DateUtils {
      * @param past
      * @return
      */
-    public static String getPastDate(int past) {
+    public static String getPastDate(int past, String patter) {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.DAY_OF_YEAR, calendar.get(Calendar.DAY_OF_YEAR) - past);
         Date today = calendar.getTime();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat format = new SimpleDateFormat(patter);
         String result = format.format(today);
         Log.e(null, result);
         return result;
@@ -329,4 +375,14 @@ public class DateUtils {
         return result;
     }
 
+    public static Long getnowEndTime(int size) {
+        Calendar todayEnd = Calendar.getInstance();
+        int day = todayEnd.get(Calendar.DATE);
+        todayEnd.set(Calendar.DATE, day + size);
+        todayEnd.set(Calendar.HOUR_OF_DAY, 23);
+        todayEnd.set(Calendar.MINUTE, 59);
+        todayEnd.set(Calendar.SECOND, 59);
+        todayEnd.set(Calendar.MILLISECOND, 999);
+        return todayEnd.getTimeInMillis();
+    }
 }

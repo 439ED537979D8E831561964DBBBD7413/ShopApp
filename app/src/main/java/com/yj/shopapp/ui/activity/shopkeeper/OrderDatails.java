@@ -2,20 +2,18 @@ package com.yj.shopapp.ui.activity.shopkeeper;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Paint;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.GridLayoutManager;
+import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ListView;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.alibaba.fastjson.JSONObject;
 import com.kaopiz.kprogresshud.KProgressHUD;
@@ -28,12 +26,15 @@ import com.yj.shopapp.ubeen.OrderPreview;
 import com.yj.shopapp.ubeen.RefreshListCar;
 import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.ui.activity.adapter.OrderDatailsAdpter;
-import com.yj.shopapp.ui.activity.adapter.OrderListAdapter;
 import com.yj.shopapp.ui.activity.base.BaseActivity;
 import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.DateUtils;
 import com.yj.shopapp.util.JsonHelper;
+import com.yj.shopapp.util.MessageEvent;
 import com.yj.shopapp.util.NetUtils;
+import com.yj.shopapp.util.SoftKeyInputHidWidget;
+import com.yj.shopapp.util.StatusBarManager;
+import com.yj.shopapp.view.KeyboardLayout;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -46,6 +47,7 @@ import butterknife.OnClick;
 
 /**
  * Created by LK on 2017/12/25.
+ * 购物车提交详情界面
  *
  * @author LK
  */
@@ -53,6 +55,8 @@ import butterknife.OnClick;
 public class OrderDatails extends BaseActivity {
 
 
+    @BindView(R.id.hot_mv)
+    TextView hotMv;
     @BindView(R.id.Consignee)
     TextView Consignee;
     @BindView(R.id.phone)
@@ -61,45 +65,86 @@ public class OrderDatails extends BaseActivity {
     TextView Rec1eivingAddress;
     @BindView(R.id.my_RecyclerView)
     RecyclerView myRecyclerView;
-    @BindView(R.id.goodslist)
-    ListView goodslist;
-    @BindView(R.id.specialoffers)
-    LinearLayout specialoffers;
-    @BindView(R.id.paid_money)
-    TextView paidMoney;
     @BindView(R.id.discount_money)
     TextView discountMoney;
-    @BindView(R.id.goods_num)
-    TextView goodsNum;
-    @BindView(R.id.total_money)
-    TextView totalMoney;
+    @BindView(R.id.paid_money)
+    TextView paidMoney;
     @BindView(R.id.message_et)
     EditText messageEt;
-
+    @BindView(R.id.scroll)
+    ScrollView scroll;
+    @BindView(R.id.titleview)
+    RelativeLayout titleview;
+    @BindView(R.id.Continue_the_order)
+    TextView ContinueTheOrder;
+    @BindView(R.id.mainLl)
+    KeyboardLayout mainLl;
+    @BindView(R.id.lift_bt)
+    ImageView liftBt;
+    @BindView(R.id.right_bt)
+    ImageView rightBt;
     private String idstr = "";
     private String addressid = "";
     private OrderPreview preview;
     private OrderDatailsAdpter classadpter;
-    private OrderListAdapter adapter1;
+    private boolean isShow = false;
+
     @Override
     protected int getLayoutId() {
         return R.layout.activity_orderdetails;
     }
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+    }
+
+    @Override
     protected void initData() {
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+
         if (getIntent().hasExtra("idstr")) {
             idstr = getIntent().getStringExtra("idstr");
         }
         if (getIntent().hasExtra("addressid")) {
             addressid = getIntent().getStringExtra("addressid");
         }
+        LinearLayoutManager ms = new LinearLayoutManager(this);
+        ms.setOrientation(LinearLayoutManager.HORIZONTAL);
         classadpter = new OrderDatailsAdpter(mContext);
-        myRecyclerView.setLayoutManager(new GridLayoutManager(mContext, 3));
+        myRecyclerView.setLayoutManager(ms);
         myRecyclerView.setAdapter(classadpter);
-        adapter1 = new OrderListAdapter(mContext);
-        goodslist.setAdapter(adapter1);
+        mainLl.setKeyboardListener(new KeyboardLayout.KeyboardLayoutListener() {
+            @Override
+            public void onKeyboardStateChanged(boolean isActive, int keyboardHeight) {
+                if (isActive) {
+                    scrollToBottom();
+                }
+
+            }
+        });
+    }
+
+    @Override
+    protected void setStatusBar() {
+        //StatusBarUtil.setColor(this,getResources().getColor(R.color.white),0);
+        StatusBarManager.getInstance().setStatusBar(getWindow(), getResources().getColor(R.color.white));
+        StatusBarManager.getInstance().setStatusBarTextColor(getWindow(), true);
+    }
+
+    /**
+     * 弹出软键盘时将SVContainer滑到底
+     */
+    private void scrollToBottom() {
+
+        scroll.postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                scroll.smoothScrollTo(0, scroll.getBottom() + SoftKeyInputHidWidget.getStatusBarHeight(OrderDatails.this));
+            }
+        }, 100);
+
     }
 
     @Override
@@ -136,9 +181,6 @@ public class OrderDatails extends BaseActivity {
                 ShowLog.e(json);
                 if (JsonHelper.isRequstOK(json, mContext)) {
                     preview = JSONObject.parseObject(json, OrderPreview.class);
-                    if (Double.parseDouble(preview.getAllmoeny()) <= 500) {
-                        showDialog();
-                    }
                     setdata();
                 } else {
                     showToastShort(JsonHelper.errorMsg(json));
@@ -154,35 +196,36 @@ public class OrderDatails extends BaseActivity {
         Consignee.setText("收货人：" + preview.getAddress().getShopname());
         phone.setText(preview.getAddress().getMobile());
         Rec1eivingAddress.setText(preview.getAddress().getAddress());
-        goodsNum.setText(String.format("共%s件商品", preview.getAllcount()));
-        totalMoney.setText(Html.fromHtml("合计:￥" + "<font color=#FE4902>" + df.format(Double.parseDouble(preview.getAllmoeny()) - (double) preview.getCashback()) + "</font>"));
-
         paidMoney.setText(String.format("￥%s", preview.getAllmoeny()));
-        if (preview.getCashback() != 0) {
-            paidMoney.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
-        }
+        ContinueTheOrder.setText(Html.fromHtml("应付金额：" + "<font color=red>" + "￥" + preview.getAllmoeny() + "</fong>"));
         discountMoney.setText(String.format("￥%d", preview.getCashback()));
-        //paybleMoney.setText(String.format("￥%s", df.format(Double.parseDouble(preview.getAllmoeny()) - (double) preview.getCashback())));
-        if (preview.getCouponlist().size() > 0) {
-            adapter1.setList(preview.getCouponlist());
-        } else {
-            specialoffers.setVisibility(View.GONE);
+        if (getList2().equals("")) {
+            hotMv.setVisibility(View.GONE);
         }
+        hotMv.setText(getList2());
+        hotMv.setSelected(true);
+        liftBt.setVisibility(preview.getClassX().size() > 4 ? View.VISIBLE : View.GONE);
+        rightBt.setVisibility(preview.getClassX().size() > 4 ? View.VISIBLE : View.GONE);
     }
 
-    private void showDialog() {
-        new MaterialDialog.Builder(mContext).title("温馨提示").content("【平台配送金额500元起】\n" +
-                "您本次下单金额为" + preview.getAllmoeny() + "元【未达配送标准】").positiveText("确定提交").negativeText("继续下单").onPositive(new MaterialDialog.SingleButtonCallback() {
-            @Override
-            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                savedoorder();
+    private String getList() {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < preview.getCouponlist().size(); i++) {
+            builder.append(preview.getCouponlist().get(i));
+            if (i < preview.getCouponlist().size()) {
+                builder.append("\n");
             }
-        }).onNegative(new MaterialDialog.SingleButtonCallback() {
-            @Override
-            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                CommonUtils.goActivity(mContext, SMainTabActivity.class, null, true);
-            }
-        }).show();
+        }
+        return builder.toString();
+    }
+
+    private String getList2() {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < preview.getCouponlist().size(); i++) {
+            builder.append(preview.getCouponlist().get(i));
+            builder.append("\t\t");
+        }
+        return builder.toString();
     }
 
     public void savedoorder() {
@@ -216,13 +259,19 @@ public class OrderDatails extends BaseActivity {
                 ShowLog.e(json);
                 JSONObject object = JSONObject.parseObject(json);
                 if (JsonHelper.isRequstOK(json, mContext)) {
-                    object.getString("oid");
-                    //CommonUtils.setBroadCast(mContext, Contants.Bro.REFRESH_ORDERLIST);
+                    EventBus.getDefault().post(new MessageEvent());
                     EventBus.getDefault().post(new RefreshListCar());
+                    String oid = object.getString("oid");
                     showToastShort(Contants.NetStatus.NETSUCCESS);
-                    finish();
+                    if (object.getJSONArray("cancel").size()==0) {
+                        Bundle bundle = new Bundle();
+                        bundle.putString("oid", oid);
+                        CommonUtils.goActivity(OrderDatails.this, SOrderDatesActivity.class, bundle, true);
+                    } else {
+                        OrderSubmitComplete.newInstance(json).show(getFragmentManager(), "OrderSubmitComplete");
+                    }
                 } else {
-                    showToastShort(object.getString("message"));
+                    showToastShort(object.getString("msg"));
                 }
             }
 
@@ -235,12 +284,9 @@ public class OrderDatails extends BaseActivity {
 
     }
 
-    @OnClick({R.id.Continue_the_order, R.id.submit_order, R.id.exit_tv, R.id.Leaving_message})
+    @OnClick({R.id.submit_order, R.id.exit_tv, R.id.Leaving_message, R.id.changesite, R.id.hot_mv, R.id.lift_bt, R.id.right_bt})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-            case R.id.Continue_the_order:
-                CommonUtils.goActivity(mContext, SMainTabActivity.class, null, true);
-                break;
             case R.id.submit_order:
                 savedoorder();
                 break;
@@ -249,6 +295,20 @@ public class OrderDatails extends BaseActivity {
                 break;
             case R.id.Leaving_message:
                 showSoftInputFromWindow(messageEt);
+                break;
+            case R.id.changesite:
+                CommonUtils.goActivity(mContext, SAddressActivity.class, null, false);
+                break;
+            case R.id.hot_mv:
+                if (preview.getCouponlist() != null && preview.getCouponlist().size() > 0) {
+                    new MaterialDialog.Builder(mContext).title("优惠活动").content(getList()).positiveText("我知道了").canceledOnTouchOutside(false).show();
+                }
+                break;
+            case R.id.lift_bt:
+                myRecyclerView.smoothScrollToPosition(0);
+                break;
+            case R.id.right_bt:
+                myRecyclerView.smoothScrollToPosition(preview.getClassX().size() - 1);
                 break;
             default:
                 break;
@@ -265,6 +325,5 @@ public class OrderDatails extends BaseActivity {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.showSoftInput(editText, 0);
     }
-
 
 }

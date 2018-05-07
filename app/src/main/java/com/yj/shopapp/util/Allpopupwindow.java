@@ -8,6 +8,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.DatePicker;
+import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
@@ -25,7 +26,8 @@ import java.util.Calendar;
 
 public class Allpopupwindow extends PopupWindow implements View.OnClickListener, DatePicker.OnDateChangedListener {
     private View rootView;
-    private TextView exit_tv, finish_tv, starttimetv, endtimetv, delect_tv;
+    private TextView exit_tv, finish_tv, starttimetv, endtimetv;
+    private ImageView delect_tv;
     private DatePicker datePicker;
     private TextView selectView;
     private int year, monthOfYear, dayOfMonth;
@@ -88,7 +90,7 @@ public class Allpopupwindow extends PopupWindow implements View.OnClickListener,
         starttimetv.setOnClickListener(this);
         endtimetv = (TextView) rootView.findViewById(R.id.endtimetv);
         endtimetv.setOnClickListener(this);
-        delect_tv = (TextView) rootView.findViewById(R.id.delect_tv);
+        delect_tv = (ImageView) rootView.findViewById(R.id.delect_tv);
         delect_tv.setOnClickListener(this);
         datePicker = (DatePicker) rootView.findViewById(R.id.mDatepicker);
     }

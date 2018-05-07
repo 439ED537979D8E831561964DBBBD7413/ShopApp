@@ -1,17 +1,13 @@
 package com.yj.shopapp.util;
 
-import android.content.Context;
 import android.os.Environment;
 import android.os.StatFs;
-import android.util.Log;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -24,9 +20,9 @@ import java.text.DecimalFormat;
 public class FileUtils {
 
 
-
     /**
      * 判断是否有SD卡
+     *
      * @return 有：true 没有：false
      */
     public static boolean hasSDCard() {
@@ -93,7 +89,7 @@ public class FileUtils {
 
     /**
      * 计算空间方法csize
-     * */
+     */
     public static String filesize(String spath) {
 
         File path = new File(spath);
@@ -113,7 +109,7 @@ public class FileUtils {
 
     /**
      * 计算空间方法csize
-     * */
+     */
     public static String filesize(long size) {
         String str = "";
         if (size >= 1024) {
@@ -126,7 +122,7 @@ public class FileUtils {
         }
         DecimalFormat formatter = new DecimalFormat();
         formatter.setGroupingSize(3);
-        return formatter.format(size)+str;
+        return formatter.format(size) + str;
     }
 
     public static boolean Availfilesize(String spath) {
@@ -141,9 +137,9 @@ public class FileUtils {
         long availaBlock = statfs.getAvailableBlocks();
 
         long size = availaBlock * blocSize;
-        if (size >= (1024*1024*1)) {
+        if (size >= (1024 * 1024 * 1)) {
             b = true;
-        }else{
+        } else {
             b = false;
         }
         return b;
@@ -155,8 +151,7 @@ public class FileUtils {
      *
      * @param sourceLocation 源文件
      * @param targetLocation 目标文件
-     * @throws IOException
-     *             Create at 2014-8-21 上午10:47:55
+     * @throws IOException Create at 2014-8-21 上午10:47:55
      */
     public static void copyDirectory(File sourceLocation, File targetLocation)
             throws IOException {
@@ -227,20 +222,18 @@ public class FileUtils {
     /**
      * 删除指定路径的文件
      */
-    public static void  deleteFile(String path)
-    {
-        if(path.trim().length()==0)
+    public static void deleteFile(String path) {
+        if (path.trim().length() == 0)
             return;
-        try{
+        try {
             File file = new File(path);
-            if(getSDCardPath()!=null)
-            {
-                if (file.exists())
-                {
+            if (getSDCardPath() != null) {
+                if (file.exists()) {
                     file.delete();
                 }
             }
-        }catch(Exception e){}
+        } catch (Exception e) {
+        }
     }
 
     public static void save(String fileName, String content) throws Exception {
@@ -253,7 +246,7 @@ public class FileUtils {
         byte[] buf = fileName.getBytes("iso8859-1");
 
 
-        fileName = new String(buf,"utf-8");
+        fileName = new String(buf, "utf-8");
 
         // Context.MODE_PRIVATE：为默认操作模式，代表该文件是私有数据，只能被应用本身访问，在该模式下，写入的内容会覆盖原文件的内容，如果想把新写入的内容追加到原文件中。可以使用Context.MODE_APPEND
         // Context.MODE_APPEND：模式会检查文件是否存在，存在就往文件追加内容，否则就创建新文件。
@@ -262,20 +255,21 @@ public class FileUtils {
         // 如果希望文件被其他应用读和写，可以传入：
         // openFileOutput("output.txt", Context.MODE_WORLD_READABLE + Context.MODE_WORLD_WRITEABLE);
 
-        FileOutputStream fos =  new FileOutputStream(fileName);
+        FileOutputStream fos = new FileOutputStream(fileName);
         fos.write(content.getBytes());
         fos.close();
     }
 
 
-    public static String createSDFile(String fileName)  {
+    public static String createSDFile(String fileName) {
         File file = null;
         try {
             file = new File(getSDCardPath() + "//" + fileName);
             if (!file.exists()) {
                 file.createNewFile();
             }
-        }catch (Exception ex){}
+        } catch (Exception ex) {
+        }
         return file.getPath();
     }
 
@@ -291,8 +285,7 @@ public class FileUtils {
             byte[] bytes = message.getBytes();
             fout.write(bytes);
             fout.close();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

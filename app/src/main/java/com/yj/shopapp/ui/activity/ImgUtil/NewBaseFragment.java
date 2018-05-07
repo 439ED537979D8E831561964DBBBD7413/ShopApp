@@ -6,14 +6,19 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kaopiz.kprogresshud.KProgressHUD;
+import com.yj.shopapp.R;
 import com.yj.shopapp.config.Contants;
+import com.yj.shopapp.util.NetUtils;
 import com.yj.shopapp.util.PreferenceUtils;
 
 import butterknife.ButterKnife;
@@ -43,6 +48,7 @@ public abstract class NewBaseFragment extends Fragment {
      * 当执行完oncreatview,View的初始化方法后方法后即为true
      */
     protected boolean mIsPrepare;
+    private Bundle bundle;
 
     /**
      * 获得全局的，防止使用getActivity()为空 * @param context
@@ -53,10 +59,15 @@ public abstract class NewBaseFragment extends Fragment {
         this.mActivity = getActivity();
     }
 
+    public Bundle getBundle() {
+        return bundle;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = LayoutInflater.from(mActivity).inflate(getLayoutId(), container, false);
-        unbinder=ButterKnife.bind(this, view);
+        bundle = savedInstanceState;
+        unbinder = ButterKnife.bind(this, view);
         uid = PreferenceUtils.getPrefString(mActivity, Contants.Preference.UID, "");
         token = PreferenceUtils.getPrefString(mActivity, Contants.Preference.TOKEN, "");
         return view;
@@ -93,12 +104,9 @@ public abstract class NewBaseFragment extends Fragment {
         mIsVisible = false;
         mIsPrepare = false;
         mToast = null;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        unbinder.unbind();
+        if (unbinder != null) {
+            unbinder.unbind();
+        }
     }
 
     @Override
@@ -112,7 +120,6 @@ public abstract class NewBaseFragment extends Fragment {
         super.setUserVisibleHint(isVisibleToUser);
 
     }
-
 
     /**
      * 懒加载，仅当用户可见切view初始化结束后才会执行
@@ -130,14 +137,45 @@ public abstract class NewBaseFragment extends Fragment {
 
     }
 
+    /**
+     * 检测网络
+     *
+     * @param context
+     * @return
+     */
+    protected boolean isNetWork(Context context) {
+        if (NetUtils.isNetworkConnected(context)) {
+            return true;
+        } else {
+            showToast("无网络");
+            return false;
+        }
+    }
+
     @SuppressLint("ShowToast")
     protected void showToast(String msg) {
+        TextView toastTv = null;
         if (mToast == null) {
-            mToast = Toast.makeText(mActivity.getApplicationContext(), msg, Toast.LENGTH_SHORT);
+            View toastRoot = LayoutInflater.from(mActivity).inflate(R.layout.view_toast, null);
+            toastTv = toastRoot.findViewById(R.id.toast_tv);
+            toastTv.setText(msg);
+            mToast = new Toast(mActivity.getApplicationContext());
+            //获取屏幕高度
+            WindowManager wm = (WindowManager) mActivity.getSystemService(Context.WINDOW_SERVICE);
+            int height = wm.getDefaultDisplay().getHeight();
+            //Toast的Y坐标是屏幕高度的1/3，不会出现不适配的问题
+            mToast.setGravity(Gravity.TOP, 0, height / 2);
+            mToast.setDuration(Toast.LENGTH_SHORT);
+            mToast.setView(toastRoot);
+            //mToast = Toast.makeText(mActivity.getApplicationContext(), msg, Toast.LENGTH_SHORT);
         } else {
-            mToast.setText(msg);
+            toastTv = mToast.getView().findViewById(R.id.toast_tv);
+            toastTv.setText(msg);
         }
-        mToast.show();
+        //mToast.setGravity(Gravity.CENTER, 0, 0);
+        if (!msg.equals("")) {
+            mToast.show();
+        }
     }
 
     protected void hintKbTwo() {

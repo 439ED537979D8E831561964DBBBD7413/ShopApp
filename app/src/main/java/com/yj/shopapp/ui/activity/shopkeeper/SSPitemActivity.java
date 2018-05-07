@@ -3,19 +3,27 @@ package com.yj.shopapp.ui.activity.shopkeeper;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.annotation.NonNull;
+import android.support.design.widget.TabLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
+import android.widget.ImageView;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.squareup.okhttp.Request;
 import com.yj.shopapp.R;
 import com.yj.shopapp.config.Contants;
@@ -23,7 +31,6 @@ import com.yj.shopapp.http.HttpHelper;
 import com.yj.shopapp.http.OkHttpResponseHandler;
 import com.yj.shopapp.ubeen.Industry;
 import com.yj.shopapp.ubeen.Spitem;
-import com.yj.shopapp.ui.activity.Interface.OnViewScrollListenter;
 import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.ui.activity.adapter.NewGoodRecyAdpter;
 import com.yj.shopapp.ui.activity.adapter.SSPitemAdapter;
@@ -33,7 +40,6 @@ import com.yj.shopapp.util.BugGoodsDialog;
 import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.DDecoration;
 import com.yj.shopapp.util.JsonHelper;
-import com.yj.shopapp.util.NetUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,31 +49,34 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import ezy.ui.layout.LoadingLayout;
 
 /**
  * Created by jm on 2016/6/21.
  */
-public class SSPitemActivity extends BaseActivity implements SSPitemAdapter.OnViewClickListener, SwipeRefreshLayout.OnRefreshListener {
+public class SSPitemActivity extends BaseActivity implements SSPitemAdapter.OnViewClickListener, OnLoadMoreListener, OnRefreshListener {
 
-    @BindView(R.id.title)
-    TextView title;
-    @BindView(R.id.id_right_btu)
-    TextView idRightBtu;
-    @BindView(R.id.first_low)
-    TextView firstLow;
-    @BindView(R.id.first_high)
-    TextView firstHigh;
+
+    @BindView(R.id.content_tv)
+    TextView contentTv;
+    @BindView(R.id.right_tv)
+    ImageView rightTv;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.tab_layout)
+    TabLayout tabLayout;
+    @BindView(R.id.screenTv)
+    RelativeLayout screenTv;
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
-    @BindView(R.id.pullToRefresh)
-    SwipeRefreshLayout pullToRefresh;
-    @BindView(R.id.IndustryListRV)
-    RecyclerView IndustryListRV;
-    @BindView(R.id.screenTv)
-    TextView screenTv;
     @BindView(R.id.view_transparent)
     View viewTransparent;
-
+    @BindView(R.id.pullToRefresh)
+    SmartRefreshLayout pullToRefresh;
+    @BindView(R.id.loading)
+    LoadingLayout loading;
+    @BindView(R.id.flipping)
+    ImageView flipping;
     private int mCurrentPage = 1;
     private List<Spitem> spitemList = new ArrayList<>();
     private String cid = "0";
@@ -75,12 +84,14 @@ public class SSPitemActivity extends BaseActivity implements SSPitemAdapter.OnVi
     private List<Industry> mdatas = new ArrayList<Industry>();
     private SSPitemAdapter oAdapter;
     private NewGoodRecyAdpter adpter;
-    private View FooterView;
     private View itemView;
-    private ListView lv;
-    private String[] name = {"默认排序", "价格升序", "价格降序"};
+    private String[] name = {"默认", "升序", "降序"};
     private PopupWindow pw;
-    private ScreenLvAdpter screenLvAdpter;
+    private ScreenLvAdpter screenLvAdpter, screenLvAdpter2;
+    private RecyclerView recyclerView1, recyclerView2;
+    private int currposition = 0;
+    private int currposition2 = 0;
+
     @Override
     protected int getLayoutId() {
         return R.layout.sactivity_spitemgoods;
@@ -88,104 +99,149 @@ public class SSPitemActivity extends BaseActivity implements SSPitemAdapter.OnVi
 
     @Override
     protected void initData() {
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        rightTv.setVisibility(View.GONE);
         if (getIntent().hasExtra("industrylist")) {
             mdatas = getIntent().getParcelableArrayListExtra("industrylist");
         }
-        title.setText("促销特价");
+        contentTv.setText("促销特价");
         oAdapter = new SSPitemAdapter(mContext);
         if (recyclerView != null) {
             recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-            recyclerView.addItemDecoration(new DDecoration(mContext));
+            recyclerView.addItemDecoration(new DDecoration(mContext, getResources().getDrawable(R.drawable.recyviewdecoration1dp)));
             recyclerView.setAdapter(oAdapter);
-            recyclerView.addOnScrollListener(new OnViewScrollListenter() {
-                @Override
-                public void onBottom() {
-                    mCurrentPage++;
-                    refreshRequest();
-                }
-            });
 
         }
         oAdapter.setListener(this);
-        pullToRefresh.setOnRefreshListener(this);
-
+        Refresh();
         adpter = new NewGoodRecyAdpter(mContext, mdatas);
-        IndustryListRV.setLayoutManager(new GridLayoutManager(mContext, numberOfCalculatedColumns()));
-        //IndustryListRV.addItemDecoration(new DDecoration(mContext, getResources().getDrawable(R.drawable.recyviewdecoration4)));
-        IndustryListRV.setAdapter(adpter);
-        adpter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//        adpter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                adpter.setTvColor(position);
+//                mCurrentPage = 1;
+//                cid = mdatas.get(position).getId();
+//                spitemList.clear();
+//                price = "";
+//                pullToRefresh.setRefreshing(true);
+//                refreshRequest();
+//            }
+//        });
+        initpw();
+        setTabLayout();
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                int position = tab.getPosition();
+                currposition = position;
+                spitemList.clear();
+                if (pw != null) {
+                    pw.dismiss();
+                }
+                if (position == 0) {
+                    cid = "0";
+                } else {
+                    cid = mdatas.get(position - 1).getId();
+                }
+                mCurrentPage = 1;
+                refreshRequest();
+                currposition2 = 0;
+                price = "";
+                loading.showLoading();
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+        if (isNetWork(mContext)) {
+            spitemList.clear();
+            refreshRequest();
+        }
+    }
+
+    private void Refresh() {
+        pullToRefresh.setHeaderHeight(50);
+        pullToRefresh.setFooterHeight(50);
+        pullToRefresh.setOnRefreshListener(this);
+        pullToRefresh.setOnLoadMoreListener(this);
+        pullToRefresh.setDisableContentWhenRefresh(true);//是否在刷新的时候禁止列表的操作
+        pullToRefresh.setDisableContentWhenLoading(true);//是否在加载的时候禁止列表的操作
+    }
+
+    private List<String> getlist() {
+        List<String> list = new ArrayList<>();
+        list.add("全部");
+        for (Industry i : mdatas) {
+            list.add(i.getName());
+        }
+        return list;
+    }
+
+    private void initpw() {
+        screenLvAdpter = new ScreenLvAdpter(mContext);
+        screenLvAdpter.setList(getlist());
+        screenLvAdpter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                adpter.setTvColor(position);
-                mCurrentPage = 1;
-                cid = mdatas.get(position).getId();
                 spitemList.clear();
+                currposition = position;
+                if (pw != null) {
+                    pw.dismiss();
+                }
+                if (position == 0) {
+                    cid = "0";
+                } else {
+                    cid = mdatas.get(position - 1).getId();
+                }
+                mCurrentPage = 1;
                 price = "";
-                pullToRefresh.setRefreshing(true);
+                tabLayout.getTabAt(position).select();
                 refreshRequest();
             }
         });
-        if (NetUtils.isNetworkConnected(mContext)) {
-            if (null != pullToRefresh) {
-                pullToRefresh.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        pullToRefresh.setRefreshing(true);
-                        refreshRequest();
-                    }
-                }, 200);
-            }
-        } else {
-            showToastShort("网络不给力");
-        }
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        FooterView = LayoutInflater.from(mContext).inflate(R.layout.footerview, null);
-        FooterView.setLayoutParams(lp);
-
-        screenLvAdpter = new ScreenLvAdpter(mContext);
-        screenLvAdpter.setList(Arrays.asList(name));
-        itemView = LayoutInflater.from(mContext).inflate(R.layout.screening_view, null);
-        lv = (ListView) itemView.findViewById(R.id.screenLV);
-        lv.setAdapter(screenLvAdpter);
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        screenLvAdpter2 = new ScreenLvAdpter(mContext);
+        screenLvAdpter2.setList(Arrays.asList(name));
+        screenLvAdpter2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                switch (position) {
-                    case 0:
-                        spitemList.clear();
-                        cid = "0";
-                        price = "";
-                        pullToRefresh.setRefreshing(true);
-                        refreshRequest();
-                        break;
-                    case 1:
-                        priceSort(1);
-                        break;
-                    case 2:
-                        priceSort(2);
-                        break;
-                    default:
-                        break;
+                spitemList.clear();
+                currposition2 = position;
+                if (pw != null) {
+                    pw.dismiss();
                 }
-                screenLvAdpter.setDefSelect(position);
-                pw.dismiss();
+                price = position + "";
+                mCurrentPage = 1;
+                refreshRequest();
             }
         });
+        itemView = LayoutInflater.from(mContext).inflate(R.layout.screening_view, null);
+        ((TextView) itemView.findViewById(R.id.tagTv)).setText("价格");
+        recyclerView1 = itemView.findViewById(R.id.recycler_view);
+        recyclerView2 = itemView.findViewById(R.id.recycler_view_2);
+        recyclerView1.setLayoutManager(new GridLayoutManager(mContext, 4));
+        recyclerView2.setLayoutManager(new GridLayoutManager(mContext, 3));
+        recyclerView1.setAdapter(screenLvAdpter);
+        recyclerView2.setAdapter(screenLvAdpter2);
     }
 
-
-    private int numberOfCalculatedColumns() {
-        int size = mdatas.size();
-        if (size < 5) {
-            return size;
-        } else {
-            if (size % 2 == 0) {
-                return size / 2;
-            } else {
-                return 5;
-            }
+    private void setTabLayout() {
+        tabLayout.addTab(tabLayout.newTab().setText("全部"));
+        for (Industry i : mdatas) {
+            tabLayout.addTab(tabLayout.newTab().setText(i.getName()));
         }
     }
 
@@ -193,7 +249,8 @@ public class SSPitemActivity extends BaseActivity implements SSPitemAdapter.OnVi
      * 显示弹出窗
      */
     private void showPW() {
-        pw = new PopupWindow(itemView, 500, ViewGroup.LayoutParams.WRAP_CONTENT, true);
+        flipping.setRotation(180);
+        pw = new PopupWindow(itemView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
         pw.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         pw.setOutsideTouchable(true);
         pw.setTouchable(true);
@@ -202,32 +259,12 @@ public class SSPitemActivity extends BaseActivity implements SSPitemAdapter.OnVi
             @Override
             public void onDismiss() {
                 viewTransparent.setVisibility(View.GONE);
+                flipping.setRotation(0);
             }
         });
+        screenLvAdpter.setDef(currposition);
+        screenLvAdpter2.setDef(currposition2);
     }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (spitemList != null) {
-            oAdapter.setList(spitemList);
-        } else {
-            if (NetUtils.isNetworkConnected(mContext)) {
-                if (null != pullToRefresh) {
-                    pullToRefresh.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            pullToRefresh.setRefreshing(true);
-                            refreshRequest();
-                        }
-                    }, 200);
-                }
-            } else {
-                showToastShort("网络不给力");
-            }
-        }
-    }
-
 
     @OnClick(R.id.screenTv)
     public void onViewClicked() {
@@ -235,28 +272,6 @@ public class SSPitemActivity extends BaseActivity implements SSPitemAdapter.OnVi
         viewTransparent.setVisibility(View.VISIBLE);
     }
 
-    /**
-     * 价格排序
-     *
-     * @param RiseAndFall
-     */
-    private void priceSort(int RiseAndFall) {
-        spitemList.clear();
-        if (RiseAndFall == 1) {
-            price = "1";
-        } else {
-            price = "2";
-        }
-        pullToRefresh.setRefreshing(true);
-        refreshRequest();
-    }
-
-    @Override
-    public void onRefresh() {
-        spitemList.clear();
-        mCurrentPage = 1;
-        refreshRequest();
-    }
 
     /***
      * 网络数据
@@ -276,7 +291,10 @@ public class SSPitemActivity extends BaseActivity implements SSPitemAdapter.OnVi
             public void onAfter() {
                 super.onAfter();
                 if (pullToRefresh != null) {
-                    pullToRefresh.setRefreshing(false);
+                    pullToRefresh.finishLoadMore();
+                }
+                if (pullToRefresh != null) {
+                    pullToRefresh.finishRefresh();
                 }
             }
 
@@ -285,20 +303,24 @@ public class SSPitemActivity extends BaseActivity implements SSPitemAdapter.OnVi
                 super.onResponse(request, json);
                 ShowLog.e(json);
                 if (JsonHelper.isRequstOK(json, mContext)) {
+                    if (loading != null) {
+                        loading.showContent();
+                    }
+                    oAdapter.setLoadstate(oAdapter.FINISH);
                     JsonHelper<Spitem> jsonHelper = new JsonHelper<Spitem>(Spitem.class);
                     spitemList.addAll(jsonHelper.getDatas(json));
                     oAdapter.setList(spitemList);
                 } else if (JsonHelper.getRequstOK(json) == 6) {
                     if (spitemList.size() > 0) {
                         //showToastShort("没有更多的数据");
-                        if (spitemList.size() > 6) {
-                            oAdapter.setmFooterView(FooterView);
-                        } else {
-                            oAdapter.removeFooterView();
+                        if (pullToRefresh != null) {
+                            pullToRefresh.finishLoadMoreWithNoMoreData();
                         }
                         mCurrentPage--;
                     } else {
-                        showToastShort("无数据");
+                        if (loading != null) {
+                            loading.showEmpty();
+                        }
                         oAdapter.notifyDataSetChanged();
                     }
                 } else {
@@ -310,7 +332,10 @@ public class SSPitemActivity extends BaseActivity implements SSPitemAdapter.OnVi
             public void onError(Request request, Exception e) {
                 super.onError(request, e);
                 if (pullToRefresh != null) {
-                    pullToRefresh.setRefreshing(false);
+                    pullToRefresh.finishLoadMore(false);
+                }
+                if (pullToRefresh != null) {
+                    pullToRefresh.finishRefresh(false);
                 }
                 mCurrentPage--;
                 showToastShort(Contants.NetStatus.NETDISABLEORNETWORKDISABLE);
@@ -329,12 +354,44 @@ public class SSPitemActivity extends BaseActivity implements SSPitemAdapter.OnVi
                 CommonUtils.goActivityForResult(mContext, SGoodsDetailActivity.class, bundle, 19, false);
                 break;
             case R.id.addcartTv:
-                BugGoodsDialog.newInstance(spitemList.get(position)).show(getFragmentManager(),"123");
+                if (getAddressId().equals("")) {
+                    new MaterialDialog.Builder(mContext).title("温馨提示!")
+                            .content("您暂未添加收货地址!")
+                            .positiveText("去完善信息")
+                            .negativeText("下次吧")
+                            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                    CommonUtils.goActivity(mContext, SAddressRefreshActivity.class, null);
+                                    dialog.dismiss();
+                                }
+                            }).show();
+                } else {
+                    BugGoodsDialog.newInstance(spitemList.get(position)).show(getFragmentManager(), "123");
+                }
                 break;
             default:
                 break;
         }
     }
 
+
+    @Override
+    public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+        if (isNetWork(mContext)) {
+            mCurrentPage++;
+            refreshRequest();
+        }
+    }
+
+    @Override
+    public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+        if (isNetWork(mContext)) {
+            spitemList.clear();
+            mCurrentPage = 1;
+            refreshRequest();
+            pullToRefresh.setNoMoreData(false);
+        }
+    }
 
 }

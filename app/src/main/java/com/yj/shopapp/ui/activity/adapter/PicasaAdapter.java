@@ -9,14 +9,14 @@ import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.yj.shopapp.R;
-import com.yj.shopapp.wbeen.Imglist;
 import com.yj.shopapp.presenter.BaseRecyclerView;
 import com.yj.shopapp.view.headfootrecycleview.IRecyclerViewIntermediary;
+import com.yj.shopapp.wbeen.Imglist;
 
 import java.util.List;
 
-import butterknife.ButterKnife;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by jm on 2016/4/27.

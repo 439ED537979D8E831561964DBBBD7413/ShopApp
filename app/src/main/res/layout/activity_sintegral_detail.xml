@@ -1,60 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:id="@+id/activity_sintegral_detail"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="@color/white"
-              android:orientation="vertical"
-              tools:context="com.yj.shopapp.ui.activity.shopkeeper.SIntegralDetailActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    tools:context="com.yj.shopapp.ui.activity.shopkeeper.SIntegralDetailActivity">
 
-    <LinearLayout
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:visibility="gone">
+        android:layout_height="@dimen/title_height"
+        app:navigationIcon="@drawable/ic_lift_arrayblack">
 
-        <Button
-            android:id="@+id/year"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@color/white"
-            android:text="年份筛选"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="兑换记录"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
 
-        <View
-            android:layout_width="@dimen/line"
-            android:layout_height="match_parent"
-            android:background="@color/line3"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:paddingRight="@dimen/H10dp"
+            android:text="积分"
+            android:textColor="@color/black"
+            android:textSize="15sp" />
+    </android.support.v7.widget.Toolbar>
 
-        <Button
-            android:id="@+id/month"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@color/white"
-            android:text="月份筛选"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colore3e3e3" />
 
-        <View
-            android:layout_width="@dimen/line"
-            android:layout_height="match_parent"
-            android:background="@color/line3"/>
-
-        <Button
-            android:id="@+id/day"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@color/white"
-            android:text="日期筛选"/>
-
-    </LinearLayout>
-
-
-    <android.support.v4.widget.SwipeRefreshLayout
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout
         android:id="@+id/swipe_refresh_layout"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:background="@color/color_white">
+
+        <com.scwang.smartrefresh.layout.header.ClassicsHeader
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:srlAccentColor="#fff"
+            app:srlPrimaryColor="#444" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -64,12 +57,11 @@
             <com.yj.shopapp.view.headfootrecycleview.RecycleViewEmpty
                 android:id="@+id/recycler_view"
                 android:layout_width="fill_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent" />
 
-            <include layout="@layout/empty_view"/>
+            <include layout="@layout/empty_view" />
         </LinearLayout>
 
-
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 
 </LinearLayout>

@@ -22,7 +22,6 @@ import com.yj.shopapp.ui.activity.base.BaseActivity;
 import com.yj.shopapp.util.DateUtils;
 import com.yj.shopapp.util.JsonHelper;
 import com.yj.shopapp.util.NetUtils;
-import com.yj.shopapp.util.PreferenceUtils;
 import com.yj.shopapp.view.headfootrecycleview.OnRecyclerViewScrollListener;
 import com.yj.shopapp.view.headfootrecycleview.RecyclerViewHeaderFooterAdapter;
 
@@ -43,7 +42,7 @@ public class SOrderDetailActivity extends BaseActivity implements BaseRecyclerVi
     @BindView(R.id.usernameTv)
     TextView usernameTv;
     @BindView(R.id.text)
-    TextView text ;
+    TextView text;
     @BindView(R.id.oidTv)
     TextView oidTv;
     @BindView(R.id.moneyTv)
@@ -62,7 +61,6 @@ public class SOrderDetailActivity extends BaseActivity implements BaseRecyclerVi
     TextView idRightBtu;
 
 
-
     private ILoadView iLoadView = null;
     private View loadMoreView = null;
 
@@ -73,14 +71,12 @@ public class SOrderDetailActivity extends BaseActivity implements BaseRecyclerVi
     private boolean isRequesting = false;//标记，是否正在刷新
 
     private int mCurrentPage = 0;
-
-    String uid;
-    String token;
     String oid;
     int isType = 0;  // 0 批发商 1 零售商
-    String url ;
+    String url;
 
     List<OrderDetails> notes = new ArrayList<>();
+
     @Override
     protected int getLayoutId() {
         return R.layout.sactivity_orderdetail;
@@ -89,17 +85,13 @@ public class SOrderDetailActivity extends BaseActivity implements BaseRecyclerVi
     @Override
     protected void initData() {
         title.setText("订单详情");
-//        idRightBtu.setText("筛选");
-
-        uid = PreferenceUtils.getPrefString(mContext, Contants.Preference.UID, "");
-        token = PreferenceUtils.getPrefString(mContext, Contants.Preference.TOKEN, "");
         oid = getIntent().getExtras().getString("oid");
         isType = getIntent().getExtras().getInt("isType");
-        if(isType==0){
+        if (isType == 0) {
             url = Contants.PortA.OrderDetails;
             usernameTv.setVisibility(View.VISIBLE);
             text.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             url = Contants.PortU.OrderDetails;
             usernameTv.setVisibility(View.GONE);
             text.setVisibility(View.GONE);
@@ -108,7 +100,7 @@ public class SOrderDetailActivity extends BaseActivity implements BaseRecyclerVi
         swipeRefreshLayout.setColorSchemeResources(Contants.Refresh.refreshColorScheme);
         swipeRefreshLayout.setOnRefreshListener(listener);
 
-        SOrderDetailAdapter oAdapter = new SOrderDetailAdapter(mContext, notes, isType , this);
+        SOrderDetailAdapter oAdapter = new SOrderDetailAdapter(mContext, notes, isType, this);
 
 
         layoutManager = new LinearLayoutManager(mContext);
@@ -147,14 +139,13 @@ public class SOrderDetailActivity extends BaseActivity implements BaseRecyclerVi
     }
 
 
-
     public void refreshRequest() {
         mCurrentPage = 1;
 
         Map<String, String> params = new HashMap<String, String>();
         params.put("uid", uid);
         params.put("token", token);
-        params.put("oid",oid);
+        params.put("oid", oid);
         params.put("p", String.valueOf(mCurrentPage));
 
         adapter.removeFooter(loadMoreView);
@@ -163,8 +154,10 @@ public class SOrderDetailActivity extends BaseActivity implements BaseRecyclerVi
             @Override
             public void onAfter() {
                 super.onAfter();
-                swipeRefreshLayout.setRefreshing(false);
-                isRequesting = false;
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.setRefreshing(false);
+                    isRequesting = false;
+                }
             }
 
             @Override
@@ -179,14 +172,14 @@ public class SOrderDetailActivity extends BaseActivity implements BaseRecyclerVi
 
                 notes.clear();
                 System.out.println("response" + json);
-                if (JsonHelper.isRequstOK(json,mContext)) {
+                if (JsonHelper.isRequstOK(json, mContext)) {
                     JsonHelper<OrderDetails> jsonHelper = new JsonHelper<OrderDetails>(OrderDetails.class);
 
                     try {
                         JSONObject jsonObject = new JSONObject(json);
-                        if(isType==0){
+                        if (isType == 0) {
                             usernameTv.setText(jsonObject.getString("username"));
-                        }else {
+                        } else {
                             usernameTv.setText(jsonObject.getString("agentuser"));
                         }
                         oidTv.setText(jsonObject.getString("oid"));
@@ -197,16 +190,16 @@ public class SOrderDetailActivity extends BaseActivity implements BaseRecyclerVi
                     }
 
 
-                    notes.addAll(jsonHelper.getDatas(json,"itemlist"));
+                    notes.addAll(jsonHelper.getDatas(json, "itemlist"));
 
                     if (notes.size() >= 20) {
                         adapter.addFooter(loadMoreView);
-                    }else{
+                    } else {
                         adapter.removeFooter(loadMoreView);
                     }
-                } else if(JsonHelper.getRequstOK(json)==6){
+                } else if (JsonHelper.getRequstOK(json) == 6) {
 
-                }else {
+                } else {
                     showToastShort(Contants.NetStatus.NETLOADERROR);
                 }
 
@@ -239,7 +232,7 @@ public class SOrderDetailActivity extends BaseActivity implements BaseRecyclerVi
         params.put("uid", uid);
         params.put("token", token);
         params.put("p", String.valueOf(mCurrentPage));
-        params.put("oid",oid);
+        params.put("oid", oid);
 
         HttpHelper.getInstance().post(mContext, url, params, new OkHttpResponseHandler<String>(mContext) {
 
@@ -260,18 +253,17 @@ public class SOrderDetailActivity extends BaseActivity implements BaseRecyclerVi
                 super.onResponse(request, json);
 
                 System.out.println("response" + json);
-                if (JsonHelper.isRequstOK(json,mContext)) {
+                if (JsonHelper.isRequstOK(json, mContext)) {
                     JsonHelper<OrderDetails> jsonHelper = new JsonHelper<OrderDetails>(OrderDetails.class);
 
-                    if (jsonHelper.getDatas(json,"itemlist").size() == 0) {
+                    if (jsonHelper.getDatas(json, "itemlist").size() == 0) {
                         iLoadView.showFinishView(loadMoreView);
                     } else {
-                        notes.addAll(jsonHelper.getDatas(json,"itemlist"));
+                        notes.addAll(jsonHelper.getDatas(json, "itemlist"));
                     }
-                }else if(JsonHelper.getRequstOK(json)==6){
+                } else if (JsonHelper.getRequstOK(json) == 6) {
                     iLoadView.showFinishView(loadMoreView);
-                }
-                else {
+                } else {
                     mCurrentPage--;
                     showToastShort(Contants.NetStatus.NETLOADERROR);
                 }
@@ -297,7 +289,6 @@ public class SOrderDetailActivity extends BaseActivity implements BaseRecyclerVi
             refreshRequest();
         }
     };
-
 
 
     public class mLoadMoreClickListener implements LoadMoreClickListener {

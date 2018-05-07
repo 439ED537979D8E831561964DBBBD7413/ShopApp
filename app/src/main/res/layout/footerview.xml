@@ -1,28 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="center"
-    android:layout_gravity="center"
+    android:animateLayoutChanges="true"
     android:orientation="horizontal">
 
-    <View
-        android:layout_width="30dp"
-        android:layout_height="1dp"
-        android:layout_marginRight="10dp"
-        android:background="@color/text_color3"/>
-
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/empty"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="到底啦"
-        android:padding="5dp"
-        android:textColor="@color/black"/>
+        android:layout_gravity="center"
+        android:gravity="center">
 
-    <View
-        android:layout_width="30dp"
-        android:layout_marginLeft="10dp"
-        android:layout_height="1dp"
-        android:background="@color/text_color3"/>
+        <View
+            android:layout_width="30dp"
+            android:layout_height="1dp"
+            android:layout_marginRight="10dp"
+            android:background="@color/text_color3" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="到底啦"
+            android:textColor="@color/black" />
+
+        <View
+            android:layout_width="30dp"
+            android:layout_height="1dp"
+            android:layout_marginLeft="10dp"
+            android:background="@color/text_color3" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/load"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:visibility="gone">
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="正在加载中"
+            android:textColor="@color/black" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/end"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:gravity="center"
+            android:text="加载完成"
+            android:textColor="@color/black" />
+    </RelativeLayout>
+
 </LinearLayout>

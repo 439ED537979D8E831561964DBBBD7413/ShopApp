@@ -1,53 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/onItemclick"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="3dp"
-        android:background="@drawable/recyitem"
-        android:elevation="3dp"
-        android:orientation="vertical">
+        android:layout_height="120dp"
+        android:background="@color/white"
+        android:orientation="horizontal">
 
-        <com.yj.shopapp.view.LoweImageView
+        <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/Goods_imag"
-            android:layout_width="match_parent"
-            android:layout_height="150dp"
-            app:ratio="1.333"/>
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_margin="@dimen/H10dp"
+            android:background="@drawable/border1dp"
+            android:padding="1dp"/>
 
-        <TextView
-            android:id="@+id/goodsName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="10dp"
-            android:text="华为手机"
-            android:textColor="@color/black"
-            android:textSize="16sp"/>
-
-        <TextView
-            android:id="@+id/goods_datas"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="10dp"
-            android:text="防水防摔手机"
-            android:textSize="12sp"/>
-
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="10dp">
+            android:layout_toRightOf="@id/Goods_imag"
+            android:orientation="vertical"
+            android:paddingTop="10dp">
 
             <TextView
-                android:id="@+id/integral_num"
+                android:id="@+id/goodsName"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:maxLines="2"
+                android:padding="2dp"
+                android:text="华为手机"
+                android:textColor="@color/color474747"/>
+
+            <TextView
+                android:id="@+id/shopspec"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="100积分"
-                android:textColor="@color/red"
+                android:padding="2dp"
+                android:text="规格"
+                android:textColor="@color/color909090"
                 android:textSize="12sp"/>
 
             <TextView
@@ -55,23 +49,58 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
+                android:padding="2dp"
                 android:paddingRight="10dp"
                 android:text="90件"
-                android:textColor="@color/red"
+                android:textColor="@color/color909090"
                 android:textSize="12sp"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="积分:  "
+                    android:padding="@dimen/H2dp"
+                    android:textColor="@color/color909090"
+                    android:textSize="12sp"/>
+
+                <TextView
+                    android:id="@+id/integral_num"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="100"
+                    android:textColor="#fe3000"
+                    android:textSize="15sp"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/Goods_imag"
+            android:layout_marginRight="12dp"
+            android:layout_alignParentRight="true">
+
+            <TextView
+                android:id="@+id/Redeem_now"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/fillet_tv_5"
+                android:gravity="center"
+                android:padding="3dp"
+                android:text="立即兑换"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:textStyle="bold"/>
         </RelativeLayout>
 
-        <TextView
-            android:id="@+id/Redeem_now"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_margin="10dp"
-            android:background="@drawable/fillet_tv_5"
-            android:gravity="center"
-            android:text="立即兑换"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            android:textStyle="bold"/>
-    </LinearLayout>
+    </RelativeLayout>
 
-</FrameLayout>
+</RelativeLayout>

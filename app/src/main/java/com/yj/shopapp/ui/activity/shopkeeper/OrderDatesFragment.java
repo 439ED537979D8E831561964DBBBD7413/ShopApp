@@ -26,6 +26,7 @@ public class OrderDatesFragment extends NewBaseFragment {
 
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
+
     private OrderFragmentAdapte adapte;
     private List<OrderDatesBean.ItemlistBean> mDate = new ArrayList<>();
 
@@ -63,13 +64,13 @@ public class OrderDatesFragment extends NewBaseFragment {
     protected void initView(View view, Bundle savedInstanceState) {
         adapte = new OrderFragmentAdapte(mActivity);
         recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
-        recyclerView.addItemDecoration(new DDecoration(mActivity));
+        recyclerView.addItemDecoration(new DDecoration(mActivity, getResources().getDrawable(R.drawable.recyviewdecoration3)));
         recyclerView.setAdapter(adapte);
-
     }
 
     @Override
     protected void initData() {
+        mDate.clear();
         for (int i = 0; i < getdata().size(); i++) {
             if (getdata().get(i).getCid().equals(getType())) {
                 mDate.add(getdata().get(i));
@@ -77,4 +78,6 @@ public class OrderDatesFragment extends NewBaseFragment {
         }
         adapte.setList(mDate);
     }
+
+
 }

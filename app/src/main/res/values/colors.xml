@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#2693fc</color>
-    <color name="colorPrimaryDark">#2693fc</color>
-    <color name="colorAccent">#3C3F41</color>
+    <color name="colorPrimaryDark">@color/colorPrimary</color>
+    <color name="colorAccent">#0085ff</color>
     <color name="color_f2f2f2">#f2f2f2</color>
-    <color name="color_e0e0e0">#e0e0e0</color>
     <color name="color_theme">#0578eb</color>
     <color name="color_999999">#999999</color>
     <color name="color_F37A1C">#F37A1C</color>
@@ -23,20 +22,11 @@
     <color name="qr_viewfinder_mask">#60000000</color>
     <color name="qr_possible_result_points">#c0ffff00</color>
     <color name="qianhui">#c2ccd0</color>
-    <color name="color_c0534e">#c0534e</color>
-    <color name="color_84b65f">#84b65f</color>
-    <color name="color_449698">#449698</color>
-    <color name="color_ff8000">#ff8000</color>
-    <color name="grey">#ebebeb</color>
     <color name="black">#000000</color>
-    <color name="darkgrey">#C0C0C0</color>
     <color name="touming">#0000</color>
     <color name="line3">#CCCCCC</color>
-    <color name="darkyellow">#FFCC33</color>
     <color name="title_font">#262626</color>
     <color name="redyellow">#e01616</color>
-    <color name="banback">#20000000</color>
-    <color name="zise">#8B008B</color>
 
     <color name="text_blue">#0076FF</color>
     <color name="text_gary">#808080</color>
@@ -53,17 +43,41 @@
     <color name="blue">#0578eb</color>
     <color name="Orange">#ed961b</color>
     <color name="red">#f0322b</color>
+    <color name="color_fc2b32">#fc2b32</color>
+    <color name="color_e72c21">#e72c21</color>
     <color name="white">#ffffff</color>
     <color name="gary_6">#666666</color>
     <color name="text_color3">#676767</color>
     <color name="skyblue">#48B4FD</color>
     <color name="colorPrimaryLight">#cfd8dc</color>
-    <color name="indicator_1">#55B3C2</color>
-    <color name="indicator_2">#64A4A4</color>
-    <color name="indicator_3">#66D7B9</color>
-    <color name="indicator_4">#FDBC7D</color>
     <color name="newtheme">#439BDF</color>
     <color name="transparent40">#66000000</color>
     <color name="deftvcolor">#8A000000</color>
     <color name="tab_ordercolor">#01ABFF</color>
+    <color name="color333333">#333333</color>
+    <color name="color888888">#888888</color>
+    <color name="color474747">#474747</color>
+    <color name="color909090">#909090</color>
+    <color name="colore7e7e7">#e7e7e7</color>
+    <color name="colorf5f5f5">#f5f5f5</color>
+    <color name="colore3e3e3">#e3e3e3</color>
+    <color name="color3fb03e">#3fb03e</color>
+    <color name="colorf3302e">#f3302e</color>
+    <color name="colorc666666">#666666</color>
+    <color name="colorcfc6f74">#fc6f74</color>
+    <color name="colorcFEFAF1">#FEFAF1</color>
+    <color name="colorcDDDDDD">#DDDDDD</color>
+    <color name="colorc0E8EE7">#0E8EE7</color>
+    <color name="colorc17A5F8">#17A5F8</color>
+    <color name="colorcD22222">#D22222</color>
+    <color name="color_a9a9a9">#a9a9a9</color>
+    <color name="color_fec329">#fec329</color>
+    <color name="color_aaaaaa">#aaaaaa</color>
+    <color name="color_01abff">#01abff</color>
+    <color name="color_01ABFF">#01AbFF</color>
+    <color name="tab_more_color">#F2ffffff</color>
+    <color name="color_1ca5f5">#1ca5f5</color>
+    <color name="color_fafafa">#FAFAFA</color>
+    <color name="color_f44421">#F44421</color>
+
 </resources>

@@ -2,7 +2,6 @@ package com.yj.shopapp.ui.activity.wholesale;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -14,6 +13,9 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.kaopiz.kprogresshud.KProgressHUD;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.squareup.okhttp.Request;
 import com.yj.shopapp.R;
 import com.yj.shopapp.config.Contants;
@@ -27,8 +29,6 @@ import com.yj.shopapp.ui.activity.adapter.WStopGoodsAdapter;
 import com.yj.shopapp.ui.activity.base.BaseActivity;
 import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.JsonHelper;
-import com.yj.shopapp.util.NetUtils;
-import com.yj.shopapp.util.PreferenceUtils;
 import com.yj.shopapp.view.headfootrecycleview.OnRecyclerViewScrollListener;
 import com.yj.shopapp.view.headfootrecycleview.RecyclerViewHeaderFooterAdapter;
 import com.yj.shopapp.wbeen.Goods;
@@ -43,7 +43,7 @@ import butterknife.BindView;
 /**
  * Created by jm on 2016/5/14.
  */
-public class WStopGoodsActivity extends BaseActivity implements GoodsRecyclerView {
+public class WStopGoodsActivity extends BaseActivity implements GoodsRecyclerView, OnRefreshListener{
 
     @BindView(R.id.title)
     TextView title;
@@ -52,7 +52,7 @@ public class WStopGoodsActivity extends BaseActivity implements GoodsRecyclerVie
     TextView id_right_btu;
 
     @BindView(R.id.swipe_refresh_layout)
-    SwipeRefreshLayout swipeRefreshLayout;
+    SmartRefreshLayout swipeRefreshLayout;
 
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
@@ -75,10 +75,6 @@ public class WStopGoodsActivity extends BaseActivity implements GoodsRecyclerVie
 
     private ArrayAdapter Dardapter;
 
-    String uid;
-    String token;
-    String agentuid = ""; //临时批发商ID 做个判断
-
 //    @OnClick(R.id.id_right_btu)
 //    public void Open(){
 //        Bundle bundle = new Bundle();
@@ -98,12 +94,6 @@ public class WStopGoodsActivity extends BaseActivity implements GoodsRecyclerVie
         bottomLayout.setVisibility(View.GONE);
         title.setText("暂停销售产品");
         id_right_btu.setText("筛选");
-
-        uid = PreferenceUtils.getPrefString(mContext, Contants.Preference.UID, "");
-        token = PreferenceUtils.getPrefString(mContext, Contants.Preference.TOKEN, "");
-
-        swipeRefreshLayout.setColorSchemeResources(Contants.Refresh.refreshColorScheme);
-        swipeRefreshLayout.setOnRefreshListener(listener);
 
         WStopGoodsAdapter oAdapter = new WStopGoodsAdapter(mContext, goodsList, this);
 
@@ -126,33 +116,12 @@ public class WStopGoodsActivity extends BaseActivity implements GoodsRecyclerVie
     }
 
 
-
-    SwipeRefreshLayout.OnRefreshListener listener = new SwipeRefreshLayout.OnRefreshListener() {
-        @Override
-        public void onRefresh() {
-
-            refreshRequest();
-        }
-    };
-
     @Override
     protected void onResume() {
         super.onResume();
-        if (NetUtils.isNetworkConnected(mContext)) {
-            if (null != swipeRefreshLayout) {
-
-                swipeRefreshLayout.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        swipeRefreshLayout.setRefreshing(true);
-
-                        refreshRequest();
-                    }
-                }, 200);
-            }
-        } else {
-            showToastShort("网络不给力");
+        if (isNetWork(mContext)) {
+            mCurrentPage = 0;
+            refreshRequest();
         }
     }
 
@@ -188,6 +157,11 @@ public class WStopGoodsActivity extends BaseActivity implements GoodsRecyclerVie
     }
 
 
+    @Override
+    public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+        mCurrentPage = 0;
+        refreshRequest();
+    }
 
 
     public class mLoadMoreClickListener implements LoadMoreClickListener {
@@ -297,17 +271,8 @@ public class WStopGoodsActivity extends BaseActivity implements GoodsRecyclerVie
                 System.out.println("response=" + json);
 
                 if (JsonHelper.errorNo(json).equals("0")) {
+                    swipeRefreshLayout.autoRefresh();
 
-                    if (null != swipeRefreshLayout) { //删除成功重新刷新数据
-                        swipeRefreshLayout.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-
-                                swipeRefreshLayout.setRefreshing(true);
-                                refreshRequest();
-                            }
-                        }, 200);
-                    }
                 } else if (JsonHelper.getRequstOK(json) == 6) {
 
                 } else {
@@ -339,7 +304,6 @@ public class WStopGoodsActivity extends BaseActivity implements GoodsRecyclerVie
             @Override
             public void onAfter() {
                 super.onAfter();
-                swipeRefreshLayout.setRefreshing(false);
                 isRequesting = false;
             }
 

@@ -62,13 +62,13 @@ public class WMyInfoActivity extends BaseActivity implements BottomDialog.OnCent
     @BindView(R.id.account_tv)
     TextView accountTv;
     private BottomDialog bottomDialog;
-    private Bitmap bitmap;
 
     @Override
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
         super.onSaveInstanceState(outState, outPersistentState);
         outState.putString("cameraPath", cameraPath);
     }
+
     @Override
     protected int getLayoutId() {
         return R.layout.wactivity_myinfo;
@@ -105,12 +105,6 @@ public class WMyInfoActivity extends BaseActivity implements BottomDialog.OnCent
         CommonUtils.goActivity(mContext, WDoPasswdActivity.class, null, false);
     }
 
-
-//    @OnClick(R.id.cashcouponmanager_rl)
-//    public void cashcouponmanagerOnclick() {
-//        CommonUtils.goActivity(mContext, WCashCouponActivity.class, null, false);
-//    }
-
     @OnClick(R.id.news)
     public void clicknews() {
         CommonUtils.goActivity(mContext, WNewListActivity.class, null, false);
@@ -127,11 +121,6 @@ public class WMyInfoActivity extends BaseActivity implements BottomDialog.OnCent
         CommonUtils.goActivity(mContext, WSalesActivity.class, null, false);
     }
 
-    //@OnClick(R.id.duetime_re)
-//public void onclickduetime()
-//{
-//    CommonUtils.goActivity(mContext, WDuetimeActivity.class, null, false);
-//}
     @OnClick(R.id.stop_goods_rl)
     public void onclickstopgoods() {
         CommonUtils.goActivity(mContext, WStopGoodsActivity.class, null, false);
@@ -153,9 +142,6 @@ public class WMyInfoActivity extends BaseActivity implements BottomDialog.OnCent
 
     @OnClick(R.id.renew)
     public void onClickRenew() {
-//        Bundle bundle = new Bundle();
-//        bundle.putString("wUrl",Contants.u+"index.php/Appi/pay?u="+uid);
-//        CommonUtils.goActivity(this, MyWebView.class,bundle,false);
         Intent intent = new Intent();
         intent.setAction("android.intent.action.VIEW");
         Uri content_url = Uri.parse(Contants.u + "index.php/Appi/pay?u=" + uid);
@@ -166,20 +152,15 @@ public class WMyInfoActivity extends BaseActivity implements BottomDialog.OnCent
 
     @OnClick(R.id.expand)
     public void onClickExpand() {
-        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.two_code);// 这里是获取图片Bitmap，也可以传入其他参数到Dialog中
-        CustomPopDialog2.Builder dialogBuild = new CustomPopDialog2.Builder(mContext, bitmap);
-        dialogBuild.setLongclick(new CustomPopDialog2.Builder.onLongclick() {
+        CustomPopDialog2 dialog2 = new CustomPopDialog2(WMyInfoActivity.this);
+        dialog2.setCanceledOnTouchOutside(true);
+        dialog2.setLongClick(new CustomPopDialog2.onLongClick() {
             @Override
             public void onLClick(View view) {
                 bottomDialog.show();
             }
         });
-        CustomPopDialog2 dialog = dialogBuild.create();
-        dialog.setCanceledOnTouchOutside(true);// 点击外部区域关闭
-        dialog.show();
-//        Bundle bundle = new Bundle();
-//        bundle.putString("wUrl", Contants.u + "index.php/Appi/sales?u=" + uid);
-//        CommonUtils.goActivity(this, MyWebView.class, bundle, false);
+        dialog2.show();
     }
 
     private void saveImg(Bitmap bitmap) {
@@ -190,16 +171,11 @@ public class WMyInfoActivity extends BaseActivity implements BottomDialog.OnCent
         this.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse(path)));
     }
 
-    @OnClick(R.id.w_updata)
-    public void onClick() {
-        //VersionUpdata.getInstance(true, mContext, getFragmentManager()).updateVersion();
-    }
-
     @Override
     public void OnCenterItemClick(BottomDialog dialog, View view) {
         switch (view.getId()) {
             case R.id.save_photoalbum:
-                saveImg(bitmap);
+                saveImg(BitmapFactory.decodeResource(getResources(), R.drawable.two_code_2));
                 break;
             case R.id.dialog_cancel:
 
@@ -208,7 +184,6 @@ public class WMyInfoActivity extends BaseActivity implements BottomDialog.OnCent
                 break;
         }
     }
-
 
 
 }

@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="@color/white"
-              android:orientation="vertical">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
 
 
     <LinearLayout
         android:id="@+id/touch_ll"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@color/all_bg"
         android:orientation="horizontal"
         android:paddingLeft="20dp">
 
@@ -22,27 +21,30 @@
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:singleLine="true"
-            android:text=""
-            android:textColor="#1296db"
-            android:textSize="18sp"/>
+            android:text="关于订单返现问题"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
 
         <ImageView
             android:id="@+id/not_img"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingBottom="15dp"
-            android:paddingTop="15dp"
-            android:src="@drawable/right_arr"/>
+            android:layout_width="50dp"
+            android:layout_height="@dimen/H50dp"
+            android:padding="@dimen/H15dp"
+            android:src="@drawable/ic_right_black" />
     </LinearLayout>
-
 
     <LinearLayout
         android:id="@+id/Not_hidecontent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/colorf5f5f5"
         android:orientation="vertical"
-        tools:ignore="WebViewLayout"
-        >
+        tools:ignore="WebViewLayout">
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="1px"
+            android:background="@color/colorf5f5f5" />
 
         <TextView
             android:id="@+id/notice_content"
@@ -54,8 +56,8 @@
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
             android:text=""
-            android:textColor="@color/text_gary_4d"
-            android:textSize="16sp"/>
+            android:textColor="@color/color333333"
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/notice_time"
@@ -65,14 +67,13 @@
             android:layout_marginBottom="10dp"
             android:paddingRight="15dp"
             android:text=""
-            android:textColor="@color/gary_6"
-            android:textSize="14sp"/>
+            android:textColor="@color/color333333" />
 
-            <WebView
-                android:id="@+id/webView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone"/>
+        <WebView
+            android:id="@+id/webView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
 
     </LinearLayout>
 

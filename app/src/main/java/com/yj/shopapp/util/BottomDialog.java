@@ -36,7 +36,6 @@ public class BottomDialog extends Dialog implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         Window window = getWindow();
         window.setGravity(Gravity.BOTTOM); // 此处可以设置dialog显示的位置为居中
-        window.setWindowAnimations(R.style.bottom_menu_animation); // 添加动画效果
         setContentView(layoutResID);
 
         WindowManager windowManager = ((Activity) context).getWindowManager();

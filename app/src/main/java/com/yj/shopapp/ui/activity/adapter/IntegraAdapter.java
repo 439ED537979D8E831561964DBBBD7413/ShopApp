@@ -11,8 +11,6 @@ import com.yj.shopapp.ui.activity.ImgUtil.CommonAdapter;
 import com.yj.shopapp.ui.activity.ImgUtil.ViewHolder;
 import com.yj.shopapp.util.GlideCircleTransform;
 
-import java.util.List;
-
 /**
  * Created by LK on 2017/12/21.
  *
@@ -22,14 +20,6 @@ import java.util.List;
 public class IntegraAdapter extends CommonAdapter<ExcGoods.DataBean> implements View.OnClickListener {
     private OnViewClickListener listener;
 
-    public void setListener(OnViewClickListener listener) {
-        this.listener = listener;
-    }
-
-    public IntegraAdapter(Context context, List list, OnViewClickListener listener) {
-        super(context, list);
-        this.listener = listener;
-    }
     public IntegraAdapter(Context context, OnViewClickListener listener) {
         super(context);
         this.listener = listener;
@@ -44,16 +34,15 @@ public class IntegraAdapter extends CommonAdapter<ExcGoods.DataBean> implements 
     public void onBindViewHolder(ViewHolder holder, int position) {
         ExcGoods.DataBean goods = list.get(position);
         holder.getTextView(R.id.goodsName).setText(goods.getName());
-        holder.getTextView(R.id.integral_num).setText(goods.getIntegral() + "积分");
-        holder.getTextView(R.id.number).setText(goods.getNum() + "件");
+        holder.getTextView(R.id.integral_num).setText(goods.getIntegral());
+        holder.getTextView(R.id.number).setText(String.format("剩余%s件", goods.getNum()));
         holder.getTextView(R.id.Redeem_now).setOnClickListener(this);
         holder.getTextView(R.id.Redeem_now).setTag(position);
         holder.getView(R.id.onItemclick).setOnClickListener(this);
         holder.getView(R.id.onItemclick).setTag(position);
-
+        holder.getTextView(R.id.shopspec).setText(String.format("规格： %1$s%2$s", goods.getSpecs(), goods.getUnit()));
         Glide.with(context).load(goods.getImgurl()).apply(new RequestOptions().centerCrop().transform(new GlideCircleTransform()))
                 .into(holder.getImageView(R.id.Goods_imag));
-
     }
 
     @Override
@@ -64,4 +53,5 @@ public class IntegraAdapter extends CommonAdapter<ExcGoods.DataBean> implements 
     public interface OnViewClickListener {
         void onItemClick(View view, int position);
     }
+
 }

@@ -32,6 +32,7 @@ public class SSPitemAdapter extends CommonAdapter<Spitem> implements View.OnClic
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Spitem spitem = list.get(position);
+        holder.getTextView(R.id.orderNumber).setText(String.format("数量%s件", spitem.getItemsum()));
         holder.getTextView(R.id.orderName).setText(spitem.getItemname());
         holder.getTextView(R.id.startDate).setText(DateUtils.timed(spitem.getTime1()) + " - " + DateUtils.timed(spitem.getTime2()));
         if (spitem.getSales().equals("1")) {
@@ -41,7 +42,7 @@ public class SSPitemAdapter extends CommonAdapter<Spitem> implements View.OnClic
             str = "打" + Double.parseDouble(spitem.getDisstr()) / 10 + "折";
             holder.getTextView(R.id.orderContent).setText(str);
         } else if (spitem.getSales().equals("3")) {
-            String html = "促销价：" + "<font color='red'>" + "￥" + spitem.getDisstr() + "</font> ";
+            String html = "<font color='red'>" + "￥" + spitem.getDisstr() + "</font> ";
             CharSequence charSequence = Html.fromHtml(html);
             holder.getTextView(R.id.orderContent).setText(charSequence);
         }
@@ -55,15 +56,17 @@ public class SSPitemAdapter extends CommonAdapter<Spitem> implements View.OnClic
         if (spitem.getSale_status() != null) {
             if (spitem.getSale_status().equals("0")) {
                 addcartTv.setBackgroundResource(R.drawable.goodcar_bg_2);
-                holder.getSimpleDraweeView(R.id.stop_simpleDraweeView).setImageResource(R.drawable.pause);
+                addcartTv.setText("正在补货中");
+                holder.getSimpleDraweeView(R.id.top_simpleDraweeView).setImageResource(R.drawable.pause);
                 addcartTv.setClickable(false);
             } else if (spitem.getSale_status().equals("1") || spitem.getSale_status().equals("null")) {
-                addcartTv.setBackgroundResource(R.drawable.goodcar_bg);
-                holder.getSimpleDraweeView(R.id.stop_simpleDraweeView).setImageResource(R.drawable.img_ic_promotion);
+                addcartTv.setBackgroundResource(R.drawable.goodcar_bg3);
+                addcartTv.setText("加入购物车");
+                holder.getSimpleDraweeView(R.id.top_simpleDraweeView).setImageResource(R.drawable.img_ic_promotion);
             }
         } else {
-            addcartTv.setBackgroundResource(R.drawable.goodcar_bg);
-            holder.getSimpleDraweeView(R.id.stop_simpleDraweeView).setImageResource(R.drawable.img_ic_promotion);
+            addcartTv.setBackgroundResource(R.drawable.goodcar_bg3);
+            holder.getSimpleDraweeView(R.id.top_simpleDraweeView).setImageResource(R.drawable.img_ic_promotion);
         }
         Glide.with(context).load(spitem.getImgurl()).into(holder.getSimpleDraweeView(R.id.simpleDraweeView));
         holder.getView(R.id.recy_item).setOnClickListener(this);

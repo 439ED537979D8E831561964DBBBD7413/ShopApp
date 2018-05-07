@@ -7,8 +7,8 @@ import android.widget.TextView;
 
 import com.yj.shopapp.R;
 
-import butterknife.ButterKnife;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by LK on 2017/12/26.

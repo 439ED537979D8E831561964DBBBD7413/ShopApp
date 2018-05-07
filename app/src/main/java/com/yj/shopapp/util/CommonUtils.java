@@ -31,6 +31,7 @@ import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
@@ -38,9 +39,11 @@ import com.xiaweizi.cornerslibrary.CornersProperty;
 import com.xiaweizi.cornerslibrary.RoundCornersTransformation;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.Matcher;
@@ -209,6 +212,25 @@ public class CommonUtils {
     }
 
     /**
+     * 判断文件石否存在
+     *
+     * @param strFile
+     * @return
+     */
+    public static boolean fileIsExists(String strFile) {
+        try {
+            File f = new File(strFile);
+            if (!f.exists()) {
+                return false;
+            }
+
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * is url
      *
      * @param url
@@ -277,11 +299,14 @@ public class CommonUtils {
      */
     public static void goActivity(Context context, Class<?> activity, Bundle bundle) {
         Intent intent = new Intent();
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK );
         intent.setClass(context, activity);
         if (bundle != null) {
             intent.putExtras(bundle);
         }
-        context.startActivity(intent);
+        if (context instanceof Activity) {
+            context.startActivity(intent);
+        }
     }
 
     /**
@@ -299,7 +324,9 @@ public class CommonUtils {
         }
         context.startActivity(intent);
         if (isFinish) {
-            ((Activity) context).finish();
+            if (context instanceof Activity) {
+                ((Activity) context).finish();
+            }
         }
     }
 
@@ -319,7 +346,9 @@ public class CommonUtils {
         }
         ((Activity) context).startActivityForResult(intent, requestCode);
         if (isFinish) {
-            ((Activity) context).finish();
+            if (context instanceof Activity) {
+                ((Activity) context).finish();
+            }
         }
     }
 
@@ -334,8 +363,11 @@ public class CommonUtils {
         if (bundle != null) {
             intent.putExtras(bundle);
         }
-        ((Activity) context).setResult(resultCode, intent);
-        ((Activity) context).finish();
+        if (context instanceof Activity) {
+            ((Activity) context).setResult(resultCode, intent);
+            ((Activity) context).finish();
+        }
+
     }
 
     /***
@@ -450,4 +482,133 @@ public class CommonUtils {
     public static String decimal(Double d) {
         return new DecimalFormat("#0.00").format(d);
     }
+
+    /**
+     * 替换手机号码
+     *
+     * @return
+     */
+    public static String replacemobile(String phone) {
+        if (!"".equals(phone)) {
+            return phone.replaceAll("(\\d{3})\\d{4}(\\d{4})", "$1****$2");
+        } else {
+            return "";
+        }
+    }
+
+    /**
+     * 对字符串处理:将指定位置到指定位置的字符以星号代替
+     *
+     * @param content 传入的字符串
+     * @param begin   开始位置
+     * @param end     结束位置
+     * @return
+     */
+
+    public static String getStarString(String content, int begin, int end) {
+
+        if (begin >= content.length() || begin < 0) {
+            return content;
+        }
+        if (end >= content.length() || end < 0) {
+            return content;
+        }
+        if (begin >= end) {
+            return content;
+        }
+        String starStr = "";
+        for (int i = begin; i < end; i++) {
+            starStr = starStr + "*";
+        }
+        return content.substring(0, begin) + starStr + content.substring(end, content.length());
+
+    }
+
+    /**
+     * 对字符加星号处理：除前面几位和后面几位外，其他的字符以星号代替
+     *
+     * @param content  传入的字符串
+     * @param frontNum 保留前面字符的位数
+     * @param endNum   保留后面字符的位数
+     * @return 带星号的字符串
+     */
+
+    public static String getStarString2(String content, int frontNum, int endNum) {
+
+        if (frontNum >= content.length() || frontNum < 0) {
+            return content;
+        }
+        if (endNum >= content.length() || endNum < 0) {
+            return content;
+        }
+        if (frontNum + endNum >= content.length()) {
+            return content;
+        }
+        String starStr = "";
+        for (int i = 0; i < (content.length() - frontNum - endNum); i++) {
+            starStr = starStr + "*";
+        }
+        return content.substring(0, frontNum) + starStr
+                + content.substring(content.length() - endNum, content.length());
+
+    }
+
+    public static String dec2perc(Double number) {
+        NumberFormat nf = NumberFormat.getPercentInstance();
+        nf.setMaximumFractionDigits(2);
+        return nf.format(number);
+    }
+
+    public static String Take4bits(String phone) {
+        if (phone.length() == 11) {
+            return phone.substring(7, 11);
+        } else {
+            if (phone.length() > 4) {
+                int len = phone.length();
+                return phone.substring(len - 4, len);
+            } else {
+                return phone;
+            }
+        }
+
+    }
+
+    /**
+     * @param destContext
+     */
+    public static void fixInputMethodManagerLeak(Context destContext) {
+        if (destContext == null) {
+            return;
+        }
+
+        InputMethodManager inputMethodManager = (InputMethodManager) destContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (inputMethodManager == null) {
+            return;
+        }
+
+        String[] viewArray = new String[]{"mCurRootView", "mServedView", "mNextServedView"};
+        Field filed;
+        Object filedObject;
+
+        for (String view : viewArray) {
+            try {
+                filed = inputMethodManager.getClass().getDeclaredField(view);
+                if (!filed.isAccessible()) {
+                    filed.setAccessible(true);
+                }
+                filedObject = filed.get(inputMethodManager);
+                if (filedObject != null && filedObject instanceof View) {
+                    View fileView = (View) filedObject;
+                    if (fileView.getContext() == destContext) { // 被InputMethodManager持有引用的context是想要目标销毁的
+                        filed.set(inputMethodManager, null); // 置空，破坏掉path to gc节点
+                    } else {
+                        break;// 不是想要目标销毁的，即为又进了另一层界面了，不要处理，避免影响原逻辑,也就不用继续for循环了
+                    }
+                }
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+        }
+    }
+
 }

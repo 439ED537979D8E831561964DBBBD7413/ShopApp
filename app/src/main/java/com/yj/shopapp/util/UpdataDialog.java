@@ -16,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -25,7 +24,6 @@ import android.widget.Toast;
 import com.alibaba.fastjson.JSONObject;
 import com.squareup.okhttp.Request;
 import com.yj.shopapp.R;
-import com.yj.shopapp.config.AppManager;
 import com.yj.shopapp.config.Contants;
 import com.yj.shopapp.http.HttpHelper;
 import com.yj.shopapp.http.OkHttpResponseHandler;
@@ -36,9 +34,8 @@ import com.yj.shopapp.ui.activity.upversion.Download;
 import java.util.HashMap;
 import java.util.Map;
 
-import butterknife.ButterKnife;
 import butterknife.BindView;
-import butterknife.OnClick;
+import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 /**
@@ -53,8 +50,6 @@ public class UpdataDialog extends DialogFragment {
     TextView tvTitle;
     @BindView(R.id.tv_update_info)
     TextView tvUpdateInfo;
-    @BindView(R.id.btn_ok)
-    Button btnOk;
     @BindView(R.id.npb)
     ProgressBar npb;
     @BindView(R.id.Progressvalue)
@@ -65,6 +60,7 @@ public class UpdataDialog extends DialogFragment {
     private boolean isDownload;
     private boolean isDownloadComp;
     Unbinder unbinder;
+
     public static UpdataDialog newInstance(boolean isDownloadComp) {
 
         Bundle args = new Bundle();
@@ -85,36 +81,54 @@ public class UpdataDialog extends DialogFragment {
     @Override
     public void onStart() {
         super.onStart();
-        getDialog().setCanceledOnTouchOutside(false);
-        getDialog().setOnKeyListener(new DialogInterface.OnKeyListener() {
-            @Override
-            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    if (isDownload) {
-                        dismiss();
-                        return false;
+        if (getDialog() != null) {
+            getDialog().setCanceledOnTouchOutside(false);
+            getDialog().setCancelable(false);
+            getDialog().setOnKeyListener(new DialogInterface.OnKeyListener() {
+                @Override
+                public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                    if (keyCode == KeyEvent.KEYCODE_BACK) {
+//                    if (isDownload) {
+//                        return false;
+//                    }
+//                    AppManager.getAppManager().finishAllActivity();
+                        return true;
                     }
-                    AppManager.getAppManager().finishActivity();
-                    return true;
+                    return false;
                 }
-                return false;
-            }
-        });
-
+            });
+        }
         Window dialogWindow = getDialog().getWindow();
         dialogWindow.setGravity(Gravity.CENTER);
         WindowManager.LayoutParams lp = dialogWindow.getAttributes();
         DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
         lp.height = (int) (displayMetrics.heightPixels * 0.8f);
         dialogWindow.setAttributes(lp);
+
+        if (isDownloadComp) {
+            String path = PreferenceUtils.getPrefString(mContext, "ApkPath", "");
+            if (CommonUtils.fileIsExists(path)) {
+                CommonUtils.installApk(mContext, path);
+                dismiss();
+            } else {
+                cupdate(mContext);
+            }
+        } else {
+            cupdate(mContext);
+        }
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.versionupdatadialog, container);
-        unbinder=ButterKnife.bind(this, view);
+        unbinder = ButterKnife.bind(this, view);
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
     }
 
     //是否更新新版本
@@ -167,11 +181,9 @@ public class UpdataDialog extends DialogFragment {
         public void onProgress(int progress, int totalSize) {
             npb.setProgress(progress);
             Progressvalue.setText(progress + "%");
-//            if (progress == 100) {
-//                dismiss();
-//            }
-            progressbarLl.setVisibility(View.GONE);
-            btnOk.setVisibility(View.VISIBLE);
+            if (progress == 100) {
+                dismiss();
+            }
         }
     };
 
@@ -193,29 +205,6 @@ public class UpdataDialog extends DialogFragment {
     public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
-    }
-
-    @OnClick({R.id.btn_ok, R.id.ll_close})
-    public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.btn_ok:
-                if (isDownloadComp) {
-                    String path = PreferenceUtils.getPrefString(mContext, "ApkPath", "");
-                    CommonUtils.installApk(mContext, path);
-                }else {
-                    progressbarLl.setVisibility(View.VISIBLE);
-                    btnOk.setVisibility(View.GONE);
-                    cupdate(mContext);
-                }
-                break;
-            case R.id.ll_close:
-                if (isDownload) {
-                    dismiss();
-                } else {
-                    AppManager.getAppManager().finishActivity();
-                }
-                break;
-        }
     }
 
 }

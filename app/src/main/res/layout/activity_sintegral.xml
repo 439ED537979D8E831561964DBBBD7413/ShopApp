@@ -1,195 +1,281 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
+<android.support.v4.widget.SwipeRefreshLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_sintegral"
+    android:id="@+id/super_swipe_refresh_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/all_bg"
-    android:orientation="vertical"
+    android:background="@color/white"
     tools:context="com.yj.shopapp.ui.activity.shopkeeper.SIntegralActivity">
-
-
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/appbarlayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/gradient"
-        app:elevation="0dp">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="?android:attr/actionBarSize"
-            android:gravity="center"
-            app:layout_scrollFlags="scroll">
-
-            <TextView
-                android:id="@+id/tv_lift"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:drawableLeft="@drawable/ic_gt"
-                android:gravity="center"
-                android:text="返回"
-                android:textColor="@color/white"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="我的积分"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                android:textStyle="bold"/>
-
-            <TextView
-                android:id="@+id/tv_right"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignParentRight="true"
-                android:gravity="center"
-                android:padding="5dp"
-                android:text="规则"
-                android:textColor="@color/white"/>
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:minHeight="?android:attr/actionBarSize"
-            app:layout_scrollFlags="scroll|snap">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/textView4"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/tvbg_round"
-                    android:gravity="center"
-                    android:text="积分总额\n19999"
-                    android:textAllCaps="false"
-                    android:textColor="@color/color_8e8e8e"
-                    android:textSize="16sp"
-                    android:textStyle="bold"/>
-
-                <TextView
-                    android:id="@+id/ranking"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:padding="5dp"
-                    android:text=""
-                    android:textColor="@color/white"
-                    android:textSize="16sp"/>
-            </LinearLayout>
-
-        </RelativeLayout>
-
-        <RadioGroup
-            android:id="@+id/m_LinearLayout"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="@color/white"
-            android:orientation="horizontal">
-
-            <RadioButton
-                android:id="@+id/filletTextView"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:button="@null"
-                android:gravity="center"
-                android:text="换购商品"
-                android:textColor="@color/group_tx_color"
-                android:textStyle="bold"/>
-
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@color/all_bg"/>
-
-            <RadioButton
-                android:id="@+id/filletTextView2"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:button="@null"
-                android:gravity="center"
-                android:text="换购记录"
-                android:textColor="@color/group_tx_color"
-                android:textStyle="bold"/>
-
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@color/all_bg"/>
-
-            <RadioButton
-                android:id="@+id/filletTextView4"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:button="@null"
-                android:gravity="center"
-                android:text="积分兑现"
-                android:visibility="gone"
-                android:textColor="@color/group_tx_color"
-                android:textStyle="bold"/>
-
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@color/all_bg"/>
-
-            <RadioButton
-                android:id="@+id/filletTextView3"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:button="@null"
-                android:gravity="center"
-                android:text="兑现记录"
-                android:textColor="@color/group_tx_color"
-                android:textStyle="bold"/>
-
-
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@color/all_bg"/>
-
-            <RadioButton
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:button="@null"
-                android:gravity="center"
-                android:text="积分明细"
-                android:textColor="@color/group_tx_color"
-                android:textStyle="bold"
-                android:visibility="gone"/>
-        </RadioGroup>
-    </android.support.design.widget.AppBarLayout>
-
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="5dp"
-        android:orientation="vertical"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:orientation="vertical">
 
-        <android.support.v4.view.ViewPager
-            android:id="@+id/my_viewpager"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:id="@+id/bgView"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:background="@drawable/gradient">
+
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/title_height"
+                    app:navigationIcon="@drawable/ic_liftarray">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="积分商城"
+                        android:textColor="@color/white"
+                        android:textSize="15sp"
+                        android:textStyle="bold"/>
+
+                </android.support.v7.widget.Toolbar>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/textView4"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:text="兑换积分3000分"
+                            android:textAllCaps="false"
+                            android:textColor="@color/white"
+                            android:textSize="13sp"/>
+
+                        <TextView
+                            android:id="@+id/ranking"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:padding="5dp"
+                            android:text="(兑换商品)"
+                            android:textColor="@color/white"
+                            android:textSize="12sp"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/returnIntegral"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/Presentintegral"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:text="提现积分3000分"
+                            android:textColor="@color/white"
+                            android:textSize="13sp"/>
+
+                        <TextView
+                            android:id="@+id/condition"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:padding="5dp"
+                            android:text="(满一万可提现)"
+                            android:textColor="@color/white"
+                            android:textSize="12sp"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <View
+                android:id="@+id/allbgView"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_below="@id/bgView"
+                android:background="@color/all_bg"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/allbgView"
+                android:layout_margin="10dp"
+                android:background="@drawable/fillet_tv_6"
+                android:elevation="3dp"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="大家在换"
+                        android:textColor="@color/red"
+                        android:textSize="15sp"/>
+
+                    <com.gongwen.marqueen.SimpleMarqueeView
+                        android:id="@+id/hot_mv"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_weight="1"
+                        android:flipInterval="2500"
+                        app:smvTextSize="12sp"
+                        android:inAnimation="@anim/in_right"
+                        android:outAnimation="@anim/out_left"
+                        app:marqueeAnimDuration="2000"
+                        app:smvTextEllipsize="end"
+                        app:smvTextColor="#65686f"
+                        app:smvTextGravity="center"
+                        app:smvTextSingleLine="true"/>
+
+                    <TextView
+                        android:id="@+id/more"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawablePadding="10dp"
+                        android:drawableRight="@drawable/ic_right_arrow"
+                        android:text="点击查看"
+                        android:textColor="@color/bottom_line"
+                        android:textSize="13sp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="13dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/exchangeshop"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:drawablePadding="10dp"
+                        android:drawableTop="@drawable/ic_shop"
+                        android:gravity="center"
+                        android:text="兑换商品"
+                        android:textColor="#666666"
+                        android:textSize="13sp"/>
+
+                    <TextView
+                        android:id="@+id/exchangeRecord"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:drawablePadding="10dp"
+                        android:drawableTop="@drawable/ic_record"
+                        android:gravity="center"
+                        android:text="我的兑换"
+                        android:textColor="#666666"
+                        android:textSize="13sp"/>
+
+                    <TextView
+                        android:id="@+id/integraldatails"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:drawablePadding="10dp"
+                        android:drawableTop="@drawable/ic_detailed"
+                        android:gravity="center"
+                        android:text="积分明细"
+                        android:textColor="#666666"
+                        android:textSize="13sp"/>
+
+                    <RelativeLayout
+                        android:id="@+id/my_Vip"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:id="@+id/vipImag"
+                            android:layout_width="match_parent"
+                            android:layout_height="25dp"
+                            android:layout_marginTop="3dp"
+                            android:src="@drawable/ic_vip"/>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentBottom="true"
+                            android:gravity="center"
+                            android:text="VIP特权"
+                            android:textColor="#666666"
+                            android:textSize="13sp"/>
+                    </RelativeLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="35dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:paddingLeft="10dp"
+                android:text="兑换商品"
+                android:textColor="@color/color333333"
+                android:textSize="12sp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/shopmore"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:gravity="center"
+                android:paddingRight="10dp"
+                android:text="更多"
+                android:textColor="@color/color888888"
+                android:textSize="13sp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_alignParentBottom="true"
+                android:background="@color/colore7e7e7"/>
+        </RelativeLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
     </LinearLayout>
 
 
-</android.support.design.widget.CoordinatorLayout>
+</android.support.v4.widget.SwipeRefreshLayout>

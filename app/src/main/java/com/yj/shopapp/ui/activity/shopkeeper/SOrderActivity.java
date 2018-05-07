@@ -1,21 +1,17 @@
 package com.yj.shopapp.ui.activity.shopkeeper;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
-import android.text.InputType;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.yj.shopapp.R;
-import com.yj.shopapp.ubeen.EventMassg;
+import com.yj.shopapp.ui.activity.ImgUtil.NewBaseFragment;
 import com.yj.shopapp.ui.activity.adapter.OrderViewPageAdpter;
-import com.yj.shopapp.ui.activity.base.BaseFragment;
 import com.yj.shopapp.util.CommonUtils;
-
-import org.greenrobot.eventbus.EventBus;
+import com.yj.shopapp.util.StatusBarUtils;
+import com.yj.shopapp.view.CustomViewPager;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -23,24 +19,39 @@ import butterknife.OnClick;
 /**
  * Created by jm on 2016/4/25.
  */
-public class SOrderActivity extends BaseFragment {
+public class SOrderActivity extends NewBaseFragment {
     @BindView(R.id.tabs_tl)
     TabLayout tabsTl;
     @BindView(R.id.viewpager)
-    ViewPager viewpager;
+    CustomViewPager viewpager;
+    @BindView(R.id.title_view)
+    LinearLayout titleView;
+    @BindView(R.id.search_tv)
+    TextView searchTv;
     private OrderViewPageAdpter adpter;
     private int[] status = {0, 1, 4, 3};
 
     @Override
-    public void init(Bundle savedInstanceState) {
-        adpter = new OrderViewPageAdpter(getFragmentManager(), status);
-        viewpager.setAdapter(adpter);
-        tabsTl.setupWithViewPager(viewpager);
+    protected int getLayoutId() {
+        return R.layout.stab_order;
     }
 
     @Override
-    public int getLayoutID() {
-        return R.layout.stab_order;
+    protected void initView(View view, Bundle savedInstanceState) {
+        StatusBarUtils.from(getActivity())
+                .setActionbarView(titleView)
+                .setTransparentStatusbar(true)
+                .setLightStatusBar(false)
+                .process();
+        adpter = new OrderViewPageAdpter(getFragmentManager(), status);
+        viewpager.setOpenAnimation(false);
+        viewpager.setScanScroll(false);
+    }
+
+    @Override
+    protected void initData() {
+        viewpager.setAdapter(adpter);
+        tabsTl.setupWithViewPager(viewpager);
     }
 
     /**
@@ -57,25 +68,12 @@ public class SOrderActivity extends BaseFragment {
                 CommonUtils.goActivity(mActivity, PieChartActivity.class, null);
                 break;
             case R.id.search_rl:
-                new MaterialDialog.Builder(mActivity).title("请输入要查询的关键字")
-                        .inputType(InputType.TYPE_CLASS_TEXT).input("请输入关键字 订单号", "", false, new MaterialDialog.InputCallback() {
-                    @Override
-                    public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
-
-                    }
-                }).negativeText("取消").positiveText("确定").onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        String msg = dialog.getInputEditText().getText().toString();
-                        if (!"".equals(msg)) {
-                            EventBus.getDefault().post(new EventMassg(msg));
-                        }
-                    }
-                }).show();
+                FragmentSearchBoxSelect.newInstance(1).show(mActivity.getFragmentManager(), "searchBox");
                 break;
             case R.id.orderRecord:
                 CommonUtils.goActivity(mActivity, GoodsRecord.class, null);
                 break;
         }
     }
+
 }

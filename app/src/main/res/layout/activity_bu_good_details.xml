@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorf5f5f5"
+    android:orientation="vertical"
+    tools:context="com.yj.shopapp.ui.activity.shopkeeper.BuGoodDetails">
+
+    <include layout="@layout/base_toolbar" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colore3e3e3" />
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:background="@color/white"
+        app:tabIndicatorColor="@color/red"
+        app:tabSelectedTextColor="@color/red"
+        app:tabTextColor="@color/black" />
+
+    <com.yj.shopapp.view.CustomViewPager
+        android:id="@+id/my_viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</LinearLayout>

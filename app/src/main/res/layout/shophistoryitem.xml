@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/color_fafafa"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/shopname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:drawableLeft="@drawable/ic_dd"
+        android:drawablePadding="@dimen/H8dp"
+        android:drawableRight="@drawable/btn_arrow_r"
+        android:paddingBottom="@dimen/H3dp"
+        android:paddingLeft="@dimen/H10dp"
+        android:paddingRight="@dimen/H10dp"
+        android:paddingTop="@dimen/H3dp"
+        android:text=""
+        android:textColor="@color/color_1ca5f5"
+        android:textSize="13sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/H2dp"
+        android:paddingLeft="@dimen/H10dp"
+        android:paddingTop="@dimen/H5dp">
+
+        <TextView
+            android:id="@+id/orderNumber"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="7"
+            android:text=""
+            android:textColor="@color/color333333"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/shopnum"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:text=""
+            android:textColor="@color/color333333"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/H5dp"
+        android:paddingLeft="@dimen/H10dp"
+        android:paddingTop="@dimen/H2dp">
+
+        <TextView
+            android:id="@+id/shopprice"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="7"
+            android:text=""
+            android:textColor="@color/color333333"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/allprice"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:text=""
+            android:textColor="@color/color333333"
+            android:textSize="12sp" />
+    </LinearLayout>
+</LinearLayout>

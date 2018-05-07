@@ -1,134 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/id_drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
     android:background="@color/white"
     android:fitsSystemWindows="true"
-    android:animateLayoutChanges="true"
     android:orientation="vertical">
 
-    <android.support.design.widget.AppBarLayout
+    <include
+        layout="@layout/base_toolbar_blue"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:elevation="0dp"
-        android:background="@color/white">
+        android:layout_height="@dimen/title_height"
+        app:layout_scrollFlags="scroll|snap" />
 
-        <include
-            layout="@layout/titlebar"
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/H40dp"
+        android:background="@drawable/borderbg1dp"
+        android:orientation="horizontal">
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tab_layout"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/title_height"
-            app:layout_scrollFlags="scroll|snap"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/buttonborders"
-            android:orientation="horizontal">
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/IndustryListRV"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"/>
-
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:background="@color/all_bg">
-
-                <TextView
-                    android:id="@+id/screenTv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="2dp"
-                    android:background="@color/white"
-                    android:drawableRight="@drawable/ic_screen"
-                    android:gravity="center"
-                    android:paddingLeft="5dp"
-                    android:paddingRight="5dp"
-                    android:layout_marginBottom="1dp"
-                    android:text="筛选"
-                    android:textColor="@color/red"/>
-            </RelativeLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:background="@drawable/buttonborders"
-            android:orientation="horizontal"
-            android:visibility="gone">
-
-            <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center">
-
-                <TextView
-                    android:id="@+id/first_low"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:drawablePadding="5dp"
-                    android:drawableRight="@drawable/sort1"
-                    android:gravity="center"
-                    android:padding="5dp"
-                    android:text="默认排序"
-                    android:textColor="@color/text_ord_clolr"/>
-            </RelativeLayout>
-
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@color/all_bg"/>
-
-            <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center">
-
-                <TextView
-                    android:id="@+id/first_high"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:drawablePadding="5dp"
-                    android:drawableRight="@drawable/sort2"
-                    android:gravity="center"
-                    android:padding="5dp"
-                    android:text="价格排序"/>
-            </RelativeLayout>
-
-        </LinearLayout>
-    </android.support.design.widget.AppBarLayout>
-
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/pullToRefresh"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:background="@color/color_white"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            android:layout_height="match_parent"
+            android:paddingRight="20dp"
+            app:tabIndicatorColor="@color/color_01ABFF"
+            app:tabMode="scrollable"
+            app:tabSelectedTextColor="@color/color_01ABFF"
+            app:tabTextColor="@color/color333333" />
 
         <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:id="@+id/screenTv"
+            android:layout_width="@dimen/H40dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_margin="1px"
+            android:background="@color/tab_more_color">
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recycler_view"
-                android:layout_width="fill_parent"
-                android:layout_height="match_parent"/>
             <View
-                android:id="@+id/view_transparent"
-                android:layout_width="match_parent"
+                android:layout_width="1px"
                 android:layout_height="match_parent"
-                android:visibility="gone"
-                android:background="@color/transparent40"/>
+                android:background="@color/colore7e7e7" />
+
+            <ImageView
+                android:id="@+id/flipping"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:src="@drawable/ic_screen" />
         </RelativeLayout>
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </RelativeLayout>
 
-</android.support.design.widget.CoordinatorLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.scwang.smartrefresh.layout.SmartRefreshLayout
+            android:id="@+id/pullToRefresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:srlAccentColor="#fff"
+            app:srlPrimaryColor="#444">
+
+            <com.scwang.smartrefresh.layout.header.ClassicsHeader
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <ezy.ui.layout.LoadingLayout
+                android:id="@+id/loading"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:llEmptyImage="@drawable/ic_emptyimag">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recycler_view"
+                    android:layout_width="fill_parent"
+                    android:layout_height="match_parent" />
+            </ezy.ui.layout.LoadingLayout>
+
+
+            <com.scwang.smartrefresh.layout.footer.ClassicsFooter
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:srlAccentColor="@color/color_999999"
+                app:srlPrimaryColor="#eeeeee" />
+        </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+
+        <View
+            android:id="@+id/view_transparent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/transparent40"
+            android:visibility="gone" />
+    </RelativeLayout>
+</LinearLayout>
+
+

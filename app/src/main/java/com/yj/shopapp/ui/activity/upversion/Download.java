@@ -27,6 +27,7 @@ public class Download {
     private static DownloadChangeObserver downloadObserver;
     private static Context mContext;
     private static DownloadProgressCallback callback;
+    private static DownloadManager downloadManager;
 
     public static void setCallback(DownloadProgressCallback callback) {
         Download.callback = callback;
@@ -44,30 +45,34 @@ public class Download {
         if (TextUtils.isEmpty(url)) {
             return;
         }
+        downloadUpdateApkId = PreferenceUtils.getPrefLong(mContext, "downloadUpdateApkId", -1);
         try {
-            Uri uri = Uri.parse(url);
-            DownloadManager downloadManager = (DownloadManager) context
-                    .getSystemService(Context.DOWNLOAD_SERVICE);
-            DownloadManager.Request request = new DownloadManager.Request(uri);
-            //在通知栏中显示
-            request.setVisibleInDownloadsUi(true);
-            request.setTitle(title);
-            String filePath;
-            if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {//外部存储卡
-                filePath = Environment.getExternalStorageDirectory().getAbsolutePath();
+            if (downloadUpdateApkId == -1) {
+                Uri uri = Uri.parse(url);
+                downloadManager = (DownloadManager) context
+                        .getSystemService(Context.DOWNLOAD_SERVICE);
+                DownloadManager.Request request = new DownloadManager.Request(uri);
+                //在通知栏中显示
 
-            } else {
-                Log.e("tag", "没有SD卡");
-                return;
+                request.setVisibleInDownloadsUi(true);
+                request.setTitle(title);
+                String filePath;
+                if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {//外部存储卡
+                    filePath = Environment.getExternalStorageDirectory().getAbsolutePath();
+
+                } else {
+                    Log.e("tag", "没有SD卡");
+                    return;
+                }
+                downloadUpdateApkFilePath = filePath + File.separator + fileName;
+                // 若存在，则删除
+                PreferenceUtils.setPrefString(context, "ApkPath", downloadUpdateApkFilePath);
+                deleteFile(downloadUpdateApkFilePath);
+                Uri fileUri = Uri.fromFile(new File(downloadUpdateApkFilePath));
+                request.setDestinationUri(fileUri);
+                downloadUpdateApkId = downloadManager.enqueue(request);
+                PreferenceUtils.setSettingLong(mContext, "downloadUpdateApkId", downloadUpdateApkId);
             }
-            downloadUpdateApkFilePath = filePath + File.separator + fileName;
-            // 若存在，则删除
-            PreferenceUtils.setPrefString(context, "ApkPath", downloadUpdateApkFilePath);
-            deleteFile(downloadUpdateApkFilePath);
-            Uri fileUri = Uri.fromFile(new File(downloadUpdateApkFilePath));
-            request.setDestinationUri(fileUri);
-            downloadUpdateApkId = downloadManager.enqueue(request);
-
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -75,11 +80,68 @@ public class Download {
         } finally {
 //            registerReceiver(receiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
         }
+        //mContext.registerReceiver(mReceiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
         //10.采用内容观察者模式实现进度
         downloadObserver = new DownloadChangeObserver(null);
         context.getContentResolver().registerContentObserver(CONTENT_URI, true, downloadObserver);
     }
 
+//    private static BroadcastReceiver mReceiver = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            checkStatus();
+//        }
+//    };
+//
+//    /**
+//     * 检查下载状态
+//     */
+//    private void checkStatus() {
+//        DownloadManager.Query query = new DownloadManager.Query();
+//        query.setFilterById(downloadUpdateApkId);
+//        Cursor cursor = downloadManager.query(query);
+//        if (cursor.moveToFirst()) {
+//            int status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS));
+//            switch (status) {
+//                //下载暂停
+//                case DownloadManager.STATUS_PAUSED:
+//                    break;
+//                //下载延迟
+//                case DownloadManager.STATUS_PENDING:
+//                    break;
+//                //正在下载
+//                case DownloadManager.STATUS_RUNNING:
+//                    break;
+//                //下载完成
+//                case DownloadManager.STATUS_SUCCESSFUL:
+//                    installAPK();
+//                    break;
+//                //下载失败
+//                case DownloadManager.STATUS_FAILED:
+//                    Toast.makeText(mContext, "下载失败", Toast.LENGTH_SHORT).show();
+//                    break;
+//            }
+//        }
+//        cursor.close();
+//    }
+
+//    /**
+//     * 7.0兼容
+//     */
+//    private void installAPK() {
+//        File apkFile =
+//                new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "百度.apk");
+//        Intent intent = new Intent(Intent.ACTION_VIEW);
+//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//            Uri apkUri = FileProvider.getUriForFile(mContext, mContext.getPackageName() + ".fileprovider", apkFile);
+//            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+//            intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
+//        } else {
+//            intent.setDataAndType(Uri.fromFile(apkFile), "application/vnd.android.package-archive");
+//        }
+//        mContext.startActivity(intent);
+//    }
 
     private static boolean deleteFile(String fileStr) {
         File file = new File(fileStr);

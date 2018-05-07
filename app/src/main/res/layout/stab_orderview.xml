@@ -1,25 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.SwipeRefreshLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/pullToRefresh"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/all_bg"
     android:fitsSystemWindows="true">
 
-    <LinearLayout
+    <com.scwang.smartrefresh.layout.header.ClassicsHeader
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:srlAccentColor="#fff"
+        app:srlPrimaryColor="#444" />
+
+    <ezy.ui.layout.LoadingLayout
+        android:id="@+id/loading"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        app:llEmptyImage="@drawable/ic_emptyimag">
 
-        <com.yj.shopapp.view.headfootrecycleview.RecycleViewEmpty
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:overScrollMode="never"
-            android:scrollbars="none"/>
+            android:scrollbars="none" />
+    </ezy.ui.layout.LoadingLayout>
 
-        <include layout="@layout/empty_view"/>
-    </LinearLayout>
-
-</android.support.v4.widget.SwipeRefreshLayout>
+    <!--<include layout="@layout/empty_view" />-->
+    <com.scwang.smartrefresh.layout.footer.ClassicsFooter
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:srlAccentColor="@color/color_999999"
+        app:srlPrimaryColor="#eeeeee" />
+</com.scwang.smartrefresh.layout.SmartRefreshLayout>

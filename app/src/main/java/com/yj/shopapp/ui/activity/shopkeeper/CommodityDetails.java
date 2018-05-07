@@ -7,17 +7,20 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.PermissionChecker;
 import android.support.v4.view.ViewPager;
 import android.text.Html;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.alibaba.fastjson.JSONObject;
+import com.bumptech.glide.Glide;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.squareup.okhttp.Request;
 import com.yj.shopapp.R;
@@ -33,20 +36,19 @@ import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.FloatingLayout;
 import com.yj.shopapp.util.NetUtils;
 import com.yj.shopapp.util.PreferenceUtils;
-import com.yj.shopapp.view.EasyBanner.GlideImageLoader;
-import com.youth.banner.Banner;
-import com.youth.banner.BannerConfig;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.bingoogolapple.bgabanner.BGABanner;
 
 public class CommodityDetails extends BaseActivity {
     @BindView(R.id.my_banner)
-    Banner myBanner;
+    BGABanner myBanner;
     @BindView(R.id.shopname)
     TextView shopname;
     @BindView(R.id.tab_layout)
@@ -68,6 +70,7 @@ public class CommodityDetails extends BaseActivity {
     private View RootView;
     private MaterialDialog dialog;
     private String shopName;
+
     @Override
     protected int getLayoutId() {
         return R.layout.activity_commodity_details;
@@ -87,10 +90,16 @@ public class CommodityDetails extends BaseActivity {
         addresId = PreferenceUtils.getPrefString(mContext, "addressId", "");
         pageradpter = new GoodsDetailSpgerAdpter(getSupportFragmentManager(), titlename);
         tabLayout.setupWithViewPager(myviewpager);
-        myBanner.setBannerStyle(BannerConfig.CIRCLE_INDICATOR);
-        myBanner.setIndicatorGravity(BannerConfig.CENTER);
-        myBanner.setImageLoader(new GlideImageLoader());
-        myBanner.setDelayTime(3000);
+        ininBanner();
+    }
+
+    private void ininBanner() {
+        myBanner.setAdapter(new BGABanner.Adapter<ImageView, String>() {
+            @Override
+            public void fillBannerItem(BGABanner banner, ImageView itemView, @Nullable String model, int position) {
+                Glide.with(mContext).load(model).into(itemView);
+            }
+        });
     }
 
     @Override
@@ -139,7 +148,7 @@ public class CommodityDetails extends BaseActivity {
                 } else {
                     new MaterialDialog.Builder(mContext)
                             .title("提示")
-                            .content("没有收货地址")
+                            .content("暂无收货地址")
                             .positiveText("去添加")
                             .negativeText("取消")
                             .canceledOnTouchOutside(false)
@@ -254,8 +263,9 @@ public class CommodityDetails extends BaseActivity {
                     } else {
                         shopname.setText(Html.fromHtml("<font size=16>" + data.getData().getName() + "</font>" + "&emsp" + "<font color=red>" + "<b>" + "￥" + data.getData().getPrice() + "</b>" + "</font>"));
                     }
-                    myBanner.setImages(data.getData().getImgurl());
-                    myBanner.start();
+                    if (myBanner!=null){
+                        myBanner.setData(data.getData().getImgurl(),new ArrayList<String>());
+                    }
                 } else {
                     showToastShort(object.getString("info"));
                 }
@@ -309,12 +319,6 @@ public class CommodityDetails extends BaseActivity {
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        myBanner.stopAutoPlay();
-    }
-
-    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_CODE && PermissionChecker.checkSelfPermission(mContext, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
@@ -341,7 +345,6 @@ public class CommodityDetails extends BaseActivity {
         }
 
     }
-
 
 
 }

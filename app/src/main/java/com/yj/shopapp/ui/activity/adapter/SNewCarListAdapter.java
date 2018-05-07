@@ -2,18 +2,28 @@ package com.yj.shopapp.ui.activity.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.net.Uri;
 import android.text.Html;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.CompoundButton;
+import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.controller.BaseControllerListener;
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
+import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.common.ResizeOptions;
+import com.facebook.imagepipeline.image.ImageInfo;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.yj.shopapp.R;
 import com.yj.shopapp.ubeen.CartList;
-import com.yj.shopapp.ui.activity.ImgUtil.CommonAdapter;
+import com.yj.shopapp.ui.activity.ImgUtil.Common2Adapter;
+import com.yj.shopapp.ui.activity.ImgUtil.RVHolder;
 import com.yj.shopapp.ui.activity.ImgUtil.ViewHolder;
 import com.yj.shopapp.ui.activity.Interface.shopcartlistInterface;
 import com.yj.shopapp.util.CommonUtils;
@@ -24,14 +34,53 @@ import com.yj.shopapp.util.CommonUtils;
  * @author LK
  */
 
-public class SNewCarListAdapter extends CommonAdapter<CartList> {
-
+public class SNewCarListAdapter extends Common2Adapter<CartList> {
+    private final static int contentview = 0;
+    private final static int foortView = 1;
+    private View foootView;
+    private int isFootview = 0;
     private shopcartlistInterface.ModifyCountInterface modifyCountInterface;
-    private boolean isSwitch;
 
-    public SNewCarListAdapter(Context context, boolean isSwitch) {
+    public SNewCarListAdapter(Context context) {
         super(context);
-        this.isSwitch = isSwitch;
+    }
+
+    @Override
+    public RVHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = null;
+        switch (viewType) {
+            case contentview:
+                view = LayoutInflater.from(context).inflate(R.layout.goodlistitem, parent, false);
+                break;
+            case foortView:
+                view = foootView;
+                break;
+        }
+        return new RVHolder(view);
+    }
+
+    private boolean isFooterViewPos(int position) {
+        return position == getItemCount() - isFootview;
+    }
+
+    public void setFoootView(View foootView) {
+        this.foootView = foootView;
+        isFootview = 1;
+        notifyDataSetChanged();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (isFooterViewPos(position)) {
+            return foortView;
+        } else {
+            return contentview;
+        }
+    }
+
+    @Override
+    public int getItemCount() {
+        return null == list ? 0 : list.size() + isFootview;
     }
 
     @Override
@@ -42,25 +91,29 @@ public class SNewCarListAdapter extends CommonAdapter<CartList> {
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
+        if (isFooterViewPos(position)) {
+            return;
+        }
         final CartList cartList = list.get(position);
-        holder.getCheckBox(R.id.checkBox).setVisibility(isSwitch ? View.VISIBLE : View.GONE);
+        holder.getTextView(R.id.shopspec).setText(String.format("规格：%1$s%2$s", cartList.getSpecs(), cartList.getUnit()));
         if (cartList.getSale_status().equals("0")) {
-            holder.getCheckBox(R.id.checkBox).setClickable(false);
+            holder.getCheckBox(R.id.checkBox).setButtonDrawable(R.drawable.ic_cross_grey);
+            holder.getCheckBox(R.id.checkBox).setChecked(false);
         } else {
+            holder.getCheckBox(R.id.checkBox).setButtonDrawable(R.drawable.checkbox_style);
             holder.getCheckBox(R.id.checkBox).setChecked(cartList.isChoosed());
         }
         holder.getTextView(R.id.shapname).setText(cartList.getName());
-        holder.getTextView(R.id.Unit_Price).setText("单价￥" + CommonUtils.decimal(Double.parseDouble(cartList.getPrice())));
+        holder.getTextView(R.id.Unit_Price).setText("￥" + CommonUtils.decimal(Double.parseDouble(cartList.getUnitprice())));
         holder.getTextView(R.id.barcode).setText(Html.fromHtml("条码：" + "<font color=#0578eb>" + cartList.getItemnumber() + "</font>"));
-        holder.getTextView(R.id.allprice).setText(String.format("总价￥%s", CommonUtils.decimal(Double.parseDouble(cartList.getMoneysum()))));
+        holder.getTextView(R.id.allprice).setText(String.format("小计￥%s", CommonUtils.decimal(Double.parseDouble(cartList.getMoneysum()))));
         holder.getTextView(R.id.num).setText(cartList.getItemcount());
         if (cartList.getSale_status().equals("1")) {
-            Glide.with(context).load(cartList.getImgurl()).apply(new RequestOptions().centerCrop().override(180,180))
+            Glide.with(context).load(cartList.getImgurl()).apply(new RequestOptions().centerCrop())
                     .into(holder.getSimpleDraweeView(R.id.itemimag));
         } else {
-            setOverlays(holder.getSimpleDraweeView(R.id.itemimag), cartList.getImgurl());
+            setImg(holder.getSimpleDraweeView(R.id.itemimag), cartList.getImgurl());
         }
-        holder.getSimpleDraweeView(R.id.itemimag);
         holder.getTextView(R.id.add).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -73,28 +126,23 @@ public class SNewCarListAdapter extends CommonAdapter<CartList> {
                 modifyCountInterface.doDecrease(position);
             }
         });
-        holder.getCheckBox(R.id.checkBox).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        holder.getCheckBox(R.id.checkBox).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                cartList.setChoosed(isChecked);
-                modifyCountInterface.checkGroup(position, isChecked);
+            public void onClick(View v) {
+                modifyCountInterface.checkGroup(position, !cartList.isChoosed());
+            }
+        });
+        holder.getTextView(R.id.num).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                modifyCountInterface.numClick(position);
             }
         });
 
     }
 
-    private void setOverlays(SimpleDraweeView view, String url) {
-        GenericDraweeHierarchy hierarchy = new GenericDraweeHierarchyBuilder(context.getResources())
-                .setOverlay(context.getResources().getDrawable(R.drawable.nogoods))
-                .build();
-        view.setHierarchy(hierarchy);
-        view.setImageURI(url);
-
-    }
-
     public void setItemData(int position, CartList newcartList) {
         list.set(position, newcartList);
-        modifyCountInterface.statistics();
         notifyDataSetChanged();
     }
 
@@ -102,5 +150,19 @@ public class SNewCarListAdapter extends CommonAdapter<CartList> {
         this.modifyCountInterface = modifyCountInterface;
     }
 
-
+    private void setImg(SimpleDraweeView mImg, String url) {
+        Uri uri = Uri.parse(url);
+        ImageRequest request = ImageRequestBuilder.newBuilderWithSource(uri)
+                .setResizeOptions(new ResizeOptions(CommonUtils.dip2px(context, 90), CommonUtils.dip2px(context, 90)))
+                .build();
+        GenericDraweeHierarchy hierarchy = new GenericDraweeHierarchyBuilder(context.getResources())
+                .setOverlay(context.getResources().getDrawable(R.drawable.ic_nogoods))
+                .build();
+        mImg.setHierarchy(hierarchy);
+        DraweeController controller = Fresco.newDraweeControllerBuilder()
+                .setOldController(mImg.getController())
+                .setControllerListener(new BaseControllerListener<ImageInfo>())
+                .setImageRequest(request).build();
+        mImg.setController(controller);
+    }
 }

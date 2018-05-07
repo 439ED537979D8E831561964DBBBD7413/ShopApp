@@ -1,140 +1,116 @@
 package com.yj.shopapp.ui.activity.shopkeeper;
 
-import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.annotation.NonNull;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.squareup.okhttp.Request;
 import com.yj.shopapp.R;
 import com.yj.shopapp.config.Contants;
 import com.yj.shopapp.http.HttpHelper;
 import com.yj.shopapp.http.OkHttpResponseHandler;
 import com.yj.shopapp.ubeen.IntegralChange;
-import com.yj.shopapp.ui.activity.ImgUtil.NewBaseFragment;
 import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.ui.activity.adapter.IntegralChangeAdapter;
+import com.yj.shopapp.ui.activity.base.BaseActivity;
 import com.yj.shopapp.util.DDecoration;
 import com.yj.shopapp.util.JsonHelper;
-import com.yj.shopapp.util.NetUtils;
+import com.yj.shopapp.util.StatusBarUtil;
+import com.yj.shopapp.view.headfootrecycleview.RecycleViewEmpty;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
-import butterknife.OnClick;
 
-public class SIntegralChangeActivity extends NewBaseFragment implements ShowDataDialog.OnDataInterface, SwipeRefreshLayout.OnRefreshListener {
-
+public class SIntegralChangeActivity extends BaseActivity implements OnRefreshListener {
     @BindView(R.id.recycler_view)
-    RecyclerView recyclerView;
-    @BindView(R.id.pullToRefresh)
-    SwipeRefreshLayout pullToRefresh;
-    @BindView(R.id.yearBt)
-    TextView yearBt;
-    @BindView(R.id.monthBt)
-    TextView monthBt;
-    private String year = "";
-    private String month = "";
-    private ShowDataDialog dataDialogs;
-    private List<IntegralChange> integralChanges = new ArrayList<>();
-    private IntegralChangeAdapter oAdapter;
-
+    RecycleViewEmpty recyclerView;
+    @BindView(R.id.swipe_refresh_layout)
+    SmartRefreshLayout swipeRefreshLayout;
+    @BindView(R.id.Cempty_view)
+    NestedScrollView CemptyView;
+    @BindView(R.id.empty_tv)
+    TextView emptyTv;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    private IntegralChange integralChange;
+    private IntegralChangeAdapter adapter;
 
     @Override
     protected int getLayoutId() {
-        return R.layout.activity_sintegral_change;
-    }
-
-    @Override
-    protected void initView(View view, Bundle savedInstanceState) {
-        oAdapter = new IntegralChangeAdapter(mActivity);
-        //设置adapter
-        if (recyclerView != null) {
-            recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
-            recyclerView.addItemDecoration(new DDecoration(mActivity, getResources().getDrawable(R.drawable.recyviewdecoration)));
-            recyclerView.setAdapter(oAdapter);
-        }
-        pullToRefresh.setOnRefreshListener(this);
-
-        dataDialogs = new ShowDataDialog(mActivity, this);
+        return R.layout.activity_sintegral_detail;
     }
 
     @Override
     protected void initData() {
-        if (NetUtils.isNetworkConnected(mActivity)) {
-            if (null != pullToRefresh) {
-                pullToRefresh.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        pullToRefresh.setRefreshing(true);
-                        getIntegralChange();
-                    }
-                }, 200);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
-        } else {
-            showToast("网络不给力");
+        });
+        Refresh();
+        adapter = new IntegralChangeAdapter(mContext);
+        emptyTv.setText("暂无兑换记录");
+        if (recyclerView != null) {
+            recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+            recyclerView.addItemDecoration(new DDecoration(mContext, getResources().getDrawable(R.drawable.recyviewdecoration1dp)));
+            recyclerView.setAdapter(adapter);
         }
+    }
+
+    @Override
+    protected void setStatusBar() {
+        StatusBarUtil.setColor(this, getResources().getColor(R.color.white), 30);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if (integralChanges != null) {
-            oAdapter.setList(integralChanges);
-        } else {
-            if (NetUtils.isNetworkConnected(mActivity)) {
-                if (null != pullToRefresh) {
-                    pullToRefresh.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            pullToRefresh.setRefreshing(true);
-                            getIntegralChange();
-                        }
-                    }, 200);
-                }
-            } else {
-                showToast("网络不给力");
-            }
+        if (isNetWork(mContext)){
+            getIntegralChange();
         }
     }
 
+    private void Refresh() {
+        swipeRefreshLayout.setHeaderHeight(50);
+        swipeRefreshLayout.setFooterHeight(50);
+        swipeRefreshLayout.setOnRefreshListener(this);
+        swipeRefreshLayout.setDisableContentWhenRefresh(true);//是否在刷新的时候禁止列表的操作
+        swipeRefreshLayout.setDisableContentWhenLoading(true);//是否在加载的时候禁止列表的操作
+        swipeRefreshLayout.setEnableFooterFollowWhenLoadFinished(true);
+        swipeRefreshLayout.setEnableLoadMoreWhenContentNotFull(false);
+    }
+
     private void getIntegralChange() {
-        Map<String, String> params = new HashMap<>();
+        Map<String, String> params = new HashMap<>(16);
         params.put("uid", uid);
         params.put("token", token);
-        if (year != null) {
-            params.put("year", year);
-        }
-        if (month != null) {
-            params.put("month", month);
-        }
-        HttpHelper.getInstance().post(mActivity, Contants.PortU.UserIntegralChange, params, new OkHttpResponseHandler<String>(mActivity) {
-            @Override
-            public void onBefore() {
-                super.onBefore();
-            }
+        HttpHelper.getInstance().post(mContext, Contants.PortS.CHANGE_HISTORY, params, new OkHttpResponseHandler<String>(mContext) {
 
             @Override
             public void onAfter() {
                 super.onAfter();
-                if (pullToRefresh != null) {
-                    pullToRefresh.setRefreshing(false);
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.finishRefresh();
                 }
-
             }
 
             @Override
             public void onError(Request request, Exception e) {
                 super.onError(request, e);
-                if (pullToRefresh != null) {
-                    pullToRefresh.setRefreshing(false);
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.finishRefresh(false);
                 }
             }
 
@@ -142,64 +118,24 @@ public class SIntegralChangeActivity extends NewBaseFragment implements ShowData
             public void onResponse(Request request, String json) {
                 super.onResponse(request, json);
                 ShowLog.e(json);
-                if (JsonHelper.isRequstOK(json, mActivity)) {
-                    integralChanges = JSONArray.parseArray(json, IntegralChange.class);
-                    oAdapter.setList(integralChanges);
+                if (JsonHelper.isRequstOK(json, mContext)) {
+                    integralChange = JSONObject.parseObject(json, IntegralChange.class);
+                    if (integralChange.getStatus() == 1) {
+                        adapter.setList(integralChange.getData());
+                    } else {
+                        showToastShort(integralChange.getInfo());
+                        recyclerView.setEmptyView(CemptyView);
+                    }
                 } else {
-                    showToast(JSONObject.parseObject(json).getString("info"));
+                    showToastShort(JsonHelper.errorMsg(json));
                 }
             }
         });
-    }
-
-
-    @OnClick({R.id.yearBt, R.id.monthBt})
-    public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.yearBt:
-                dataDialogs.showDataDialog(0);
-                break;
-            case R.id.monthBt:
-                dataDialogs.showDataDialog(1);
-                break;
-            default:
-                break;
-        }
-    }
-
-    @Override
-    public void setYead(String yead) {
-
-        year = yead.substring(0, yead.length() - 1);
-        yearBt.setText(yead);
-        pullToRefresh.setRefreshing(true);
-        getIntegralChange();
 
     }
 
     @Override
-    public void setMonths(String yead, String months) {
-
-        yearBt.setText(yead);
-        monthBt.setText(months);
-        year = yead.substring(0, yead.length() - 1);
-        month = months.substring(0, months.length() - 1);
-        pullToRefresh.setRefreshing(true);
-        getIntegralChange();
-
-    }
-
-    @Override
-    public void setQuarter(String yead, String quarter) {
-
-    }
-//    @Override
-//    public void setDatas(int yead, int months, int datas) {
-//
-//    }
-
-    @Override
-    public void onRefresh() {
+    public void onRefresh(@NonNull RefreshLayout refreshLayout) {
         getIntegralChange();
     }
 }

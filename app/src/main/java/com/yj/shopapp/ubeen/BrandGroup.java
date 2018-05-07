@@ -1,5 +1,8 @@
 package com.yj.shopapp.ubeen;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.List;
 
 /**
@@ -8,7 +11,7 @@ import java.util.List;
  * @author LK
  */
 
-public class BrandGroup {
+public class BrandGroup implements Parcelable {
 
     /**
      * name : 一线品牌
@@ -34,7 +37,7 @@ public class BrandGroup {
         this.list = list;
     }
 
-    public static class ListBean {
+    public static class ListBean implements Parcelable {
         /**
          * id : 1
          * name : 康师傅
@@ -49,7 +52,16 @@ public class BrandGroup {
         private boolean isSort;
         private boolean isFoot;
         private String gid;
-        private int position;
+        private int position;//记录标题的位置
+        private int index;
+
+        public int getIndex() {
+            return index;
+        }
+
+        public void setIndex(int index) {
+            this.index = index;
+        }
 
         public int getPosition() {
             return position;
@@ -123,13 +135,95 @@ public class BrandGroup {
             this.isSort = isSort;
         }
 
-        public ListBean(String name, String gid, boolean isFoot,int position) {
+        public ListBean(String name, int position) {
+            this.name = name;
+            this.position = position;
+        }
+
+        public ListBean(String name, String gid, boolean isFoot, int position) {
             this.name = name;
             this.gid = gid;
             this.isFoot = isFoot;
-            this.position=position;
+            this.position = position;
         }
 
+        public ListBean(String name, int index, boolean isSort) {
+            this.name = name;
+            this.index = index;
+            this.isSort = isSort;
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(this.id);
+            dest.writeString(this.name);
+            dest.writeString(this.imgurl);
+            dest.writeString(this.sort);
+            dest.writeByte(this.isSort ? (byte) 1 : (byte) 0);
+            dest.writeByte(this.isFoot ? (byte) 1 : (byte) 0);
+            dest.writeString(this.gid);
+            dest.writeInt(this.position);
+            dest.writeInt(this.index);
+        }
+
+        protected ListBean(Parcel in) {
+            this.id = in.readString();
+            this.name = in.readString();
+            this.imgurl = in.readString();
+            this.sort = in.readString();
+            this.isSort = in.readByte() != 0;
+            this.isFoot = in.readByte() != 0;
+            this.gid = in.readString();
+            this.position = in.readInt();
+            this.index = in.readInt();
+        }
+
+        public static final Parcelable.Creator<ListBean> CREATOR = new Parcelable.Creator<ListBean>() {
+            @Override
+            public ListBean createFromParcel(Parcel source) {
+                return new ListBean(source);
+            }
+
+            @Override
+            public ListBean[] newArray(int size) {
+                return new ListBean[size];
+            }
+        };
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.name);
+        dest.writeTypedList(this.list);
+    }
+
+    public BrandGroup() {
+    }
+
+    protected BrandGroup(Parcel in) {
+        this.name = in.readString();
+        this.list = in.createTypedArrayList(ListBean.CREATOR);
+    }
+
+    public static final Parcelable.Creator<BrandGroup> CREATOR = new Parcelable.Creator<BrandGroup>() {
+        @Override
+        public BrandGroup createFromParcel(Parcel source) {
+            return new BrandGroup(source);
+        }
+
+        @Override
+        public BrandGroup[] newArray(int size) {
+            return new BrandGroup[size];
+        }
+    };
 }

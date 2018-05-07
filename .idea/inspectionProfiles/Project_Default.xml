@@ -2,7 +2,6 @@
   <profile version="1.0">
     <option name="myName" value="Project Default" />
     <inspection_tool class="AliAccessStaticViaInstance" enabled="false" level="BLOCKER" enabled_by_default="false" />
-    <inspection_tool class="AliAccessToNonThreadSafeStaticFieldFromInstance" enabled="false" level="CRITICAL" enabled_by_default="false" />
     <inspection_tool class="AliArrayNamingShouldHaveBracket" enabled="false" level="MAJOR" enabled_by_default="false" />
     <inspection_tool class="AliControlFlowStatementWithoutBraces" enabled="false" level="BLOCKER" enabled_by_default="false" />
     <inspection_tool class="AliDeprecation" enabled="false" level="CRITICAL" enabled_by_default="false" />
@@ -13,6 +12,7 @@
     <inspection_tool class="AlibabaAbstractClassShouldStartWithAbstractNaming" enabled="false" level="CRITICAL" enabled_by_default="false" />
     <inspection_tool class="AlibabaAbstractMethodOrInterfaceMethodMustUseJavadoc" enabled="false" level="MAJOR" enabled_by_default="false" />
     <inspection_tool class="AlibabaAvoidApacheBeanUtilsCopy" enabled="false" level="BLOCKER" enabled_by_default="false" />
+    <inspection_tool class="AlibabaAvoidCallStaticSimpleDateFormat" enabled="false" level="CRITICAL" enabled_by_default="false" />
     <inspection_tool class="AlibabaAvoidCommentBehindStatement" enabled="false" level="MAJOR" enabled_by_default="false" />
     <inspection_tool class="AlibabaAvoidComplexCondition" enabled="false" level="MAJOR" enabled_by_default="false" />
     <inspection_tool class="AlibabaAvoidConcurrentCompetitionRandom" enabled="false" level="MAJOR" enabled_by_default="false" />
@@ -55,9 +55,6 @@
     <inspection_tool class="AlibabaUndefineMagicConstant" enabled="false" level="MAJOR" enabled_by_default="false" />
     <inspection_tool class="AlibabaUnsupportedExceptionWithModifyAsList" enabled="false" level="CRITICAL" enabled_by_default="false" />
     <inspection_tool class="AlibabaUseQuietReferenceNotation" enabled="false" level="MAJOR" enabled_by_default="false" />
-    <inspection_tool class="AndroidLintDuplicateActivity" enabled="false" level="ERROR" enabled_by_default="false" />
-    <inspection_tool class="AndroidLintNamespaceTypo" enabled="false" level="ERROR" enabled_by_default="false" />
-    <inspection_tool class="AndroidLintValidFragment" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="JavaDoc" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="TOP_LEVEL_CLASS_OPTIONS">
         <value>

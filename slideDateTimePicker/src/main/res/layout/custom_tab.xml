@@ -8,7 +8,6 @@
 
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/customTab"
     android:orientation="vertical"
     android:layout_width="0dp"
     android:layout_height="50dp"

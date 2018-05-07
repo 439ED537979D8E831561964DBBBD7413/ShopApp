@@ -1,5 +1,7 @@
 package com.yj.shopapp.ubeen;
 
+import java.util.List;
+
 /**
  * From ShopApp
  * Created by wxq on 17/4/5.
@@ -9,83 +11,16 @@ package com.yj.shopapp.ubeen;
 
 public class IntegralChange {
 
+
     /**
-     * id : 6
-     * accountnumber : 13662829560
-     * changetype : 0
-     * changetime : 1490431327
-     * edittime : 0
-     * rmb : 50
-     * integral : 10000
      * status : 1
-     * remark : null
+     * info : 有换购记录!
+     * data : [{"id":"15","num":"2","integral":"100","sumintegral":"200","addtime":"1522295774","status":"1","imgurl":"http://u.19diandian.com/Public/uploads/goods/5a63076b7524d.jpg","name":"小米手机"},{"id":"14","num":"2","integral":"100","sumintegral":"200","addtime":"1522295771","status":"1","imgurl":"http://u.19diandian.com/Public/uploads/goods/5a630755ade0f.jpg","name":"华为手机"}]
      */
 
-    private int id;
-    private String accountnumber;
-    private int changetype;
-    private long changetime;
-    private String edittime;
-    private String rmb;
-    private String integral;
     private int status;
-    private String remark;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getAccountnumber() {
-        return accountnumber;
-    }
-
-    public void setAccountnumber(String accountnumber) {
-        this.accountnumber = accountnumber;
-    }
-
-    public int getChangetype() {
-        return changetype;
-    }
-
-    public void setChangetype(int changetype) {
-        this.changetype = changetype;
-    }
-
-    public long getChangetime() {
-        return changetime;
-    }
-
-    public void setChangetime(long changetime) {
-        this.changetime = changetime;
-    }
-
-    public String getEdittime() {
-        return edittime;
-    }
-
-    public void setEdittime(String edittime) {
-        this.edittime = edittime;
-    }
-
-    public String getRmb() {
-        return rmb;
-    }
-
-    public void setRmb(String rmb) {
-        this.rmb = rmb;
-    }
-
-    public String getIntegral() {
-        return integral;
-    }
-
-    public void setIntegral(String integral) {
-        this.integral = integral;
-    }
+    private String info;
+    private List<DataBean> data;
 
     public int getStatus() {
         return status;
@@ -95,11 +30,105 @@ public class IntegralChange {
         this.status = status;
     }
 
-    public String getRemark() {
-        return remark;
+    public String getInfo() {
+        return info;
     }
 
-    public void setRemark(String remark) {
-        this.remark = remark;
+    public void setInfo(String info) {
+        this.info = info;
+    }
+
+    public List<DataBean> getData() {
+        return data;
+    }
+
+    public void setData(List<DataBean> data) {
+        this.data = data;
+    }
+
+    public static class DataBean {
+        /**
+         * id : 15
+         * num : 2
+         * integral : 100
+         * sumintegral : 200
+         * addtime : 1522295774
+         * status : 1
+         * imgurl : http://u.19diandian.com/Public/uploads/goods/5a63076b7524d.jpg
+         * name : 小米手机
+         */
+
+        private String id;
+        private String num;
+        private String integral;
+        private String sumintegral;
+        private String addtime;
+        private String status;
+        private String imgurl;
+        private String name;
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getNum() {
+            return num;
+        }
+
+        public void setNum(String num) {
+            this.num = num;
+        }
+
+        public String getIntegral() {
+            return integral;
+        }
+
+        public void setIntegral(String integral) {
+            this.integral = integral;
+        }
+
+        public String getSumintegral() {
+            return sumintegral;
+        }
+
+        public void setSumintegral(String sumintegral) {
+            this.sumintegral = sumintegral;
+        }
+
+        public String getAddtime() {
+            return addtime;
+        }
+
+        public void setAddtime(String addtime) {
+            this.addtime = addtime;
+        }
+
+        public String getStatus() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
+        }
+
+        public String getImgurl() {
+            return imgurl;
+        }
+
+        public void setImgurl(String imgurl) {
+            this.imgurl = imgurl;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
     }
 }

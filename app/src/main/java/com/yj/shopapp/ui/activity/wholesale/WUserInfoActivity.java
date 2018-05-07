@@ -19,12 +19,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.baidu.location.BDLocation;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.kaopiz.kprogresshud.KProgressHUD;
 import com.squareup.okhttp.Request;
 import com.yj.shopapp.R;
-import com.yj.shopapp.baidu.BaiduTool;
 import com.yj.shopapp.config.Contants;
 import com.yj.shopapp.http.HttpHelper;
 import com.yj.shopapp.http.OkHttpResponseHandler;
@@ -49,7 +47,7 @@ import butterknife.OnClick;
  * Created by jm on 2016/5/7.
  * 修改资料
  */
-public class WUserInfoActivity extends BaseActivity implements BaiduTool.BaiduClient {
+public class WUserInfoActivity extends BaseActivity {
     @BindView(R.id.title)
     TextView title;
     @BindView(R.id.id_right_btu)
@@ -104,10 +102,8 @@ public class WUserInfoActivity extends BaseActivity implements BaiduTool.BaiduCl
     @OnClick(R.id.refresh_btn)
     public void OnclickRefresh(){
         BprogressDialog.show();
-        baiduTool.start();
     }
 
-    BaiduTool baiduTool;
     //显示ProgressDialog
     KProgressHUD BprogressDialog;
 
@@ -129,7 +125,6 @@ public class WUserInfoActivity extends BaseActivity implements BaiduTool.BaiduCl
         if (getBundle() != null) {
             cameraPath = getBundle().getString("cameraPath");
         }
-        baiduTool = new BaiduTool(mContext,this);
         BprogressDialog = growProgress(Contants.Progress.BAIDU_ING);
         getIndustrys(false);
         report();
@@ -611,23 +606,5 @@ public class WUserInfoActivity extends BaseActivity implements BaiduTool.BaiduCl
         }
 
         return true;
-    }
-
-
-
-    @Override
-    public void report(int status, String value) {
-        if(status==0){
-            add_address_detail_edt.setText(value);
-        }else{
-            showToastShort("定位失败");
-        }
-
-        BprogressDialog.dismiss();
-    }
-
-    @Override
-    public void getLocation(BDLocation location) {
-
     }
 }

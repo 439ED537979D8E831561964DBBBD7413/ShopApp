@@ -17,6 +17,7 @@ import com.yj.shopapp.util.CenterDialog;
 import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.JsonHelper;
 import com.yj.shopapp.util.NetUtils;
+import com.yj.shopapp.util.StatusBarUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,6 +50,7 @@ public class RedPackActivity extends BaseActivity implements CenterDialog.OnCent
     int index;
     private CenterDialog centerDialog;
     TextView title_tv;
+
     @Override
     protected int getLayoutId() {
         return R.layout.redpackactivity;
@@ -62,8 +64,13 @@ public class RedPackActivity extends BaseActivity implements CenterDialog.OnCent
         if (getIntent().hasExtra("uid")) {
             userId = getIntent().getExtras().getString("uid");
         }
-        centerDialog = new CenterDialog(mContext, R.layout.redp_dialog, new int[]{R.id.dialog_cancel, R.id.dialog_sure, R.id.tv_next});
+        centerDialog = new CenterDialog(mContext, R.layout.redp_dialog, new int[]{R.id.dialog_cancel, R.id.dialog_sure, R.id.tv_next},0.8);
         centerDialog.setOnCenterItemClickListener(this);
+    }
+
+    @Override
+    protected void setStatusBar() {
+        StatusBarUtil.setColor(this, getResources().getColor(R.color.white), 30);
     }
 
     /**
@@ -92,9 +99,9 @@ public class RedPackActivity extends BaseActivity implements CenterDialog.OnCent
                 if (JsonHelper.isRequstOK(json, mContext)) {
                     JsonHelper<Reward> jsonHelper = new JsonHelper<Reward>(Reward.class);
                     list = jsonHelper.getDatas(json);
-                    tv1.setText(((int) list.get(0).getReward()) + "元");
-                    tv2.setText(((int) list.get(1).getReward()) + "元");
-                    tv3.setText(((int) list.get(2).getReward()) + "元");
+                    tv1.setText((int)list.get(0).getReward() + "");
+                    tv2.setText((int)list.get(1).getReward() + "");
+                    tv3.setText((int)list.get(2).getReward() + "");
                 }
             }
 
@@ -129,8 +136,8 @@ public class RedPackActivity extends BaseActivity implements CenterDialog.OnCent
                 index = 2;
                 showdialog();
                 break;
-                default:
-                    break;
+            default:
+                break;
         }
     }
 
@@ -238,8 +245,8 @@ public class RedPackActivity extends BaseActivity implements CenterDialog.OnCent
                     title_tv.setText(((int) list.get(index).getReward()) + "元红包");
                 }
                 break;
-                default:
-                    break;
+            default:
+                break;
         }
     }
 }

@@ -36,7 +36,7 @@ public class WNewOrderAdpter extends CommonAdapter<NewOrder> {
         holder.getTextView(R.id.orderNo).setText(order.getOid());
         holder.getTextView(R.id.orderStatus).setText(Contants.OrderStadus[Integer.parseInt(order.getStatus())]);
         holder.getTextView(R.id.total_num).setText(Html.fromHtml("共<font color='#ed961b'>" + order.getSumnum() + "</font>件商品"));
-        if (order.getCoupon().equals("0")) {
+        if (order.getCoupon()==0) {
             holder.getTextView(R.id.Amount_payable).setText(Html.fromHtml("应付金额：<font color='#ed961b'>" + "￥" + order.getMoney() + "</font>"));
         } else {
             holder.getTextView(R.id.Amount_payable).setText(Html.fromHtml("应付金额：<font color='#ed961b'>" + "￥" + order.getMoney() +

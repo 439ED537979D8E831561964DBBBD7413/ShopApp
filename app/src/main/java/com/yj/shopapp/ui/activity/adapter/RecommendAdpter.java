@@ -1,10 +1,10 @@
 package com.yj.shopapp.ui.activity.adapter;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -13,8 +13,8 @@ import com.yj.shopapp.ubeen.Extend;
 
 import java.util.List;
 
-import butterknife.ButterKnife;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by LK on 2017/10/11.
@@ -42,17 +42,12 @@ public class RecommendAdpter extends CommonBaseAdapter<Extend> implements View.O
             holder = (ViewHolder) view.getTag();
         }
 
-
         if (mshowControl.get(i) == 0) {
+            holder.imag2.setRotation(0);
             holder.recRl1.setVisibility(View.GONE);
-            holder.tv1.setTextColor(Color.parseColor("#ffffff"));
-            holder.tv2.setTextColor(Color.parseColor("#ffffff"));
-            holder.recRl.setBackgroundColor(Color.parseColor("#F7893A"));
         } else {
+            holder.imag2.setRotation(90);
             holder.recRl1.setVisibility(View.VISIBLE);
-            holder.recRl.setBackgroundColor(Color.parseColor("#ffffff"));
-            holder.tv1.setTextColor(Color.parseColor("#F7893A"));
-            holder.tv2.setTextColor(Color.parseColor("#F7893A"));
         }
 
         Extend extend = list.get(i);
@@ -67,9 +62,6 @@ public class RecommendAdpter extends CommonBaseAdapter<Extend> implements View.O
         if (0 == extend.getRid()) {
             isshow = false;
             holder.tv3.setText("选择红包\u0020");
-            holder.tv1.setTextColor(Color.parseColor("#ffffff"));
-            holder.tv2.setTextColor(Color.parseColor("#ffffff"));
-            holder.recRl.setBackgroundColor(Color.parseColor("#F7893A"));
             holder.tv3.setVisibility(View.VISIBLE);
             holder.recRl1.setVisibility(View.GONE);
             holder.tv4.setVisibility(View.GONE);
@@ -88,13 +80,10 @@ public class RecommendAdpter extends CommonBaseAdapter<Extend> implements View.O
                 holder.tv4.setBackground(new ColorDrawable());
                 break;
             case 1:
-                holder.recRl.setBackgroundColor(Color.parseColor("#F7893A"));
                 holder.tv4.setText("领取红包");
                 holder.tv4.setBackgroundResource(R.drawable.tv_bg_shape);
                 isshow = false;
                 holder.recRl1.setVisibility(View.GONE);
-                holder.tv1.setTextColor(Color.parseColor("#ffffff"));
-                holder.tv2.setTextColor(Color.parseColor("#ffffff"));
                 break;
             case 2:
                 holder.tv4.setText("已领取\u0020\u0020");
@@ -171,6 +160,8 @@ public class RecommendAdpter extends CommonBaseAdapter<Extend> implements View.O
         TextView tv7;
         @BindView(R.id.rec_rl_1)
         RelativeLayout recRl1;
+        @BindView(R.id.imag2)
+        ImageView imag2;
 
         ViewHolder(View view) {
             ButterKnife.bind(this, view);

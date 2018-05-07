@@ -1,12 +1,8 @@
 package com.yj.shopapp.util;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.text.TextUtils;
-import android.view.LayoutInflater;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.yj.shopapp.R;
 
 /**
  * Created by jm on 2016/4/27.

@@ -37,6 +37,33 @@ public class Spitem implements Parcelable {
     private String itemname;
     private String sale_status;
     private String price;
+    private String itemsum;
+    private String specs;
+    private String msg;
+
+    public String getMsg() {
+        return msg == null ? "" : msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
+
+    public String getSpecs() {
+        return specs == null ? "" : specs;
+    }
+
+    public void setSpecs(String specs) {
+        this.specs = specs;
+    }
+
+    public String getItemsum() {
+        return itemsum == null ? "" : itemsum;
+    }
+
+    public void setItemsum(String itemsum) {
+        this.itemsum = itemsum;
+    }
 
     public String getPrice() {
         return price;
@@ -150,6 +177,9 @@ public class Spitem implements Parcelable {
         this.itemname = itemname;
     }
 
+    public Spitem() {
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -171,9 +201,9 @@ public class Spitem implements Parcelable {
         dest.writeString(this.itemname);
         dest.writeString(this.sale_status);
         dest.writeString(this.price);
-    }
-
-    public Spitem() {
+        dest.writeString(this.itemsum);
+        dest.writeString(this.specs);
+        dest.writeString(this.msg);
     }
 
     protected Spitem(Parcel in) {
@@ -191,9 +221,12 @@ public class Spitem implements Parcelable {
         this.itemname = in.readString();
         this.sale_status = in.readString();
         this.price = in.readString();
+        this.itemsum = in.readString();
+        this.specs = in.readString();
+        this.msg = in.readString();
     }
 
-    public static final Parcelable.Creator<Spitem> CREATOR = new Parcelable.Creator<Spitem>() {
+    public static final Creator<Spitem> CREATOR = new Creator<Spitem>() {
         @Override
         public Spitem createFromParcel(Parcel source) {
             return new Spitem(source);

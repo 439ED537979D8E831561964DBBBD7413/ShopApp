@@ -28,7 +28,6 @@ import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputConnectionWrapper;
 import android.widget.TextView;
 
-
 import com.yj.shopapp.R;
 
 import java.util.ArrayList;

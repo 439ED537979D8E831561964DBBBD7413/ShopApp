@@ -15,7 +15,7 @@ import java.util.List;
  * @author LK
  */
 
-public class OrderDatasAdapte1 extends CommonAdapter<OrderDatesBean.CouponBran> {
+public class OrderDatasAdapte1 extends CommonAdapter<OrderDatesBean.CouponlistBean> {
     public OrderDatasAdapte1(Context context, List list) {
         super(context, list);
     }

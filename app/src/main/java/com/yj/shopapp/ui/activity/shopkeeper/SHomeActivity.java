@@ -1,19 +1,15 @@
 package com.yj.shopapp.ui.activity.shopkeeper;
 
 import android.Manifest;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Paint;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
@@ -23,9 +19,6 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -38,10 +31,10 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.gongwen.marqueen.MarqueeFactory;
 import com.gongwen.marqueen.MarqueeView;
+import com.gongwen.marqueen.util.OnItemClickListener;
 import com.mining.app.zxing.MipcaActivityCapture;
 import com.squareup.okhttp.Request;
 import com.yj.shopapp.R;
@@ -49,8 +42,9 @@ import com.yj.shopapp.config.Contants;
 import com.yj.shopapp.http.HttpHelper;
 import com.yj.shopapp.http.OkHttpResponseHandler;
 import com.yj.shopapp.ubeen.Address;
+import com.yj.shopapp.ubeen.HotIndex;
 import com.yj.shopapp.ubeen.Industry;
-import com.yj.shopapp.ubeen.IntegralInfo;
+import com.yj.shopapp.ubeen.LimitedSale;
 import com.yj.shopapp.ubeen.LookItem;
 import com.yj.shopapp.ubeen.NotMfData;
 import com.yj.shopapp.ubeen.Notice;
@@ -64,16 +58,11 @@ import com.yj.shopapp.util.DateUtils;
 import com.yj.shopapp.util.DialogUtils;
 import com.yj.shopapp.util.GlideCircleTransform;
 import com.yj.shopapp.util.JsonHelper;
-import com.yj.shopapp.util.NetUtils;
 import com.yj.shopapp.util.NoticeDialog;
 import com.yj.shopapp.util.NoticeMF;
 import com.yj.shopapp.util.PreferenceUtils;
-import com.yj.shopapp.view.EasyBanner.GlideImageLoader;
-import com.yj.shopapp.view.MyBanner;
+import com.yj.shopapp.util.StatusBarUtils;
 import com.yj.shopapp.wbeen.BannerInfo;
-import com.youth.banner.BannerConfig;
-import com.youth.banner.Transformer;
-import com.youth.banner.listener.OnBannerListener;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -86,13 +75,14 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.bingoogolapple.bgabanner.BGABanner;
 import q.rorbin.badgeview.QBadgeView;
 
 
 /**
  * Created by jm on 2016/4/25.
  */
-public class SHomeActivity extends NewBaseFragment implements NoticeDialog.OnCenterItemClickListener {
+public class SHomeActivity extends NewBaseFragment implements SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemClickListener {
 
 
     @BindView(R.id.classi_gv)
@@ -111,38 +101,60 @@ public class SHomeActivity extends NewBaseFragment implements NoticeDialog.OnCen
     SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.hot_mv)
     MarqueeView hot_mv;
-    @BindView(R.id.bannerView)
-    MyBanner bannerView;
     String agentuid;
     @BindView(R.id.service_imag)
     ImageView serviceImag;
     @BindView(R.id.newgoodsTv)
     TextView newgoodsTv;
+    @BindView(R.id.sales_time)
+    TextView salesTime;
+    @BindView(R.id.good_img)
+    ImageView goodImg;
+    @BindView(R.id.shopprice)
+    TextView shopprice;
+    @BindView(R.id.price_tv)
+    TextView priceTv;
+    @BindView(R.id.image2)
+    ImageView image2;
+    @BindView(R.id.shopprice2)
+    TextView shopprice2;
+    @BindView(R.id.price_tv2)
+    TextView priceTv2;
+    @BindView(R.id.hotshopimag)
+    ImageView hotshopimag;
+    @BindView(R.id.hotshopprice)
+    TextView hotshopprice;
+    @BindView(R.id.hotshopimag2)
+    ImageView hotshopimag2;
+    @BindView(R.id.hotshopprice2)
+    TextView hotshopprice2;
+    @BindView(R.id.banner_guide_content)
+    BGABanner bannerGuideContent;
+    @BindView(R.id.bugood_bg)
+    ImageView bugoodBg;
+    @BindView(R.id.hotGoods_bg)
+    ImageView hotGoodsBg;
 
     private List<BannerInfo> advers = new ArrayList<>();
     private ArrayList<Notice> notices = new ArrayList<Notice>();
     private List<NotMfData> hot_list_1;
     private List<Industry> mdatas = new ArrayList<Industry>();
     private List<Address> notes = new ArrayList<Address>();
-    private Handler handler = new Handler();
     private float notY;
     private String notid;
     private List<Notice> noticeLists = new ArrayList<>();
-    private NoticeDialog notDialog;
-    private InputMethodManager imm;
     private MarqueeFactory mf;
     private int checksum;
     private SRecyclerAdapter adapter;
-    private TextView dtitle, dtitle_tv, dtime_tv, dcontent_tv;
-    private WebView dwebView;
-    int notindex = 0;
     public final static int REQUESTCODE_SCAN_WHAT = 2;
     private String imagurl = "";
-    private int CashingSwitch;
     String content;
     private JSONObject object = null;
     private static final int CAMERA_OK = 1;
     private QBadgeView qBadgeView1, qBadgeView2;
+    private List<LimitedSale> limitedSaleList = new ArrayList<>();
+    private List<HotIndex> hotIndexList = new ArrayList<>();
+    private List<String> imags = new ArrayList<>();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -165,9 +177,11 @@ public class SHomeActivity extends NewBaseFragment implements NoticeDialog.OnCen
         }
     }
 
+
     private void showDialogCheckGoods() {
         Bundle bundle = new Bundle();
         bundle.putInt(Contants.ScanValueType.KEY, Contants.ScanValueType.S_type);
+        bundle.putString("type", "home");
         CommonUtils.goActivityForResult(mActivity, MipcaActivityCapture.class, bundle, 001, false);
     }
 
@@ -185,7 +199,7 @@ public class SHomeActivity extends NewBaseFragment implements NoticeDialog.OnCen
      * @param view
      */
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    @OnClick({R.id.id_right_btu, R.id.salesPromotion_lin, R.id.lowBtn, R.id.search2Btn, R.id.searchBtn, R.id.integral_rl, R.id.search_rl, R.id.reward, R.id.service_imag})
+    @OnClick({R.id.id_right_btu, R.id.salesPromotion_lin, R.id.lowBtn, R.id.search2Btn, R.id.searchBtn, R.id.integral_rl, R.id.search_rl, R.id.reward, R.id.service_imag, R.id.limitBuGood, R.id.goto_sales, R.id.goto_hot})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.id_right_btu:
@@ -205,36 +219,18 @@ public class SHomeActivity extends NewBaseFragment implements NoticeDialog.OnCen
                 CommonUtils.goActivity(mActivity, SNewGoodsActivity.class, bundles, false);
                 break;
             case R.id.search_rl:
-                DialogUtils dialogUtils = new DialogUtils();
-                dialogUtils.getInputMaterialDialog(mActivity, "输入商品名称", "输入商品名称或条码", new MaterialDialog.InputCallback() {
-                    @Override
-                    public void onInput(@NonNull MaterialDialog dialog, final CharSequence input) {
-                        imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
-                        handler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                Bundle bundle = new Bundle();
-                                bundle.putString("name", "商品详情");
-                                bundle.putString("keyword", input.toString());
-                                CommonUtils.goActivity(mActivity, SGoodsActivity.class, bundle);
-                            }
-                        }, 200 * 1);
-                    }
-                }, null, null);
-                dialogUtils.show();
+                FragmentSearchBoxSelect.newInstance(0).show(mActivity.getFragmentManager(), "selectBox");
                 break;
             case R.id.searchBtn:
                 if (ContextCompat.checkSelfPermission(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
                         || ContextCompat.checkSelfPermission(mActivity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(mActivity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, CAMERA_OK);
+                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, CAMERA_OK);
                 } else {
                     showDialogCheckGoods();
                 }
                 break;
             case R.id.integral_rl:
-                Bundle bundle2 = new Bundle();
-                bundle2.putInt("status", CashingSwitch);
-                CommonUtils.goActivity(mActivity, SIntegralActivity.class, bundle2);
+                CommonUtils.goActivity(mActivity, SIntegralActivity.class, null);
                 break;
 
             case R.id.reward:
@@ -242,7 +238,23 @@ public class SHomeActivity extends NewBaseFragment implements NoticeDialog.OnCen
                 break;
             case R.id.service_imag:
                 //ShowLog.e(object.getInteger("status") + "");
-                getService();
+                // getService();
+                showToast("您所处区域暂未开通该服务!");
+                break;
+            case R.id.goto_sales:
+                if (limitedSaleList.size() > 0) {
+                    CommonUtils.goActivity(mActivity, BuGoodDetails.class, null);
+                } else {
+                    showToast("暂无活动，敬请期待");
+                }
+                break;
+            case R.id.goto_hot:
+                //跳转至热门商品
+                if (hotIndexList.size() > 0) {
+                    CommonUtils.goActivity(mActivity, HotGoodActivity.class, null);
+                } else {
+                    showToast("暂无商品，敬请期待");
+                }
                 break;
             default:
                 break;
@@ -256,43 +268,72 @@ public class SHomeActivity extends NewBaseFragment implements NoticeDialog.OnCen
 
     @Override
     protected void initView(View view, Bundle savedInstanceState) {
-        imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        StatusBarUtils.from(getActivity())
+                .setActionbarView(titleView)
+                .setTransparentStatusbar(true)
+                .setLightStatusBar(false)
+                .process();
         checksum = PreferenceUtils.getPrefInt(mActivity, "reward_area", -1);
         imagurl = PreferenceUtils.getPrefString(mActivity, "check_open", "");
-        //ShowLog.e(imagurl);
         object = JSONObject.parseObject(imagurl);
         mf = new NoticeMF(mActivity);
-        //0未开放，1开放
-        if (checksum == 0) {
-            reward.setEnabled(false);
-            Glide.with(mActivity).load(R.drawable.reference).apply(new RequestOptions().transform(new GlideCircleTransform())).into(rewardImg);
+        hot_mv.setMarqueeFactory(mf);
+        swipeRefreshLayout.setColorSchemeResources(Contants.Refresh.refreshColorScheme);
+        swipeRefreshLayout.setOnRefreshListener(this);
+        initAdpter();
+        initBanner();
+        initRecy();
+        initBadgerView();
+    }
+
+    /**
+     * 初始化小红点
+     */
+    private void initBadgerView() {
+        qBadgeView1 = new QBadgeView(mActivity);
+        qBadgeView1.bindTarget(newgoodsTv).setExactMode(true).setGravityOffset(10, 0, true);
+        qBadgeView2 = new QBadgeView(mActivity);
+        qBadgeView2.bindTarget(idRightBtu).setExactMode(true).setBadgeGravity(Gravity.END | Gravity.TOP);
+    }
+
+    /**
+     * 初始化Adpter
+     */
+    private void initAdpter() {
+        adapter = new SRecyclerAdapter(mActivity, mdatas);
+    }
+
+    /**
+     * 初始化Recy
+     */
+    private void initRecy() {
+        if (classiGv != null) {
+            classiGv.setLayoutManager(new GridLayoutManager(mActivity, 5));
+            classiGv.setNestedScrollingEnabled(false);
+            classiGv.setAdapter(adapter);
+            adapter.setOnItemClickListener(this);
         }
-        mf.setOnItemClickListener(new MarqueeFactory.OnItemClickListener() {
+    }
+
+    /**
+     * 初始化Banner
+     */
+    private void initBanner() {
+        bannerGuideContent.setAdapter(new BGABanner.Adapter<ImageView, String>() {
+
             @Override
-            public void onItemClickListener(MarqueeFactory.ViewHolder holder) {
-                holder.mView.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        notY = event.getY();
-                        return false;
-                    }
-                });
-                if (notY < 90) {
-                    notid = hot_list_1.get(holder.position).getNum();
-                } else {
-                    notid = hot_list_1.get(holder.position).getNum_1();
-                }
-                Bundle bundle = new Bundle();
-                bundle.putString("id", notid);
-                bundle.putParcelableArrayList("notice", notices);
-                CommonUtils.goActivity(mActivity, SMsgDetailActivity.class, bundle);
+            public void fillBannerItem(BGABanner banner, ImageView itemView, @Nullable String model, int position) {
+                Glide.with(SHomeActivity.this)
+                        .load(model)
+                        .apply(new RequestOptions().centerCrop().dontAnimate())
+                        .into(itemView);
+
             }
         });
-        notDialog = new NoticeDialog(mActivity, R.layout.dailog_hot, new int[]{R.id.dialog_next, R.id.dialog_sure, R.id.dialog_up});
-        notDialog.setOnCenterItemClickListener(this);
-        bannerView.setOnBannerListener(new OnBannerListener() {
+        bannerGuideContent.setDelegate(new BGABanner.Delegate<ImageView, String>() {
+
             @Override
-            public void OnBannerClick(int position) {
+            public void onBannerItemClick(BGABanner banner, ImageView itemView, @Nullable String model, int position) {
                 if (advers.get(position).getClassify() == 1) {
                     Bundle bundle = new Bundle();
                     bundle.putString("goodsId", advers.get(position).getItemid());
@@ -305,85 +346,76 @@ public class SHomeActivity extends NewBaseFragment implements NoticeDialog.OnCen
                 }
             }
         });
-        if (bannerView != null) {
-            bannerView.setBannerStyle(BannerConfig.CIRCLE_INDICATOR);
-            bannerView.setDelayTime(3500);
-            bannerView.setBannerAnimation(Transformer.Accordion);
-            bannerView.setImageLoader(new GlideImageLoader());
-            bannerView.setRefreshLayout(swipeRefreshLayout);
-        }
-        swipeRefreshLayout.setColorSchemeResources(Contants.Refresh.refreshColorScheme);
-        swipeRefreshLayout.setOnRefreshListener(listener);
-        adapter = new SRecyclerAdapter(mActivity, mdatas);
-        if (classiGv != null) {
-            classiGv.setLayoutManager(new GridLayoutManager(mActivity, 5));
-            classiGv.setNestedScrollingEnabled(false);
-            classiGv.setAdapter(adapter);
-            adapter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    if (0 == mdatas.get(position).getResult()) {
-                        showToast(mdatas.get(position).getName() + "暂未开放，敬请期待！");
-                    } else {
-                        Bundle bundle = new Bundle();
-                        bundle.putString("CId", mdatas.get(position).getId());
-                        bundle.putString("Name", mdatas.get(position).getName());
-                        CommonUtils.goActivity(mActivity, SSecondActivity.class, bundle);
-                    }
-                }
-            });
-        }
-        //getLogin_Number();
-        qBadgeView1 = new QBadgeView(mActivity);
-        qBadgeView1.bindTarget(newgoodsTv).setExactMode(true).setGravityOffset(10, 0, true).setBadgeNumber(10);
-        qBadgeView2 = new QBadgeView(mActivity);
-        qBadgeView2.bindTarget(idRightBtu).setExactMode(true).setBadgeGravity(Gravity.END | Gravity.TOP);
     }
 
     @Override
     protected void initData() {
-        if (NetUtils.isNetworkConnected(mActivity)) {
-            if (null != swipeRefreshLayout) {
-
-                swipeRefreshLayout.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        swipeRefreshLayout.setRefreshing(true);
-                        Refresh();
-
-                    }
-                }, 200);
-            }
-        } else {
-            showToast("网络不给力");
+        if (isNetWork(mActivity)) {
+            onRefresh();
         }
+        if (checksum == 0) {
+            reward.setEnabled(false);
+            Glide.with(mActivity).load(R.drawable.reference).apply(new RequestOptions().transform(new GlideCircleTransform())).into(rewardImg);
+        }
+        hot_mv.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClickListener(View mView, Object mData, int mPosition) {
+                mView.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        notY = event.getY();
+                        return false;
+                    }
+                });
+                if (notY < 90) {
+                    notid = hot_list_1.get(mPosition).getNum();
+                } else {
+                    notid = hot_list_1.get(mPosition).getNum_1();
+                }
+                Bundle bundle = new Bundle();
+                bundle.putString("id", notid);
+                bundle.putParcelableArrayList("notice", notices);
+                CommonUtils.goActivity(mActivity, SMsgDetailActivity.class, bundle);
+            }
+
+        });
+
     }
 
-    SwipeRefreshLayout.OnRefreshListener listener = new SwipeRefreshLayout.OnRefreshListener() {
-        @Override
-        public void onRefresh() {
-            Refresh();
-
-        }
-    };
-
-
-    public void Refresh() {
+    @Override
+    public void onRefresh() {
+        getTodayItemsNum();
         getAdvinfo();
         //getrewardArea();
         refreshRequest();
         noticeSwitchList();
         check_extend();
         loadImag();
+        // Change_Switch();
         getNotice();
-        Change_Switch();
         getindustry();
         getSite();
         getNewsCount();
+        getlimitedSaleList();
+        getHotIndex();
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        if (0 == mdatas.get(position).getResult()) {
+            showToast(mdatas.get(position).getName() + "暂未开放，敬请期待！");
+        } else {
+            Bundle bundle = new Bundle();
+            bundle.putString("CId", mdatas.get(position).getId());
+            bundle.putString("Name", mdatas.get(position).getName());
+            CommonUtils.goActivity(mActivity, SSecondActivity.class, bundle);
+        }
     }
 
     private void loadImag() {
-        Glide.with(mActivity).load(object.getString("imgurl")).apply(new RequestOptions().centerCrop().diskCacheStrategy(DiskCacheStrategy.ALL)).into(serviceImag);
+        if (null != object) {
+            Glide.with(mActivity).load(object.getString("imgurl")).into(serviceImag);
+        }
     }
 
     /**
@@ -412,35 +444,86 @@ public class SHomeActivity extends NewBaseFragment implements NoticeDialog.OnCen
         });
     }
 
-    private void Change_Switch() {
-        Map<String, String> params = new HashMap<>();
+    private void getTodayItemsNum() {
+        Map<String, String> params = new HashMap<String, String>();
         params.put("uid", uid);
         params.put("token", token);
-        HttpHelper.getInstance().post(mActivity, Contants.PortU.CHANGE_SWITCH, params, new OkHttpResponseHandler<String>(mActivity) {
+        HttpHelper.getInstance().post(mActivity, Contants.PortU.GETTODAYITEMSNUM, params, new OkHttpResponseHandler<String>(mActivity) {
+            @Override
+            public void onError(Request request, Exception e) {
+                super.onError(request, e);
+            }
+
+            @Override
+            public void onBefore() {
+                super.onBefore();
+            }
+
+            @Override
+            public void onResponse(Request request, String response) {
+                super.onResponse(request, response);
+                ShowLog.e(response);
+                if (JsonHelper.isRequstOK(response, mActivity)) {
+                    JSONObject object = JSONObject.parseObject(response);
+                    int num = object.getInteger("num");
+                    if (num == 0) {
+                        qBadgeView1.hide(true);
+                    } else {
+                        qBadgeView1.setBadgeNumber(num);
+                    }
+                }
+            }
+        });
+    }
+
+    public void getHotIndex() {
+        Map<String, String> params = new HashMap<>(16);
+        params.put("uid", uid);
+        params.put("token", token);
+        HttpHelper.getInstance().post(getContext(), Contants.PortS.HOT_INDEX, params, new OkHttpResponseHandler<String>(getContext()) {
+            @Override
+            public void onError(Request request, Exception e) {
+                super.onError(request, e);
+            }
+
             @Override
             public void onAfter() {
                 super.onAfter();
             }
 
             @Override
-            public void onResponse(Request request, String json) {
-                super.onResponse(request, json);
-                JSONObject object = JSONObject.parseObject(json);
-                CashingSwitch = object.getInteger("status");
-                if (CashingSwitch == 1) {
-                    getIntegral();
+            public void onResponse(Request request, String response) {
+                super.onResponse(request, response);
+                ShowLog.e(response);
+                if (JsonHelper.isRequstOK(response, mActivity)) {
+                    hotIndexList = JSONArray.parseArray(response, HotIndex.class);
+                    setHotListData(hotIndexList);
                 }
-
-            }
-
-            @Override
-            public void onError(Request request, Exception e) {
-                super.onError(request, e);
             }
         });
     }
 
+    private void setHotListData(List<HotIndex> listData) {
+        int size = listData.size();
+        if (size == 0) {
+            hotGoodsBg.setVisibility(View.VISIBLE);
+        } else if (size > 1) {
+            Glide.with(mActivity).load(listData.get(0).getImgurl()).into(hotshopimag);
+            Glide.with(mActivity).load(listData.get(1).getImgurl()).into(hotshopimag2);
+            hotshopprice.setText(String.format("￥%s", listData.get(0).getPrice()));
+            hotshopprice.setBackgroundColor(getResources().getColor(R.color.color_f44421));
+            hotshopprice2.setText(String.format("￥%s", listData.get(1).getPrice()));
+            hotshopprice2.setBackgroundColor(getResources().getColor(R.color.color_f44421));
+        } else {
+            Glide.with(mActivity).load(listData.get(0).getImgurl()).into(hotshopimag);
+            hotshopprice.setText(String.format("￥%s", listData.get(0).getPrice()));
+            hotshopprice.setBackgroundColor(getResources().getColor(R.color.color_f44421));
+        }
+    }
 
+    /**
+     * 弹出框
+     */
     public void noticeSwitchList() {
         Map<String, String> params = new HashMap<>(16);
         params.put("uid", uid);
@@ -462,31 +545,7 @@ public class SHomeActivity extends NewBaseFragment implements NoticeDialog.OnCen
                     String yestday = PreferenceUtils.getPrefString(mActivity, "s" + uid, "");
                     String today = DateUtils.getNowDate();
                     if (!yestday.equals(today)) {
-                        notDialog.show();
-                        if (!"1".equals(noticeLists.get(notindex).getClassify())) {
-                            notDialog.hide();
-                        }
-                        dtitle = (TextView) notDialog.findViewById(R.id.notice_tiele);
-                        dtitle_tv = (TextView) notDialog.findViewById(R.id.hot_title);
-                        dtime_tv = (TextView) notDialog.findViewById(R.id.hot_time);
-                        dcontent_tv = (TextView) notDialog.findViewById(R.id.hot_context);
-                        dwebView = (WebView) notDialog.findViewById(R.id.webView);
-                        dwebView.setWebViewClient(new WebViewClient() {
-                            @Override
-                            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                                view.loadUrl(url);
-                                return true;
-                            }
-
-                            @Override
-                            public void onPageFinished(WebView view, String url) {
-                                super.onPageFinished(view, url);
-                                notDialog.show();
-
-                            }
-
-                        });
-                        setDialogText();
+                        NoticeDialog.newInstance(noticeLists).show(mActivity.getFragmentManager(), "noticeDialog");
                         PreferenceUtils.setPrefString(mActivity, "s" + uid, today);
                     }
 
@@ -496,29 +555,98 @@ public class SHomeActivity extends NewBaseFragment implements NoticeDialog.OnCen
         });
     }
 
-    public void setDialogText() {
-        //showbg();
-        Notice notice = noticeLists.get(notindex);
-        if ("1".equals(notice.getClassify())) {
-            dtitle.setText(notice.getType());
-            dtitle_tv.setText(notice.getTitle());
-            dtime_tv.setText(DateUtils.getDateToLong(notice.getAddtime()));
-            dcontent_tv.setText(notice.getContent());
-            dtitle_tv.setVisibility(View.VISIBLE);
-            dcontent_tv.setVisibility(View.VISIBLE);
-            dtime_tv.setVisibility(View.VISIBLE);
-            dwebView.setVisibility(View.GONE);
-        } else {
-            notDialog.hide();
-            dtitle_tv.setVisibility(View.GONE);
-            dcontent_tv.setVisibility(View.GONE);
-            dtime_tv.setVisibility(View.GONE);
-            dwebView.setVisibility(View.VISIBLE);
-            dwebView.loadUrl(notice.getUrl());
+    /**
+     * 获取限购商品列表
+     */
+    private void getlimitedSaleList() {
+        Map<String, String> params = new HashMap<>(16);
+        params.put("uid", uid);
+        params.put("token", token);
+        HttpHelper.getInstance().post(getContext(), Contants.PortS.AINDEX, params, new OkHttpResponseHandler<String>(getContext()) {
+            @Override
+            public void onResponse(Request request, String json) {
+                super.onResponse(request, json);
+                ShowLog.e(json);
+                if (JsonHelper.isRequstOK(json, mActivity)) {
+                    limitedSaleList = JSONArray.parseArray(json, LimitedSale.class);
+                }
+            }
 
-        }
+            @Override
+            public void onAfter() {
+                super.onAfter();
+                //flashSaleAdpter.setList(limitedSaleList);
+                setLimitedsaleData(limitedSaleList);
+                if (limitedSaleList.size() > 0) {
+                    long time = DateUtils.ContrastTime(Long.parseLong(limitedSaleList.get(0).getStart()));
+                    //ShowLog.e(time + "");
+                    //ShowLog.e(DateUtils.getnowEndTime(1) + "");
+                    if (time != -1) {
+
+                        if (time > 60 * 60 * 24 * 1000 * 2) {
+                            //时间大于两天
+                            salesTime.setText(String.format("%1$s日  %2$s:00", DateUtils.getDay(Long.valueOf(limitedSaleList.get(0).getStart()) * 1000)
+                                    , DateUtils.getHour(Long.parseLong(limitedSaleList.get(0).getStart()) * 1000)));
+                        } else {
+                            //两天内
+                            if (time > 60 * 60 * 24 * 1000) {
+                                if (time > DateUtils.getnowEndTime(1) - System.currentTimeMillis()) {
+                                    salesTime.setText(String.format("%1$s日  %2$s:00", DateUtils.getDay(Long.valueOf(limitedSaleList.get(0).getStart()) * 1000), DateUtils.getHour(Long.parseLong(limitedSaleList.get(0).getStart()) * 1000)));
+                                } else {
+                                    //大于一天
+                                    salesTime.setText(String.format("明天  %s:00", DateUtils.getHour(Long.parseLong(limitedSaleList.get(0).getStart()) * 1000)));
+                                }
+                            } else {
+                                //小于一天
+                                if (time > (DateUtils.getnowEndTime(0) - System.currentTimeMillis())) {
+                                    salesTime.setText(String.format("明天  %s:00", DateUtils.getHour(Long.parseLong(limitedSaleList.get(0).getStart()) * 1000)));
+                                } else {
+                                    salesTime.setText(String.format("今天  %s:00", DateUtils.getHour(Long.parseLong(limitedSaleList.get(0).getStart()) * 1000)));
+                                }
+                            }
+                        }
+
+                    } else {
+                        salesTime.setText("正在疯抢");
+                    }
+                } else {
+                    if (salesTime != null) {
+                        salesTime.setText("");
+                    }
+                    bugoodBg.setVisibility(View.VISIBLE);
+                }
+
+            }
+
+            @Override
+            public void onError(Request request, Exception e) {
+                super.onError(request, e);
+                showToast(Contants.NetStatus.NETDISABLEORNETWORKDISABLE);
+            }
+        });
     }
 
+
+    private void setLimitedsaleData(List<LimitedSale> limitedsaleData) {
+        int size = limitedsaleData.size();
+        if (size == 0) {
+            return;
+        } else if (size > 1) {
+            Glide.with(mActivity).load(limitedsaleData.get(0).getImgurl()).into(goodImg);
+            Glide.with(mActivity).load(limitedsaleData.get(1).getImgurl()).into(image2);
+            shopprice.setText(String.format("￥%s", limitedsaleData.get(0).getUnitprice()));
+            shopprice2.setText(String.format("￥%s", limitedsaleData.get(1).getUnitprice()));
+            priceTv.setText(String.format("%s", limitedsaleData.get(0).getPrice()));
+            priceTv.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+            priceTv2.setText(String.format("%s", limitedsaleData.get(1).getPrice()));
+            priceTv2.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+        } else {
+            Glide.with(mActivity).load(limitedsaleData.get(0).getImgurl()).into(goodImg);
+            shopprice.setText(String.format("￥%s", limitedsaleData.get(0).getUnitprice()));
+            priceTv.setText(String.format("%s", limitedsaleData.get(0).getPrice()));
+            priceTv.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+        }
+    }
 
     /**
      * 通知
@@ -554,6 +682,7 @@ public class SHomeActivity extends NewBaseFragment implements NoticeDialog.OnCen
                     int size = notices.size();
                     hot_list_1 = new ArrayList<NotMfData>();
                     for (int i = 0; i < notices.size(); i++) {
+
                         if (i % 2 == 0) {
                             content = notices.get(i).getTitle();
                         } else {
@@ -563,10 +692,8 @@ public class SHomeActivity extends NewBaseFragment implements NoticeDialog.OnCen
                             hot_list_1.add(new NotMfData((i + 1) + "", content, "-1", " "));
                         }
                     }
-                    mf.resetData(hot_list_1);
-                    hot_mv.setMarqueeFactory(mf);
+                    mf.setData(hot_list_1);
                     hot_mv.startFlipping();
-                    //getNoticeContent();
                 }
 
             }
@@ -637,6 +764,7 @@ public class SHomeActivity extends NewBaseFragment implements NoticeDialog.OnCen
                     JSONObject object = JSONObject.parseObject(json);
                     String num = object.getString("errcode");
                     if (num.equals("06")) {
+                        PreferenceUtils.remove(mActivity, "addressId");
                         if (PreferenceUtils.getPrefInt(mActivity, Contants.Preference.ISLOGGIN, 0) == 1) {
                             getLogin_Number();
                             PreferenceUtils.setPrefInt(mActivity, Contants.Preference.ISLOGGIN, 0);
@@ -647,7 +775,6 @@ public class SHomeActivity extends NewBaseFragment implements NoticeDialog.OnCen
                     notes = JSONArray.parseArray(json, Address.class);
                     PreferenceUtils.setPrefString(mActivity, "addressId", notes.get(0).getId());
                 }
-
             }
 
             @Override
@@ -659,6 +786,9 @@ public class SHomeActivity extends NewBaseFragment implements NoticeDialog.OnCen
 
     }
 
+    /**
+     * 获取新消息
+     */
     public void getNewsCount() {
         Map<String, String> params = new HashMap<String, String>();
         params.put("uid", uid);
@@ -703,6 +833,9 @@ public class SHomeActivity extends NewBaseFragment implements NoticeDialog.OnCen
         });
     }
 
+    /**
+     * 增值服务
+     */
     private void getService() {
         Map<String, String> params = new HashMap<>(16);
         params.put("uid", uid);
@@ -735,96 +868,6 @@ public class SHomeActivity extends NewBaseFragment implements NoticeDialog.OnCen
         });
     }
 
-    private long curr_integral = 0;
-    private int sum;//总积分
-    private int number;//显示还需要多少积分
-    private int money;//提示的金额
-    private long limt_integral = 0;
-
-    private void getIntegral() {
-        Map<String, String> params = new HashMap<>();
-        params.put("uid", uid);
-        params.put("token", token);
-        HttpHelper.getInstance().post(getActivity(), Contants.PortU.UserIntegral, params, new OkHttpResponseHandler<String>(getActivity()) {
-            @Override
-            public void onBefore() {
-                super.onBefore();
-            }
-
-            @Override
-            public void onAfter() {
-                super.onAfter();
-            }
-
-            @Override
-            public void onError(Request request, Exception e) {
-                super.onError(request, e);
-
-            }
-
-            @Override
-            public void onResponse(Request request, String json) {
-                super.onResponse(request, json);
-                System.out.print("   request   ===>>  " + json);
-                ShowLog.e(json);
-                if (JsonHelper.isRequstOK(json, mActivity)) {
-                    JsonHelper<IntegralInfo> jsonHelper = new JsonHelper(IntegralInfo.class);
-                    IntegralInfo integralInfo = jsonHelper.getData(json, null);
-                    curr_integral = integralInfo.getIntegral();
-                    limt_integral = integralInfo.getMin_limit();
-                    sum = countintegral((int) curr_integral);
-                    String str = integralInfo.getRatio();
-                    if (str.matches("^[0-9]*(\\.?)[0-9]*")) {
-                        float ratio = Float.parseFloat(integralInfo.getRatio());
-                        number = (int) (sum - curr_integral);
-                        money = (int) ((curr_integral / limt_integral) * limt_integral * ratio);
-                    }
-                    if (limt_integral <= curr_integral) {
-                        showintegralDialog();
-                    }
-                }
-            }
-        });
-    }
-
-    private void showintegralDialog() {
-        String yestday = PreferenceUtils.getPrefString(mActivity, uid, "");
-        String today = DateUtils.getNowDate();
-        if (!today.equals(yestday)) {
-            AlertDialog.Builder integralDialog = new AlertDialog.Builder(mActivity);
-            integralDialog.setIcon(R.drawable.integral);
-            integralDialog.setTitle("积分兑换");
-            ShowLog.e(money + "");
-            integralDialog.setMessage("您现在有 " + curr_integral + "积分可以提现" + money + " 元现金，继续努力哦！");
-            integralDialog.setPositiveButton("立即兑换", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("swtich", 1);
-                    CommonUtils.goActivity(mActivity, SIntegralActivity.class, new Bundle());
-                }
-            });
-            integralDialog.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
-            integralDialog.show();
-            //showPopupWindow(money);
-            PreferenceUtils.setPrefString(mActivity, uid, today);
-        }
-
-    }
-
-    private int countintegral(int num) {
-        int index = 1;
-        while (num > (index * limt_integral)) {
-            index++;
-        }
-        return (int) (index * limt_integral);
-    }
-
     private void getAdvinfo() {
         Map<String, String> params = new HashMap<String, String>();
         params.put("uid", uid);
@@ -840,6 +883,7 @@ public class SHomeActivity extends NewBaseFragment implements NoticeDialog.OnCen
             @Override
             public void onBefore() {
                 super.onBefore();
+                imags.clear();
             }
 
             @Override
@@ -850,13 +894,11 @@ public class SHomeActivity extends NewBaseFragment implements NoticeDialog.OnCen
                     JsonHelper<BannerInfo> adverJsonHelper = new JsonHelper<>(BannerInfo.class);
                     advers = adverJsonHelper.getDatas(response);
                     if (advers != null) {
-                        List<String> imgs = new ArrayList<String>();
                         for (int i = 0; i < advers.size(); i++) {
-                            imgs.add(advers.get(i).getImgurl());
+                            imags.add(advers.get(i).getImgurl());
                         }
-                        if (bannerView != null) {
-                            bannerView.setImages(imgs);
-                            bannerView.start();
+                        if (bannerGuideContent != null) {
+                            bannerGuideContent.setData(imags, new ArrayList<String>());
                         }
                     }
                 } else {
@@ -872,20 +914,6 @@ public class SHomeActivity extends NewBaseFragment implements NoticeDialog.OnCen
         });
 
     }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        bannerView.startAutoPlay();
-
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        bannerView.stopAutoPlay();
-    }
-
 
     // 获取行业
     private void getindustry() {
@@ -1068,7 +1096,7 @@ public class SHomeActivity extends NewBaseFragment implements NoticeDialog.OnCen
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        ShowLog.e("requestCode" + requestCode + "resultCode" + resultCode);
+        //ShowLog.e("requestCode" + requestCode + "resultCode" + resultCode);
         if (resultCode == SChooseAgentActivity.CHOOSEAGENT_TYPE_WHAT && requestCode == 1001) {
             if (data != null) {
                 Bundle bundle = new Bundle();
@@ -1118,46 +1146,15 @@ public class SHomeActivity extends NewBaseFragment implements NoticeDialog.OnCen
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(ReCode msg) {
-        foundGoods(msg.getCode(), 0, "order");
+        if (msg.getStatus() == 1) {
+            foundGoods(msg.getCode(), 0, "order");
+        }
     }
 
     @Override
     public void onDestroy() {
-        if (notDialog != null) {
-            notDialog.dismiss();
-        }
         super.onDestroy();
         EventBus.getDefault().unregister(this);
-    }
-
-
-    @Override
-    public void OnCenterItemClick(NoticeDialog dialog, View view) {
-        switch (view.getId()) {
-            case R.id.dialog_sure:
-                //hidebg();
-                dialog.dismiss();
-                break;
-            case R.id.dialog_next:
-                if (notindex == noticeLists.size() - 1) {
-                    showToast("没有更多内容了");
-                } else if (notindex < noticeLists.size() - 1) {
-                    notindex++;
-                    setDialogText();
-                }
-                break;
-            case R.id.dialog_up:
-                if (notindex == 0) {
-                    showToast("没有更多内容了");
-                } else if (notindex >= 0) {
-                    notindex--;
-                    setDialogText();
-                }
-                break;
-
-            default:
-                break;
-        }
     }
 
 }

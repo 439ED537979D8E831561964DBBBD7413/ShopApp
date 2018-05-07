@@ -53,6 +53,7 @@ public class VerificationPhoneActivity extends BaseActivity {
     public static String ACTION_KEY = "action";
     int isSendmsg = 0;
     int num;
+
     @Override
     protected int getLayoutId() {
         return R.layout.activity_verificationphone;
@@ -72,7 +73,6 @@ public class VerificationPhoneActivity extends BaseActivity {
 
 
     public void getCode() {
-        //jishi();
         timer.start();
         getcodeTxt.setBackground(getResources().getDrawable(
                 R.drawable.huiseruanjiao));
@@ -112,16 +112,20 @@ public class VerificationPhoneActivity extends BaseActivity {
 
         @Override
         public void onTick(long millisUntilFinished) {
-            getcodeTxt.setClickable(false);
-            getcodeTxt.setText(millisUntilFinished / 1000 + "s");
+            if (getcodeTxt != null) {
+                getcodeTxt.setClickable(false);
+                getcodeTxt.setText(millisUntilFinished / 1000 + "s");
+            }
         }
 
         @Override
         public void onFinish() {
-            getcodeTxt.setClickable(true);
-            getcodeTxt.setBackground(getResources().getDrawable(
-                    R.drawable.ic_redborder));
-            getcodeTxt.setText("获取验证码");
+            if (getcodeTxt != null) {
+                getcodeTxt.setClickable(true);
+                getcodeTxt.setBackground(getResources().getDrawable(
+                        R.drawable.ic_redborder));
+                getcodeTxt.setText("获取验证码");
+            }
         }
     };
 
@@ -228,11 +232,13 @@ public class VerificationPhoneActivity extends BaseActivity {
     }
 
 
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
         isSendmsg = 1;
+        if (timer != null) {
+            timer.cancel();
+        }
     }
 
     @OnClick(R.id.next)
