@@ -15,6 +15,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.kaopiz.kprogresshud.KProgressHUD;
 import com.squareup.okhttp.Request;
@@ -33,7 +34,7 @@ import com.yj.shopapp.util.JsonHelper;
 import com.yj.shopapp.util.MessageEvent;
 import com.yj.shopapp.util.NetUtils;
 import com.yj.shopapp.util.SoftKeyInputHidWidget;
-import com.yj.shopapp.util.StatusBarManager;
+import com.yj.shopapp.util.StatusBarUtil;
 import com.yj.shopapp.view.KeyboardLayout;
 
 import org.greenrobot.eventbus.EventBus;
@@ -87,7 +88,10 @@ public class OrderDatails extends BaseActivity {
     private String addressid = "";
     private OrderPreview preview;
     private OrderDatailsAdpter classadpter;
-    private boolean isShow = false;
+//    private boolean isShow = false;
+//    private CenterDialog dialog;
+//    private RecyclerView dialogreyc;
+//    private OutOfStorkAdpter adpter;
 
     @Override
     protected int getLayoutId() {
@@ -120,16 +124,44 @@ public class OrderDatails extends BaseActivity {
                 if (isActive) {
                     scrollToBottom();
                 }
-
             }
         });
+//        dialog = new CenterDialog(mContext, R.layout.outofstorkdialog, new int[]{R.id.finish_tv, R.id.i_see}, 0.8);
+//        dialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
+//            @Override
+//            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+//                return true;
+//            }
+//        });
+//        adpter = new OutOfStorkAdpter(mContext);
+//        dialog.setOnCenterItemClickListener(new CenterDialog.OnCenterItemClickListener() {
+//            @Override
+//            public void OnCenterItemClick(CenterDialog dialog, View view) {
+//                switch (view.getId()) {
+//                    case R.id.finish_tv:
+//                        dialog.dismiss();
+//                        finish();
+//                        break;
+//                    case R.id.i_see:
+//                        dialog.dismiss();
+//                        break;
+//                    default:
+//                        break;
+//                }
+//            }
+//        });
+        if (NetUtils.isNetworkConnected(mContext)) {
+            requestData();
+        } else {
+            showToastShort("无网络");
+        }
     }
+
 
     @Override
     protected void setStatusBar() {
-        //StatusBarUtil.setColor(this,getResources().getColor(R.color.white),0);
-        StatusBarManager.getInstance().setStatusBar(getWindow(), getResources().getColor(R.color.white));
-        StatusBarManager.getInstance().setStatusBarTextColor(getWindow(), true);
+        StatusBarUtil.setColor(this, getResources().getColor(R.color.white), 0);
+        StatusBarUtil.setStatusBarTextColor(getWindow(), true);
     }
 
     /**
@@ -145,16 +177,6 @@ public class OrderDatails extends BaseActivity {
             }
         }, 100);
 
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (NetUtils.isNetworkConnected(mContext)) {
-            requestData();
-        } else {
-            showToastShort("无网络");
-        }
     }
 
     private void requestData() {
@@ -198,7 +220,7 @@ public class OrderDatails extends BaseActivity {
         Rec1eivingAddress.setText(preview.getAddress().getAddress());
         paidMoney.setText(String.format("￥%s", preview.getAllmoeny()));
         ContinueTheOrder.setText(Html.fromHtml("应付金额：" + "<font color=red>" + "￥" + preview.getAllmoeny() + "</fong>"));
-        discountMoney.setText(String.format("￥%d", preview.getCashback()));
+        discountMoney.setText(String.format("￥%s", preview.getCashback()));
         if (getList2().equals("")) {
             hotMv.setVisibility(View.GONE);
         }
@@ -206,6 +228,9 @@ public class OrderDatails extends BaseActivity {
         hotMv.setSelected(true);
         liftBt.setVisibility(preview.getClassX().size() > 4 ? View.VISIBLE : View.GONE);
         rightBt.setVisibility(preview.getClassX().size() > 4 ? View.VISIBLE : View.GONE);
+        if (preview.getCancel().size() > 0) {
+            OutOfStockListDialog.newInstance(preview.getCancel()).show(getFragmentManager(), "outofstock");
+        }
     }
 
     private String getList() {
@@ -259,16 +284,16 @@ public class OrderDatails extends BaseActivity {
                 ShowLog.e(json);
                 JSONObject object = JSONObject.parseObject(json);
                 if (JsonHelper.isRequstOK(json, mContext)) {
-                    EventBus.getDefault().post(new MessageEvent());
                     EventBus.getDefault().post(new RefreshListCar());
                     String oid = object.getString("oid");
                     showToastShort(Contants.NetStatus.NETSUCCESS);
-                    if (object.getJSONArray("cancel").size()==0) {
+                    if (object.getJSONArray("cancel").size() == 0) {
                         Bundle bundle = new Bundle();
                         bundle.putString("oid", oid);
                         CommonUtils.goActivity(OrderDatails.this, SOrderDatesActivity.class, bundle, true);
                     } else {
                         OrderSubmitComplete.newInstance(json).show(getFragmentManager(), "OrderSubmitComplete");
+                        returnlistcart();
                     }
                 } else {
                     showToastShort(object.getString("msg"));
@@ -284,11 +309,27 @@ public class OrderDatails extends BaseActivity {
 
     }
 
+    private void returnlistcart() {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("uid", uid);
+        params.put("token", token);
+        params.put("cancel", JSON.toJSON(preview.getCancel()).toString());
+        HttpHelper.getInstance().post(mContext, Contants.PortU.RETURN_LISTCART, params, new OkHttpResponseHandler<String>(mContext) {
+            @Override
+            public void onResponse(Request request, String response) {
+                super.onResponse(request, response);
+                ShowLog.e(response);
+            }
+        });
+
+    }
+
     @OnClick({R.id.submit_order, R.id.exit_tv, R.id.Leaving_message, R.id.changesite, R.id.hot_mv, R.id.lift_bt, R.id.right_bt})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.submit_order:
                 savedoorder();
+                //OrderSubmitComplete.newInstance("").show(getFragmentManager(), "OrderSubmitComplete");
                 break;
             case R.id.exit_tv:
                 finish();
@@ -313,6 +354,13 @@ public class OrderDatails extends BaseActivity {
             default:
                 break;
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        returnlistcart();
+        EventBus.getDefault().post(new MessageEvent());
     }
 
     /**

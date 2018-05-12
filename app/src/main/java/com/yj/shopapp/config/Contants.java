@@ -202,6 +202,7 @@ public class Contants {
         public final static String SHOWHISTORY = url_2 + "showHistory";
         public final static String LIMITEDSALE_INDEX = url_2 + "limitedSale_index";
         public final static String GETTODAYITEMSNUM = url_2 + "getTodayItemsNum";
+        public final static String RETURN_LISTCART = url_2 + "return_listcart";
     }
 
     public static final class PortS {

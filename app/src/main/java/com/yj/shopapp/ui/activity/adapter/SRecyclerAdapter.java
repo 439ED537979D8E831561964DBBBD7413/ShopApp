@@ -17,7 +17,7 @@ import java.util.List;
  * Created by Administrator on 2017/8/8 0008.
  */
 
-public class SRecyclerAdapter extends CommonAdapter {
+public class SRecyclerAdapter extends CommonAdapter<Industry> {
     public SRecyclerAdapter(Context context, List list) {
         super(context, list);
     }
@@ -29,11 +29,11 @@ public class SRecyclerAdapter extends CommonAdapter {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Industry mdatas = (Industry) list.get(position);
+        Industry mdatas = list.get(position);
         holder.getTextView(R.id.name_tv).setText(mdatas.getName());
-        if (0==mdatas.getResult()) {
+        if (0 == mdatas.getResult()) {
             Glide.with(context).load(mdatas.getUrl()).apply(new RequestOptions().transform(new GlideCircleTransform())).into(holder.getImageView(R.id.simpleDraweeView));
-        }else {
+        } else {
             Glide.with(context).load(mdatas.getUrl()).into(holder.getImageView(R.id.simpleDraweeView));
         }
 

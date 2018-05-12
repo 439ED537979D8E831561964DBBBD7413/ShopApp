@@ -40,6 +40,15 @@ public class Spitem implements Parcelable {
     private String itemsum;
     private String specs;
     private String msg;
+    private String specialnote;
+
+    public String getSpecialnote() {
+        return specialnote == null ? "" : specialnote;
+    }
+
+    public void setSpecialnote(String specialnote) {
+        this.specialnote = specialnote;
+    }
 
     public String getMsg() {
         return msg == null ? "" : msg;
@@ -204,6 +213,7 @@ public class Spitem implements Parcelable {
         dest.writeString(this.itemsum);
         dest.writeString(this.specs);
         dest.writeString(this.msg);
+        dest.writeString(this.specialnote);
     }
 
     protected Spitem(Parcel in) {
@@ -224,6 +234,7 @@ public class Spitem implements Parcelable {
         this.itemsum = in.readString();
         this.specs = in.readString();
         this.msg = in.readString();
+        this.specialnote = in.readString();
     }
 
     public static final Creator<Spitem> CREATOR = new Creator<Spitem>() {

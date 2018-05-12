@@ -1,13 +1,18 @@
 package com.yj.shopapp.ui.activity.upversion;
 
+import android.annotation.SuppressLint;
 import android.app.DownloadManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
+import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -23,8 +28,9 @@ import java.io.File;
 public class Download {
     public static long downloadUpdateApkId = -1;//下载更新Apk 下载任务对应的Id
     public static String downloadUpdateApkFilePath;//下载更新Apk 文件路径
-    public static final Uri CONTENT_URI = Uri.parse("content://downloads/my_downloads");
+    private static final Uri CONTENT_URI = Uri.parse("content://downloads/my_downloads");
     private static DownloadChangeObserver downloadObserver;
+    @SuppressLint("StaticFieldLeak")
     private static Context mContext;
     private static DownloadProgressCallback callback;
     private static DownloadManager downloadManager;
@@ -53,7 +59,6 @@ public class Download {
                         .getSystemService(Context.DOWNLOAD_SERVICE);
                 DownloadManager.Request request = new DownloadManager.Request(uri);
                 //在通知栏中显示
-
                 request.setVisibleInDownloadsUi(true);
                 request.setTitle(title);
                 String filePath;
@@ -84,64 +89,8 @@ public class Download {
         //10.采用内容观察者模式实现进度
         downloadObserver = new DownloadChangeObserver(null);
         context.getContentResolver().registerContentObserver(CONTENT_URI, true, downloadObserver);
+        mContext.registerReceiver(mReceiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
     }
-
-//    private static BroadcastReceiver mReceiver = new BroadcastReceiver() {
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            checkStatus();
-//        }
-//    };
-//
-//    /**
-//     * 检查下载状态
-//     */
-//    private void checkStatus() {
-//        DownloadManager.Query query = new DownloadManager.Query();
-//        query.setFilterById(downloadUpdateApkId);
-//        Cursor cursor = downloadManager.query(query);
-//        if (cursor.moveToFirst()) {
-//            int status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS));
-//            switch (status) {
-//                //下载暂停
-//                case DownloadManager.STATUS_PAUSED:
-//                    break;
-//                //下载延迟
-//                case DownloadManager.STATUS_PENDING:
-//                    break;
-//                //正在下载
-//                case DownloadManager.STATUS_RUNNING:
-//                    break;
-//                //下载完成
-//                case DownloadManager.STATUS_SUCCESSFUL:
-//                    installAPK();
-//                    break;
-//                //下载失败
-//                case DownloadManager.STATUS_FAILED:
-//                    Toast.makeText(mContext, "下载失败", Toast.LENGTH_SHORT).show();
-//                    break;
-//            }
-//        }
-//        cursor.close();
-//    }
-
-//    /**
-//     * 7.0兼容
-//     */
-//    private void installAPK() {
-//        File apkFile =
-//                new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "百度.apk");
-//        Intent intent = new Intent(Intent.ACTION_VIEW);
-//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-//            Uri apkUri = FileProvider.getUriForFile(mContext, mContext.getPackageName() + ".fileprovider", apkFile);
-//            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-//            intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
-//        } else {
-//            intent.setDataAndType(Uri.fromFile(apkFile), "application/vnd.android.package-archive");
-//        }
-//        mContext.startActivity(intent);
-//    }
 
     private static boolean deleteFile(String fileStr) {
         File file = new File(fileStr);
@@ -172,8 +121,93 @@ public class Download {
                 callback.onProgress(progress, 100);
             }
         }
-
-
     }
 
+    private static BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Cursor c = null;
+            if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(intent.getAction())) {
+                if (downloadUpdateApkId >= 0) {
+                    long downloadId = downloadUpdateApkId;
+                    DownloadManager.Query query = new DownloadManager.Query();
+                    query.setFilterById(downloadId);
+                    DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+                    c = downloadManager.query(query);
+                    if (c.moveToFirst()) {
+                        int status = c.getInt(c.getColumnIndex(DownloadManager.COLUMN_STATUS));
+                        switch (status) {
+                            //下载暂停
+                            case DownloadManager.STATUS_PAUSED:
+                                break;
+                            //下载延迟
+                            case DownloadManager.STATUS_PENDING:
+                                break;
+                            //正在下载
+                            case DownloadManager.STATUS_RUNNING:
+                                break;
+                            //下载完成
+                            case DownloadManager.STATUS_SUCCESSFUL:
+                                //保存状态
+                                PreferenceUtils.setPrefBoolean(context, "DownloadSuccess", true);
+                                if (Download.downloadUpdateApkFilePath != null) {
+                                    Intent i = new Intent(Intent.ACTION_VIEW);
+                                    File apkFile = new File(Download.downloadUpdateApkFilePath);
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                        i.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                        Uri contentUri = FileProvider.getUriForFile(
+                                                context, context.getPackageName() + ".fileProvider", apkFile);
+                                        i.setDataAndType(contentUri, "application/vnd.android.package-archive");
+                                    } else {
+                                        i.setDataAndType(Uri.fromFile(apkFile),
+                                                "application/vnd.android.package-archive");
+                                    }
+                                    intent.addCategory("android.intent.category.DEFAULT");
+                                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    context.startActivity(i);
+                                }
+                                break;
+                            //下载失败
+                            case DownloadManager.STATUS_FAILED:
+                                downloadManager.remove(downloadId);
+                                break;
+                        }
+//                        if (status == DownloadManager.STATUS_FAILED) {
+//                            downloadManager.remove(downloadId);
+//
+//                        } else if (status == DownloadManager.STATUS_SUCCESSFUL) {
+//                            //保存状态
+//                            PreferenceUtils.setPrefBoolean(context, "DownloadSuccess", true);
+//                            if (Download.downloadUpdateApkFilePath != null) {
+//                                Intent i = new Intent(Intent.ACTION_VIEW);
+//                                File apkFile = new File(Download.downloadUpdateApkFilePath);
+//                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//                                    i.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+//                                    Uri contentUri = FileProvider.getUriForFile(
+//                                            context, context.getPackageName() + ".fileProvider", apkFile);
+//                                    i.setDataAndType(contentUri, "application/vnd.android.package-archive");
+//                                } else {
+//                                    i.setDataAndType(Uri.fromFile(apkFile),
+//                                            "application/vnd.android.package-archive");
+//                                }
+//                                intent.addCategory("android.intent.category.DEFAULT");
+//                                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                                context.startActivity(i);
+//                            }
+//
+//                        }
+                    }
+                    c.close();
+                }
+            }
+        }
+    };
+
+    public static void onDestory() {
+        try {
+            mContext.unregisterReceiver(mReceiver);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

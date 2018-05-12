@@ -3,6 +3,7 @@ package com.yj.shopapp.ubeen;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -45,6 +46,18 @@ public class OrderDatesBean {
     private List<CouponlistBean> couponlist;
     private List<DataBean> data;
     private List<ItemlistBean> itemlist;
+    private List<OosdataBean> oosdata;
+
+    public List<OosdataBean> getOosdata() {
+        if (oosdata == null) {
+            return new ArrayList<>();
+        }
+        return oosdata;
+    }
+
+    public void setOosdata(List<OosdataBean> oosdata) {
+        this.oosdata = oosdata;
+    }
 
     public String getOid() {
         return oid;
@@ -436,6 +449,112 @@ public class OrderDatesBean {
             @Override
             public ItemlistBean[] newArray(int size) {
                 return new ItemlistBean[size];
+            }
+        };
+    }
+
+    public static class OosdataBean implements Parcelable {
+
+        /**
+         * name : 小鱼{老坛山椒味}
+         * itemnumber : 6933213200926
+         * unit : 盒
+         * unitprice : 21.00
+         * num : 5
+         * money : 105
+         */
+
+        private String name;
+        private String itemnumber;
+        private String unit;
+        private String unitprice;
+        private String num;
+        private int money;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getItemnumber() {
+            return itemnumber;
+        }
+
+        public void setItemnumber(String itemnumber) {
+            this.itemnumber = itemnumber;
+        }
+
+        public String getUnit() {
+            return unit;
+        }
+
+        public void setUnit(String unit) {
+            this.unit = unit;
+        }
+
+        public String getUnitprice() {
+            return unitprice;
+        }
+
+        public void setUnitprice(String unitprice) {
+            this.unitprice = unitprice;
+        }
+
+        public String getNum() {
+            return num;
+        }
+
+        public void setNum(String num) {
+            this.num = num;
+        }
+
+        public int getMoney() {
+            return money;
+        }
+
+        public void setMoney(int money) {
+            this.money = money;
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(this.name);
+            dest.writeString(this.itemnumber);
+            dest.writeString(this.unit);
+            dest.writeString(this.unitprice);
+            dest.writeString(this.num);
+            dest.writeInt(this.money);
+        }
+
+        public OosdataBean() {
+        }
+
+        protected OosdataBean(Parcel in) {
+            this.name = in.readString();
+            this.itemnumber = in.readString();
+            this.unit = in.readString();
+            this.unitprice = in.readString();
+            this.num = in.readString();
+            this.money = in.readInt();
+        }
+
+        public static final Parcelable.Creator<OosdataBean> CREATOR = new Parcelable.Creator<OosdataBean>() {
+            @Override
+            public OosdataBean createFromParcel(Parcel source) {
+                return new OosdataBean(source);
+            }
+
+            @Override
+            public OosdataBean[] newArray(int size) {
+                return new OosdataBean[size];
             }
         };
     }

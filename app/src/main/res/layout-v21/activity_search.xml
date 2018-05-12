@@ -2,28 +2,26 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/colorf5f5f5"
     android:orientation="vertical">
 
-
     <LinearLayout
-        android:id="@+id/popupwindow"
+        android:id="@+id/title_layout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/title_height"
-        android:background="@drawable/gradient"
+        android:elevation="@dimen/H3dp"
         android:gravity="center"
         android:orientation="horizontal">
 
-        <TextView
+        <ImageView
             android:id="@+id/exit_tv"
-            android:layout_width="wrap_content"
+            android:layout_width="40dp"
             android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/ic_gt" />
+            android:src="@drawable/ic_lift_arrayblack" />
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:layout_weight="1"
@@ -43,8 +41,10 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@null"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
                 android:gravity="center_vertical"
-                android:hint="商品名称搜索"
+                android:hint="请输入关键字或条码"
                 android:padding="@dimen/H5dp"
                 android:paddingLeft="@dimen/H10dp"
                 android:singleLine="true"
@@ -60,18 +60,22 @@
             android:layout_marginRight="8dp"
             android:background="@drawable/tv_bg_shape_4"
             android:gravity="center"
-            android:padding="@dimen/H3dp"
+            android:padding="@dimen/H5dp"
             android:text="搜索"
-            android:textColor="@color/color333333"
+            android:textColor="@color/color_999999"
             android:textSize="13sp" />
     </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/brand_recy"
+    <ezy.ui.layout.LoadingLayout
+        android:id="@+id/loading"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginTop="6dp">
 
-    </android.support.v7.widget.RecyclerView>
-
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/my_RecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </ezy.ui.layout.LoadingLayout>
 
 </LinearLayout>

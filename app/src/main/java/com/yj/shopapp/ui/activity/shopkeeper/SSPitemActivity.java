@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.alibaba.fastjson.JSONArray;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
@@ -36,7 +37,7 @@ import com.yj.shopapp.ui.activity.adapter.NewGoodRecyAdpter;
 import com.yj.shopapp.ui.activity.adapter.SSPitemAdapter;
 import com.yj.shopapp.ui.activity.adapter.ScreenLvAdpter;
 import com.yj.shopapp.ui.activity.base.BaseActivity;
-import com.yj.shopapp.util.BugGoodsDialog;
+import com.yj.shopapp.dialog.BugGoodsDialog;
 import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.DDecoration;
 import com.yj.shopapp.util.JsonHelper;
@@ -142,6 +143,7 @@ public class SSPitemActivity extends BaseActivity implements SSPitemAdapter.OnVi
                 int position = tab.getPosition();
                 currposition = position;
                 spitemList.clear();
+                oAdapter.setList(spitemList);
                 if (pw != null) {
                     pw.dismiss();
                 }
@@ -292,8 +294,6 @@ public class SSPitemActivity extends BaseActivity implements SSPitemAdapter.OnVi
                 super.onAfter();
                 if (pullToRefresh != null) {
                     pullToRefresh.finishLoadMore();
-                }
-                if (pullToRefresh != null) {
                     pullToRefresh.finishRefresh();
                 }
             }
@@ -302,14 +302,13 @@ public class SSPitemActivity extends BaseActivity implements SSPitemAdapter.OnVi
             public void onResponse(Request request, String json) {
                 super.onResponse(request, json);
                 ShowLog.e(json);
+                if (SSPitemActivity.this.isFinishing()) return;
                 if (JsonHelper.isRequstOK(json, mContext)) {
+                    spitemList.addAll(JSONArray.parseArray(json, Spitem.class));
+                    oAdapter.setList(spitemList);
                     if (loading != null) {
                         loading.showContent();
                     }
-                    oAdapter.setLoadstate(oAdapter.FINISH);
-                    JsonHelper<Spitem> jsonHelper = new JsonHelper<Spitem>(Spitem.class);
-                    spitemList.addAll(jsonHelper.getDatas(json));
-                    oAdapter.setList(spitemList);
                 } else if (JsonHelper.getRequstOK(json) == 6) {
                     if (spitemList.size() > 0) {
                         //showToastShort("没有更多的数据");

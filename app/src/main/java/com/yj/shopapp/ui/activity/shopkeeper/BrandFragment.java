@@ -2,24 +2,19 @@ package com.yj.shopapp.ui.activity.shopkeeper;
 
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.alibaba.fastjson.JSONArray;
 import com.squareup.okhttp.Request;
@@ -45,6 +40,8 @@ import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
+import butterknife.OnClick;
+import butterknife.Unbinder;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -56,11 +53,12 @@ public class BrandFragment extends NewBaseFragment implements AdapterView.OnItem
     @BindView(R.id.lift_list)
     ListView liftList;
     @BindView(R.id.value_Et)
-    EditText valueEt;
+    TextView valueEt;
     @BindView(R.id.topRecyclerview)
     RecyclerView topRecyclerview;
     @BindView(R.id.title_layout)
     RelativeLayout titleLayout;
+    Unbinder unbinder;
 
     private List<Industry> industryList = new ArrayList<>();
     private String Cid = "";
@@ -98,62 +96,59 @@ public class BrandFragment extends NewBaseFragment implements AdapterView.OnItem
         liftList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                valueEt.setText("");
-                valueEt.setFocusable(false);
-                valueEt.setFocusableInTouchMode(true);
                 lift3Adpter.setDefSelect(position);
                 ((LinearLayoutManager) rightRecy.getLayoutManager()).scrollToPositionWithOffset(tabname_brand.get(position).getPosition(), 0);
             }
         });
-        valueEt.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                newBrandGroup.clear();
-                if (!"".equals(s.toString())) {
-                    for (BrandGroup.ListBean bean : listBeans) {
-                        if (!bean.isSort()) {
-                            if (bean.getName().contains(s.toString())) {
-                                newBrandGroup.add(bean);
-                            }
-                        } else {
-                            newBrandGroup.add(bean);
-                        }
-                    }
-                    isSereen = true;
-                    List<BrandGroup.ListBean> list = new ArrayList<>();
-                    for (int i = 0; i < newBrandGroup.size(); i++) {
-                        if (i == newBrandGroup.size() - 1) {
-                            if (newBrandGroup.get(i).isSort()) {
-                                continue;
-                            } else {
-                                list.add(newBrandGroup.get(i));
-                                continue;
-                            }
-                        }
-                        if (newBrandGroup.get(i).isSort() && !newBrandGroup.get(i + 1).isSort()
-                                || !newBrandGroup.get(i).isSort() && newBrandGroup.get(i + 1).isSort()
-                                || !newBrandGroup.get(i).isSort() && !newBrandGroup.get(i + 1).isSort()) {
-                            list.add(newBrandGroup.get(i));
-                        }
-                    }
-                    newBrandGroup = list;
-                    brandAdapter.setList(newBrandGroup);
-                } else {
-                    isSereen = false;
-                    brandAdapter.setList(listBeans);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
+//        valueEt.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                newBrandGroup.clear();
+//                if (!"".equals(s.toString())) {
+//                    for (BrandGroup.ListBean bean : listBeans) {
+//                        if (!bean.isSort()) {
+//                            if (bean.getName().contains(s.toString())) {
+//                                newBrandGroup.add(bean);
+//                            }
+//                        } else {
+//                            newBrandGroup.add(bean);
+//                        }
+//                    }
+//                    isSereen = true;
+//                    List<BrandGroup.ListBean> list = new ArrayList<>();
+//                    for (int i = 0; i < newBrandGroup.size(); i++) {
+//                        if (i == newBrandGroup.size() - 1) {
+//                            if (newBrandGroup.get(i).isSort()) {
+//                                continue;
+//                            } else {
+//                                list.add(newBrandGroup.get(i));
+//                                continue;
+//                            }
+//                        }
+//                        if (newBrandGroup.get(i).isSort() && !newBrandGroup.get(i + 1).isSort()
+//                                || !newBrandGroup.get(i).isSort() && newBrandGroup.get(i + 1).isSort()
+//                                || !newBrandGroup.get(i).isSort() && !newBrandGroup.get(i + 1).isSort()) {
+//                            list.add(newBrandGroup.get(i));
+//                        }
+//                    }
+//                    newBrandGroup = list;
+//                    brandAdapter.setList(newBrandGroup);
+//                } else {
+//                    isSereen = false;
+//                    brandAdapter.setList(listBeans);
+//                }
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//
+//            }
+//        });
         rightRecy.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -167,8 +162,11 @@ public class BrandFragment extends NewBaseFragment implements AdapterView.OnItem
                     int firstItemPosition = linearManager.findFirstVisibleItemPosition();
                     if (firstItemPosition == -1) return;
                     if (listBeans.size() > 0) {
-                        if (lift3Adpter.getDefItem() != listBeans.get(firstItemPosition).getIndex()) {
-                            lift3Adpter.setDefSelect(listBeans.get(firstItemPosition).getIndex());
+                        if (firstItemPosition < listBeans.size()) {
+                            if (lift3Adpter.getDefItem() != listBeans.get(firstItemPosition).getIndex()) {
+                                lift3Adpter.setDefSelect(listBeans.get(firstItemPosition).getIndex());
+                                liftList.setSelection(listBeans.get(firstItemPosition).getIndex());
+                            }
                         }
                     }
                 }
@@ -181,9 +179,6 @@ public class BrandFragment extends NewBaseFragment implements AdapterView.OnItem
         topRecyAdpter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                valueEt.setText("");
-                valueEt.setFocusable(false);
-                valueEt.setFocusableInTouchMode(true);
                 if (industryList.get(position).getId() != null) {
                     Cid = industryList.get(position).getId();
                     getBrand();
@@ -202,10 +197,6 @@ public class BrandFragment extends NewBaseFragment implements AdapterView.OnItem
                 }
             }
         });
-        setHideOrShowSoftInput(valueEt);
-        setHideOrShowSoftInput(topRecyclerview);
-        setHideOrShowSoftInput(liftList);
-        setHideOrShowSoftInput(rightRecy);
     }
 
     @Override
@@ -322,8 +313,9 @@ public class BrandFragment extends NewBaseFragment implements AdapterView.OnItem
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                int itemHight = rightRecy.getLayoutManager().getChildAt(1).getHeight();
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT
-                        , (int) (CommonUtils.screenHeight(mActivity) * 0.6));
+                        , rightRecy.getHeight() - itemHight);
                 View view = new View(mActivity);
                 view.setLayoutParams(layoutParams);
                 brandAdapter.setFoootView(view);
@@ -355,31 +347,8 @@ public class BrandFragment extends NewBaseFragment implements AdapterView.OnItem
 
     }
 
-    private void setHideOrShowSoftInput(View v) {
-        if (!(v instanceof EditText)) {
-            v.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    hideSoftKeyboard(mActivity);
-                    if (valueEt!=null){
-                        valueEt.setFocusable(false);
-                        valueEt.setFocusableInTouchMode(true);
-                    }
-                    return false;
-                }
-            });
-        }
-        if (v instanceof ViewGroup) {
-            for (int i = 0; i < ((ViewGroup) v).getChildCount(); i++) {
-                View innerView = ((ViewGroup) v).getChildAt(i);
-                setHideOrShowSoftInput(innerView);
-            }
-        }
-    }
-
-    public void hideSoftKeyboard(Activity activity) {
-        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity
-                .INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+    @OnClick(R.id.value_Et)
+    public void onViewClicked() {
+        FragmentSearchBoxSelect.newInstance(0).show(mActivity.getFragmentManager(), "selectBox");
     }
 }

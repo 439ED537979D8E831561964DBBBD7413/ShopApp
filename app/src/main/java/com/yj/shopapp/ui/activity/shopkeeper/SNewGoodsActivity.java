@@ -39,7 +39,7 @@ import com.yj.shopapp.ui.activity.adapter.NewGoodRecyAdpter;
 import com.yj.shopapp.ui.activity.adapter.SNewGoodsAdpter;
 import com.yj.shopapp.ui.activity.adapter.ScreenLvAdpter;
 import com.yj.shopapp.ui.activity.base.BaseActivity;
-import com.yj.shopapp.util.BugGoodsDialog;
+import com.yj.shopapp.dialog.BugGoodsDialog;
 import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.DateUtils;
 import com.yj.shopapp.util.DisplayUtil;
@@ -311,6 +311,7 @@ public class SNewGoodsActivity extends BaseActivity implements OnRefreshListener
             public void onResponse(Request request, String json) {
                 super.onResponse(request, json);
                 ShowLog.e(json);
+                if (SNewGoodsActivity.this.isFinishing()) return;
                 if (JsonHelper.isRequstOK(json, mContext)) {
                     if (loading != null) {
                         loading.showContent();
@@ -332,8 +333,6 @@ public class SNewGoodsActivity extends BaseActivity implements OnRefreshListener
                     mCurrentPage--;
                     if (swipeRefreshLayout != null) {
                         swipeRefreshLayout.finishRefresh(false);
-                    }
-                    if (swipeRefreshLayout != null) {
                         swipeRefreshLayout.finishLoadMore(false);
                     }
                 }

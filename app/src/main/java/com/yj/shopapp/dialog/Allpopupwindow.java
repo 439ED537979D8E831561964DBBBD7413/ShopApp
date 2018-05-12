@@ -1,4 +1,4 @@
-package com.yj.shopapp.util;
+package com.yj.shopapp.dialog;
 
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.yj.shopapp.R;
 import com.yj.shopapp.ui.activity.Interface.OnDateListenter;
 import com.yj.shopapp.ui.activity.ShowLog;
+import com.yj.shopapp.util.DateUtils;
 
 import java.util.Calendar;
 

@@ -181,6 +181,15 @@ public class Goods implements Parcelable {
     private String date;
     private String itemsum;
     private String msg;
+    private String specialnote;
+
+    public String getSpecialnote() {
+        return specialnote == null ? "" : specialnote;
+    }
+
+    public void setSpecialnote(String specialnote) {
+        this.specialnote = specialnote;
+    }
 
     public String getMsg() {
         return msg == null ? "" : msg;
@@ -219,6 +228,7 @@ public class Goods implements Parcelable {
         dest.writeString(this.date);
         dest.writeString(this.itemsum);
         dest.writeString(this.msg);
+        dest.writeString(this.specialnote);
     }
 
     protected Goods(Parcel in) {
@@ -241,6 +251,7 @@ public class Goods implements Parcelable {
         this.date = in.readString();
         this.itemsum = in.readString();
         this.msg = in.readString();
+        this.specialnote = in.readString();
     }
 
     public static final Creator<Goods> CREATOR = new Creator<Goods>() {

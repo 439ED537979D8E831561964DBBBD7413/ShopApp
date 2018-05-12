@@ -107,7 +107,7 @@ public abstract class BaseTabActivity extends FinalFragmentActivity {
         super.onDestroy();
         // 结束Activity&从堆栈中移除
         AppManager.getAppManager().removeActivityFromStack(this);
-
+        VersionUpdata.getInstance().onDestroy();
     }
 
 
@@ -153,11 +153,11 @@ public abstract class BaseTabActivity extends FinalFragmentActivity {
 
     private void checkAndUpdate(Context context) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            VersionUpdata.getInstance(false, mContext, getFragmentManager()).updateVersion();
+            VersionUpdata.getInstance().init(getApplicationContext(), getFragmentManager()).updateVersion();
         } else {
             if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED) {
-                VersionUpdata.getInstance(false, mContext, getFragmentManager()).updateVersion();
+                VersionUpdata.getInstance().init(getApplicationContext(), getFragmentManager()).updateVersion();
             } else {//申请权限
                 ActivityCompat.requestPermissions((Activity) context,
                         new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
@@ -171,21 +171,19 @@ public abstract class BaseTabActivity extends FinalFragmentActivity {
         switch (requestCode) {
             case 1:
                 try {
-                    if (grantResults != null) {
-                        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                            VersionUpdata.getInstance(false, mContext, getFragmentManager()).updateVersion();
-                        } else {
-                            new ConfirmDialog(this, new Callback() {
-                                @Override
-                                public void callback(int position) {
-                                    if (position == 1) {
-                                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                                        intent.setData(Uri.parse("package:" + getPackageName())); // 根据包名打开对应的设置界面
-                                        startActivity(intent);
-                                    }
+                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        VersionUpdata.getInstance().init(getApplicationContext(), getFragmentManager()).updateVersion();
+                    } else {
+                        new ConfirmDialog(this, new Callback() {
+                            @Override
+                            public void callback(int position) {
+                                if (position == 1) {
+                                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                                    intent.setData(Uri.parse("package:" + getPackageName())); // 根据包名打开对应的设置界面
+                                    startActivity(intent);
                                 }
-                            }).setContent("暂无读写SD卡权限\n是否前往设置？").show();
-                        }
+                            }
+                        }).setContent("暂无读写SD卡权限\n是否前往设置？").show();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

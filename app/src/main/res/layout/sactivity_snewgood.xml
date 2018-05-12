@@ -8,7 +8,9 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/borderbg1dp"
+        android:elevation="@dimen/H3dp"
         android:orientation="vertical">
 
         <include
@@ -25,9 +27,9 @@
                 android:id="@+id/tab_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingRight="20dp"
                 app:tabIndicatorColor="@color/color_01ABFF"
                 app:tabMode="scrollable"
-                android:paddingRight="20dp"
                 app:tabSelectedTextColor="@color/color_01ABFF"
                 app:tabTextColor="@color/color333333" />
 
@@ -53,49 +55,49 @@
             </RelativeLayout>
         </RelativeLayout>
 
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <com.scwang.smartrefresh.layout.SmartRefreshLayout
-                android:id="@+id/swipe_refresh_layout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:srlAccentColor="#fff"
-                app:srlPrimaryColor="#444">
-
-                <com.scwang.smartrefresh.layout.header.ClassicsHeader
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-                <ezy.ui.layout.LoadingLayout
-                    android:id="@+id/loading"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <android.support.v7.widget.RecyclerView
-                        android:id="@+id/recycler_view"
-                        android:layout_width="fill_parent"
-                        android:layout_height="match_parent" />
-                </ezy.ui.layout.LoadingLayout>
-
-
-                <com.scwang.smartrefresh.layout.footer.ClassicsFooter
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:srlAccentColor="#999999"
-                    app:srlPrimaryColor="#eeeeee" />
-            </com.scwang.smartrefresh.layout.SmartRefreshLayout>
-
-            <View
-                android:id="@+id/view_transparent"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/transparent40"
-                android:visibility="gone" />
-        </RelativeLayout>
     </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.scwang.smartrefresh.layout.SmartRefreshLayout
+            android:id="@+id/swipe_refresh_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:srlAccentColor="#fff"
+            app:srlPrimaryColor="#444">
+
+            <com.scwang.smartrefresh.layout.header.ClassicsHeader
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <ezy.ui.layout.LoadingLayout
+                android:id="@+id/loading"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recycler_view"
+                    android:layout_width="fill_parent"
+                    android:layout_height="match_parent" />
+            </ezy.ui.layout.LoadingLayout>
+
+
+            <com.scwang.smartrefresh.layout.footer.ClassicsFooter
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:srlAccentColor="#999999"
+                app:srlPrimaryColor="#eeeeee" />
+        </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+
+        <View
+            android:id="@+id/view_transparent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/transparent40"
+            android:visibility="gone" />
+    </RelativeLayout>
 
 
 </LinearLayout>

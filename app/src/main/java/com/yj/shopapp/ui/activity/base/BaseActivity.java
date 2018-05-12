@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -53,6 +54,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected boolean mIsActivityGroupBase = false;
     Unbinder unbinder;
     private Bundle bundle;
+
     //private ImmersionBar mImmersionBar;
     public Bundle getBundle() {
         return bundle;
@@ -66,7 +68,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         setContentView(getLayoutId());
         unbinder = ButterKnife.bind(this);
         mContext = this;
-        setStatusBar();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            setStatusBar();
+        }
 //        mImmersionBar = ImmersionBar.with(this).fitsSystemWindows(true).statusBarColor(R.color.colorPrimary);
 //        mImmersionBar.init();   //所有子类都将继承这些相同的属性
         uid = PreferenceUtils.getPrefString(mContext, Contants.Preference.UID, "");

@@ -1,6 +1,7 @@
 package com.yj.shopapp.util;
 
 import android.content.Context;
+import android.content.Intent;
 
 import com.google.gson.Gson;
 import com.yj.shopapp.config.Contants;
@@ -52,7 +53,9 @@ public class JsonHelper<T> {
             PreferenceUtils.remove(context, Contants.Preference.UID);
             PreferenceUtils.remove(context, Contants.Preference.UTYPE);
             PreferenceUtils.remove(context, Contants.Preference.TOKEN);
-            CommonUtils.goActivity(context, LoginActivity.class,null,true);
+            Intent intent = new Intent(context, LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
         }
         return statusCode == 0;
     }

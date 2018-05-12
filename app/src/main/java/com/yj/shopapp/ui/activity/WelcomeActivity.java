@@ -94,6 +94,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
         }
         initBanner();
+        updateVersion();
     }
 
     private void initBanner() {
@@ -355,6 +356,30 @@ public class WelcomeActivity extends AppCompatActivity {
             @Override
             public void onAfter() {
                 super.onAfter();
+            }
+        });
+    }
+
+    //检测版本
+    public void updateVersion() {
+        if (!NetUtils.isNetworkAvailable(mContext)) {
+            Toast.makeText(mContext, Contants.NetStatus.NETDISABLE, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        String version = String.valueOf(CommonUtils.getVerCode(mContext));
+        final Map<String, String> params = new HashMap<>();
+        params.put("version", version);
+        params.put("type", "1");
+        HttpHelper.getInstance().post(mContext, Contants.appd, params, new OkHttpResponseHandler<String>(mContext) {
+            @Override
+            public void onResponse(Request request, String json) {
+                super.onResponse(request, json);
+                ShowLog.e(json);
+                if (JsonHelper.isRequstOK(json, mContext)) {
+                    JSONObject jsonObject = JSONObject.parseObject(json);
+                    int status = Integer.parseInt(jsonObject.getString("status"));
+                    PreferenceUtils.setPrefInt(mContext, "appVersion", status);
+                }
             }
         });
     }

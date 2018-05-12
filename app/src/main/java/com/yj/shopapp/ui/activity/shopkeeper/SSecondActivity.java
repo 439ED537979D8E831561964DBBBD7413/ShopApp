@@ -85,6 +85,7 @@ public class SSecondActivity extends BaseActivity implements AdapterView.OnItemC
     private int currposition = 0, classifyposition = 0;
     private ScreenLvAdpter screenLvAdpter;
     private RecyclerView pwRecy;
+    private String cid;
 
     @Override
     protected int getLayoutId() {
@@ -103,6 +104,9 @@ public class SSecondActivity extends BaseActivity implements AdapterView.OnItemC
         });
         if (getIntent().hasExtra("Name")) {
             contentTv.setText(getIntent().getStringExtra("Name"));
+        }
+        if (getIntent().hasExtra("CId")) {
+            cid = getIntent().getStringExtra("CId");
         }
         brandAdapter = new SBrandAdapter(mContext);
         rightTv.setText("品牌");
@@ -223,20 +227,22 @@ public class SSecondActivity extends BaseActivity implements AdapterView.OnItemC
                     //获取第一个可见view的位置
                     int firstItemPosition = linearManager.findFirstVisibleItemPosition();
                     if (firstItemPosition == -1) return;
-                    if (isBrang) {
-                        if (listBeans.size() > 0) {
-                            if (listBeans.get(firstItemPosition).isSort()) {
+
+                    try {
+                        if (isBrang) {
+                            if (listBeans.size() > 0) {
+                                //                            if (listBeans.get(firstItemPosition).isSort()) {
                                 tabLayout.setFocusable(true);
                                 tabLayout.setFocusableInTouchMode(true);
                                 if (!tabLayout.getTabAt(listBeans.get(firstItemPosition).getIndex()).isSelected()) {
                                     tabLayout.getTabAt(listBeans.get(firstItemPosition).getIndex()).select();
                                     currposition = listBeans.get(firstItemPosition).getIndex();
+                                    //    }
                                 }
                             }
-                        }
-                    } else {
-                        if (groups.size() > 0) {
-                            if (groups.get(firstItemPosition).isSort()) {
+                        } else {
+                            if (groups.size() > 0) {
+                                //   if (groups.get(firstItemPosition).isSort()) {
                                 tabLayout.setFocusable(true);
                                 tabLayout.setFocusableInTouchMode(true);
                                 if (!tabLayout.getTabAt(groups.get(firstItemPosition).getIndex()).isSelected()) {
@@ -244,8 +250,11 @@ public class SSecondActivity extends BaseActivity implements AdapterView.OnItemC
                                     classifyposition = groups.get(firstItemPosition).getIndex();
 
                                 }
+                                // }
                             }
                         }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 }
             }
@@ -262,6 +271,10 @@ public class SSecondActivity extends BaseActivity implements AdapterView.OnItemC
         pwRecy = rootView.findViewById(R.id.my_RecyclerView);
         pwRecy.setLayoutManager(new GridLayoutManager(mContext, 4));
         pwRecy.setAdapter(screenLvAdpter);
+        pw = new PopupWindow(rootView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
+        pw.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        pw.setOutsideTouchable(true);
+        pw.setTouchable(true);
     }
 
     /**
@@ -269,10 +282,6 @@ public class SSecondActivity extends BaseActivity implements AdapterView.OnItemC
      */
     private void showPW() {
         image2.setRotation(180);
-        pw = new PopupWindow(rootView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
-        pw.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        pw.setOutsideTouchable(true);
-        pw.setTouchable(true);
         pw.showAsDropDown(more);
         pw.setOnDismissListener(new PopupWindow.OnDismissListener() {
             @Override
@@ -340,7 +349,7 @@ public class SSecondActivity extends BaseActivity implements AdapterView.OnItemC
         Map<String, String> params = new HashMap<String, String>();
         params.put("uid", uid);
         params.put("token", token);
-        params.put("cid", getIntent().getStringExtra("CId"));
+        params.put("cid", cid);
         HttpHelper.getInstance().post(mContext, Contants.PortU.INDUSTRY_CATELIST, params, new OkHttpResponseHandler<String>(mContext) {
             @Override
             public void onError(Request request, Exception e) {
@@ -494,8 +503,9 @@ public class SSecondActivity extends BaseActivity implements AdapterView.OnItemC
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                int itemHeight = recyclerView.getLayoutManager().getChildAt(1).getHeight();
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT
-                        , (int) (CommonUtils.screenHeight(mContext) * 0.7));
+                        , recyclerView.getHeight() - itemHeight);
                 View view = new View(mContext);
                 view.setLayoutParams(layoutParams);
                 brandAdapter.setFoootView(view);
@@ -520,6 +530,7 @@ public class SSecondActivity extends BaseActivity implements AdapterView.OnItemC
                 bundle.putString("bid", listBeans.get(position).getId());
                 bundle.putString("typeName", listBeans.get(position).getName());
             }
+            bundle.putString("cid", cid);
             CommonUtils.goActivity(mContext, SGoodsActivity.class, bundle);
 
         } else {

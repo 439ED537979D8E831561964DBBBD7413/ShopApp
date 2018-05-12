@@ -1,4 +1,4 @@
-package com.yj.shopapp.util;
+package com.yj.shopapp.dialog;
 
 import android.app.AlertDialog;
 import android.content.Context;

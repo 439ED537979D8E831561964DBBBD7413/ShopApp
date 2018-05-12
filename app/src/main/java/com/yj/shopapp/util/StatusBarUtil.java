@@ -72,7 +72,18 @@ public class StatusBarUtil {
             setRootView(activity);
         }
     }
-
+    @TargetApi(Build.VERSION_CODES.M)
+    public static void setStatusBarTextColor(Window window, boolean lightStatusBar) {
+        if (window == null) return;
+        View decor = window.getDecorView();
+        int ui = decor.getSystemUiVisibility();
+        if (lightStatusBar) {
+            ui |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+        } else {
+            ui &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+        }
+        decor.setSystemUiVisibility(ui);
+    }
     /**
      * 为滑动返回界面设置状态栏颜色
      *

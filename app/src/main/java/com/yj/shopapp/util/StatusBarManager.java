@@ -54,8 +54,7 @@ public class StatusBarManager {
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public void setStatusBar(Window window, @ColorInt int color) {
         if (window == null) return;
-        if(Build.VERSION.SDK_INT >= 21)
-        {
+        if (Build.VERSION.SDK_INT >= 21) {
             window.setStatusBarColor(color);
         }
     }

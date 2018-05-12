@@ -97,13 +97,14 @@ public class UpdataDialog extends DialogFragment {
                     return false;
                 }
             });
+            Window dialogWindow = getDialog().getWindow();
+            dialogWindow.setGravity(Gravity.CENTER);
+            WindowManager.LayoutParams lp = dialogWindow.getAttributes();
+            DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
+            lp.height = (int) (displayMetrics.heightPixels * 0.8f);
+            dialogWindow.setAttributes(lp);
         }
-        Window dialogWindow = getDialog().getWindow();
-        dialogWindow.setGravity(Gravity.CENTER);
-        WindowManager.LayoutParams lp = dialogWindow.getAttributes();
-        DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
-        lp.height = (int) (displayMetrics.heightPixels * 0.8f);
-        dialogWindow.setAttributes(lp);
+
 
         if (isDownloadComp) {
             String path = PreferenceUtils.getPrefString(mContext, "ApkPath", "");
@@ -162,7 +163,7 @@ public class UpdataDialog extends DialogFragment {
                 int vercode = Integer.parseInt(jsonObject.getString("version"));
                 final String appurl = jsonObject.getString("appurl");
                 isDownload = true;
-                Download.downloadForAutoInstall(mContext, appurl, "ShopApp.apk", "版本更新");
+                Download.downloadForAutoInstall(mContext.getApplicationContext(), appurl, "ShopApp.apk", "版本更新");
                 Download.setCallback(callbacks);
             }
 
@@ -200,11 +201,11 @@ public class UpdataDialog extends DialogFragment {
             e.printStackTrace();
         }
     }
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
+
     }
 
 }

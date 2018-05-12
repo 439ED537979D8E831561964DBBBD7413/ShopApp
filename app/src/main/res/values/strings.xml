@@ -7,6 +7,9 @@
 
     <string name="shopkeeper">零售商</string>
     <string name="wholesaler">批发商</string>
+    <string name="outfostack">很遗憾，你的订单有缺货信息</string>
+    <string name="gocarlist">返回购物车</string>
+    <string name="i_see">我知道了</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string-array name="tabName">

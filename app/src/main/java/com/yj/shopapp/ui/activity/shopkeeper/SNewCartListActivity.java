@@ -1,8 +1,10 @@
 package com.yj.shopapp.ui.activity.shopkeeper;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.TabLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -35,8 +37,8 @@ import com.yj.shopapp.ui.activity.Interface.shopcartlistInterface;
 import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.ui.activity.adapter.CarListViewPagerAdpter;
 import com.yj.shopapp.ui.activity.adapter.SNewCarListAdapter;
-import com.yj.shopapp.util.Center2Dialog;
-import com.yj.shopapp.util.CenterDialog;
+import com.yj.shopapp.dialog.Center2Dialog;
+import com.yj.shopapp.dialog.CenterDialog;
 import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.DDecoration;
 import com.yj.shopapp.util.GoodsNumInputDialog;
@@ -58,6 +60,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -112,6 +115,7 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
     private DecimalFormat df = new DecimalFormat("######0.00");
     private boolean isload = true;
     private CenterDialog dialog;
+    private boolean isSubmitgoods;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -141,6 +145,7 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
         myRecyclerView.setAdapter(adapter);
 
         myRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
@@ -155,10 +160,19 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
                     if (tabLayout == null) return;
                     tabLayout.setFocusable(true);
                     tabLayout.setFocusableInTouchMode(true);
-                    if (cartLists.size() > 0) {
-                        if (tabLayout != null) {
-                            tabLayout.getTabAt(cartLists.get(firstItemPosition).getTabposition()).select();
+                    try {
+                        if (cartLists.size() > 0) {
+                            if (firstItemPosition < cartLists.size()) {
+                                if (!Objects.requireNonNull(tabLayout.getTabAt(cartLists.get(firstItemPosition).getTabposition())).isSelected()) {
+                                    Objects.requireNonNull(tabLayout.getTabAt(cartLists.get(firstItemPosition).getTabposition())).select();
+                                }
+                            }
                         }
+                        if (firstItemPosition == cartLists.size() - 1) {
+                            ((LinearLayoutManager) myRecyclerView.getLayoutManager()).scrollToPositionWithOffset(cartLists.size() - 1, 0);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 }
             }
@@ -296,8 +310,9 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
     @Override
     public void checkGroup(int position, boolean isChecked) {
         if (cartLists.get(position).getSale_status().equals("0")) {
-            cartLists.get(position).setChoosed(true);
-            delCart();
+            //cartLists.get(position).setChoosed(true);
+            delOneGoods(cartLists.get(position).getId());
+           // delCart();
         } else {
             cartLists.get(position).setChoosed(isChecked);
             isAllCheck();
@@ -307,8 +322,10 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
 
     private void isAllCheck() {
         isSelect = false;
+        isSubmitgoods = true;
         for (CartList i : cartLists) {
             if (!i.getSale_status().equals("0")) {
+                isSubmitgoods = false;
                 if (i.isChoosed()) {
                     isSelect = true;
                 } else {
@@ -319,6 +336,9 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
         }
         if (cartLists.size() == 0) {
             isSelect = false;
+        }
+        if (isSubmitgoods) {
+            showToast("暂无可提交商品!");
         }
         myCheckbox.setChecked(isSelect);
         if (myCheckbox.isChecked()) {
@@ -486,11 +506,9 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (cartLists.size() > 0) {
-                    int height = myRecyclerView.computeVerticalScrollExtent();
-                    int itemheight = myRecyclerView.getLayoutManager().getChildAt(0).getHeight();
+                if (cartLists.size() > 0 && myRecyclerView != null) {
                     LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT
-                            , height - itemheight);
+                            , (int) (CommonUtils.screenHeight(mActivity) * 0.65));
                     View view = new View(mActivity);
                     view.setLayoutParams(layoutParams);
                     adapter.setFoootView(view);
@@ -629,7 +647,21 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
             showToast("请选择商品");
         }
 
+    }
 
+    private void delOneGoods(final String id) {
+        new MaterialDialog.Builder(mActivity)
+                .content("是否删除选中的商品?")
+                .positiveText("删除")
+                .negativeText("取消")
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+                        delCartReport(id);
+                        materialDialog.dismiss();
+                    }
+                })
+                .show();
     }
 
     public void delCartReport(String idstr) {

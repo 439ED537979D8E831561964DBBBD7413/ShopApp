@@ -108,6 +108,7 @@
         <activity
             android:name=".ui.activity.LoginActivity"
             android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize|stateHidden"
             android:screenOrientation="portrait" />
 
         <provider
@@ -299,6 +300,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.shopkeeper.Seek_brand"
+            android:windowSoftInputMode="adjustPan|stateVisible"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.shopkeeper.RedPackActivity"
@@ -338,15 +340,15 @@
             android:name=".ui.activity.shopkeeper.AccountBookActivity"
             android:screenOrientation="portrait" />
 
-        <receiver
-            android:name=".ui.activity.upversion.UpdateAppReceiver"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.DOWNLOAD_COMPLETE" />
-                <action android:name="android.intent.action.DOWNLOAD_NOTIFICATION_CLICKED" />
-            </intent-filter>
-        </receiver>
+        <!--<receiver-->
+            <!--android:name=".ui.activity.upversion.UpdateAppReceiver"-->
+            <!--android:enabled="true"-->
+            <!--android:exported="true">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.DOWNLOAD_COMPLETE" />-->
+                <!--<action android:name="android.intent.action.DOWNLOAD_NOTIFICATION_CLICKED" />-->
+            <!--</intent-filter>-->
+        <!--</receiver>-->
 
         <!--
  ATTENTION: This was auto-generated to add Google Play services to your project for
@@ -446,7 +448,7 @@
         <activity
             android:name=".ui.activity.shopkeeper.HotGoodActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.activity.shopkeeper.GoodsRecordDatails"></activity>
+        <activity android:name=".ui.activity.shopkeeper.GoodsRecordDatails"/>
     </application>
 
 </manifest>

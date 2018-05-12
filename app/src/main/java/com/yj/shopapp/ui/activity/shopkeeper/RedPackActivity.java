@@ -13,7 +13,7 @@ import com.yj.shopapp.http.OkHttpResponseHandler;
 import com.yj.shopapp.ubeen.Reward;
 import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.ui.activity.base.BaseActivity;
-import com.yj.shopapp.util.CenterDialog;
+import com.yj.shopapp.dialog.CenterDialog;
 import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.JsonHelper;
 import com.yj.shopapp.util.NetUtils;

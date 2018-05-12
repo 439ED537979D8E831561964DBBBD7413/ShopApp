@@ -32,7 +32,7 @@ import com.yj.shopapp.http.OkHttpResponseHandler;
 import com.yj.shopapp.ubeen.LookItem;
 import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.ui.activity.base.BaseActivity;
-import com.yj.shopapp.util.BugGoodsDialog;
+import com.yj.shopapp.dialog.BugGoodsDialog;
 import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.DialogUtils;
 import com.yj.shopapp.util.JsonHelper;

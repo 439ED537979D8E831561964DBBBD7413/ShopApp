@@ -15,7 +15,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -402,6 +401,7 @@ public class SHomeActivity extends NewBaseFragment implements SwipeRefreshLayout
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        if (mdatas.size() == 0) return;
         if (0 == mdatas.get(position).getResult()) {
             showToast(mdatas.get(position).getName() + "暂未开放，敬请期待！");
         } else {
@@ -544,12 +544,12 @@ public class SHomeActivity extends NewBaseFragment implements SwipeRefreshLayout
                     noticeLists = jsonHelper.getDatas(json);
                     String yestday = PreferenceUtils.getPrefString(mActivity, "s" + uid, "");
                     String today = DateUtils.getNowDate();
-                    if (!yestday.equals(today)) {
-                        NoticeDialog.newInstance(noticeLists).show(mActivity.getFragmentManager(), "noticeDialog");
-                        PreferenceUtils.setPrefString(mActivity, "s" + uid, today);
+                    if (PreferenceUtils.getPrefInt(mActivity,"appVersion",0)==0){
+                        if (!yestday.equals(today)) {
+                            NoticeDialog.newInstance(noticeLists).show(mActivity.getFragmentManager(), "noticeDialog");
+                            PreferenceUtils.setPrefString(mActivity, "s" + uid, today);
+                        }
                     }
-
-
                 }
             }
         });
@@ -613,7 +613,9 @@ public class SHomeActivity extends NewBaseFragment implements SwipeRefreshLayout
                     if (salesTime != null) {
                         salesTime.setText("");
                     }
-                    bugoodBg.setVisibility(View.VISIBLE);
+                    if (bugoodBg != null) {
+                        bugoodBg.setVisibility(View.VISIBLE);
+                    }
                 }
 
             }
@@ -888,7 +890,6 @@ public class SHomeActivity extends NewBaseFragment implements SwipeRefreshLayout
 
             @Override
             public void onResponse(Request request, String response) {
-                System.out.println("response" + response);
                 ShowLog.e(response);
                 if (JsonHelper.isRequstOK(response, mActivity)) {
                     JsonHelper<BannerInfo> adverJsonHelper = new JsonHelper<>(BannerInfo.class);
@@ -917,7 +918,7 @@ public class SHomeActivity extends NewBaseFragment implements SwipeRefreshLayout
 
     // 获取行业
     private void getindustry() {
-        mdatas.clear();
+        // mdatas.clear();
         Map<String, String> params = new HashMap<String, String>();
         params.put("uid", uid);
         params.put("token", token);
@@ -947,13 +948,13 @@ public class SHomeActivity extends NewBaseFragment implements SwipeRefreshLayout
 
             @Override
             public void onResponse(Request request, String response) {
-                System.out.println("response" + response);
-                Log.e("m_tag", response);
+                ShowLog.e(response);
                 if (JsonHelper.isRequstOK(response, mActivity)) {
-                    JsonHelper<Industry> jsonHelper = new JsonHelper<Industry>(Industry.class);
-                    mdatas.addAll(jsonHelper.getDatas(response));
+                    mdatas = JSONArray.parseArray(response, Industry.class);
+//                    JsonHelper<Industry> jsonHelper = new JsonHelper<Industry>(Industry.class);
+//                    mdatas.addAll(jsonHelper.getDatas(response));
                     seveurl();
-                    adapter.notifyDataSetChanged();
+                    adapter.setList(mdatas);
                 } else {
                     showToast(JsonHelper.errorMsg(response));
                 }

@@ -36,10 +36,11 @@ import com.yj.shopapp.ui.activity.adapter.OrderDatasAdapte1;
 import com.yj.shopapp.ui.activity.adapter.OrderFragmentAdapte;
 import com.yj.shopapp.ui.activity.adapter.ViewPageAdpter;
 import com.yj.shopapp.ui.activity.base.BaseActivity;
+import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.DDecoration;
 import com.yj.shopapp.util.DateUtils;
 import com.yj.shopapp.util.JsonHelper;
-import com.yj.shopapp.util.StatusBarManager;
+import com.yj.shopapp.util.StatusBarUtil;
 
 import java.lang.reflect.Field;
 import java.text.DecimalFormat;
@@ -49,6 +50,7 @@ import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
 /**
  * Created by LK on 2017/12/20.
@@ -132,6 +134,7 @@ public class SOrderDatesActivity extends BaseActivity {
             oid = getIntent().getStringExtra("oid");
             orderid.setText("订单号：" + oid);
         }
+
         //datasAdapte = new OrderDatasAdapte(mContext);
         //adapte1 = new OrderDatasAdapte1(mContext);
         //pageAdpter = new ViewPageAdpter(getSupportFragmentManager());
@@ -162,7 +165,9 @@ public class SOrderDatesActivity extends BaseActivity {
                         if (!tabLayout.getTabAt(mData.getItemlist().get(firstItemPosition).getIndex()).isSelected()) {
                             tabLayout.getTabAt(mData.getItemlist().get(firstItemPosition).getIndex()).select();
                         }
-
+                        if (firstItemPosition == mData.getItemlist().size() - 1) {
+                            ((LinearLayoutManager) myRecyclerView.getLayoutManager()).scrollToPositionWithOffset(mData.getItemlist().size() - 1, 0);
+                        }
                     }
 
                 }
@@ -173,9 +178,8 @@ public class SOrderDatesActivity extends BaseActivity {
 
     @Override
     protected void setStatusBar() {
-       // StatusBarUtil.setColor(this, getResources().getColor(R.color.white), 0);
-        StatusBarManager.getInstance().setStatusBar(getWindow(), getResources().getColor(R.color.white));
-        StatusBarManager.getInstance().setStatusBarTextColor(getWindow(), true);
+        StatusBarUtil.setColor(this, getResources().getColor(R.color.white), 0);
+        StatusBarUtil.setStatusBarTextColor(getWindow(), true);
     }
 
     private void refreshRequest() {
@@ -210,6 +214,9 @@ public class SOrderDatesActivity extends BaseActivity {
         //totalPackage.setText(mData.getCoupon());
 
         try {
+            if (mData.getOosdata().size() > 0) {
+                rightTv.setText("缺货信息");
+            }
             status.setText(Contants.OrderStadus[Integer.parseInt(mData.getStatus())]);
             orderTime.setText(DateUtils.timet(mData.getAddtime()));
             DecimalFormat df = new DecimalFormat("#.00");
@@ -296,10 +303,9 @@ public class SOrderDatesActivity extends BaseActivity {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    int height = myRecyclerView.computeVerticalScrollExtent();
-                    int itemheight = myRecyclerView.getLayoutManager().getChildAt(0).getHeight();
+
                     LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT
-                            , height - itemheight);
+                            , (int) (CommonUtils.screenHeight(mContext) * 0.7));
                     View view = new View(mContext);
                     view.setLayoutParams(layoutParams);
                     adapte.setFoootView(view);
@@ -413,5 +419,10 @@ public class SOrderDatesActivity extends BaseActivity {
                 e.printStackTrace();
             }
         }
+    }
+
+    @OnClick(R.id.right_tv)
+    public void onViewClicked() {
+        OutOfStockListDialog.newInstance(mData.getOosdata(), 1).show(getFragmentManager(), "outofstock");
     }
 }

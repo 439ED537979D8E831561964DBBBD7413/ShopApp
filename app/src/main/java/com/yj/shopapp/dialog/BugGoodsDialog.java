@@ -1,4 +1,4 @@
-package com.yj.shopapp.util;
+package com.yj.shopapp.dialog;
 
 import android.app.DialogFragment;
 import android.app.FragmentManager;
@@ -36,6 +36,8 @@ import com.yj.shopapp.ubeen.HotIndex;
 import com.yj.shopapp.ubeen.LookItem;
 import com.yj.shopapp.ubeen.Spitem;
 import com.yj.shopapp.ui.activity.ShowLog;
+import com.yj.shopapp.util.JsonHelper;
+import com.yj.shopapp.util.PreferenceUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -77,6 +79,8 @@ public class BugGoodsDialog extends DialogFragment implements TextWatcher {
     TextView warningTv;
     @BindView(R.id.warning_tv_super)
     LinearLayout warningTvSuper;
+    @BindView(R.id.special_note)
+    TextView specialNote;
     private Context mContext;
     private int minnum, maxnum, gsum;
     private String uid, token;
@@ -157,6 +161,7 @@ public class BugGoodsDialog extends DialogFragment implements TextWatcher {
             shopspec.setText(goods.getSpecs());
             warningTvSuper.setVisibility(goods.getMsg().equals("") ? View.GONE : View.VISIBLE);
             warningTv.setText(goods.getMsg());
+            specialNote.setText(goods.getSpecialnote());
             Glide.with(mContext).load(goods.getImgurl()).apply(new RequestOptions().centerCrop()).into(goodsImag);
         } else if (lookItem != null) {
             shapname.setText(lookItem.getName());
@@ -164,6 +169,7 @@ public class BugGoodsDialog extends DialogFragment implements TextWatcher {
             shopspec.setText(lookItem.getSpecs());
             warningTvSuper.setVisibility(lookItem.getMsg().equals("") ? View.GONE : View.VISIBLE);
             warningTv.setText(lookItem.getMsg());
+            specialNote.setText(lookItem.getSpecialnote());
             Glide.with(mContext).load(lookItem.getImgurl()).apply(new RequestOptions().centerCrop()).into(goodsImag);
         } else if (spitem != null) {
             shapname.setText(spitem.getItemname());
@@ -171,6 +177,7 @@ public class BugGoodsDialog extends DialogFragment implements TextWatcher {
             shopspec.setText(spitem.getSpecs());
             warningTvSuper.setVisibility(spitem.getMsg().equals("") ? View.GONE : View.VISIBLE);
             warningTv.setText(spitem.getMsg());
+            specialNote.setText(spitem.getSpecialnote());
             Glide.with(mContext).load(spitem.getImgurl()).apply(new RequestOptions().centerCrop()).into(goodsImag);
         } else {
             shapname.setText(index.getName());
@@ -178,6 +185,7 @@ public class BugGoodsDialog extends DialogFragment implements TextWatcher {
             shopspec.setText(index.getSpecs());
             warningTvSuper.setVisibility(index.getMsg().equals("") ? View.GONE : View.VISIBLE);
             warningTv.setText(index.getMsg());
+            specialNote.setText(index.getSpecialnote());
             Glide.with(mContext).load(index.getImgurl()).apply(new RequestOptions().centerCrop()).into(goodsImag);
         }
     }
@@ -197,21 +205,6 @@ public class BugGoodsDialog extends DialogFragment implements TextWatcher {
 //        getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
 //        getDialog().getWindow().setLayout(dm.widthPixels, getDialog().getWindow().getAttributes().height);
 
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (goods != null) {
-            requestMinandMaxNum(goods.getId());
-        } else if (lookItem != null) {
-            requestMinandMaxNum(lookItem.getId());
-        } else if (spitem != null) {
-            requestMinandMaxNum(spitem.getId());
-        } else {
-            requestMinandMaxNum(index.getId());
-        }
-        setDeta();
     }
 
     @Nullable
@@ -256,6 +249,16 @@ public class BugGoodsDialog extends DialogFragment implements TextWatcher {
                 return true;
             }
         });
+        if (goods != null) {
+            requestMinandMaxNum(goods.getId());
+        } else if (lookItem != null) {
+            requestMinandMaxNum(lookItem.getId());
+        } else if (spitem != null) {
+            requestMinandMaxNum(spitem.getId());
+        } else {
+            requestMinandMaxNum(index.getId());
+        }
+        setDeta();
     }
 
     @Override
@@ -386,15 +389,19 @@ public class BugGoodsDialog extends DialogFragment implements TextWatcher {
                 e.printStackTrace();
             }
         }
-        if (goodtips != null) {
-            goodtips.setText(text1 + text2);
-        }
-        if (minnum == 0) {
-            count.setText(number + "");
-        } else {
-            //editText.setText("" + minnum);
-            count.setText("" + minnum);
-            number = minnum;
+        try {
+            if (goodtips != null) {
+                goodtips.setText(text1 + text2);
+            }
+            if (minnum == 0) {
+                count.setText(number + "");
+            } else {
+                //editText.setText("" + minnum);
+                count.setText("" + minnum);
+                number = minnum;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

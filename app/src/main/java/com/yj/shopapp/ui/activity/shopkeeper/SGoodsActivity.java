@@ -27,7 +27,7 @@ import com.yj.shopapp.ui.activity.Interface.GoodsItemListenter;
 import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.ui.activity.adapter.SNewGoodsAdpter;
 import com.yj.shopapp.ui.activity.base.BaseActivity;
-import com.yj.shopapp.util.BugGoodsDialog;
+import com.yj.shopapp.dialog.BugGoodsDialog;
 import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.DDecoration;
 import com.yj.shopapp.util.JsonHelper;
@@ -216,9 +216,9 @@ public class SGoodsActivity extends BaseActivity implements GoodsItemListenter, 
         params.put("token", token);
         params.put("p", String.valueOf(mCurrentPage));
         params.put("brandid", brandid);
-        if (isSet == 1) {
-            params.put("cid", cid);
-        }
+        //if (isSet == 1) {
+        params.put("cid", cid);
+        // }
         params.put("bigtypeid", typeid);
         params.put("itemname", username);
         params.put("keyword", keyWord);
@@ -301,6 +301,7 @@ public class SGoodsActivity extends BaseActivity implements GoodsItemListenter, 
                 break;
             case Seek_brand.GOBACKONE:
                 brandid = data.getExtras().getString("bid");
+                title.setText(data.getExtras().getString("gname"));
                 keyWord = "";
                 if (NetUtils.isNetworkConnected(mContext)) {
                     if (null != swipeRefreshLayout) {
@@ -312,10 +313,9 @@ public class SGoodsActivity extends BaseActivity implements GoodsItemListenter, 
                 break;
             case Seek_brand.GOBACKTWO:
                 keyWord = data.getExtras().getString("content");
-                brandid = "";
                 if (NetUtils.isNetworkConnected(mContext)) {
                     if (null != swipeRefreshLayout) {
-                        swipeRefreshLayout.autoRefresh(300, 300, 1.5f);
+                        swipeRefreshLayout.autoRefresh();
                     }
                 } else {
                     showToastShort("网络不给力");

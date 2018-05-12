@@ -11,73 +11,53 @@
     android:orientation="vertical"
     tools:context="com.yj.shopapp.ui.activity.shopkeeper.SSecondActivity">
 
-    <include layout="@layout/base_toolbar_blue_tv" />
-
-    <!--<LinearLayout-->
-    <!--android:id="@+id/search_layout"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_margin="5dp"-->
-    <!--android:background="@drawable/ic_default_item_bg"-->
-    <!--android:orientation="horizontal"-->
-    <!--android:paddingLeft="5dp">-->
-
-    <!--<ImageView-->
-    <!--android:layout_width="25dp"-->
-    <!--android:layout_height="25dp"-->
-    <!--android:layout_gravity="center_vertical"-->
-    <!--android:src="@drawable/search_icon"/>-->
-
-    <!--<com.yj.shopapp.view.ClearEditText-->
-    <!--android:id="@+id/value_Et"-->
-    <!--android:layout_width="0dp"-->
-    <!--android:layout_height="32dp"-->
-    <!--android:layout_weight="1"-->
-    <!--android:background="@null"-->
-    <!--android:gravity="center"-->
-    <!--android:hint="品牌搜索"-->
-    <!--android:singleLine="true"-->
-    <!--android:paddingRight="5dp"-->
-    <!--android:textColor="@color/text_color"-->
-    <!--android:textSize="14sp"/>-->
-    <!--</LinearLayout>-->
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/H40dp"
+        android:layout_height="wrap_content"
         android:background="@drawable/borderbg1dp"
-        android:orientation="horizontal">
+        android:elevation="@dimen/H3dp"
+        android:orientation="vertical">
 
-        <android.support.design.widget.TabLayout
-            android:id="@+id/tab_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingRight="20dp"
-            app:tabIndicatorColor="@color/color_01ABFF"
-            app:tabMode="scrollable"
-            app:tabSelectedTextColor="@color/color_01ABFF"
-            app:tabTextColor="@color/color333333" />
+        <include layout="@layout/base_toolbar_blue_tv" />
 
         <RelativeLayout
-            android:id="@+id/more"
-            android:layout_width="40dp"
-            android:layout_height="match_parent"
-            android:layout_alignParentRight="true"
-            android:layout_margin="@dimen/H1dp"
-            android:background="@color/tab_more_color">
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/H40dp"
+            android:orientation="horizontal">
 
-            <View
-                android:layout_width="1px"
+            <android.support.design.widget.TabLayout
+                android:id="@+id/tab_layout"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/colore7e7e7" />
+                android:paddingRight="20dp"
+                app:tabIndicatorColor="@color/color_01ABFF"
+                app:tabMode="scrollable"
+                app:tabSelectedTextColor="@color/color_01ABFF"
+                app:tabTextColor="@color/color333333" />
 
-            <ImageView
-                android:id="@+id/image2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:src="@drawable/ic_screen" />
+            <RelativeLayout
+                android:id="@+id/more"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:layout_margin="@dimen/H1dp"
+                android:background="@color/tab_more_color">
+
+                <View
+                    android:layout_width="1px"
+                    android:layout_height="match_parent"
+                    android:background="@color/colore7e7e7" />
+
+                <ImageView
+                    android:id="@+id/image2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/ic_screen" />
+            </RelativeLayout>
         </RelativeLayout>
-    </RelativeLayout>
+    </LinearLayout>
+
 
     <RelativeLayout
         android:layout_width="match_parent"

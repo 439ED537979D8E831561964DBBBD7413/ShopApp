@@ -19,9 +19,9 @@ import com.yj.shopapp.ui.activity.MyWebView;
 import com.yj.shopapp.ui.activity.PicasaActivity;
 import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.ui.activity.base.BaseActivity;
-import com.yj.shopapp.util.BottomDialog;
+import com.yj.shopapp.dialog.BottomDialog;
 import com.yj.shopapp.util.CommonUtils;
-import com.yj.shopapp.util.CustomPopDialog2;
+import com.yj.shopapp.dialog.CustomPopDialog2;
 import com.yj.shopapp.util.PreferenceUtils;
 
 import butterknife.BindView;

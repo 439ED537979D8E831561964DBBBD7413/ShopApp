@@ -62,7 +62,6 @@ public class LookItem implements Parcelable {
     private String gift;
     private String msg;
     private String bookmark;
-
     public String getBookmark() {
         return bookmark == null ? "" : bookmark;
     }

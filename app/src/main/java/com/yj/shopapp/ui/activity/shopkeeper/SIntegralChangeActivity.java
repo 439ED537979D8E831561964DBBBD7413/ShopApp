@@ -77,7 +77,7 @@ public class SIntegralChangeActivity extends BaseActivity implements OnRefreshLi
     @Override
     public void onResume() {
         super.onResume();
-        if (isNetWork(mContext)){
+        if (isNetWork(mContext)) {
             getIntegralChange();
         }
     }
@@ -121,10 +121,14 @@ public class SIntegralChangeActivity extends BaseActivity implements OnRefreshLi
                 if (JsonHelper.isRequstOK(json, mContext)) {
                     integralChange = JSONObject.parseObject(json, IntegralChange.class);
                     if (integralChange.getStatus() == 1) {
-                        adapter.setList(integralChange.getData());
+                        if (adapter != null) {
+                            adapter.setList(integralChange.getData());
+                        }
                     } else {
                         showToastShort(integralChange.getInfo());
-                        recyclerView.setEmptyView(CemptyView);
+                        if (recyclerView != null) {
+                            recyclerView.setEmptyView(CemptyView);
+                        }
                     }
                 } else {
                     showToastShort(JsonHelper.errorMsg(json));

@@ -7,79 +7,82 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/title_view"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/title_height"
-        android:background="@drawable/gradient"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content"
+        android:background="@drawable/borderbg1dp"
+        android:elevation="@dimen/H3dp"
+        android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/order_count"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:src="@drawable/statistics" />
-
-        <RelativeLayout
-            android:id="@+id/search_rl"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="5"
-            android:background="@drawable/home_serach_bg"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp">
+        <LinearLayout
+            android:id="@+id/title_view"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/title_height"
+            android:background="@drawable/gradient"
+            android:orientation="horizontal">
 
             <ImageView
-                android:id="@+id/search_img"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:layout_centerVertical="true"
-                android:src="@drawable/search_icon" />
-
-            <TextView
-                android:id="@+id/search_tv"
-                android:layout_width="wrap_content"
+                android:id="@+id/order_count"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="8dp"
-                android:layout_toRightOf="@id/search_img"
-                android:text="输入商品名或者商品条码"
-                android:textSize="13sp" />
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:src="@drawable/statistics" />
+
+            <RelativeLayout
+                android:id="@+id/search_rl"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="5"
+                android:background="@drawable/home_serach_bg"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp">
+
+                <ImageView
+                    android:id="@+id/search_img"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/search_icon" />
+
+                <TextView
+                    android:id="@+id/search_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="8dp"
+                    android:layout_toRightOf="@id/search_img"
+                    android:text="输入商品名或者商品条码"
+                    android:textSize="13sp" />
 
 
-            <!--<EditText-->
-            <!--android:id="@+id/search_edit"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:layout_toRightOf="@id/search_tv"-->
-            <!--android:background="#00ffffff"-->
-            <!--android:maxLines="1"-->
-            <!--android:textColor="@color/white" />-->
-        </RelativeLayout>
+                <!--<EditText-->
+                <!--android:id="@+id/search_edit"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_toRightOf="@id/search_tv"-->
+                <!--android:background="#00ffffff"-->
+                <!--android:maxLines="1"-->
+                <!--android:textColor="@color/white" />-->
+            </RelativeLayout>
 
-        <ImageView
-            android:id="@+id/orderRecord"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:src="@drawable/historical" />
+            <ImageView
+                android:id="@+id/orderRecord"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:src="@drawable/historical" />
+        </LinearLayout>
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tabs_tl"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            app:tabIndicatorColor="@color/color_01abff"
+            app:tabSelectedTextColor="@color/color_01abff"
+            app:tabTextColor="@color/black" />
     </LinearLayout>
-
-    <android.support.design.widget.TabLayout
-        android:id="@+id/tabs_tl"
-        android:layout_width="match_parent"
-        android:layout_height="34dp"
-        app:tabIndicatorColor="@color/color_01abff"
-        app:tabSelectedTextColor="@color/color_01abff"
-        app:tabTextColor="@color/black" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/colorf5f5f5" />
 
     <com.yj.shopapp.view.CustomViewPager
         android:id="@+id/viewpager"

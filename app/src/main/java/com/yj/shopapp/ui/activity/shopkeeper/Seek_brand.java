@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -18,6 +17,7 @@ import com.yj.shopapp.config.Contants;
 import com.yj.shopapp.http.HttpHelper;
 import com.yj.shopapp.http.OkHttpResponseHandler;
 import com.yj.shopapp.ubeen.TagGroup;
+import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.ui.activity.adapter.SBrand2Adapter;
 import com.yj.shopapp.ui.activity.base.BaseActivity;
 import com.yj.shopapp.util.CommonUtils;
@@ -74,6 +74,7 @@ public class Seek_brand extends BaseActivity {
                 String bId = groups.get(position).getId();
                 Bundle b = new Bundle();
                 b.putString("bid", bId);
+                b.putString("gname", groups.get(position).getName());
                 CommonUtils.goResult(mContext, b, GOBACKONE);
             }
         });
@@ -94,6 +95,7 @@ public class Seek_brand extends BaseActivity {
         params.put("token", token);
         params.put("industryid", typeid);
         params.put("cid", cid);
+        ShowLog.e("Cid" + cid);
         HttpHelper.getInstance().post(mContext, Contants.PortU.BrandList, params, new OkHttpResponseHandler<String>(mContext) {
             @Override
             public void onBefore() {
@@ -108,7 +110,7 @@ public class Seek_brand extends BaseActivity {
             @Override
             public void onResponse(Request request, String json) {
                 super.onResponse(request, json);
-                Log.e("request", json);
+                ShowLog.e(json);
                 if (JsonHelper.isRequstOK(json, mContext)) {
                     JsonHelper<TagGroup> jsonHelper = new JsonHelper<TagGroup>(TagGroup.class);
                     groups.addAll(jsonHelper.getDatas(json));

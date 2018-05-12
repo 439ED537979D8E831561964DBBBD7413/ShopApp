@@ -21,6 +21,7 @@ import com.yj.shopapp.ui.activity.LoginActivity;
 import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.ui.activity.adapter.HomeViewPager;
 import com.yj.shopapp.ui.activity.base.BaseTabActivity;
+import com.yj.shopapp.ui.activity.upversion.Download;
 import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.JsonHelper;
 import com.yj.shopapp.util.MessageEvent;
@@ -222,6 +223,7 @@ public class SMainTabActivity extends BaseTabActivity implements RadioGroup.OnCh
 
     @Override
     protected void onDestroy() {
+        Download.onDestory();
         CommonUtils.fixInputMethodManagerLeak(SMainTabActivity.this);
         super.onDestroy();
         unbinder.unbind();

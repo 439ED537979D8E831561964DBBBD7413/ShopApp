@@ -27,7 +27,7 @@ import com.yj.shopapp.ui.activity.base.BaseActivity;
 import com.yj.shopapp.ui.activity.shopkeeper.AddressFragment;
 import com.yj.shopapp.ui.activity.shopkeeper.SMainTabActivity;
 import com.yj.shopapp.ui.activity.wholesale.WMainTabActivity;
-import com.yj.shopapp.util.CenterDialog;
+import com.yj.shopapp.dialog.CenterDialog;
 import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.JsonHelper;
 import com.yj.shopapp.util.PreferenceUtils;

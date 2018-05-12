@@ -39,6 +39,15 @@ public class HotIndex implements Parcelable {
     private int unitprice;
     private String itemsum;
     private String msg;
+    private String specialnote;
+
+    public String getSpecialnote() {
+        return specialnote == null ? "" : specialnote;
+    }
+
+    public void setSpecialnote(String specialnote) {
+        this.specialnote = specialnote;
+    }
 
     public String getMsg() {
         return msg == null ? "" : msg;
@@ -167,6 +176,7 @@ public class HotIndex implements Parcelable {
         dest.writeInt(this.unitprice);
         dest.writeString(this.itemsum);
         dest.writeString(this.msg);
+        dest.writeString(this.specialnote);
     }
 
     protected HotIndex(Parcel in) {
@@ -183,6 +193,7 @@ public class HotIndex implements Parcelable {
         this.unitprice = in.readInt();
         this.itemsum = in.readString();
         this.msg = in.readString();
+        this.specialnote = in.readString();
     }
 
     public static final Creator<HotIndex> CREATOR = new Creator<HotIndex>() {

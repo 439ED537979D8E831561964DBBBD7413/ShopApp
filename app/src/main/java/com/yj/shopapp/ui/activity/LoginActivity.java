@@ -113,10 +113,13 @@ public class LoginActivity extends BaseActivity {
     private void scrollToBottom() {
         if (scroll != null) {
             scroll.postDelayed(new Runnable() {
-
                 @Override
                 public void run() {
-                    scroll.smoothScrollTo(0, scroll.getBottom() + SoftKeyInputHidWidget.getStatusBarHeight(LoginActivity.this));
+                    try {
+                        scroll.smoothScrollTo(0, scroll.getBottom() + SoftKeyInputHidWidget.getStatusBarHeight(LoginActivity.this));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }, 100);
         }
@@ -278,7 +281,6 @@ public class LoginActivity extends BaseActivity {
                     PreferenceUtils.setPrefInt(mContext, "isVip", uinfo.getIs_vip());
                     PreferenceUtils.setPrefString(mContext, "CustomerService", uinfo.getCustomer_service_phone());
                     PreferenceUtils.setPrefString(mContext, "address", uinfo.getAddress());
-                    ShowLog.e(uinfo.getAddress());
                     if ("1".equals(uinfo.getUtype())) {
                         getrewardArea(uinfo.getUid(), uinfo.getToken());
                     } else {
