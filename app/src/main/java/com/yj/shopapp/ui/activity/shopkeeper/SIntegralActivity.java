@@ -109,12 +109,7 @@ public class SIntegralActivity extends BaseActivity implements IntegraAdapter.On
                 .process();
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        toolbar.setNavigationOnClickListener(v -> finish());
         superSwipeRefreshLayout.setOnRefreshListener(this);
         kProgressHUD = growProgress(Contants.Progress.LOAD_ING);
         if (PreferenceUtils.getPrefInt(mContext, "isVip", 0) == 0) {
@@ -175,14 +170,16 @@ public class SIntegralActivity extends BaseActivity implements IntegraAdapter.On
                         condition.setText(String.format("(%s)", object.getString("vip_content")));
                         fontLarger(String.format("提现积分 %s 分", object.getString("return_integral")), Presentintegral);
                     }
-                    JSONArray array = object.getJSONArray("everybody_changing");
-                    List<String> mdeta = array.toJavaList(String.class);
-
-                    if (marqueeFactory2.getData() == null) {
-                        marqueeFactory2.setData(mdeta);
+                    if (object.get("everybody_changing") != null && !object.get("everybody_changing").equals("")){
+                        JSONArray array = object.getJSONArray("everybody_changing");
+                        List<String> mdeta = array.toJavaList(String.class);
+                        if (marqueeFactory2.getData() == null) {
+                            marqueeFactory2.setData(mdeta);
+                        }
+                        //MarqueeView设置Factory
+                        hotMv.startFlipping();
                     }
-                    //MarqueeView设置Factory
-                    hotMv.startFlipping();
+
                 }
             }
 

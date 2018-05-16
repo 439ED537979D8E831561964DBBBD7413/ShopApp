@@ -10,8 +10,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSONArray;
@@ -87,13 +85,10 @@ public class GoodsRecord extends BaseActivity implements OnRefreshListener, OnLo
         if (loading != null) {
             loading.showContent();
         }
-        adpter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Bundle bundle = new Bundle();
-                bundle.putParcelable("orderrecord", orderRecords.get(position));
-                CommonUtils.goActivity(GoodsRecord.this, GoodsRecordDatails.class, bundle);
-            }
+        adpter.setOnItemClickListener((parent, view, position, id) -> {
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("orderrecord", orderRecords.get(position));
+            CommonUtils.goActivity(GoodsRecord.this, GoodsRecordDatails.class, bundle);
         });
     }
 
@@ -152,6 +147,9 @@ public class GoodsRecord extends BaseActivity implements OnRefreshListener, OnLo
                 } else {
                     orderRecords.addAll(JSONArray.parseArray(json, OrderRecord.class));
                     adpter.setList(orderRecords);
+                    if (loading != null) {
+                        loading.showContent();
+                    }
                 }
             }
         });

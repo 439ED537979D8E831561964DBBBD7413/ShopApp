@@ -6,11 +6,11 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 
@@ -70,7 +70,7 @@ public class SNewOrderAdpter extends Common2Adapter<NewOrder> {
             holder.getTextView(R.id.orderNo).setText(String.format("订单：%s", order.getOid()));
             holder.getTextView(R.id.orderStatus).setText(Contants.OrderStadus[Integer.parseInt(order.getStatus())]);
             if (order.getCoupon() == 0) {
-                holder.getTextView(R.id.total_num).setText(String.format("共%s件商品", order.getSumnum()));
+                holder.getTextView(R.id.total_num).setText(Html.fromHtml("共" + "<font color=>" + order.getSumnum() + "</font>" + "件商品"));
             } else {
                 holder.getTextView(R.id.total_num).setText(String.format("共%d件商品    已优惠￥%.2f", order.getSumnum(), (double) order.getCoupon()));
             }
@@ -82,55 +82,24 @@ public class SNewOrderAdpter extends Common2Adapter<NewOrder> {
             linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
             recyclerView.setLayoutManager(linearLayoutManager);
             recyclerView.setAdapter(adapter);
-            recyclerView.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    if (event.getAction() == event.ACTION_DOWN) {
-                        scrollX = event.getX();
-                        scrollY = event.getY();
-                    }
-                    if (event.getAction() == event.ACTION_UP) {
-                        if (Math.abs(scrollX - event.getX()) <= 10 && Math.abs(scrollY - event.getY()) <= 10) {
-                            Bundle bundle = new Bundle();
-                            bundle.putString("oid", order.getOid());
-                            CommonUtils.goActivity(context, SOrderDatesActivity.class, bundle);
-                        }
-                    }
-                    return false;
+            recyclerView.setOnTouchListener((v, event) -> {
+                if (event.getAction() == event.ACTION_DOWN) {
+                    scrollX = event.getX();
+                    scrollY = event.getY();
                 }
+                if (event.getAction() == event.ACTION_UP) {
+                    if (Math.abs(scrollX - event.getX()) <= 10 && Math.abs(scrollY - event.getY()) <= 10) {
+                        Bundle bundle = new Bundle();
+                        bundle.putString("oid", order.getOid());
+                        CommonUtils.goActivity(context, SOrderDatesActivity.class, bundle);
+                    }
+                }
+                return false;
             });
             holder.getImageView(R.id.lift_bt).setVisibility(order.getData().size() > 4 ? View.VISIBLE : View.GONE);
             holder.getImageView(R.id.right_bt).setVisibility(order.getData().size() > 4 ? View.VISIBLE : View.GONE);
-            holder.getImageView(R.id.lift_bt).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    recyclerView.smoothScrollToPosition(0);
-                }
-            });
-            holder.getImageView(R.id.right_bt).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    recyclerView.smoothScrollToPosition(order.getData().size() - 1);
-                }
-            });
-//            recyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
-//                @Override
-//                public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
-//                    return true;
-//                }
-//
-//                @Override
-//                public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-//                    Bundle bundle = new Bundle();
-//                    bundle.putString("oid", order.getOid());
-//                    CommonUtils.goActivity(context, SOrderDatesActivity.class, bundle);
-//                }
-//
-//                @Override
-//                public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-//
-//                }
-//            });
+            holder.getImageView(R.id.lift_bt).setOnClickListener(v -> recyclerView.smoothScrollToPosition(0));
+            holder.getImageView(R.id.right_bt).setOnClickListener(v -> recyclerView.smoothScrollToPosition(order.getData().size() - 1));
         }
     }
 

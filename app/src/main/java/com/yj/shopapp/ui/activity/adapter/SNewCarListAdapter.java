@@ -17,7 +17,6 @@ import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
 import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.common.ResizeOptions;
-import com.facebook.imagepipeline.image.ImageInfo;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.yj.shopapp.R;
@@ -97,11 +96,15 @@ public class SNewCarListAdapter extends Common2Adapter<CartList> {
         final CartList cartList = list.get(position);
         holder.getTextView(R.id.shopspec).setText(String.format("规格：%1$s%2$s", cartList.getSpecs(), cartList.getUnit()));
         if (cartList.getSale_status().equals("0")) {
+            holder.getView(R.id.checkBoxlayout).setVisibility(View.GONE);
             holder.getCheckBox(R.id.checkBox).setButtonDrawable(R.drawable.ic_cross_grey);
             holder.getCheckBox(R.id.checkBox).setChecked(false);
+            holder.getTextView(R.id.tv_tips).setText("正在补货中");
         } else {
+            holder.getView(R.id.checkBoxlayout).setVisibility(View.VISIBLE);
             holder.getCheckBox(R.id.checkBox).setButtonDrawable(R.drawable.checkbox_style);
             holder.getCheckBox(R.id.checkBox).setChecked(cartList.isChoosed());
+            holder.getTextView(R.id.tv_tips).setText("");
         }
         holder.getTextView(R.id.shapname).setText(cartList.getName());
         holder.getTextView(R.id.Unit_Price).setText("￥" + CommonUtils.decimal(Double.parseDouble(cartList.getUnitprice())));
@@ -114,30 +117,10 @@ public class SNewCarListAdapter extends Common2Adapter<CartList> {
         } else {
             setImg(holder.getSimpleDraweeView(R.id.itemimag), cartList.getImgurl());
         }
-        holder.getTextView(R.id.add).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                modifyCountInterface.doIncrease(position);
-            }
-        });
-        holder.getTextView(R.id.cutdown).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                modifyCountInterface.doDecrease(position);
-            }
-        });
-        holder.getCheckBox(R.id.checkBox).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                modifyCountInterface.checkGroup(position, !cartList.isChoosed());
-            }
-        });
-        holder.getTextView(R.id.num).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                modifyCountInterface.numClick(position);
-            }
-        });
+        holder.getTextView(R.id.add).setOnClickListener(v -> modifyCountInterface.doIncrease(position));
+        holder.getTextView(R.id.cutdown).setOnClickListener(v -> modifyCountInterface.doDecrease(position));
+        holder.getCheckBox(R.id.checkBox).setOnClickListener(v -> modifyCountInterface.checkGroup(position, !cartList.isChoosed()));
+        holder.getTextView(R.id.num).setOnClickListener(v -> modifyCountInterface.numClick(position));
 
     }
 
@@ -161,7 +144,7 @@ public class SNewCarListAdapter extends Common2Adapter<CartList> {
         mImg.setHierarchy(hierarchy);
         DraweeController controller = Fresco.newDraweeControllerBuilder()
                 .setOldController(mImg.getController())
-                .setControllerListener(new BaseControllerListener<ImageInfo>())
+                .setControllerListener(new BaseControllerListener<>())
                 .setImageRequest(request).build();
         mImg.setController(controller);
     }

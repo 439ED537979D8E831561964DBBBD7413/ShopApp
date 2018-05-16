@@ -1,41 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:fresco="http://schemas.android.com/apk/res-auto"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="@color/white"
-              android:orientation="vertical">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
 
-    <include layout="@layout/titlebar"/>
+    <include layout="@layout/titlebar" />
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/H40dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="10dp">
+            android:paddingLeft="@dimen/H10dp"
+            android:paddingRight="@dimen/H10dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
+                android:layout_marginBottom="@dimen/H10dp"
+                android:layout_marginTop="@dimen/H10dp"
                 android:orientation="horizontal">
 
                 <com.facebook.drawee.view.SimpleDraweeView
                     android:id="@+id/simpleDraweeView"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
+                    android:background="@drawable/border1dp"
                     fresco:placeholderImage="@drawable/load"
-                    fresco:placeholderImageScaleType="focusCrop"/>
+                    fresco:placeholderImageScaleType="focusCrop" />
 
                 <LinearLayout
                     android:id="@+id/changeLy"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:paddingLeft="5dp">
+                    android:padding="5dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -46,31 +52,30 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="成本价:"/>
+                            android:text="成本价:" />
 
                         <TextView
                             android:id="@+id/chengbenpriceTx"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
+                            android:text=""
                             android:textColor="@color/red"
-                            android:textSize="16sp"
-                            android:text=""/>
+                            android:textSize="16sp" />
 
                         <TextView
-
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="批  发  价:"/>
+                            android:text="批  发  价:" />
 
                         <TextView
                             android:id="@+id/goodspriceTx"
                             android:layout_width="0dp"
-                            android:textColor="@color/red"
-                            android:textSize="16sp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text=""/>
+                            android:text=""
+                            android:textColor="@color/red"
+                            android:textSize="16sp" />
 
                     </LinearLayout>
 
@@ -79,30 +84,34 @@
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:orientation="horizontal">
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="起    购:"/>
+                            android:text="起    购:" />
+
                         <TextView
                             android:id="@+id/item_min_num"
                             android:layout_width="0dp"
-                            android:textColor="@color/red"
-                            android:textSize="16sp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text=""/>
+                            android:text=""
+                            android:textColor="@color/red"
+                            android:textSize="16sp" />
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="限        购:"/>
+                            android:text="限        购:" />
+
                         <TextView
                             android:id="@+id/item_max_num"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
+                            android:text=""
                             android:textColor="@color/red"
-                            android:textSize="16sp"
-                            android:text=""/>
+                            android:textSize="16sp" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -110,30 +119,34 @@
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:orientation="horizontal">
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="库    存:"/>
+                            android:text="库    存:" />
+
                         <TextView
                             android:id="@+id/goodinventoryTx"
                             android:layout_width="0dp"
-                            android:textColor="@color/red"
-                            android:textSize="16sp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text=""/>
+                            android:text=""
+                            android:textColor="@color/red"
+                            android:textSize="16sp" />
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="停售库存:"/>
+                            android:text="停售库存:" />
+
                         <TextView
                             android:id="@+id/stopitemsum"
                             android:layout_width="0dp"
-                            android:textColor="@color/red"
-                            android:textSize="16sp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text=""/>
+                            android:text=""
+                            android:textColor="@color/red"
+                            android:textSize="16sp" />
 
                     </LinearLayout>
 
@@ -142,30 +155,34 @@
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:orientation="horizontal">
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="最小值:"/>
+                            android:text="最小值:" />
+
                         <TextView
                             android:id="@+id/min_goodinventoryTx"
                             android:layout_width="0dp"
-                            android:textColor="@color/red"
-                            android:textSize="16sp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text=""/>
+                            android:text=""
+                            android:textColor="@color/red"
+                            android:textSize="16sp" />
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="最  大  值:"/>
+                            android:text="最  大  值:" />
+
                         <TextView
                             android:id="@+id/max_goodinventoryTx"
                             android:layout_width="0dp"
-                            android:textColor="@color/red"
-                            android:textSize="16sp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text=""/>
+                            android:text=""
+                            android:textColor="@color/red"
+                            android:textSize="16sp" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -175,59 +192,136 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/color_f2f2f2"/>
+                android:background="@color/color_f2f2f2" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/H40dp"
+                android:orientation="horizontal">
+
+                <CheckBox
+                    android:id="@+id/add_hotindex"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:button="@drawable/goodsdatails_chexkbox"
+                    android:text="    加入热门推荐"
+                    android:textColor="@color/color333333" />
+
+                <CheckBox
+                    android:id="@+id/add_stopsale"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:button="@drawable/goodsdatails_chexkbox"
+                    android:text="    加入暂停销售"
+                    android:textColor="@color/color333333" />
+
+                <!--<RelativeLayout-->
+                <!--android:id="@+id/choose_re"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content">-->
+
+                <!--<ImageView-->
+                <!--android:id="@+id/choose"-->
+                <!--android:layout_width="20dp"-->
+                <!--android:layout_height="20dp"-->
+                <!--android:layout_centerVertical="true"-->
+                <!--android:src="@drawable/check_false" />-->
+
+                <!--<TextView-->
+                <!--android:id="@+id/shopsnameTv"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_centerVertical="true"-->
+                <!--android:layout_gravity="center_vertical"-->
+                <!--android:layout_toRightOf="@+id/choose"-->
+                <!--android:text="加入新品上市"-->
+                <!--android:textColor="@color/text_color"-->
+                <!--android:textSize="16sp" />-->
+                <!--</RelativeLayout>-->
+
+                <!--<RelativeLayout-->
+                <!--android:id="@+id/choose1_re"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content">-->
+
+                <!--<ImageView-->
+                <!--android:id="@+id/choose1"-->
+                <!--android:layout_width="20dp"-->
+                <!--android:layout_height="20dp"-->
+                <!--android:layout_centerVertical="true"-->
+                <!--android:src="@drawable/check_false" />-->
+
+                <!--<TextView-->
+                <!--android:id="@+id/stopsnameTv"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_centerVertical="true"-->
+                <!--android:layout_gravity="center_vertical"-->
+                <!--android:layout_toRightOf="@+id/choose1"-->
+                <!--android:text="加入暂停销售"-->
+                <!--android:textColor="@color/text_color"-->
+                <!--android:textSize="16sp" />-->
+                <!--</RelativeLayout>-->
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/color_f2f2f2" />
 
             <RelativeLayout
                 android:id="@+id/goodsupplierRL"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:focusable="true"
-                android:focusableInTouchMode="true">
+                android:layout_height="@dimen/H40dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:text="供应商"
-                    android:textColor="@color/text_color"
-                    android:textSize="16sp"/>
+                    android:textColor="@color/color333333" />
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/goodsupplier_Tx"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
-                    android:orientation="horizontal">
+                    android:drawableEnd="@drawable/next_icon"
+                    android:drawablePadding="@dimen/H5dp"
+                    android:drawableRight="@drawable/next_icon"
+                    android:gravity="center_vertical"
+                    android:text=""
+                    android:textColor="@color/color_999999" />
 
-                    <TextView
-                        android:id="@+id/goodsupplier_Tx"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:gravity="center_vertical"
-                        android:text=""
-                        android:textColor="@color/text_color2"
-                        android:textSize="16sp"/>
+                <!--<LinearLayout-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_alignParentRight="true"-->
+                <!--android:orientation="horizontal">-->
 
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:layout_gravity="center_vertical"
-                        android:src="@drawable/next_icon"/>
 
-                </LinearLayout>
+                <!--<ImageView-->
+                <!--android:layout_width="16dp"-->
+                <!--android:layout_height="16dp"-->
+                <!--android:layout_gravity="center_vertical"-->
+                <!--android:src="@drawable/next_icon" />-->
+
+                <!--</LinearLayout>-->
 
             </RelativeLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/color_f2f2f2"/>
+                android:background="@color/color_f2f2f2" />
 
             <RelativeLayout
                 android:id="@+id/goodsclassifyRL"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:focusable="true"
-                android:focusableInTouchMode="true">
+                android:layout_height="@dimen/H40dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -237,45 +331,45 @@
                     android:layout_alignParentTop="true"
                     android:gravity="center_vertical"
                     android:text="商品分类"
-                    android:textColor="@color/text_color"
-                    android:textSize="16sp"/>
+                    android:textColor="@color/color333333" />
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/goodsclassify_Tx"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_alignParentRight="true"
-                    android:orientation="horizontal">
+                    android:drawablePadding="@dimen/H5dp"
+                    android:drawableRight="@drawable/next_icon"
+                    android:gravity="center_vertical"
+                    android:text=""
+                    android:textColor="@color/color_999999" />
 
-                    <TextView
-                        android:id="@+id/goodsclassify_Tx"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:gravity="center_vertical"
-                        android:text=""
-                        android:textColor="@color/text_color2"
-                        android:textSize="16sp"/>
+                <!--<LinearLayout-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_alignParentRight="true"-->
+                <!--android:orientation="horizontal">-->
 
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:layout_gravity="center_vertical"
-                        android:src="@drawable/next_icon"/>
 
-                </LinearLayout>
+                <!--<ImageView-->
+                <!--android:layout_width="16dp"-->
+                <!--android:layout_height="16dp"-->
+                <!--android:layout_gravity="center_vertical"-->
+                <!--android:src="@drawable/next_icon" />-->
+
+                <!--</LinearLayout>-->
 
             </RelativeLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/color_f2f2f2"/>
+                android:background="@color/color_f2f2f2" />
 
             <RelativeLayout
                 android:id="@+id/goodsbrand"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:focusable="true"
-                android:focusableInTouchMode="true">
+                android:layout_height="@dimen/H40dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -285,43 +379,47 @@
                     android:layout_alignParentTop="true"
                     android:gravity="center_vertical"
                     android:text="商品品牌"
-                    android:textColor="@color/text_color"
-                    android:textSize="16sp"/>
+                    android:textColor="@color/color333333" />
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/goodscbrand_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
-                    android:orientation="horizontal">
+                    android:drawableEnd="@drawable/next_icon"
+                    android:drawablePadding="@dimen/H5dp"
+                    android:drawableRight="@drawable/next_icon"
+                    android:gravity="center_vertical"
+                    android:text=""
+                    android:textColor="@color/color_999999" />
 
-                    <TextView
-                        android:id="@+id/goodscbrand_tv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:gravity="center_vertical"
-                        android:text=""
-                        android:textColor="@color/text_color2"
-                        android:textSize="16sp"/>
+                <!--<LinearLayout-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_alignParentRight="true"-->
+                <!--android:orientation="horizontal">-->
 
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:layout_gravity="center_vertical"
-                        android:src="@drawable/next_icon"/>
 
-                </LinearLayout>
+                <!--<ImageView-->
+                <!--android:layout_width="16dp"-->
+                <!--android:layout_height="16dp"-->
+                <!--android:layout_gravity="center_vertical"-->
+                <!--android:src="@drawable/next_icon" />-->
+
+                <!--</LinearLayout>-->
 
             </RelativeLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/color_f2f2f2"/>
+                android:background="@color/color_f2f2f2" />
 
             <RelativeLayout
                 android:id="@+id/goodsnameRL"
                 android:layout_width="match_parent"
-                android:layout_height="48dp">
+                android:layout_height="@dimen/H40dp">
 
                 <TextView
                     android:id="@+id/name_tv"
@@ -330,254 +428,269 @@
                     android:layout_alignParentLeft="true"
                     android:gravity="center_vertical"
                     android:text="商品名称"
-                    android:textColor="@color/text_color"
-                    android:textSize="16sp"/>
+                    android:textColor="@color/color333333" />
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/goodsnane_Tx"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_alignParentRight="true"
-                    android:orientation="horizontal">
+                    android:layout_toEndOf="@id/name_tv"
+                    android:layout_toRightOf="@id/name_tv"
+                    android:drawableEnd="@drawable/next_icon"
+                    android:drawablePadding="@dimen/H5dp"
+                    android:drawableRight="@drawable/next_icon"
+                    android:ellipsize="end"
+                    android:gravity="right|center"
+                    android:singleLine="true"
+                    android:text=""
+                    android:textColor="@color/color_999999" />
 
-                    <TextView
-                        android:id="@+id/goodsnane_Tx"
-                        android:layout_width="250dp"
-                        android:layout_height="match_parent"
-                        android:ellipsize="end"
-                        android:gravity="right|center"
-                        android:singleLine="true"
-                        android:text=""
-                        android:textColor="@color/text_color2"
-                        android:textSize="16sp"/>
+                <!--<LinearLayout-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_alignParentRight="true"-->
+                <!--android:orientation="horizontal">-->
 
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:layout_gravity="center_vertical"
-                        android:src="@drawable/next_icon"/>
 
-                </LinearLayout>
+                <!--<ImageView-->
+                <!--android:layout_width="16dp"-->
+                <!--android:layout_height="16dp"-->
+                <!--android:layout_gravity="center_vertical"-->
+                <!--android:src="@drawable/next_icon" />-->
+
+                <!--</LinearLayout>-->
 
             </RelativeLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/color_f2f2f2"/>
+                android:background="@color/color_f2f2f2" />
 
             <RelativeLayout
                 android:id="@+id/goodsbarRL"
                 android:layout_width="match_parent"
-                android:layout_height="48dp">
+                android:layout_height="@dimen/H40dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:text="商品条码"
-                    android:textColor="@color/text_color"
-                    android:textSize="16sp"/>
+                    android:textColor="@color/color333333" />
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/goodsbar_Tx"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
-                    android:orientation="horizontal">
+                    android:drawableEnd="@drawable/next_icon"
+                    android:drawablePadding="@dimen/H5dp"
+                    android:drawableRight="@drawable/next_icon"
+                    android:gravity="center_vertical"
+                    android:hint="可扫码条码可为空"
+                    android:text=""
+                    android:textColor="@color/color_999999" />
+                <!--<LinearLayout-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_alignParentRight="true"-->
+                <!--android:orientation="horizontal">-->
 
-                    <TextView
-                        android:id="@+id/goodsbar_Tx"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:gravity="center_vertical|right"
-                        android:hint="可扫码条码可为空"
-                        android:text=""
-                        android:textColor="@color/text_color2"
-                        android:textSize="16sp"/>
+                <!---->
 
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:layout_gravity="center_vertical"
-                        android:src="@drawable/next_icon"/>
+                <!--<ImageView-->
+                <!--android:layout_width="16dp"-->
+                <!--android:layout_height="16dp"-->
+                <!--android:layout_gravity="center_vertical"-->
+                <!--android:src="@drawable/next_icon" />-->
 
-                </LinearLayout>
+                <!--</LinearLayout>-->
 
             </RelativeLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/color_f2f2f2"/>
+                android:background="@color/color_f2f2f2" />
 
             <RelativeLayout
                 android:id="@+id/goodscodeRL"
                 android:layout_width="match_parent"
-                android:layout_height="48dp">
+                android:layout_height="@dimen/H40dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:text="货号编码"
-                    android:textColor="@color/text_color"
-                    android:textSize="16sp"/>
+                    android:textColor="@color/color333333" />
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/goodsode_Tx"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_alignParentRight="true"
-                    android:orientation="horizontal">
+                    android:drawablePadding="@dimen/H5dp"
+                    android:drawableRight="@drawable/next_icon"
+                    android:gravity="center_vertical"
+                    android:text=""
+                    android:textColor="@color/color_999999" />
+                <!--<LinearLayout-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_alignParentRight="true"-->
+                <!--android:orientation="horizontal">-->
 
-                    <TextView
-                        android:id="@+id/goodsode_Tx"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:gravity="center_vertical|right"
-                        android:text=""
-                        android:textColor="@color/text_color2"
+                <!---->
 
-                        android:textSize="16sp"/>
+                <!--<ImageView-->
+                <!--android:layout_width="16dp"-->
+                <!--android:layout_height="16dp"-->
+                <!--android:layout_gravity="center_vertical"-->
+                <!--android:src="@drawable/next_icon" />-->
 
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:layout_gravity="center_vertical"
-                        android:src="@drawable/next_icon"/>
-
-                </LinearLayout>
+                <!--</LinearLayout>-->
 
             </RelativeLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/color_f2f2f2"/>
+                android:background="@color/color_f2f2f2" />
 
 
             <RelativeLayout
                 android:id="@+id/goodsunitRL"
                 android:layout_width="match_parent"
-                android:layout_height="48dp">
+                android:layout_height="@dimen/H40dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:text="单位"
-                    android:textColor="@color/text_color"
-                    android:textSize="16sp"/>
+                    android:textColor="@color/color333333" />
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/goodsunit_Tx"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_alignParentRight="true"
-                    android:orientation="horizontal">
+                    android:drawablePadding="@dimen/H5dp"
+                    android:drawableRight="@drawable/next_icon"
+                    android:gravity="center_vertical"
+                    android:text=""
+                    android:textColor="@color/color_999999" />
+                <!--<LinearLayout-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_alignParentRight="true"-->
+                <!--android:orientation="horizontal">-->
 
-                    <TextView
-                        android:id="@+id/goodsunit_Tx"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:gravity="center_vertical"
-                        android:text=""
-                        android:textColor="@color/text_color2"
-                        android:textSize="16sp"/>
+                <!---->
 
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:layout_gravity="center_vertical"
-                        android:src="@drawable/next_icon"/>
+                <!--<ImageView-->
+                <!--android:layout_width="16dp"-->
+                <!--android:layout_height="16dp"-->
+                <!--android:layout_gravity="center_vertical"-->
+                <!--android:src="@drawable/next_icon" />-->
 
-                </LinearLayout>
+                <!--</LinearLayout>-->
 
             </RelativeLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/color_f2f2f2"/>
+                android:background="@color/color_f2f2f2" />
 
             <RelativeLayout
                 android:id="@+id/goodsnormsRL"
                 android:layout_width="match_parent"
-                android:layout_height="48dp">
+                android:layout_height="@dimen/H40dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:text="商品规格"
-                    android:textColor="@color/text_color"
-                    android:textSize="16sp"/>
+                    android:textColor="@color/color333333" />
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/goodsnorms_Tx"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_alignParentRight="true"
-                    android:orientation="horizontal">
+                    android:drawablePadding="@dimen/H5dp"
+                    android:drawableRight="@drawable/next_icon"
+                    android:gravity="center_vertical"
+                    android:text=""
+                    android:textColor="@color/color_999999" />
 
-                    <TextView
-                        android:id="@+id/goodsnorms_Tx"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:gravity="center_vertical"
-                        android:text=""
-                        android:textColor="@color/text_color2"
-                        android:textSize="16sp"/>
+                <!--<LinearLayout-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_alignParentRight="true"-->
+                <!--android:orientation="horizontal">-->
 
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:layout_gravity="center_vertical"
-                        android:src="@drawable/next_icon"/>
 
-                </LinearLayout>
+                <!--<ImageView-->
+                <!--android:layout_width="16dp"-->
+                <!--android:layout_height="16dp"-->
+                <!--android:layout_gravity="center_vertical"-->
+                <!--android:src="@drawable/next_icon" />-->
+
+                <!--</LinearLayout>-->
 
             </RelativeLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/color_f2f2f2"/>
+                android:background="@color/color_f2f2f2" />
 
             <RelativeLayout
                 android:id="@+id/goodsExplainRL"
                 android:layout_width="match_parent"
-                android:layout_height="48dp">
+                android:layout_height="@dimen/H40dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:text="商品提示"
-                    android:textColor="@color/text_color"
-                    android:textSize="16sp"/>
+                    android:textColor="@color/color333333" />
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/goodExplain_Tx"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_alignParentRight="true"
-                    android:orientation="horizontal">
+                    android:drawablePadding="@dimen/H5dp"
+                    android:drawableRight="@drawable/next_icon"
+                    android:ellipsize="end"
+                    android:gravity="center_vertical"
+                    android:maxEms="8"
+                    android:singleLine="true"
+                    android:text=""
+                    android:textColor="@color/color_999999" />
+                <!--<LinearLayout-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_alignParentRight="true"-->
+                <!--android:orientation="horizontal">-->
 
-                    <TextView
-                        android:id="@+id/goodExplain_Tx"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:ellipsize="end"
-                        android:gravity="center_vertical"
-                        android:maxEms="8"
-                        android:singleLine="true"
-                        android:text=""
-                        android:textColor="@color/text_color2"
-                        android:textSize="16sp"/>
+                <!---->
 
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:layout_gravity="center_vertical"
-                        android:src="@drawable/next_icon"/>
+                <!--<ImageView-->
+                <!--android:layout_width="16dp"-->
+                <!--android:layout_height="16dp"-->
+                <!--android:layout_gravity="center_vertical"-->
+                <!--android:src="@drawable/next_icon" />-->
 
-                </LinearLayout>
+                <!--</LinearLayout>-->
 
 
             </RelativeLayout>
@@ -585,188 +698,107 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/color_f2f2f2"/>
+                android:background="@color/color_f2f2f2" />
 
             <RelativeLayout
                 android:id="@+id/goodsAddressRL"
                 android:layout_width="match_parent"
-                android:layout_height="48dp">
+                android:layout_height="@dimen/H40dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:text="商品位置"
-                    android:textColor="@color/text_color"
-                    android:textSize="16sp"/>
+                    android:textColor="@color/color333333" />
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/goodAddress_Tx"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_alignParentRight="true"
-                    android:orientation="horizontal">
+                    android:drawablePadding="@dimen/H5dp"
+                    android:drawableRight="@drawable/next_icon"
+                    android:ellipsize="end"
+                    android:gravity="center_vertical"
+                    android:maxEms="8"
+                    android:singleLine="true"
+                    android:text=""
+                    android:textColor="@color/color_999999" />
+                <!--<LinearLayout-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_alignParentRight="true"-->
+                <!--android:orientation="horizontal">-->
 
-                    <TextView
-                        android:id="@+id/goodAddress_Tx"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:ellipsize="end"
-                        android:gravity="center_vertical"
-                        android:maxEms="8"
-                        android:singleLine="true"
-                        android:text=""
-                        android:textColor="@color/text_color2"
-                        android:textSize="16sp"/>
+                <!---->
 
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:layout_gravity="center_vertical"
-                        android:src="@drawable/next_icon"/>
+                <!--<ImageView-->
+                <!--android:layout_width="16dp"-->
+                <!--android:layout_height="16dp"-->
+                <!--android:layout_gravity="center_vertical"-->
+                <!--android:src="@drawable/next_icon" />-->
 
-                </LinearLayout>
+                <!--</LinearLayout>-->
 
             </RelativeLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/color_f2f2f2"/>
+                android:background="@color/color_f2f2f2" />
 
             <RelativeLayout
                 android:id="@+id/goodsdetailRL"
                 android:layout_width="match_parent"
-
-                android:layout_height="48dp">
+                android:layout_height="150dp"
+                android:layout_marginBottom="50dp">
 
                 <TextView
+                    android:id="@+id/tv_shopintroduce"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="@dimen/H40dp"
                     android:gravity="center_vertical"
                     android:text="商品介绍"
-                    android:textColor="@color/text_color"
-                    android:textSize="16sp"/>
+                    android:textColor="@color/color333333" />
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentRight="true"
-                    android:orientation="horizontal">
-
-
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:layout_gravity="center_vertical"
-                        android:src="@drawable/next_icon"/>
-
-                </LinearLayout>
-
-            </RelativeLayout>
-
-            <EditText
-                android:id="@+id/goodsdetaail_Tx"
-                android:layout_width="fill_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:text=""
-                android:textColor="@color/text_color2"
-                android:textSize="16sp"/>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/color_f2f2f2"/>
-
-            <RelativeLayout
-                android:id="@+id/choose_re"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:paddingBottom="@dimen/pandingtop"
-                android:paddingRight="@dimen/pandingtop"
-                android:paddingTop="@dimen/pandingtop">
-
-                <ImageView
-                    android:id="@+id/choose"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_centerVertical="true"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginTop="8dp"
-                    android:src="@drawable/check_false"/>
-
-                <TextView
-                    android:id="@+id/shopsnameTv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_gravity="center_vertical"
-                    android:layout_toRightOf="@+id/choose"
-                    android:text="加入新品上市"
-                    android:textColor="@color/text_color"
-                    android:textSize="16sp"/>
-            </RelativeLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/color_f2f2f2"/>
-
-            <RelativeLayout
-                android:id="@+id/choose1_re"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:paddingBottom="@dimen/pandingtop"
-                android:paddingRight="@dimen/pandingtop"
-                android:paddingTop="@dimen/pandingtop">
-
-                <ImageView
-                    android:id="@+id/choose1"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_centerVertical="true"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginTop="8dp"
-                    android:src="@drawable/check_false"/>
-
-                <TextView
-                    android:id="@+id/stopsnameTv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_gravity="center_vertical"
-                    android:layout_toRightOf="@+id/choose1"
-                    android:text="加入暂停销售"
-                    android:textColor="@color/text_color"
-                    android:textSize="16sp"/>
-            </RelativeLayout>
-
-            <android.support.v7.widget.CardView
-                android:id="@+id/submit"
-                style="@style/Widget.Button.CardItem2"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_margin="20dp"
-                android:background="@color/color_FFA500">
-
-                <TextView
+                <RelativeLayout
                     android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:padding="10dp"
-                    android:text="确认提交"
-                    android:textColor="@android:color/white"
-                    android:textSize="18sp"/>
-            </android.support.v7.widget.CardView>
+                    android:layout_height="match_parent"
+                    android:layout_margin="@dimen/H10dp"
+                    android:layout_toRightOf="@id/tv_shopintroduce"
+                    android:background="@drawable/border1dp">
 
+                    <TextView
+                        android:id="@+id/goodsdetaail_Tx"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:hint=""
+                        android:padding="@dimen/H5dp"
+                        android:text=""
+                        android:textColor="@color/color_999999"
+                        android:textSize="14sp" />
+                </RelativeLayout>
 
+            </RelativeLayout>
         </LinearLayout>
 
     </ScrollView>
 
-</LinearLayout>
+    <android.support.v7.widget.CardView
+        android:id="@+id/submit"
+        style="@style/Widget.Button.CardItem2"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="确认提交"
+            android:textColor="@android:color/white"
+            android:textSize="16sp" />
+    </android.support.v7.widget.CardView>
+</RelativeLayout>

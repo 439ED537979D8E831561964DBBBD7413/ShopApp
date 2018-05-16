@@ -1,5 +1,6 @@
 package com.yj.shopapp.util;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 
@@ -32,6 +33,7 @@ public class JsonHelper<T> {
         return code;
     }
 
+    @SuppressLint("Assert")
     public static boolean isRequstOK(String json, Context context) {
 
         if (StringHelper.isEmpty(json)) {

@@ -130,12 +130,9 @@ public class BuGoodDetails extends BaseActivity {
                         dialog = new MaterialDialog.Builder(mContext).title("限量抢购须知").content(ruleText).positiveText("好的，我知道了")
                                 .cancelable(false).show();
                         final TextView tv = dialog.getActionButton(DialogAction.POSITIVE);
-                        tv.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                if (isok) {
-                                    dialog.dismiss();
-                                }
+                        tv.setOnClickListener(v -> {
+                            if (isok) {
+                                dialog.dismiss();
                             }
                         });
                         CountDownTimer countDownTimer = new CountDownTimer(15000, 1000) {

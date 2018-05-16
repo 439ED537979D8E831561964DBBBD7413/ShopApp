@@ -20,21 +20,20 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.squareup.okhttp.Request;
 import com.yj.shopapp.R;
 import com.yj.shopapp.config.Contants;
+import com.yj.shopapp.dialog.BottomDialog;
+import com.yj.shopapp.dialog.CenterDialog;
+import com.yj.shopapp.dialog.CustomPopDialog2;
 import com.yj.shopapp.http.HttpHelper;
 import com.yj.shopapp.http.OkHttpResponseHandler;
 import com.yj.shopapp.ubeen.Address;
 import com.yj.shopapp.ui.activity.ImgUtil.NewBaseFragment;
 import com.yj.shopapp.ui.activity.LoginActivity;
 import com.yj.shopapp.ui.activity.ShowLog;
-import com.yj.shopapp.dialog.BottomDialog;
-import com.yj.shopapp.dialog.CenterDialog;
 import com.yj.shopapp.util.CommonUtils;
-import com.yj.shopapp.dialog.CustomPopDialog2;
 import com.yj.shopapp.util.JsonHelper;
 import com.yj.shopapp.util.NetUtils;
 import com.yj.shopapp.util.PreferenceUtils;
@@ -93,7 +92,6 @@ public class SMyInfoActivity extends NewBaseFragment implements CenterDialog.OnC
     private static final int REQUEST_CODE = 1;
     private List<Address> notes = new ArrayList<Address>();
     private String cameraPath;
-    String pw = "";
     private final int REQUEST_CODEC = 0x1001;
 
     @Override
@@ -213,12 +211,7 @@ public class SMyInfoActivity extends NewBaseFragment implements CenterDialog.OnC
     public void onClickExpand() {
         CustomPopDialog2 dialog2 = new CustomPopDialog2(mActivity);
         dialog2.setCanceledOnTouchOutside(true);
-        dialog2.setLongClick(new CustomPopDialog2.onLongClick() {
-            @Override
-            public void onLClick(View view) {
-                bottomDialog.show();
-            }
-        });
+        dialog2.setLongClick(view -> bottomDialog.show());
         dialog2.show();
     }
 
@@ -292,23 +285,20 @@ public class SMyInfoActivity extends NewBaseFragment implements CenterDialog.OnC
             case R.id.call_phone:
                 new MaterialDialog.Builder(mActivity).title("提示").positiveText("拨打").negativeText("取消")
                         .content("是否要拨打客服电话?")
-                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                //拨打电话
-                                if (Build.VERSION.SDK_INT >= 23) {
-                                    //判断有没有拨打电话权限
-                                    if (PermissionChecker.checkSelfPermission(mActivity, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                                        //请求拨打电话权限
-                                        requestPermissions(new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CODEC);
-
-                                    } else {
-                                        callPhone();
-                                    }
+                        .onPositive((dialog, which) -> {
+                            //拨打电话
+                            if (Build.VERSION.SDK_INT >= 23) {
+                                //判断有没有拨打电话权限
+                                if (PermissionChecker.checkSelfPermission(mActivity, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                                    //请求拨打电话权限
+                                    requestPermissions(new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CODEC);
 
                                 } else {
                                     callPhone();
                                 }
+
+                            } else {
+                                callPhone();
                             }
                         }).show();
                 break;

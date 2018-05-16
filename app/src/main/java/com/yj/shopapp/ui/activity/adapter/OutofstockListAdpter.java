@@ -14,7 +14,7 @@ import com.yj.shopapp.ui.activity.ImgUtil.ViewHolder;
  *
  * @author LK
  */
-public class OutofstockListAdpter extends Common2Adapter{
+public class OutofstockListAdpter extends Common2Adapter {
     public OutofstockListAdpter(Context context) {
         super(context);
     }
@@ -26,13 +26,13 @@ public class OutofstockListAdpter extends Common2Adapter{
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        if (list.get(position)instanceof OrderPreview.CancelBean){
+        if (list.get(position) instanceof OrderPreview.CancelBean) {
             OrderPreview.CancelBean bean = (OrderPreview.CancelBean) list.get(position);
             holder.getTextView(R.id.shopname).setText(bean.getName());
             holder.getTextView(R.id.shopnum).setText(String.format("条码：%s", bean.getItemid()));
             holder.getTextView(R.id.shopCount).setText(String.format("提交数量：%1$s%2$s", bean.getOrdernum(), bean.getUnit()));
             holder.getTextView(R.id.outofstock).setText(Html.fromHtml("缺货：" + "<font color=red>" + bean.getNum() + bean.getUnit() + "</font>"));
-        }else {
+        } else {
             OrderDatesBean.OosdataBean oosdataBean = (OrderDatesBean.OosdataBean) list.get(position);
             holder.getTextView(R.id.shopname).setText(oosdataBean.getName());
             holder.getTextView(R.id.shopnum).setText(String.format("条码：%s", oosdataBean.getItemnumber()));

@@ -9,7 +9,6 @@ import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -133,10 +132,10 @@ public class WGoodsDetailActivity extends BaseActivity {
     private MaterialEditText elementScale;
     private MaterialEditText maxelementScale;
     private MaterialEditText minelementScale;
-    @BindView(R.id.choose)
-    ImageView choose;
-    @BindView(R.id.choose1)
-    ImageView choose1;
+//    @BindView(R.id.choose)
+//    ImageView choose;
+//    @BindView(R.id.choose1)
+//    ImageView choose1;
     private String agencyname;
     private String agencyId;
     public static final int TYPE = 10010;
@@ -178,7 +177,6 @@ public class WGoodsDetailActivity extends BaseActivity {
         title.setText("商品详情");
         idRightBtu.setText("加入促销");
         setResult(0);
-        goodsdetailRL.setFocusable(true);
         itemnoid = getIntent().getExtras().getString("itemnoid");
         id = getIntent().getExtras().getString("id");
         uid = PreferenceUtils.getPrefString(mContext, Contants.Preference.UID, "");
@@ -235,21 +233,21 @@ public class WGoodsDetailActivity extends BaseActivity {
                     itemMaxNum.setText(lookitem.getMaxnum());
                     stopitemsum.setText(lookitem.getStopitemsum());
                     goodAddressTx.setText(lookitem.getLocalhostname());
-                    if (lookitem.getSale_status().equals("0")) {
-                        choose1.setImageDrawable(mContext.getResources().getDrawable(R.drawable.check_true));
-                        isstopsels = 0;
-                    } else {
-                        choose1.setImageDrawable(mContext.getResources().getDrawable(R.drawable.check_false));
-                        isstopsels = 1;
-                    }
-
-                    if (Integer.parseInt(lookitem.getIs_new()) == 1) {
-                        choose.setImageDrawable(mContext.getResources().getDrawable(R.drawable.check_true));
-                        ischooseNewGood = 1;
-                    } else {
-                        choose.setImageDrawable(mContext.getResources().getDrawable(R.drawable.check_false));
-                        ischooseNewGood = 0;
-                    }
+//                    if (lookitem.getSale_status().equals("0")) {
+//                        choose1.setImageDrawable(mContext.getResources().getDrawable(R.drawable.check_true));
+//                        isstopsels = 0;
+//                    } else {
+//                        choose1.setImageDrawable(mContext.getResources().getDrawable(R.drawable.check_false));
+//                        isstopsels = 1;
+//                    }
+//
+//                    if (Integer.parseInt(lookitem.getIs_new()) == 1) {
+//                        choose.setImageDrawable(mContext.getResources().getDrawable(R.drawable.check_true));
+//                        ischooseNewGood = 1;
+//                    } else {
+//                        choose.setImageDrawable(mContext.getResources().getDrawable(R.drawable.check_false));
+//                        ischooseNewGood = 0;
+//                    }
                     goodsdetaailTx.setText(lookitem.getBrochure().replace("<br/>", ""));
 
                     imageUri = Uri.parse(lookitem.getImgurl());
@@ -554,28 +552,28 @@ public class WGoodsDetailActivity extends BaseActivity {
 //        setDialogInput(goodspriceTx,goodinventoryTx);
 //    }
 
-    @OnClick(R.id.choose_re)
-    public void chooseNewGood() {
-        if (ischooseNewGood == 0) {
-            choose.setImageDrawable(mContext.getResources().getDrawable(R.drawable.check_true));
-            ischooseNewGood = 1;
-        } else {
-            choose.setImageDrawable(mContext.getResources().getDrawable(R.drawable.check_false));
-            ischooseNewGood = 0;
-        }
-    }
-
-    @OnClick(R.id.choose1_re)
-    public void stopsals() {
-        if (isstopsels == 1) {
-            choose1.setImageDrawable(mContext.getResources().getDrawable(R.drawable.check_true));
-            isstopsels = 0;
-        } else {
-            choose1.setImageDrawable(mContext.getResources().getDrawable(R.drawable.check_false));
-            isstopsels = 1;
-
-        }
-    }
+//    @OnClick(R.id.choose_re)
+//    public void chooseNewGood() {
+//        if (ischooseNewGood == 0) {
+//            choose.setImageDrawable(mContext.getResources().getDrawable(R.drawable.check_true));
+//            ischooseNewGood = 1;
+//        } else {
+//            choose.setImageDrawable(mContext.getResources().getDrawable(R.drawable.check_false));
+//            ischooseNewGood = 0;
+//        }
+//    }
+//
+//    @OnClick(R.id.choose1_re)
+//    public void stopsals() {
+//        if (isstopsels == 1) {
+//            choose1.setImageDrawable(mContext.getResources().getDrawable(R.drawable.check_true));
+//            isstopsels = 0;
+//        } else {
+//            choose1.setImageDrawable(mContext.getResources().getDrawable(R.drawable.check_false));
+//            isstopsels = 1;
+//
+//        }
+//    }
 
     @OnClick(R.id.goodspriceTx)
     public void onClickSpriceLay() { //修改批发价

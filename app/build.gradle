@@ -22,8 +22,8 @@ android {
         applicationId "com.yj.shopapp"
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 29
-        versionName "v.8.3.0"
+        versionCode 30
+        versionName "v.8.3.1"
         multiDexEnabled true
         ndk {
             // 设置支持的SO库架构
@@ -31,6 +31,11 @@ android {
         }
         signingConfig signingConfigs.config
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     buildTypes {
         debug {
             minifyEnabled false
@@ -60,13 +65,9 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:ju' + 'nit:4.12'
-    //    compile('com.github.afollestad.material-dialogs:core:0.8.5.4@aar') {
-    //        transitive = true
-    //    }
     compile('com.github.afollestad.material-dialogs:core:0.8.5.5@aar') { transitive = true }
     compile files('libs/afinal_0.5_bin.jar')
     compile files('libs/zxing.jar')
-    compile project(':slideDateTimePicker')
     compile files('libs/Msc.jar')
     compile files('libs/httpmime-4.1.2.jar')
     compile files('libs/okhttp-2.5.0.jar')

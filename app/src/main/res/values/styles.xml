@@ -44,8 +44,6 @@
     <style name="Widget.Button.CardItem" parent="">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <!--<item name="android:padding">@dimen/note_spacing</item>-->
-        <item name="android:foreground">?selectableItemBackground</item>
         <item name="android:clickable">true</item>
         <item name="cardBackgroundColor">@android:color/white</item>
         <item name="cardCornerRadius">1dip</item>
@@ -54,10 +52,8 @@
     <style name="Widget.Button.CardItem2" parent="">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <!--<item name="android:padding">@dimen/note_spacing</item>-->
-        <item name="android:foreground">?selectableItemBackground</item>
         <item name="android:clickable">true</item>
-        <item name="cardBackgroundColor">@color/color_FFA500</item>
+        <item name="cardBackgroundColor">@color/color_01ABFF</item>
         <item name="cardCornerRadius">1dip</item>
     </style>
 

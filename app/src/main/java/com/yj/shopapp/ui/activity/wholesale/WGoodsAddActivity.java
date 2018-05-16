@@ -8,8 +8,9 @@ import android.support.v7.widget.CardView;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -24,11 +25,13 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 import com.squareup.okhttp.Request;
 import com.yj.shopapp.R;
 import com.yj.shopapp.config.Contants;
+import com.yj.shopapp.dialog.CenterDialog;
 import com.yj.shopapp.http.HttpHelper;
 import com.yj.shopapp.http.OkHttpResponseHandler;
 import com.yj.shopapp.ubeen.GoodAddress;
 import com.yj.shopapp.ubeen.UserGroup;
 import com.yj.shopapp.ui.activity.ChooseActivity;
+import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.ui.activity.base.BaseActivity;
 import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.ImgUtils;
@@ -57,7 +60,7 @@ import butterknife.OnClick;
 /**
  * Created by jm on 2016/4/26.
  */
-public class WGoodsAddActivity extends BaseActivity {
+public class WGoodsAddActivity extends BaseActivity implements CompoundButton.OnCheckedChangeListener {
     @BindView(R.id.goodExplain_Tx)
     TextView goodExplain_Tx;
     @BindView(R.id.goodsode_Tx)
@@ -70,7 +73,6 @@ public class WGoodsAddActivity extends BaseActivity {
     TextView max_goodinventoryTx;
     @BindView(R.id.id_right_btu)
     TextView idRightBtu;
-
     @BindView(R.id.simpleDraweeView)
     SimpleDraweeView simpleDraweeView;
     @BindView(R.id.goodsclassify_Tx)
@@ -93,7 +95,6 @@ public class WGoodsAddActivity extends BaseActivity {
     TextView goodsnormsTx;
     @BindView(R.id.goodsnormsRL)
     RelativeLayout goodsnormsRL;
-
     @BindView(R.id.goodsdetailRL)
     RelativeLayout goodsdetailRL;
     @BindView(R.id.submit)
@@ -116,10 +117,6 @@ public class WGoodsAddActivity extends BaseActivity {
     RelativeLayout goodscodeRL;
     @BindView(R.id.goodAddress_Tx)
     TextView goodAddressTx;
-    @BindView(R.id.stopsnameTv)
-    TextView stopsnameTv;
-    @BindView(R.id.choose1_re)
-    RelativeLayout choose1Re;
     @BindView(R.id.goodscbrand_tv)
     TextView goodscbrandTv;
     @BindView(R.id.item_min_num)
@@ -128,37 +125,41 @@ public class WGoodsAddActivity extends BaseActivity {
     TextView itemMaxNum;
     @BindView(R.id.stopitemsum)
     TextView stopitemsum;
-    private MaterialEditText elementScale;
-    @BindView(R.id.choose)
-    ImageView choose;
-    @BindView(R.id.choose1)
-    ImageView choose1;
-    private String agencyname;
-    private String agencyId;
     @BindView(R.id.goodsupplier_Tx)
     TextView goodsupplier_Tx;
-    int isstopsels = 1;//如果选中=1不选中=0
-    boolean isshow = false;
-
-    String uid;
-    String token;
-    GoodAddress.ChildrenBean bean;
-    String chooseimgid;
-    String chooseUrl;
-
-    String Typeid;
-    String Unitid;
-    String Imgid;
-    String Itemnoid;
-    int ischooseNewGood = 0;//如果选中==1不选中==0
-
-    List<Itemunit> itemunitList = new ArrayList<>();
-    List<Itemtype> itemtypeList = new ArrayList<>(); //商品分类
-    List<UserGroup> userGroupList = new ArrayList<>();
-    List<String> priceArray = new ArrayList<>();
-
-    KProgressHUD progressDialog = null;
+    @BindView(R.id.add_hotindex)
+    CheckBox addHotindex;
+    @BindView(R.id.add_stopsale)
+    CheckBox addStopsale;
+    private String agencyname;
+    private String agencyId;
+    private int isstopsels = 1;//如果选中=1不选中=0
+    private boolean isshow = false;
+    private MaterialEditText elementScale;
+    private GoodAddress.ChildrenBean bean;
+    private String chooseimgid;
+    private String chooseUrl;
+    private String Typeid;
+    private String Unitid;
+    private String Imgid;
+    private String Itemnoid;
+    private int ischooseNewGood = 0;//如果选中==1不选中==0
+    private List<Itemunit> itemunitList = new ArrayList<>();
+    private List<Itemtype> itemtypeList = new ArrayList<>(); //商品分类
+    private List<UserGroup> userGroupList = new ArrayList<>();
+    private List<String> priceArray = new ArrayList<>();
+    private KProgressHUD progressDialog = null;
     private String brandId;
+    private String brangName;
+    private CenterDialog dialog;
+    private EditText dialog_edit;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
+    }
+
     @Override
     protected int getLayoutId() {
         return R.layout.wactivity_goodsdetail;
@@ -166,24 +167,26 @@ public class WGoodsAddActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-        EventBus.getDefault().register(mContext);
         title.setText("添加商品");
         goodsdetailRL.setFocusable(true);
         goodsdetaailTx.setHint("请输入商品介绍");
-        uid = PreferenceUtils.getPrefString(mContext, Contants.Preference.UID, "");
-        token = PreferenceUtils.getPrefString(mContext, Contants.Preference.TOKEN, "");
         isshow = getIntent().getExtras().getBoolean("isshow");
         Itemnoid = getIntent().getExtras().getString("itemnoid");
         goodsbarTx.setText(Itemnoid);
         progressDialog = growProgress(Contants.Progress.LOAD_ING);
-
-        reportUnits();
+        addHotindex.setOnCheckedChangeListener(this);
+        addStopsale.setOnCheckedChangeListener(this);
+        if (isNetWork(mContext)) {
+            reportUnits();
+            reportType();
+        }
+        dialog = new CenterDialog(mContext, R.layout.dialog_barcodeview, new int[]{R.id.dialog_close, R.id.dialog_cancel, R.id.dialog_sure}, 0.8);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        EventBus.getDefault().unregister(mContext);
+        EventBus.getDefault().unregister(this);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -192,21 +195,19 @@ public class WGoodsAddActivity extends BaseActivity {
         goodAddressTx.setText(bean.getName());
     }
 
+
     /**
      * 加载单位
      */
     public void reportUnits() {
-
         Map<String, String> params = new HashMap<String, String>();
         params.put("uid", uid);
         params.put("token", token);
-
         HttpHelper.getInstance().post(mContext, Contants.PortA.ITEMUNIT, params, new OkHttpResponseHandler<String>(mContext) {
 
             @Override
             public void onAfter() {
                 super.onAfter();
-                reportType();
                 progressDialog.dismiss();
             }
 
@@ -219,8 +220,7 @@ public class WGoodsAddActivity extends BaseActivity {
             @Override
             public void onResponse(Request request, String json) {
                 super.onResponse(request, json);
-                System.out.println("response" + json);
-
+                ShowLog.e(json);
                 if (JsonHelper.isRequstOK(json, mContext)) {
                     JsonHelper<Itemunit> jsonHelper = new JsonHelper<Itemunit>(Itemunit.class);
                     itemunitList = jsonHelper.getDatas(json);
@@ -259,7 +259,7 @@ public class WGoodsAddActivity extends BaseActivity {
             @Override
             public void onResponse(Request request, String json) {
                 super.onResponse(request, json);
-                System.out.println("response" + json);
+                ShowLog.e(json);
 
                 if (JsonHelper.isRequstOK(json, mContext)) {
                     if (Ation.equals("getGoodsInfo")) {
@@ -270,11 +270,9 @@ public class WGoodsAddActivity extends BaseActivity {
                         goodsbarTx.setText(wGoodsAdd.getItemnoid());
                         goodsnormsTx.setText(wGoodsAdd.getSpecs());
                         goodsdetaailTx.setText(wGoodsAdd.getBrochure());
-
                         Uri imageUri = Uri.parse(wGoodsAdd.getImgurl());
-                        //开始下载
+                        //开始下
                         simpleDraweeView.setImageURI(imageUri);
-
                         Imgid = wGoodsAdd.getImgid();
                     } else if (Ation.equals("goodsIsExist")) {
                         Toast.makeText(WGoodsAddActivity.this, "商品已经存在了！", Toast.LENGTH_SHORT).show();
@@ -305,8 +303,6 @@ public class WGoodsAddActivity extends BaseActivity {
         Map<String, String> params = new HashMap<String, String>();
         params.put("uid", uid);
         params.put("token", token);
-
-
         HttpHelper.getInstance().post(mContext, Contants.PortA.ITEMTYPE, params, new OkHttpResponseHandler<String>(mContext) {
 
             @Override
@@ -324,7 +320,7 @@ public class WGoodsAddActivity extends BaseActivity {
             @Override
             public void onResponse(Request request, String json) {
                 super.onResponse(request, json);
-                System.out.println("response" + json);
+                ShowLog.e(json);
 
                 if (JsonHelper.isRequstOK(json, mContext)) {
 
@@ -414,7 +410,7 @@ public class WGoodsAddActivity extends BaseActivity {
             @Override
             public void onResponse(Request request, String json) {
                 super.onResponse(request, json);
-                System.out.println("response" + json);
+                ShowLog.e(json);
 
                 if (JsonHelper.isRequstOK(json, mContext)) {
                     if (!isshow) {
@@ -479,10 +475,9 @@ public class WGoodsAddActivity extends BaseActivity {
             @Override
             public void onResponse(Request request, String json) {
                 super.onResponse(request, json);
-                System.out.println("response" + json);
+                ShowLog.e(json);
 
                 if (JsonHelper.isRequstOK(json, mContext)) {
-
                     try {
                         JSONObject jsonObject = new JSONObject(json);
                         Imgid = jsonObject.getString("imgid");
@@ -505,134 +500,193 @@ public class WGoodsAddActivity extends BaseActivity {
         });
     }
 
-    @OnClick(R.id.choose_re)
-    public void chooseNewGood() {
-        if (ischooseNewGood == 0) {
-            choose.setImageDrawable(mContext.getResources().getDrawable(R.drawable.check_true));
-            ischooseNewGood = 1;
-
-        } else {
-            choose.setImageDrawable(mContext.getResources().getDrawable(R.drawable.check_false));
-            ischooseNewGood = 0;
-
+    /**
+     * 添加到热门推荐
+     * 添加到暂停销售
+     *
+     * @param buttonView
+     * @param isChecked
+     */
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        switch (buttonView.getId()) {
+            case R.id.add_hotindex:
+                if (isChecked) {
+                    ischooseNewGood = 1;
+                } else {
+                    ischooseNewGood = 0;
+                }
+                break;
+            case R.id.add_stopsale:
+                if (isChecked) {
+                    isstopsels = 1;
+                } else {
+                    isstopsels = 0;
+                }
+                break;
         }
     }
 
-    @OnClick(R.id.choose1_re)
-    public void stopsals() {
-        if (isstopsels == 1) {
-            choose1.setImageDrawable(mContext.getResources().getDrawable(R.drawable.check_true));
-            isstopsels = 0;
+    @OnClick({R.id.goodsupplierRL, R.id.goodsExplainRL, R.id.changeLy, R.id.goodspriceTx, R.id.goodinventoryTx, R.id.simpleDraweeView, R.id.goodscodeRL, R.id.goodsunitRL, R.id.goodsclassifyRL, R.id.goodsnameRL
+            , R.id.goodsbarRL, R.id.goodsnormsRL, R.id.submit, R.id.goodsAddressRL, R.id.goodsbrand, R.id.goodsdetailRL})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            //供应商
+            case R.id.goodsupplierRL:
+                Bundle bundle = new Bundle();
+                bundle.putString("choosetype", "0");
+                CommonUtils.goActivityForResult(mContext, WAgencyActivity.class, bundle, 10012, false);
+                break;
+            //商品提示
+            case R.id.goodsExplainRL:
+                showDialogToastM("商品特别说明", "输入说明", goodExplain_Tx);
+                break;
+            //修改价格库存
+            case R.id.changeLy:
+                Bundle bundle1 = new Bundle();
+                bundle1.putString("costPrice", chengbenpriceTx.getText().toString()); //成本价
+                bundle1.putString("wholesalePrice", goodspriceTx.getText().toString());//批发价
+                bundle1.putString("inventory", goodinventoryTx.getText().toString()); //库存
+                bundle1.putString("max", max_goodinventoryTx.getText().toString()); //最大库存
+                bundle1.putString("min", min_goodinventoryTx.getText().toString()); //最小库存
+                bundle1.putString("minnum", itemMinNum.getText().toString());
+                bundle1.putString("maxnum", itemMaxNum.getText().toString());
+                bundle1.putString("stopnum", stopitemsum.getText().toString());
+                CommonUtils.goActivityForResult(mContext, WPriceEditActivity.class, bundle1, WPriceEditActivity.EDIT_CODE, false);
+                break;
+            //修改批发价
+            case R.id.goodspriceTx:
+                setDialogInputSprice(goodspriceTx);
+                break;
+            //修改库存
+            case R.id.goodinventoryTx:
+                setDialogInput(goodinventoryTx);
+                break;
+            //修改商品图片
+            case R.id.simpleDraweeView:
+                Bundle bundle2 = new Bundle();
+                bundle2.putString("GoodsNumber", goodsbarTx.getText().toString());
+                CommonUtils.goActivityForResult(mContext, ChooseActivity.class, bundle2, 0, false);
+                break;
+            //修改货号编码
+            case R.id.goodscodeRL:
+                //showDialogToastM("请输入货号编码", "输入货号编码", goodsode_Tx);
+                showDialogs(2, "货号编码", "请输入货号编码", "取消");
+                break;
+            //修改单位
+            case R.id.goodsunitRL:
+                String goodstr = goodsunitTx.getText().toString();
 
-        } else {
-            choose1.setImageDrawable(mContext.getResources().getDrawable(R.drawable.check_false));
-            isstopsels = 1;
+                String[] selectItemArr = new String[itemunitList.size()];
 
+                int goodsNum = -1;
+                int i = 0;
+                for (Itemunit itemunit : itemunitList) {
+                    selectItemArr[i] = itemunit.getName();
+                    if (goodstr.equals(itemunit.getName())) {
+                        goodsNum = i;
+                    }
+                    i++;
+                }
+                showDialogList("请选择商品单位", selectItemArr, goodsNum, goodsunitTx);
+                break;
+            //修改商品分类
+            case R.id.goodsclassifyRL:
+                mItemtype = null;
+                showChooseify("请选择分类", "0");
+                break;
+            //修改商品名称
+            case R.id.goodsnameRL:
+                showDialogs(0, "商品名称", "请输入商品名称", "取消");
+                //showDialogToast("请输入商品名称", "请输入商品名称", goodsnaneTx);
+                break;
+            //修改商品条码
+            case R.id.goodsbarRL:
+                showDialogs(1, "商品条码", "请输入商品条码", "取消");
+                //showDialogToast2("请输入商品条码", "请输入商品条码", goodsbarTx);
+                break;
+            //修改商品规格
+            case R.id.goodsnormsRL:
+                showDialogToast("请输入商品规格", "请输入商品规格", goodsnormsTx);
+                break;
+            //提交
+            case R.id.submit:
+                if (!check()) {
+                    return;
+                }
+                if (NetUtils.isNetworkConnected(mContext)) {
+                    progressDialog = growProgress(Contants.Progress.SUMBIT_ING);
+                    progressDialog.show();
+                    submitGoodsImg();
+                } else {
+                    showToastShort("网络不给力");
+                }
+                break;
+            //修改商品位置
+            case R.id.goodsAddressRL:
+                CommonUtils.goActivity(mContext, GoodSheives.class, null, false);
+                break;
+            //修改商品品牌
+            case R.id.goodsbrand:
+                CommonUtils.goActivityForResult(mContext, WBrandActivity.class, new Bundle(), 10014, false);
+                break;
+            //商品介绍
+            case R.id.goodsdetailRL:
+                break;
         }
     }
 
-    @OnClick(R.id.goodsupplierRL)
-    public void getAgency() {
-        Bundle bundle = new Bundle();
-        bundle.putString("choosetype", "0");
-        CommonUtils.goActivityForResult(mContext, WAgencyActivity.class, bundle, 10012, false);
-    }
+    private void showDialogs(int type, String title, String hint, String lift_bt_text) {
+        dialog.show();
+        ((TextView) dialog.findViewById(R.id.dialog_title)).setText(title);
+        dialog_edit = dialog.findViewById(R.id.ecit_phone);
+        dialog_edit.setHint(hint);
+        ((TextView) dialog.findViewById(R.id.dialog_cancel)).setText(lift_bt_text);
+        dialog.setOnCenterItemClickListener((dialog, view) -> {
+            switch (view.getId()) {
+                case R.id.dialog_close:
+                    dialog.dismiss();
+                    break;
+                case R.id.dialog_cancel:
+                    switch (type) {
+                        case 2:
+                        case 1:
+                        case 0:
+                            dialog.dismiss();
+                            break;
 
-    @OnClick(R.id.goodsExplainRL)
-    public void goodsExplainRL() {
-        showDialogToastM("商品特别说明", "输入说明", goodExplain_Tx);
-    }
-
-    @OnClick(R.id.changeLy)
-    public void onclichengbenpriceLay() {//修改成本价
-//        showDialogToastM("成本价", "输入成本价", chengbenpriceTx);
-        Bundle bundle = new Bundle();
-        bundle.putString("costPrice", chengbenpriceTx.getText().toString()); //成本价
-        bundle.putString("wholesalePrice", goodspriceTx.getText().toString());//批发价
-        bundle.putString("inventory", goodinventoryTx.getText().toString()); //库存
-        bundle.putString("max", max_goodinventoryTx.getText().toString()); //最大库存
-        bundle.putString("min", min_goodinventoryTx.getText().toString()); //最小库存
-        bundle.putString("minnum", itemMinNum.getText().toString());
-        bundle.putString("maxnum", itemMaxNum.getText().toString());
-        bundle.putString("stopnum", stopitemsum.getText().toString());
-        CommonUtils.goActivityForResult(mContext, WPriceEditActivity.class, bundle, WPriceEditActivity.EDIT_CODE, false);
-    }
-
-    @OnClick(R.id.goodspriceTx)
-    public void onClickSpriceLay() { //修改批发价
-        setDialogInputSprice(goodspriceTx);
-    }
-
-    @OnClick(R.id.goodinventoryTx)
-    public void onClickInventoryLay() { //修改库存
-        setDialogInput(goodinventoryTx);
-    }
-
-    @OnClick(R.id.simpleDraweeView)
-    public void onClickChoose() {
-
-        Bundle bundle = new Bundle();
-        bundle.putString("GoodsNumber", goodsbarTx.getText().toString());
-        CommonUtils.goActivityForResult(mContext, ChooseActivity.class, bundle, 0, false);
-    }
-
-    @OnClick(R.id.goodscodeRL)
-    public void goodscodeRL() {
-        showDialogToastM("请输入货号编码", "输入货号编码", goodsode_Tx);
-    }
-
-    @OnClick(R.id.goodsunitRL)
-    public void onClockshowUnit() {
-        String goodstr = goodsunitTx.getText().toString();
-
-        String[] selectItemArr = new String[itemunitList.size()];
-
-        int goodsNum = -1;
-        int i = 0;
-        for (Itemunit itemunit : itemunitList) {
-            selectItemArr[i] = itemunit.getName();
-            if (goodstr.equals(itemunit.getName())) {
-                goodsNum = i;
+                    }
+                    break;
+                case R.id.dialog_sure:
+                    switch (type) {
+                        case 0:
+                            if (!dialog_edit.getText().toString().equals("")) {
+                                goodsnaneTx.setText(dialog_edit.getText().toString());
+                                dialog.dismiss();
+                            } else {
+                                showToastShort("请输入商品名");
+                            }
+                            break;
+                        case 1:
+                            if (!dialog_edit.getText().toString().equals("")) {
+                                goodsbarTx.setText(dialog_edit.getText().toString());
+                                dialog.dismiss();
+                            } else {
+                                showToastShort("请输入商品条码");
+                            }
+                            break;
+                        case 2:
+                            if (!dialog_edit.getText().toString().equals("")) {
+                                goodsode_Tx.setText(dialog_edit.getText().toString());
+                                dialog.dismiss();
+                            } else {
+                                showToastShort("请输入货号编码");
+                            }
+                            break;
+                    }
+                    break;
             }
-            i++;
-        }
-        showDialogList("请选择商品单位", selectItemArr, goodsNum, goodsunitTx);
-    }
-
-    @OnClick(R.id.goodsclassifyRL)
-    public void showGoodsClassIfy() {
-        mItemtype = null;
-        showChooseify("请选择分类", "0");
-    }
-
-    @OnClick(R.id.goodsnameRL)
-    public void showName() {
-        showDialogToast("请输入商品名称", "请输入商品名称", goodsnaneTx);
-    }
-
-    @OnClick(R.id.goodsbarRL)
-    public void showBar() {
-        showDialogToast2("请输入商品条码", "请输入商品条码", goodsbarTx);
-    }
-
-    @OnClick(R.id.goodsnormsRL)
-    public void showNorm() {
-        showDialogToast("请输入商品规格", "请输入商品规格", goodsnormsTx);
-    }
-
-    @OnClick(R.id.submit)
-    public void submit() {
-
-        if (!check()) {
-            return;
-        }
-        if (NetUtils.isNetworkConnected(mContext)) {
-            progressDialog = growProgress(Contants.Progress.SUMBIT_ING);
-            progressDialog.show();
-            submitGoodsImg();
-        } else {
-            showToastShort("网络不给力");
-        }
+        });
     }
 
     public void showDialogToastM(String title, String input, final TextView tv) {
@@ -678,23 +732,17 @@ public class WGoodsAddActivity extends BaseActivity {
                 .positiveText("确定")
                 .negativeText("扫描")
 //                .title(title)
-                .input(input, tv.getText().toString(), true, new MaterialDialog.InputCallback() {
-                    @Override
-                    public void onInput(MaterialDialog dialog, CharSequence input) {
-                        if (input == null) {
-                            Toast.makeText(WGoodsAddActivity.this, "条码不能为空！", Toast.LENGTH_SHORT).show();
-                        } else {
-                            getGoodsInfo("goodsIsExist", input.toString());
-                            Log.e("m_tag", "2");
-                        }
+                .input(input, tv.getText().toString(), true, (dialog, input1) -> {
+                    if (input1 == null) {
+                        Toast.makeText(WGoodsAddActivity.this, "条码不能为空！", Toast.LENGTH_SHORT).show();
+                    } else {
+                        getGoodsInfo("goodsIsExist", input1.toString());
+                        Log.e("m_tag", "2");
                     }
-                }).onNegative(new MaterialDialog.SingleButtonCallback() {
-            @Override
-            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                Bundle bundle = new Bundle();
-                bundle.putInt(Contants.ScanValueType.KEY, Contants.ScanValueType.original_type);
-                CommonUtils.goActivityForResult(mContext, MipcaActivityCapture.class, bundle, 0, false);
-            }
+                }).onNegative((dialog, which) -> {
+            Bundle bundle = new Bundle();
+            bundle.putInt(Contants.ScanValueType.KEY, Contants.ScanValueType.original_type);
+            CommonUtils.goActivityForResult(mContext, MipcaActivityCapture.class, bundle, 0, false);
         })
                 .show();
     }
@@ -1032,109 +1080,6 @@ public class WGoodsAddActivity extends BaseActivity {
     }
 
 
-    public void saveSa1les(String saveid, String stype, String itemid, String starttime, String stoptime
-            , String disstr, String gift) {
-
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("uid", uid);
-        params.put("token", token);
-        params.put("saveid", saveid);
-        params.put("stype", stype);
-        params.put("itemid", itemid);
-        params.put("starttime", starttime);
-        params.put("stoptime", stoptime);
-        params.put("disstr", disstr);
-        params.put("gift", gift);
-
-        //显示ProgressDialog
-
-        progressDialog = growProgress(Contants.Progress.SUMBIT_ING);
-        progressDialog.show();
-
-        HttpHelper.getInstance().post(mContext, Contants.PortA.SAVESP, params, new OkHttpResponseHandler<String>(mContext) {
-
-            @Override
-            public void onAfter() {
-                super.onAfter();
-                progressDialog.dismiss();
-            }
-
-            @Override
-            public void onBefore() {
-                super.onBefore();
-            }
-
-            @Override
-            public void onResponse(Request request, String json) {
-                super.onResponse(request, json);
-                System.out.println("response" + json);
-
-                if (JsonHelper.isRequstOK(json, mContext)) {
-                    showToastShort(Contants.NetStatus.NETSUCCESS);
-                } else {
-                    showToastShort(Contants.NetStatus.NETERROR);
-                }
-            }
-
-            @Override
-            public void onError(Request request, Exception e) {
-                super.onError(request, e);
-                showToastShort(Contants.NetStatus.NETDISABLEORNETWORKDISABLE);
-            }
-        });
-    }
-
-    /**
-     * 用户组
-     */
-    public void loadIClient() {
-
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("uid", uid);
-        params.put("token", token);
-        //显示ProgressDialog
-
-        HttpHelper.getInstance().post(mContext, Contants.PortA.UserGroup, params, new OkHttpResponseHandler<String>(mContext) {
-
-            @Override
-            public void onAfter() {
-                super.onAfter();
-
-                if (getIntent().getExtras().getInt("type") == 1) {
-                    getGoodsInfo("getGoodsInfo", Itemnoid);
-                } else {
-                    progressDialog.dismiss();
-                }
-            }
-
-            @Override
-            public void onBefore() {
-                super.onBefore();
-            }
-
-            @Override
-            public void onResponse(Request request, String json) {
-                super.onResponse(request, json);
-
-                System.out.println("response" + json);
-                if (JsonHelper.isRequstOK(json, mContext)) {
-                    JsonHelper<UserGroup> jsonHelper = new JsonHelper<UserGroup>(UserGroup.class);
-                    userGroupList = jsonHelper.getDatas(json);
-                    priceArray.clear();
-                } else if (JsonHelper.getRequstOK(json) == 6) {
-
-                } else {
-
-                }
-            }
-
-            @Override
-            public void onError(Request request, Exception e) {
-                super.onError(request, e);
-            }
-        });
-    }
-
     public boolean check() {
         if (StringHelper.isEmpty(chengbenpriceTx.getText().toString().trim())) {
             showToastShort("请填写成本价");
@@ -1167,39 +1112,5 @@ public class WGoodsAddActivity extends BaseActivity {
         return true;
 
     }
-
-
-
-
-
-    @OnClick(R.id.goodsAddressRL)
-    public void onViewClicked() {
-        CommonUtils.goActivity(mContext, GoodSheives.class, null, false);
-    }
-
-    private void showAddress(List<GoodAddress> goodAddresses) {
-        final List<GoodAddress> address = goodAddresses;
-        MaterialDialog.Builder materialDialog = new MaterialDialog.Builder(this);
-        materialDialog.title("选择商品地址");
-        for (GoodAddress array : address) {
-            materialDialog.items(array.getName());
-        }
-        materialDialog.itemsCallback(new MaterialDialog.ListCallback() {
-            @Override
-            public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                //addressID = address.get(which).getId();
-                goodAddressTx.setText(text);
-                dialog.dismiss();
-            }
-        });
-        materialDialog.show();
-    }
-
-    @OnClick(R.id.goodsbrand)
-    public void onClick() {
-        CommonUtils.goActivityForResult(mContext, WBrandActivity.class, new Bundle(), 10014, false);
-    }
-
-    private String brangName;
 
 }

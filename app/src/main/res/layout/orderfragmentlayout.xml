@@ -13,7 +13,8 @@
         <ImageView
             android:id="@+id/itemimg"
             android:layout_width="80dp"
-            android:layout_height="80dp" />
+            android:layout_height="80dp"
+            android:src="@drawable/load" />
 
         <RelativeLayout
             android:layout_width="0dp"
@@ -25,9 +26,13 @@
 
             <TextView
                 android:id="@+id/itemname"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="350ml怡宝"
+                android:layout_toLeftOf="@+id/class_name"
+                android:ellipsize="end"
+                android:paddingRight="@dimen/H10dp"
+                android:singleLine="true"
+                android:text=""
                 android:textColor="@color/black" />
 
             <TextView
@@ -35,12 +40,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:text="数量：1"
+                android:text=""
                 android:textColor="@color/color_999999"
                 android:textSize="13sp" />
 
             <TextView
-                android:id="@+id/class_name"
+                android:id="@id/class_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
@@ -57,7 +62,7 @@
                     android:id="@+id/unitprice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="￥30.50"
+                    android:text=""
                     android:textColor="@color/black"
                     android:textSize="13sp"
                     android:textStyle="bold" />
@@ -67,7 +72,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:text="小计：30.50"
+                    android:text=""
                     android:textColor="@color/black"
                     android:textSize="13sp"
                     android:textStyle="bold" />

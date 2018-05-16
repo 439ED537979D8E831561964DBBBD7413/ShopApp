@@ -8,12 +8,11 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
-import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
 import com.kaopiz.kprogresshud.KProgressHUD;
 import com.squareup.okhttp.Request;
 import com.yj.shopapp.R;
 import com.yj.shopapp.config.Contants;
+import com.yj.shopapp.dialog.DataPickerDialog;
 import com.yj.shopapp.http.HttpHelper;
 import com.yj.shopapp.http.OkHttpResponseHandler;
 import com.yj.shopapp.ui.activity.base.BaseActivity;
@@ -24,7 +23,6 @@ import com.yj.shopapp.util.PreferenceUtils;
 import com.yj.shopapp.util.StringHelper;
 import com.yj.shopapp.wbeen.SPlist;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -63,6 +61,7 @@ public class WSalesDetailActivity extends BaseActivity {
     String saveid;
     String type = "update";
     private String price;
+
     @Override
     protected int getLayoutId() {
         return R.layout.wactivity_salesdetail;
@@ -85,10 +84,10 @@ public class WSalesDetailActivity extends BaseActivity {
             idRightBtu.setText("修改");
             sPlist = (SPlist) getIntent().getExtras().getSerializable("been");
             itemid = sPlist.getItemid();
-            startimeTv.setText(DateUtils.getDateToString2(sPlist.getTime1() + "000"));
-            overimeTv.setText(DateUtils.getDateToString2(sPlist.getTime2() + "000"));
-            startTime = Long.valueOf(sPlist.getTime1() + "000");
-            overTime = Long.valueOf(sPlist.getTime2() + "000");
+            startimeTv.setText(DateUtils.getDateToString2(sPlist.getTime1()+"000"));
+            overimeTv.setText(DateUtils.getDateToString2(sPlist.getTime2()+"000"));
+            startTime = Long.valueOf(sPlist.getTime1());
+            overTime = Long.valueOf(sPlist.getTime2());
             isGift = sPlist.getSales();
             salePriceTv.setText(sPlist.getDisstr());
             priceTv.setText(sPlist.getPrice());
@@ -111,7 +110,7 @@ public class WSalesDetailActivity extends BaseActivity {
 
         String salePrice = salePriceTv.getText().toString();
         if (!salePrice.isEmpty()) {
-            saveSales("3", String.valueOf(startTime / 1000), String.valueOf(overTime / 1000),
+            saveSales("3", String.valueOf(startTime), String.valueOf(overTime),
                     salePrice, "");
         }
 
@@ -119,43 +118,37 @@ public class WSalesDetailActivity extends BaseActivity {
 
     @OnClick(R.id.startimeTv)
     public void showstartTime() {
-        new SlideDateTimePicker.Builder(getSupportFragmentManager())
-                .setListener(new SlideDateTimeListener() {
-                    @Override
-                    public void onDateTimeSet(Date date) {
-                        startTime = date.getTime();
-                        startimeTv.setText(DateUtils.getDateToLong(date.getTime()));
-                        System.out.println(date.getTime());
-                    }
-                })
-                .setMinDate(new Date())
-                .setIs24HourTime(true)
-                .setInitialDate(new Date())
-                .build()
-                .show();
+        new DataPickerDialog(mContext, new DataPickerDialog.TimePickerDialogInterface() {
+
+            @Override
+            public void positiveListener(DataPickerDialog dialog) {
+                startTime = dialog.getSelectTimeDtamp()/1000;
+                startimeTv.setText(DateUtils.getDateToLong(dialog.getSelectTimeDtamp(), "yyyy年MM月dd日 hh时mm分"));
+            }
+
+            @Override
+            public void negativeListener() {
+
+            }
+        }).showDatePickerDialog();
     }
 
     @OnClick(R.id.overimeTv)
     public void showoverTime() {
-        new SlideDateTimePicker.Builder(getSupportFragmentManager())
-                .setListener(new SlideDateTimeListener() {
-                    @Override
-                    public void onDateTimeSet(Date date) {
-                        overTime = date.getTime();
-                        overimeTv.setText(DateUtils.getDateToLong(date.getTime()));
-                        System.out.println(date.getTime());
-                    }
-                })
+        new DataPickerDialog(mContext, new DataPickerDialog.TimePickerDialogInterface() {
 
-                .setMinDate(startTime == 0 ? new Date() : new Date(startTime))
-                .setIs24HourTime(true)
-                .setInitialDate(new Date())
-                .build()
-                .show();
+            @Override
+            public void positiveListener(DataPickerDialog dialog) {
+                overTime = dialog.getSelectTimeDtamp()/1000;
+                overimeTv.setText(DateUtils.getDateToLong(dialog.getSelectTimeDtamp(), "yyyy年MM月dd日 hh时mm分"));
+            }
 
+            @Override
+            public void negativeListener() {
 
+            }
+        }).showDatePickerDialog();
     }
-
 
 
     public void saveSales(String stype, String starttime, String stoptime
@@ -169,7 +162,6 @@ public class WSalesDetailActivity extends BaseActivity {
         } else {
             params.put("saveid", saveid);
         }
-
 
         params.put("stype", stype);
         params.put("itemid", itemid);
@@ -233,9 +225,6 @@ public class WSalesDetailActivity extends BaseActivity {
             }
         });
     }
-
-
-
 
 
 }

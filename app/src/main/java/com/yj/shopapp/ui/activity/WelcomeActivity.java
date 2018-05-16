@@ -16,6 +16,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.bumptech.glide.Glide;
 import com.squareup.okhttp.Request;
 import com.yj.shopapp.R;
+import com.yj.shopapp.config.AppManager;
 import com.yj.shopapp.config.Contants;
 import com.yj.shopapp.http.HttpHelper;
 import com.yj.shopapp.http.OkHttpResponseHandler;
@@ -73,6 +74,7 @@ public class WelcomeActivity extends AppCompatActivity {
             finish();
             return;
         }
+        AppManager.getAppManager().addActivity(WelcomeActivity.this);
         String token = PreferenceUtils.getPrefString(mContext, Contants.Preference.TOKEN, "");
         String username = PreferenceUtils.getPrefString(mContext, Contants.Preference.USER_NAME, "");
         String userpwd = PreferenceUtils.getPrefString(mContext, Contants.Preference.USER_PWD, "");
@@ -98,61 +100,47 @@ public class WelcomeActivity extends AppCompatActivity {
     }
 
     private void initBanner() {
-        bannerGuideForeground.setAdapter(new BGABanner.Adapter<ImageView, String>() {
-            @Override
-            public void fillBannerItem(BGABanner banner, ImageView itemView, @Nullable String model, int position) {
-                Glide.with(mContext).load(model).into(itemView);
-            }
+        bannerGuideForeground.setAdapter((BGABanner.Adapter<ImageView, String>) (banner, itemView, model, position) -> Glide.with(mContext).load(model).into(itemView));
+        bannerGuideForeground.setDelegate((banner, itemView, model, position) -> {
+            WelcomeImags imags = welcomeImags.get(position);
+            switch (imags.getType()) {
+                case "1":
+                    Bundle bundle1 = new Bundle();
+                    bundle1.putString("goodsId", imags.getItemid());
+                    Intent intent1 = new Intent(WelcomeActivity.this, SGoodsDetailActivity.class);
+                    intent1.putExtras(bundle1);
+                    startActivity(intent1);
 
-        });
-        bannerGuideForeground.setDelegate(new BGABanner.Delegate() {
-            @Override
-            public void onBannerItemClick(BGABanner banner, View itemView, @Nullable Object model, int position) {
-                WelcomeImags imags = welcomeImags.get(position);
-                switch (imags.getType()) {
-                    case "1":
-                        Bundle bundle1 = new Bundle();
-                        bundle1.putString("goodsId", imags.getItemid());
-                        Intent intent1 = new Intent(WelcomeActivity.this, SGoodsDetailActivity.class);
-                        intent1.putExtras(bundle1);
-                        startActivity(intent1);
+                    break;
+                case "2":
+                    Bundle bundle2 = new Bundle();
+                    bundle2.putString("Store_id", imags.getShop_id());
+                    Intent intent2 = new Intent(WelcomeActivity.this, ClassifyListActivity.class);
+                    intent2.putExtras(bundle2);
+                    startActivity(intent2);
 
-                        break;
-                    case "2":
-                        Bundle bundle2 = new Bundle();
-                        bundle2.putString("Store_id", imags.getShop_id());
-                        Intent intent2 = new Intent(WelcomeActivity.this, ClassifyListActivity.class);
-                        intent2.putExtras(bundle2);
-                        startActivity(intent2);
+                    break;
+                case "3":
+                    Bundle bundle3 = new Bundle();
+                    bundle3.putString("shop_id", imags.getGoods_id());
+                    Intent intent3 = new Intent(WelcomeActivity.this, CommodityDetails.class);
+                    intent3.putExtras(bundle3);
+                    startActivity(intent3);
 
-                        break;
-                    case "3":
-                        Bundle bundle3 = new Bundle();
-                        bundle3.putString("shop_id", imags.getGoods_id());
-                        Intent intent3 = new Intent(WelcomeActivity.this, CommodityDetails.class);
-                        intent3.putExtras(bundle3);
-                        startActivity(intent3);
+                    break;
+                case "4":
+                    Bundle bundle = new Bundle();
+                    bundle.putString("url", imags.getUrl());
+                    Intent intent4 = new Intent(WelcomeActivity.this, MyWebView.class);
+                    intent4.putExtras(bundle);
+                    startActivity(intent4);
 
-                        break;
-                    case "4":
-                        Bundle bundle = new Bundle();
-                        bundle.putString("url", imags.getUrl());
-                        Intent intent4 = new Intent(WelcomeActivity.this, MyWebView.class);
-                        intent4.putExtras(bundle);
-                        startActivity(intent4);
-
-                        break;
-                    default:
-                        break;
-                }
+                    break;
+                default:
+                    break;
             }
         });
-        bannerGuideForeground.setEnterSkipViewIdAndDelegate(R.id.getintohome, 0, new BGABanner.GuideDelegate() {
-            @Override
-            public void onClickEnterOrSkip() {
-                goActivity();
-            }
-        });
+        bannerGuideForeground.setEnterSkipViewIdAndDelegate(R.id.getintohome, 0, this::goActivity);
     }
 
     @Override
@@ -182,8 +170,8 @@ public class WelcomeActivity extends AppCompatActivity {
             finish();
         } else {
             Intent intent = new Intent(WelcomeActivity.this, WMainTabActivity.class);
-            overridePendingTransition(R.anim.anim_home_in, R.anim.anim_home_out);
             startActivity(intent);
+            overridePendingTransition(R.anim.anim_home_in, R.anim.anim_home_out);
             finish();
         }
     }
@@ -232,7 +220,9 @@ public class WelcomeActivity extends AppCompatActivity {
                     uid = uinfo.getUid();
                     token = uinfo.getToken();
                     getAndroidAdvmap(uid, token);
-                    getrewardArea(uid, token);
+                    if (uType.equals("1")) {
+                        getrewardArea(uid, token);
+                    }
                 } else {
                     Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);
                     startActivity(intent);
@@ -403,5 +393,6 @@ public class WelcomeActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         unbinder.unbind();
+        AppManager.getAppManager().removeActivityFromStack(WelcomeActivity.this);
     }
 }

@@ -21,7 +21,6 @@ import com.yj.shopapp.ui.activity.base.BaseFragment;
 import com.yj.shopapp.ui.activity.shopkeeper.SOrderDetailActivity;
 import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.JsonHelper;
-import com.yj.shopapp.util.NetUtils;
 import com.yj.shopapp.util.PreferenceUtils;
 import com.yj.shopapp.view.headfootrecycleview.OnRecyclerViewScrollListener;
 import com.yj.shopapp.view.headfootrecycleview.RecyclerViewHeaderFooterAdapter;
@@ -99,24 +98,7 @@ public class WOrderViewActivity extends BaseFragment implements BaseRecyclerView
             recyclerView.setLayoutManager(layoutManager);
             recyclerView.setAdapter(adapter);
         }
-
-        if (NetUtils.isNetworkConnected(mActivity)) {
-            if (null != swipeRefreshLayout) {
-
-                swipeRefreshLayout.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        swipeRefreshLayout.setRefreshing(true);
-
-                        refreshRequest();
-                    }
-                }, 200);
-            }
-        } else {
-            showToastShort("网络不给力");
-        }
-
+        refreshRequest();
     }
 
     @Override

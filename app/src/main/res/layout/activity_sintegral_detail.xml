@@ -49,18 +49,16 @@
             app:srlAccentColor="#fff"
             app:srlPrimaryColor="#444" />
 
-        <LinearLayout
+        <ezy.ui.layout.LoadingLayout
+            android:id="@+id/loading"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
-            <com.yj.shopapp.view.headfootrecycleview.RecycleViewEmpty
+            <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycler_view"
                 android:layout_width="fill_parent"
                 android:layout_height="match_parent" />
-
-            <include layout="@layout/empty_view" />
-        </LinearLayout>
+        </ezy.ui.layout.LoadingLayout>
 
     </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 

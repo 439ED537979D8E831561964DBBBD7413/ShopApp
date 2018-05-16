@@ -1,6 +1,7 @@
 package com.yj.shopapp.ui.activity.adapter;
 
 import android.content.Context;
+import android.text.Html;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
@@ -34,7 +35,7 @@ public class SorderItemAdapter extends Common2Adapter<NewOrder.DataBean> {
         RelativeLayout rl = (RelativeLayout) holder.getView(R.id.itemview);
         rl.setLayoutParams(new RelativeLayout.LayoutParams(CommonUtils.screenWidth(context) / 4, ViewGroup.LayoutParams.WRAP_CONTENT));
         NewOrder.DataBean bean = list.get(position);
-        holder.getTextView(R.id.name_tv).setText(String.format("共%1$s件 ￥%2$s", bean.getItemnum(), bean.getMoney()));
+        holder.getTextView(R.id.name_tv).setText(Html.fromHtml("共" + "<font color=#f0322b>" + bean.getItemnum() + "</font>" + "件" + "<font color=#f0322b>" + bean.getMoney() + "</font>" + "元"));
         holder.getTextView(R.id.edit_img).setText(bean.getName());
         CircleImageView circleImageView = (CircleImageView) holder.getView(R.id.simpleDraweeView);
         Glide.with(context).load(bean.getImgurl()).into(circleImageView);

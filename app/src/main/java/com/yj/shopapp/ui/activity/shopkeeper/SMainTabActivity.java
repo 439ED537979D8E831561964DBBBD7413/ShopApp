@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
@@ -45,14 +44,6 @@ public class SMainTabActivity extends BaseTabActivity implements RadioGroup.OnCh
     public final static int CARLIST = 2135;
     @BindView(R.id.content)
     CustomViewPager content;
-    @BindView(R.id.tab_home)
-    RadioButton tabHome;
-    @BindView(R.id.tab_order)
-    RadioButton tabOrder;
-    @BindView(R.id.tab_client)
-    RadioButton tabClient;
-    @BindView(R.id.tab_mtinfo)
-    RadioButton tabMtinfo;
     @BindView(R.id.tabs_rg)
     RadioGroup tabsRg;
     private HomeViewPager viewPager;

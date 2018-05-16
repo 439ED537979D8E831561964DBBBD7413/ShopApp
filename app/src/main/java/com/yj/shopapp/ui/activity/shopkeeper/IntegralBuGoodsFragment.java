@@ -10,7 +10,6 @@ import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.View;
 
-import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -70,12 +69,7 @@ public class IntegralBuGoodsFragment extends BaseActivity implements IntegraAdap
     protected void initData() {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        toolbar.setNavigationOnClickListener(v -> finish());
         kProgressHUD = growProgress(Contants.Progress.LOAD_ING);
         adapter = new IntegraAdapter(mContext, this);
         if (myRecyclerView != null) {
@@ -152,21 +146,15 @@ public class IntegralBuGoodsFragment extends BaseActivity implements IntegraAdap
         new MaterialDialog.Builder(mContext)
                 .title("请输入换购数量")
                 .inputType(InputType.TYPE_CLASS_NUMBER)
-                .input("请输入数量", "", new MaterialDialog.InputCallback() {
-                    @Override
-                    public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                .input("请输入数量", "", (dialog, input) -> {
 
-                    }
                 })
                 .positiveText("确定")
                 .negativeText("取消")
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        goodnumber = dialog.getInputEditText().getText().toString();
-                        if (!"".equals(goodnumber)) {
-                            changeGoods(mData.getData().get(position).getId());
-                        }
+                .onPositive((dialog, which) -> {
+                    goodnumber = dialog.getInputEditText().getText().toString();
+                    if (!"".equals(goodnumber)) {
+                        changeGoods(mData.getData().get(position).getId());
                     }
                 })
                 .canceledOnTouchOutside(false)

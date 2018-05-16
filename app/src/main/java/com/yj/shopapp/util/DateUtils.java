@@ -209,13 +209,19 @@ public class DateUtils {
 
     /*时间戳转换成字符窜*/
     public static String getDateToLong(long time) {
-
         Date d = new Date(time * 1000);
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd hh:mm");
         return sf.format(d);
 
     }
 
+    /*时间戳转换成字符窜*/
+    public static String getDateToLong(long time, String pattern) {
+        Date d = new Date(time);
+        SimpleDateFormat sf = new SimpleDateFormat(pattern);
+        return sf.format(d);
+
+    }
 
     /*将字符串转为时间戳*/
     public static long getStringToDate(String time) {
@@ -260,6 +266,17 @@ public class DateUtils {
         } else {
             return -1;
         }
+    }
+
+    public static Long DataToMill(String time) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
+        try {
+            Date d = sdf.parse(time);
+            return d.getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return Long.valueOf(0);
     }
 
     /**

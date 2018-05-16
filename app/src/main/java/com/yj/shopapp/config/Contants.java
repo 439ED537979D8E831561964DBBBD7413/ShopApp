@@ -97,6 +97,8 @@ public class Contants {
         public final static String GoodsBrand = url_ + "brandlist";
         public final static String LOCALHOST_AREA = url_ + "localhost_area";
         public final static String NOTICESWITCH_LIST = url_ + "noticeswitch_list";
+        //http://u.19diandian.com/index.php/Appa/classlist
+        public final static String CLASSLIST = url_ + "classlist";
     }
 
     public static final class PortU {

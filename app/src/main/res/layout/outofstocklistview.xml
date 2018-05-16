@@ -37,13 +37,17 @@
 
         <TextView
             android:id="@+id/shopname"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/outofstock"
+            android:ellipsize="end"
+            android:paddingRight="@dimen/H10dp"
+            android:singleLine="true"
             android:text=""
             android:textColor="@color/black" />
 
         <TextView
-            android:id="@+id/outofstock"
+            android:id="@id/outofstock"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"

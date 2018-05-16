@@ -107,8 +107,7 @@
         </activity>
         <activity
             android:name=".ui.activity.LoginActivity"
-            android:launchMode="singleTask"
-            android:windowSoftInputMode="adjustResize|stateHidden"
+            android:windowSoftInputMode="adjustPan|stateHidden"
             android:screenOrientation="portrait" />
 
         <provider
@@ -125,9 +124,6 @@
             android:name=".ui.activity.wholesale.WStopGoodsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.activity.wholesale.WMyInfoActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.activity.wholesale.WautoputCouponActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -135,8 +131,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.wholesale.WMainTabActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan|stateHidden" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.ChooseActivity"
             android:screenOrientation="portrait" />
@@ -154,6 +149,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.wholesale.WGoodsDetailActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.wholesale.WRefunorderActivity"
@@ -248,6 +244,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.wholesale.WGoodsAddActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.wholesale.WSalesDetailActivity"

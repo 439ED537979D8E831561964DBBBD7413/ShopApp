@@ -118,12 +118,9 @@ public class OrderDatails extends BaseActivity {
         classadpter = new OrderDatailsAdpter(mContext);
         myRecyclerView.setLayoutManager(ms);
         myRecyclerView.setAdapter(classadpter);
-        mainLl.setKeyboardListener(new KeyboardLayout.KeyboardLayoutListener() {
-            @Override
-            public void onKeyboardStateChanged(boolean isActive, int keyboardHeight) {
-                if (isActive) {
-                    scrollToBottom();
-                }
+        mainLl.setKeyboardListener((isActive, keyboardHeight) -> {
+            if (isActive) {
+                scrollToBottom();
             }
         });
 //        dialog = new CenterDialog(mContext, R.layout.outofstorkdialog, new int[]{R.id.finish_tv, R.id.i_see}, 0.8);
@@ -160,7 +157,7 @@ public class OrderDatails extends BaseActivity {
 
     @Override
     protected void setStatusBar() {
-        StatusBarUtil.setColor(this, getResources().getColor(R.color.white), 0);
+        StatusBarUtil.setColor(this, getResources().getColor(R.color.white), 30);
         StatusBarUtil.setStatusBarTextColor(getWindow(), true);
     }
 
@@ -168,15 +165,7 @@ public class OrderDatails extends BaseActivity {
      * 弹出软键盘时将SVContainer滑到底
      */
     private void scrollToBottom() {
-
-        scroll.postDelayed(new Runnable() {
-
-            @Override
-            public void run() {
-                scroll.smoothScrollTo(0, scroll.getBottom() + SoftKeyInputHidWidget.getStatusBarHeight(OrderDatails.this));
-            }
-        }, 100);
-
+        scroll.postDelayed(() -> scroll.smoothScrollTo(0, scroll.getBottom() + SoftKeyInputHidWidget.getStatusBarHeight(OrderDatails.this)), 100);
     }
 
     private void requestData() {
@@ -357,10 +346,15 @@ public class OrderDatails extends BaseActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().post(new MessageEvent());
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
         returnlistcart();
-        EventBus.getDefault().post(new MessageEvent());
     }
 
     /**

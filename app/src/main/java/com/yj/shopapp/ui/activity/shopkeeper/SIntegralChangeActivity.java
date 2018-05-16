@@ -1,11 +1,10 @@
 package com.yj.shopapp.ui.activity.shopkeeper;
 
+import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.widget.TextView;
 
 import com.alibaba.fastjson.JSONObject;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -23,24 +22,23 @@ import com.yj.shopapp.ui.activity.base.BaseActivity;
 import com.yj.shopapp.util.DDecoration;
 import com.yj.shopapp.util.JsonHelper;
 import com.yj.shopapp.util.StatusBarUtil;
-import com.yj.shopapp.view.headfootrecycleview.RecycleViewEmpty;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
+import ezy.ui.layout.LoadingLayout;
 
 public class SIntegralChangeActivity extends BaseActivity implements OnRefreshListener {
     @BindView(R.id.recycler_view)
-    RecycleViewEmpty recyclerView;
+    RecyclerView recyclerView;
     @BindView(R.id.swipe_refresh_layout)
     SmartRefreshLayout swipeRefreshLayout;
-    @BindView(R.id.Cempty_view)
-    NestedScrollView CemptyView;
-    @BindView(R.id.empty_tv)
-    TextView emptyTv;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+    @BindView(R.id.loading)
+    LoadingLayout loading;
     private IntegralChange integralChange;
     private IntegralChangeAdapter adapter;
 
@@ -53,15 +51,9 @@ public class SIntegralChangeActivity extends BaseActivity implements OnRefreshLi
     protected void initData() {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        toolbar.setNavigationOnClickListener(v -> finish());
         Refresh();
         adapter = new IntegralChangeAdapter(mContext);
-        emptyTv.setText("暂无兑换记录");
         if (recyclerView != null) {
             recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
             recyclerView.addItemDecoration(new DDecoration(mContext, getResources().getDrawable(R.drawable.recyviewdecoration1dp)));
@@ -121,13 +113,14 @@ public class SIntegralChangeActivity extends BaseActivity implements OnRefreshLi
                 if (JsonHelper.isRequstOK(json, mContext)) {
                     integralChange = JSONObject.parseObject(json, IntegralChange.class);
                     if (integralChange.getStatus() == 1) {
+                        loading.showContent();
                         if (adapter != null) {
                             adapter.setList(integralChange.getData());
                         }
                     } else {
-                        showToastShort(integralChange.getInfo());
-                        if (recyclerView != null) {
-                            recyclerView.setEmptyView(CemptyView);
+                        //showToastShort(integralChange.getInfo());
+                        if (loading != null) {
+                            loading.showEmpty();
                         }
                     }
                 } else {
@@ -141,5 +134,12 @@ public class SIntegralChangeActivity extends BaseActivity implements OnRefreshLi
     @Override
     public void onRefresh(@NonNull RefreshLayout refreshLayout) {
         getIntegralChange();
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // TODO: add setContentView(...) invocation
+        ButterKnife.bind(this);
     }
 }

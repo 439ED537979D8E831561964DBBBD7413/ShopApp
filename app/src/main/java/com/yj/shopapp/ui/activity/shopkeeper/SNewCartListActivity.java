@@ -26,6 +26,8 @@ import com.kaopiz.kprogresshud.KProgressHUD;
 import com.squareup.okhttp.Request;
 import com.yj.shopapp.R;
 import com.yj.shopapp.config.Contants;
+import com.yj.shopapp.dialog.Center2Dialog;
+import com.yj.shopapp.dialog.CenterDialog;
 import com.yj.shopapp.http.HttpHelper;
 import com.yj.shopapp.http.OkHttpResponseHandler;
 import com.yj.shopapp.ubeen.Address;
@@ -37,8 +39,6 @@ import com.yj.shopapp.ui.activity.Interface.shopcartlistInterface;
 import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.ui.activity.adapter.CarListViewPagerAdpter;
 import com.yj.shopapp.ui.activity.adapter.SNewCarListAdapter;
-import com.yj.shopapp.dialog.Center2Dialog;
-import com.yj.shopapp.dialog.CenterDialog;
 import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.DDecoration;
 import com.yj.shopapp.util.GoodsNumInputDialog;
@@ -116,6 +116,7 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
     private boolean isload = true;
     private CenterDialog dialog;
     private boolean isSubmitgoods;
+    private boolean isShowToast = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -210,6 +211,7 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
                 break;
             case R.id.my_checkbox:
                 isSelect = !isSelect;
+                isShowToast = true;
                 for (CartList c : cartLists) {
                     if (c.getSale_status().equals("0")) {
                         c.setChoosed(false);
@@ -229,23 +231,20 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
     private void showDialog(Double moeny, final String idstr) {
         dialog = new CenterDialog(mActivity, R.layout.carlistsubmitinfo, new int[]{R.id.exit_tv, R.id.finish_tv}, 0.8);
         dialog.show();
-        dialog.setOnCenterItemClickListener(new CenterDialog.OnCenterItemClickListener() {
-            @Override
-            public void OnCenterItemClick(CenterDialog dialog, View view) {
-                switch (view.getId()) {
-                    case R.id.exit_tv:
-                        Bundle bundle = new Bundle();
-                        bundle.putString("idstr", idstr);
-                        bundle.putString("addressid", PreferenceUtils.getPrefString(mActivity, "addressId", ""));
-                        CommonUtils.goActivity(mActivity, OrderDatails.class, bundle);
-                        dialog.dismiss();
-                        break;
-                    case R.id.finish_tv:
-                        dialog.dismiss();
-                        break;
-                    default:
-                        break;
-                }
+        dialog.setOnCenterItemClickListener((dialog, view) -> {
+            switch (view.getId()) {
+                case R.id.exit_tv:
+                    Bundle bundle = new Bundle();
+                    bundle.putString("idstr", idstr);
+                    bundle.putString("addressid", PreferenceUtils.getPrefString(mActivity, "addressId", ""));
+                    CommonUtils.goActivity(mActivity, OrderDatails.class, bundle);
+                    dialog.dismiss();
+                    break;
+                case R.id.finish_tv:
+                    dialog.dismiss();
+                    break;
+                default:
+                    break;
             }
         });
         ((TextView) dialog.findViewById(R.id.onetext)).setText(Html.fromHtml("平台配送金额" + "<font color=#e72c21>" + "500" + "</font>" + "元起送"));
@@ -298,12 +297,8 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
     public void numClick(final int position) {
         final CartList c = cartLists.get(position);
         if (c.getSale_status().equals("1")) {
-            GoodsNumInputDialog.newInstance(c.getItemid(), c.getUnit(), Integer.parseInt(c.getItemcount())).setListener(new GoodsNumInputDialog.OnShopNumListener() {
-                @Override
-                public void goodsNum(String number) {
-                    changeNumber(c.getId(), number, position);
-                }
-            }).show(mActivity.getFragmentManager(), "goodsdilog");
+            GoodsNumInputDialog.newInstance(c.getItemid(), c.getUnit(), Integer.parseInt(c.getItemcount())).setListener(s -> changeNumber(c.getId(), s, position)
+            ).show(mActivity.getFragmentManager(), "goodsdilog");
         }
     }
 
@@ -312,7 +307,7 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
         if (cartLists.get(position).getSale_status().equals("0")) {
             //cartLists.get(position).setChoosed(true);
             delOneGoods(cartLists.get(position).getId());
-           // delCart();
+            // delCart();
         } else {
             cartLists.get(position).setChoosed(isChecked);
             isAllCheck();
@@ -337,7 +332,7 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
         if (cartLists.size() == 0) {
             isSelect = false;
         }
-        if (isSubmitgoods) {
+        if (isSubmitgoods && isShowToast) {
             showToast("暂无可提交商品!");
         }
         myCheckbox.setChecked(isSelect);
@@ -503,16 +498,13 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
     }
 
     private void addEmptyView() {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (cartLists.size() > 0 && myRecyclerView != null) {
-                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT
-                            , (int) (CommonUtils.screenHeight(mActivity) * 0.65));
-                    View view = new View(mActivity);
-                    view.setLayoutParams(layoutParams);
-                    adapter.setFoootView(view);
-                }
+        new Handler().postDelayed(() -> {
+            if (cartLists.size() > 0 && myRecyclerView != null) {
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT
+                        , (int) (CommonUtils.screenHeight(mActivity) * 0.65));
+                View view = new View(mActivity);
+                view.setLayoutParams(layoutParams);
+                adapter.setFoootView(view);
             }
         }, 300);
     }
@@ -615,6 +607,7 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
             public void onBefore() {
                 super.onBefore();
                 classname.clear();
+                isShowToast = false;
             }
         });
     }

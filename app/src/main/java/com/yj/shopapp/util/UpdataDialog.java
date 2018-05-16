@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -84,18 +83,15 @@ public class UpdataDialog extends DialogFragment {
         if (getDialog() != null) {
             getDialog().setCanceledOnTouchOutside(false);
             getDialog().setCancelable(false);
-            getDialog().setOnKeyListener(new DialogInterface.OnKeyListener() {
-                @Override
-                public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-                    if (keyCode == KeyEvent.KEYCODE_BACK) {
+            getDialog().setOnKeyListener((dialog, keyCode, event) -> {
+                if (keyCode == KeyEvent.KEYCODE_BACK) {
 //                    if (isDownload) {
 //                        return false;
 //                    }
 //                    AppManager.getAppManager().finishAllActivity();
-                        return true;
-                    }
-                    return false;
+                    return true;
                 }
+                return false;
             });
             Window dialogWindow = getDialog().getWindow();
             dialogWindow.setGravity(Gravity.CENTER);

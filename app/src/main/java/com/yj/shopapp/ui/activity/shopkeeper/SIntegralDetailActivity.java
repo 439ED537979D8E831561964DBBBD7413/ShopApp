@@ -4,7 +4,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -17,7 +16,6 @@ import com.yj.shopapp.config.Contants;
 import com.yj.shopapp.http.HttpHelper;
 import com.yj.shopapp.http.OkHttpResponseHandler;
 import com.yj.shopapp.ubeen.IntegralDetail;
-import com.yj.shopapp.ui.activity.Interface.OnDateListenter;
 import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.ui.activity.adapter.IntegralAdapter;
 import com.yj.shopapp.ui.activity.base.BaseActivity;
@@ -59,12 +57,7 @@ public class SIntegralDetailActivity extends BaseActivity implements OnRefreshLi
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        toolbar.setNavigationOnClickListener(v -> finish());
         //设置adapter
         adapter = new IntegralAdapter(mContext);
         if (recyclerView != null) {
@@ -147,13 +140,10 @@ public class SIntegralDetailActivity extends BaseActivity implements OnRefreshLi
 
     @OnClick(R.id.screenTime)
     public void onViewClicked() {
-        new SelectTimeFragmnet().setListenter(new OnDateListenter() {
-            @Override
-            public void getDate(String starttime, String endtime) {
-                startTime = starttime;
-                endTime = endtime;
-                onResume();
-            }
+        new SelectTimeFragmnet().setListenter((starttime, endtime) -> {
+            startTime = starttime;
+            endTime = endtime;
+            onResume();
         }).show(getFragmentManager(), "select");
     }
 

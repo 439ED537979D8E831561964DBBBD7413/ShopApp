@@ -500,15 +500,16 @@ public class SSecondActivity extends BaseActivity implements AdapterView.OnItemC
     }
 
     private void addEmptyView() {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
+        new Handler().postDelayed(() -> {
+            try {
                 int itemHeight = recyclerView.getLayoutManager().getChildAt(1).getHeight();
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT
                         , recyclerView.getHeight() - itemHeight);
                 View view = new View(mContext);
                 view.setLayoutParams(layoutParams);
                 brandAdapter.setFoootView(view);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }, 300);
     }

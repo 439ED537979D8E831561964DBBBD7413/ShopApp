@@ -13,6 +13,7 @@ import android.widget.NumberPicker;
 import android.widget.TimePicker;
 
 import com.yj.shopapp.R;
+import com.yj.shopapp.util.DateUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,7 +100,7 @@ public class DataPickerDialog {
                             getDatePickerValue();
                             getTimePickerValue();
                         }
-                        timePickerDialogInterface.positiveListener();
+                        timePickerDialogInterface.positiveListener(DataPickerDialog.this);
 
                     }
                 });
@@ -153,10 +154,10 @@ public class DataPickerDialog {
     }
 
     /*
-    * 调整numberpicker大小
-    */
+     * 调整numberpicker大小
+     */
     private void resizeNumberPicker(NumberPicker np) {
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(120,
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(240,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
         params.setMargins(10, 0, 10, 0);
         np.setLayoutParams(params);
@@ -229,6 +230,11 @@ public class DataPickerDialog {
         mDay = mDatePicker.getDayOfMonth();
     }
 
+    public Long getSelectTimeDtamp() {
+       // Date date = new Date(mYear, mMonth, mDay);
+        return DateUtils.DataToMill(String.format("%d年%d月%d日",mYear,mMonth+1,mDay));
+    }
+
     /**
      * 获取时间选择的值
      */
@@ -241,7 +247,7 @@ public class DataPickerDialog {
 
     public interface TimePickerDialogInterface {
         //确认按钮
-        void positiveListener();
+        void positiveListener(DataPickerDialog dialog);
 
         //取消按钮
         void negativeListener();

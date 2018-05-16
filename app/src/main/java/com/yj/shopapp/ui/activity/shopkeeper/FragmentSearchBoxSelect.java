@@ -9,6 +9,8 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -123,8 +125,30 @@ public class FragmentSearchBoxSelect extends DialogFragment {
                 }
             }
         });
+        if (Type != 0) {
+            valueEt.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
+                }
 
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    if (s.toString().equals("")) {
+
+                    } else {
+                        String input = valueEt.getText().toString();
+                        refreshRequest(input);
+                        loading.showLoading();
+                    }
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+
+                }
+            });
+        }
     }
 
     @Override
@@ -179,7 +203,6 @@ public class FragmentSearchBoxSelect extends DialogFragment {
                 dismiss();
                 break;
             case R.id.submitTv:
-
                 if (Type == 0) {
                     String input = valueEt.getText().toString();
                     if (!input.equals("")) {
@@ -224,7 +247,9 @@ public class FragmentSearchBoxSelect extends DialogFragment {
                 } else if (JsonHelper.getRequstOK(json) == 6) {
                     loading.showEmpty();
                 }
-                loading.showContent();
+                if (loading != null) {
+                    loading.showContent();
+                }
             }
 
             @Override
@@ -242,6 +267,7 @@ public class FragmentSearchBoxSelect extends DialogFragment {
 
     private void hideImm() {
         InputMethodManager inputMethodManager = (InputMethodManager) mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        assert inputMethodManager != null;
         inputMethodManager.hideSoftInputFromWindow(valueEt.getWindowToken(), 0);
     }
 }

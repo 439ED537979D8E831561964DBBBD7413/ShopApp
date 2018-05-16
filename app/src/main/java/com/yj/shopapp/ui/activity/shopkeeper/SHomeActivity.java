@@ -1022,7 +1022,7 @@ public class SHomeActivity extends NewBaseFragment implements SwipeRefreshLayout
         params.put("itemnoid", itemnoid);
         params.put("id", "");
         params.put("agentuid", "");
-        ShowLog.e(uid + "|" + token + "itemnoid" + itemnoid + "checkgoods" + checkgoods + "type");
+        //ShowLog.e(uid + "|" + token + "itemnoid" + itemnoid + "checkgoods" + checkgoods + "type");
         //显示ProgressDialog
 
         HttpHelper.getInstance().post(mActivity, Contants.PortU.LookItem, params, new OkHttpResponseHandler<String>(mActivity) {

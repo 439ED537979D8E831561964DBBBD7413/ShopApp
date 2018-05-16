@@ -1,14 +1,11 @@
 package com.yj.shopapp.ui.activity;
 
-import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v7.widget.CardView;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -29,10 +26,10 @@ import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.JsonHelper;
 import com.yj.shopapp.util.NetUtils;
 import com.yj.shopapp.util.PreferenceUtils;
+import com.yj.shopapp.util.SoftKeyBoardListener;
 import com.yj.shopapp.util.SoftKeyInputHidWidget;
 import com.yj.shopapp.util.StringHelper;
 import com.yj.shopapp.view.ClearEditText;
-import com.yj.shopapp.view.KeyboardLayout;
 import com.yj.shopapp.wbeen.Login;
 
 import java.util.HashMap;
@@ -62,24 +59,19 @@ public class LoginActivity extends BaseActivity {
     LinearLayout bgView;
     @BindView(R.id.scroll)
     ScrollView scroll;
-    @BindView(R.id.mainLl)
-    KeyboardLayout mainLl;
+    @BindView(R.id.fillView)
+    View fillView;
     private KProgressHUD progressDialog;
     int index;
     boolean isReqing;
     private int status;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        //StatusBarUtil.setTranslucent(this);
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     protected int getLayoutId() {
         return R.layout.activity_login;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void initData() {
         AppManager.getAppManager().finishAllActivity();
@@ -87,41 +79,37 @@ public class LoginActivity extends BaseActivity {
         String userpwd = PreferenceUtils.getPrefString(mContext, Contants.Preference.USER_PWD, "");
         userNameEt.setText(username);
         userPasswordEt.setText(userpwd);
-        userPasswordEt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        userPasswordEt.setOnEditorActionListener((v, actionId, event) -> {
+            //完成
+            login();
+            return true;
+        });
+        CommonUtils.setHideOrShowSoftInput(userNameEt, LoginActivity.this);
+        CommonUtils.setHideOrShowSoftInput(userPasswordEt, LoginActivity.this);
+        SoftKeyBoardListener.setListener(LoginActivity.this, new SoftKeyBoardListener.OnSoftKeyBoardChangeListener() {
             @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                //完成
-                login();
-                return true;
+            public void keyBoardShow(int height) {
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) (height * 0.8));
+                fillView.setLayoutParams(params);
+                scrollToBottom();
+            }
+
+            @Override
+            public void keyBoardHide(int height) {
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
+                fillView.setLayoutParams(params);
             }
         });
-        mainLl.setKeyboardListener(new KeyboardLayout.KeyboardLayoutListener() {
-            @Override
-            public void onKeyboardStateChanged(boolean isActive, int keyboardHeight) {
-                if (isActive) {
-                    scrollToBottom();
-                }
-            }
-        });
-        setHideOrShowSoftInput(userNameEt);
-        setHideOrShowSoftInput(userPasswordEt);
     }
 
     /**
      * 弹出软键盘时将SVContainer滑到底
      */
     private void scrollToBottom() {
-        if (scroll != null) {
-            scroll.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        scroll.smoothScrollTo(0, scroll.getBottom() + SoftKeyInputHidWidget.getStatusBarHeight(LoginActivity.this));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }, 100);
+        try {
+            scroll.postDelayed(() -> scroll.smoothScrollTo(0, scroll.getBottom() + SoftKeyInputHidWidget.getStatusBarHeight(LoginActivity.this)), 100);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -298,31 +286,5 @@ public class LoginActivity extends BaseActivity {
                 showToastShort(Contants.NetStatus.NETDISABLEORNETWORKDISABLE);
             }
         });
-    }
-
-    private void setHideOrShowSoftInput(View v) {
-        if (!(v instanceof EditText)) {
-            v.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    hideSoftKeyboard(LoginActivity.this);
-//                    mHolder.ll_settings.setFocusable(true);
-//                    mHolder.ll_settings.requestFocus();
-                    return false;
-                }
-            });
-        }
-        if (v instanceof ViewGroup) {
-            for (int i = 0; i < ((ViewGroup) v).getChildCount(); i++) {
-                View innerView = ((ViewGroup) v).getChildAt(i);
-                setHideOrShowSoftInput(innerView);
-            }
-        }
-    }
-
-    public void hideSoftKeyboard(Activity activity) {
-        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity
-                .INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
     }
 }

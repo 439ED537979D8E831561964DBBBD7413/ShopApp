@@ -1,7 +1,9 @@
 package com.yj.shopapp.ui.activity.shopkeeper;
 
 
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.widget.AbsListView;
@@ -51,17 +53,10 @@ public class my_Recommenduser extends BaseFragment implements RecommendAdpter.Ca
         swipeRefreshLayout.setColorSchemeResources(Contants.Refresh.refreshColorScheme);
         swipeRefreshLayout.setOnRefreshListener(listener);
         emptyView.setText("暂无推荐\r\n\r\n推荐用户领百元红包，你还在等什么!");
-        if (adpter == null) {
-            adpter = new RecommendAdpter(mActivity, this);
-        }
+        adpter = new RecommendAdpter(mActivity, this);
         if (NetUtils.isNetworkConnected(mActivity)) {
             if (null != swipeRefreshLayout) {
-                swipeRefreshLayout.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        fresh();
-                    }
-                }, 200);
+                swipeRefreshLayout.postDelayed(this::fresh, 200);
             }
         } else {
             showToastShort("网络不给力");
@@ -106,12 +101,7 @@ public class my_Recommenduser extends BaseFragment implements RecommendAdpter.Ca
         return R.layout.fragment_my__recommenduser;
     }
 
-    SwipeRefreshLayout.OnRefreshListener listener = new SwipeRefreshLayout.OnRefreshListener() {
-        @Override
-        public void onRefresh() {
-            refreshRequest();
-        }
-    };
+    SwipeRefreshLayout.OnRefreshListener listener = this::refreshRequest;
 
     /**
      * 网络请求
@@ -133,6 +123,7 @@ public class my_Recommenduser extends BaseFragment implements RecommendAdpter.Ca
                 super.onBefore();
             }
 
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onResponse(Request request, String json) {
                 super.onResponse(request, json);
@@ -142,6 +133,7 @@ public class my_Recommenduser extends BaseFragment implements RecommendAdpter.Ca
                     for (int i = 0; i < list.size(); i++) {
                         showControl.add(1);
                     }
+                    assert adpter != null;
                     adpter.setList(list);
                     adpter.setmshowControl(showControl);
                     listView.setAdapter(adpter);

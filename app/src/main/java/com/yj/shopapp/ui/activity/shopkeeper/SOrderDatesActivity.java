@@ -123,12 +123,7 @@ public class SOrderDatesActivity extends BaseActivity {
     protected void initData() {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        toolbar.setNavigationOnClickListener(v -> finish());
         contentTv.setText("订单详情");
         if (getIntent().hasExtra("oid")) {
             oid = getIntent().getStringExtra("oid");
@@ -178,7 +173,7 @@ public class SOrderDatesActivity extends BaseActivity {
 
     @Override
     protected void setStatusBar() {
-        StatusBarUtil.setColor(this, getResources().getColor(R.color.white), 0);
+        StatusBarUtil.setColor(this, getResources().getColor(R.color.white), 30);
         StatusBarUtil.setStatusBarTextColor(getWindow(), true);
     }
 
