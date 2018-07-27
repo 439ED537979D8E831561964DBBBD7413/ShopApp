@@ -33,6 +33,7 @@ public class activityRule extends BaseFragment {
     @BindView(R.id.rule_details)
     TextView ruleDetails;
     int start;
+
     @Override
     public void init(Bundle savedInstanceState) {
         if (NetUtils.isNetworkConnected(mActivity)) {
@@ -74,20 +75,22 @@ public class activityRule extends BaseFragment {
                     String rule = object.getString("rule");
                     String[] newStr = rule.split(";");
                     SpannableStringBuilder builder = new SpannableStringBuilder();
-                    ForegroundColorSpan span = new ForegroundColorSpan(getResources().getColor(R.color.red));
-                    for (int i = 0; i < newStr.length; i++) {
-                        if (i == newStr.length - 1) {
-                            start = builder.length();
-                            builder.append(newStr[i]);
-                        } else {
-                            builder.append(newStr[i]);
-                        }
-                        builder.append("\r\n\r\n");
+                    if (isAdded()) {
+                        ForegroundColorSpan span = new ForegroundColorSpan(getResources().getColor(R.color.red));
+                        for (int i = 0; i < newStr.length; i++) {
+                            if (i == newStr.length - 1) {
+                                start = builder.length();
+                                builder.append(newStr[i]);
+                            } else {
+                                builder.append(newStr[i]);
+                            }
+                            builder.append("\r\n\r\n");
 
+                        }
+                        int end = builder.length();
+                        builder.setSpan(span, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        ruleDetails.setText(builder);
                     }
-                    int end = builder.length();
-                    builder.setSpan(span,start,end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    ruleDetails.setText(builder);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

@@ -20,8 +20,6 @@ import com.yj.shopapp.ui.activity.LoginActivity;
 import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.ui.activity.adapter.HomeViewPager;
 import com.yj.shopapp.ui.activity.base.BaseTabActivity;
-import com.yj.shopapp.ui.activity.upversion.Download;
-import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.JsonHelper;
 import com.yj.shopapp.util.MessageEvent;
 import com.yj.shopapp.util.PreferenceUtils;
@@ -211,13 +209,48 @@ public class SMainTabActivity extends BaseTabActivity implements RadioGroup.OnCh
     public void onPageScrollStateChanged(int state) {
 
     }
-
-    @Override
-    protected void onDestroy() {
-        Download.onDestory();
-        CommonUtils.fixInputMethodManagerLeak(SMainTabActivity.this);
-        super.onDestroy();
-        unbinder.unbind();
-    }
+//
+//    public interface MyTouchListener {
+//        public void onTouchEvent(MotionEvent event);
+//    }
+//
+//    // 保存MyTouchListener接口的列表
+//    private ArrayList<MyTouchListener> myTouchListeners = new ArrayList<SMainTabActivity.MyTouchListener>();
+//
+//    /**
+//     * 提供给Fragment通过getActivity()方法来注册自己的触摸事件的方法
+//     *
+//     * @param listener
+//     */
+//    public void registerMyTouchListener(MyTouchListener listener) {
+//        myTouchListeners.add(listener);
+//    }
+//
+//    /**
+//     * 提供给Fragment通过getActivity()方法来取消注册自己的触摸事件的方法
+//     *
+//     * @param listener
+//     */
+//    public void unRegisterMyTouchListener(MyTouchListener listener) {
+//        myTouchListeners.remove(listener);
+//    }
+//
+//    /**
+//     * 分发触摸事件给所有注册了MyTouchListener的接口
+//     */
+//    @Override
+//    public boolean dispatchTouchEvent(MotionEvent ev) {
+//        for (MyTouchListener listener : myTouchListeners) {
+//            listener.onTouchEvent(ev);
+//        }
+//        return super.dispatchTouchEvent(ev);
+//    }
+//
+//    @Override
+//    protected void onDestroy() {
+//        CommonUtils.fixInputMethodManagerLeak(SMainTabActivity.this);
+//        super.onDestroy();
+//        unbinder.unbind();
+//    }
 
 }

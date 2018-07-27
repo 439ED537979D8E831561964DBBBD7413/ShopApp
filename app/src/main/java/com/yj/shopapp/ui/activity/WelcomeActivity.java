@@ -1,13 +1,22 @@
 package com.yj.shopapp.ui.activity;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.PermissionChecker;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,13 +56,19 @@ import cn.bingoogolapple.bgabanner.BGABanner;
  * Created by LK on 2017/11/3.
  */
 
-public class WelcomeActivity extends AppCompatActivity {
+public class WelcomeActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
     @BindView(R.id.CountdownText)
     TextView CountdownText;
     @BindView(R.id.getintohome)
     TextView getintohome;
     @BindView(R.id.banner_guide_foreground)
     BGABanner bannerGuideForeground;
+    @BindView(R.id.Contact_us)
+    TextView ContactUs;
+    @BindView(R.id.hide_Contact_us)
+    LinearLayout hideContactUs;
+    @BindView(R.id.hide_intohome)
+    LinearLayout hideIntohome;
 
     private Context mContext;
     boolean isReqing;
@@ -62,7 +77,13 @@ public class WelcomeActivity extends AppCompatActivity {
     private String token;
     private List<WelcomeImags> welcomeImags = new ArrayList<>();
     private List<String> imags = new ArrayList<>();
+    private static final int REQUEST_CODE = 1;
+    private final int REQUEST_CODEC = 0x1001;
+    private int currposition = 0;
     Unbinder unbinder;
+    private String username;
+    private String userpwd;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -76,8 +97,8 @@ public class WelcomeActivity extends AppCompatActivity {
         }
         AppManager.getAppManager().addActivity(WelcomeActivity.this);
         String token = PreferenceUtils.getPrefString(mContext, Contants.Preference.TOKEN, "");
-        String username = PreferenceUtils.getPrefString(mContext, Contants.Preference.USER_NAME, "");
-        String userpwd = PreferenceUtils.getPrefString(mContext, Contants.Preference.USER_PWD, "");
+        username = PreferenceUtils.getPrefString(mContext, Contants.Preference.USER_NAME, "");
+        userpwd = PreferenceUtils.getPrefString(mContext, Contants.Preference.USER_PWD, "");
         if (username.isEmpty() || userpwd.isEmpty() || token.isEmpty()) {
             Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);
             startActivity(intent);
@@ -131,7 +152,8 @@ public class WelcomeActivity extends AppCompatActivity {
                 case "4":
                     Bundle bundle = new Bundle();
                     bundle.putString("url", imags.getUrl());
-                    Intent intent4 = new Intent(WelcomeActivity.this, MyWebView.class);
+                    bundle.putString("phone", welcomeImags.get(currposition).getTel());
+                    Intent intent4 = new Intent(WelcomeActivity.this, MyWebView2.class);
                     intent4.putExtras(bundle);
                     startActivity(intent4);
 
@@ -140,7 +162,7 @@ public class WelcomeActivity extends AppCompatActivity {
                     break;
             }
         });
-        bannerGuideForeground.setEnterSkipViewIdAndDelegate(R.id.getintohome, 0, this::goActivity);
+        bannerGuideForeground.setOnPageChangeListener(this);
     }
 
     @Override
@@ -152,7 +174,9 @@ public class WelcomeActivity extends AppCompatActivity {
     private CountDownTimer timer = new CountDownTimer(4000, 1000) {
         @Override
         public void onTick(long millisUntilFinished) {
-            CountdownText.setText("跳过 " + (millisUntilFinished / 1000));
+            if (CountdownText != null) {
+                CountdownText.setText("跳过 " + (millisUntilFinished / 1000));
+            }
         }
 
         @Override
@@ -216,6 +240,7 @@ public class WelcomeActivity extends AppCompatActivity {
                     PreferenceUtils.setPrefInt(mContext, "isVip", uinfo.getIs_vip());
                     PreferenceUtils.setPrefString(mContext, "CustomerService", uinfo.getCustomer_service_phone());
                     PreferenceUtils.setPrefString(mContext, "address", uinfo.getAddress());
+                    PreferenceUtils.setPrefBoolean(mContext, "firstMain", true);
                     uType = uinfo.getUtype();
                     uid = uinfo.getUid();
                     token = uinfo.getToken();
@@ -319,7 +344,6 @@ public class WelcomeActivity extends AppCompatActivity {
             public void onResponse(Request request, String json) {
                 super.onResponse(request, json);
                 ShowLog.e(json);
-
                 if (!json.startsWith("{\"errcode")) {
                     if (!"[]".equals(json) && json.length() != 0) {
                         welcomeImags = JSONArray.parseArray(json, WelcomeImags.class);
@@ -330,8 +354,12 @@ public class WelcomeActivity extends AppCompatActivity {
                             bannerGuideForeground.setData(imags, new ArrayList<String>());
                         }
                         if (imags.size() == 1) {
-                            CountdownText.setVisibility(View.VISIBLE);
-                            timer.start();
+                            if (CountdownText != null) {
+                                CountdownText.setVisibility(View.VISIBLE);
+                            }
+                            if (timer != null) {
+                                timer.start();
+                            }
                         }
                     } else {
                         goActivity();
@@ -352,10 +380,6 @@ public class WelcomeActivity extends AppCompatActivity {
 
     //检测版本
     public void updateVersion() {
-        if (!NetUtils.isNetworkAvailable(mContext)) {
-            Toast.makeText(mContext, Contants.NetStatus.NETDISABLE, Toast.LENGTH_SHORT).show();
-            return;
-        }
         String version = String.valueOf(CommonUtils.getVerCode(mContext));
         final Map<String, String> params = new HashMap<>();
         params.put("version", version);
@@ -368,13 +392,21 @@ public class WelcomeActivity extends AppCompatActivity {
                 if (JsonHelper.isRequstOK(json, mContext)) {
                     JSONObject jsonObject = JSONObject.parseObject(json);
                     int status = Integer.parseInt(jsonObject.getString("status"));
-                    PreferenceUtils.setPrefInt(mContext, "appVersion", status);
+                    PreferenceUtils.setPrefInt(mContext, "updateStatus", status);
+                    if (status == 0) {
+                        //删除文件
+                        String path = PreferenceUtils.getPrefString(mContext, "apkPath", "");
+                        if (!"".equals(path)) {
+                            CommonUtils.deleteFile(path);
+                        }
+                    }
                 }
             }
         });
     }
 
-    @OnClick({R.id.CountdownText, R.id.getintohome})
+
+    @OnClick({R.id.CountdownText, R.id.getintohome, R.id.Contact_us})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.CountdownText:
@@ -384,9 +416,57 @@ public class WelcomeActivity extends AppCompatActivity {
             case R.id.getintohome:
                 goActivity();
                 break;
+            case R.id.Contact_us:
+                //拨打电话
+                if (imags.size() == 0) return;
+                if (!welcomeImags.get(currposition).getTel().equals("")) {
+                    if (Build.VERSION.SDK_INT >= 23) {
+                        //判断有没有拨打电话权限
+                        if (PermissionChecker.checkSelfPermission(WelcomeActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                            //请求拨打电话权限
+                            requestPermissions(new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CODEC);
+                        } else {
+                            callPhone();
+                        }
+                    } else {
+                        callPhone();
+                    }
+                }
+                break;
             default:
                 break;
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQUEST_CODEC:
+                if (PermissionChecker.checkSelfPermission(WelcomeActivity.this, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
+                    callPhone();
+                } else {
+                    Toast.makeText(mContext, "授权失败", Toast.LENGTH_SHORT).show();
+                }
+                break;
+        }
+    }
+
+    private void callPhone() {
+        if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
+            Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + welcomeImags.get(currposition).getTel()));
+            startActivity(intent);
+        } else {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(WelcomeActivity.this, Manifest.permission.CALL_PHONE)) {
+                //已经禁止提示了("您已禁止该权限，需要重新开启");
+                Toast.makeText(mContext, "您已禁止该权限，需要重新开启", Toast.LENGTH_SHORT).show();
+            } else {
+                ActivityCompat.requestPermissions(WelcomeActivity.this, new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CODE);
+
+            }
+
+        }
+
     }
 
     @Override
@@ -394,5 +474,30 @@ public class WelcomeActivity extends AppCompatActivity {
         super.onDestroy();
         unbinder.unbind();
         AppManager.getAppManager().removeActivityFromStack(WelcomeActivity.this);
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        currposition = position;
+        if (welcomeImags.get(position).getTel().equals("")) {
+            hideContactUs.setVisibility(View.GONE);
+        } else {
+            hideContactUs.setVisibility(View.VISIBLE);
+        }
+        if (position == imags.size() - 1) {
+            hideIntohome.setVisibility(View.VISIBLE);
+        } else {
+            hideIntohome.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
     }
 }

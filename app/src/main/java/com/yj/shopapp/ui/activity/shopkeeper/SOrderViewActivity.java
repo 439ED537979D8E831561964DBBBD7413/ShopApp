@@ -56,6 +56,7 @@ public class SOrderViewActivity extends NewBaseFragment implements OnRefreshList
     private List<NewOrder> orderList = new ArrayList<>();
     private String keyword = "";
     private boolean isFirst = true;
+    private int statysType;
 
     public static SOrderViewActivity newInstance(int type) {
         Bundle args = new Bundle();
@@ -65,9 +66,6 @@ public class SOrderViewActivity extends NewBaseFragment implements OnRefreshList
         return fragment;
     }
 
-    private int gettype() {
-        return getArguments().getInt("type");
-    }
 
     @Override
     protected int getLayoutId() {
@@ -76,6 +74,7 @@ public class SOrderViewActivity extends NewBaseFragment implements OnRefreshList
 
     @Override
     protected void initView(View view, Bundle savedInstanceState) {
+        statysType = getArguments().getInt("type");
         adapter = new SNewOrderAdpter(mActivity, orderList);
         if (recyclerView != null) {
             recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
@@ -138,7 +137,7 @@ public class SOrderViewActivity extends NewBaseFragment implements OnRefreshList
                 }
                 break;
             default:
-                if (!isFirst && gettype() == 0) {
+                if (!isFirst && statysType == 0) {
                     if (isNetWork(mActivity)) {
                         orderList.clear();
                         refreshRequest(0);
@@ -155,7 +154,7 @@ public class SOrderViewActivity extends NewBaseFragment implements OnRefreshList
         params.put("token", token);
         params.put("p", String.valueOf(mCurrentPage));
         params.put("keyword", keyword);
-        params.put("ostatus", gettype() + "");
+        params.put("ostatus", statysType + "");
         HttpHelper.getInstance().post(mActivity, Contants.PortU.MYORDER, params, new OkHttpResponseHandler<String>(mActivity) {
             @Override
             public void onError(Request request, Exception e) {

@@ -11,6 +11,7 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 
@@ -63,18 +64,18 @@ public class SNewOrderAdpter extends Common2Adapter<NewOrder> {
             holder.getTextView(R.id.bgoodsspesc).setText(String.format("规格：%1$s%2$s", order.getIteminfo().getSpecs(), order.getIteminfo().getUnit()));
             holder.getTextView(R.id.bgoodsprice).setText(String.format("￥%s", order.getIteminfo().getUnitprice()));
             holder.getTextView(R.id.bgoodsnum).setText(String.format("x%s", order.getIteminfo().getItemcount()));
-            holder.getTextView(R.id.allnum).setText(String.format("共%1$s%2$s商品", order.getIteminfo().getItemcount(), order.getIteminfo().getUnit()));
+            holder.getTextView(R.id.allnum).setText(Html.fromHtml("共" + "<font color=#f0322b>" + order.getIteminfo().getItemcount() + order.getIteminfo().getUnit() + "</font>" + "商品"));
             fontLarger(String.format("总金额：￥%s", order.getIteminfo().getMoneysum()), holder.getTextView(R.id.allmonry), 4);
             Glide.with(context).load(order.getIteminfo().getImgurl()).into(holder.getImageView(R.id.shopimag));
         } else {
             holder.getTextView(R.id.orderNo).setText(String.format("订单：%s", order.getOid()));
             holder.getTextView(R.id.orderStatus).setText(Contants.OrderStadus[Integer.parseInt(order.getStatus())]);
             if (order.getCoupon() == 0) {
-                holder.getTextView(R.id.total_num).setText(Html.fromHtml("共" + "<font color=>" + order.getSumnum() + "</font>" + "件商品"));
+                holder.getTextView(R.id.total_num).setText(Html.fromHtml("共" + "<font color=#f0322b>" + order.getSumnum() + "件" + "</font>" + "商品"));
             } else {
-                holder.getTextView(R.id.total_num).setText(String.format("共%d件商品    已优惠￥%.2f", order.getSumnum(), (double) order.getCoupon()));
+                holder.getTextView(R.id.total_num).setText(Html.fromHtml("共" + "<font color=#f0322b>" + order.getSumnum() + "</font>" + "件商品" + " &emsp &emsp &emsp " + "已优惠￥" + order.getCoupon()));
             }
-            fontLarger(String.format("应付金额：￥%s", order.getMoney()), holder.getTextView(R.id.Amount_payable), 5);
+            fontLarger(String.format("应付金额：￥%s",order.getNewreceipt()), holder.getTextView(R.id.Amount_payable), 5);
 
             final RecyclerView recyclerView = (RecyclerView) holder.getView(R.id.orderItem_Recy);
             SorderItemAdapter adapter = new SorderItemAdapter(context, order.getData());
@@ -83,11 +84,11 @@ public class SNewOrderAdpter extends Common2Adapter<NewOrder> {
             recyclerView.setLayoutManager(linearLayoutManager);
             recyclerView.setAdapter(adapter);
             recyclerView.setOnTouchListener((v, event) -> {
-                if (event.getAction() == event.ACTION_DOWN) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     scrollX = event.getX();
                     scrollY = event.getY();
                 }
-                if (event.getAction() == event.ACTION_UP) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
                     if (Math.abs(scrollX - event.getX()) <= 10 && Math.abs(scrollY - event.getY()) <= 10) {
                         Bundle bundle = new Bundle();
                         bundle.putString("oid", order.getOid());
@@ -118,7 +119,7 @@ public class SNewOrderAdpter extends Common2Adapter<NewOrder> {
 
     private void fontLarger(String test, TextView textView, int index) {
         SpannableStringBuilder builder = new SpannableStringBuilder(test);
-        ForegroundColorSpan span = new ForegroundColorSpan(Color.parseColor("#01abff"));
+        ForegroundColorSpan span = new ForegroundColorSpan(Color.parseColor("#f0322b"));
         builder.setSpan(span, index, test.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         builder.setSpan(new RelativeSizeSpan(1.2f), index, test.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         if (textView != null) {

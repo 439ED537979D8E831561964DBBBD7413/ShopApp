@@ -36,6 +36,10 @@ public class BindAccountActivity extends BaseActivity {
     TextView accountType;
     @BindView(R.id.account_tv)
     ClearEditText accountTv;
+    @BindView(R.id.nickname)
+    TextView nickname;
+    @BindView(R.id.submit_tv)
+    TextView submitTv;
     private int type = 0;
     private String[] titles = {"绑定微信", "绑定支付宝"};
 
@@ -59,13 +63,17 @@ public class BindAccountActivity extends BaseActivity {
         }
         titleTv.setText(type != 0 ? titles[type - 1] : "");
         tips.setText(String.format("请仔细核对您的%s账号，以确保能准确成功的打款", type == 1 ? "微信" : "支付宝"));
-        accountType.setText(type == 1 ? "微信" : "支付宝");
+        accountType.setText(type == 1 ? "微信账号" : "支付宝账号");
+        accountTv.setHint(type == 1 ? "请输入微信账号" : "请输入支付宝账号");
+        nickname.setText(type == 1 ? "微信昵称" : "支付宝昵称");
     }
+
     @Override
     protected void setStatusBar() {
         super.setStatusBar();
         StatusBarUtil.setColor(this, getResources().getColor(R.color.white), 50);
     }
+
     private void requestDeta() {
         Map<String, String> params = new HashMap<>();
         params.put("uid", uid);
@@ -107,4 +115,5 @@ public class BindAccountActivity extends BaseActivity {
             showToastShort("请输入提现账号");
         }
     }
+
 }

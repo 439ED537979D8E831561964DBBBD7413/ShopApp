@@ -27,16 +27,16 @@ import com.kaopiz.kprogresshud.KProgressHUD;
 import com.squareup.okhttp.Request;
 import com.yj.shopapp.R;
 import com.yj.shopapp.config.Contants;
+import com.yj.shopapp.dialog.BugGoodsDialog;
 import com.yj.shopapp.http.HttpHelper;
 import com.yj.shopapp.http.OkHttpResponseHandler;
 import com.yj.shopapp.ubeen.LookItem;
 import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.ui.activity.base.BaseActivity;
-import com.yj.shopapp.dialog.BugGoodsDialog;
 import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.DialogUtils;
 import com.yj.shopapp.util.JsonHelper;
-import com.yj.shopapp.util.StatusBarUtils;
+import com.yj.shopapp.util.StatusBarUtil;
 import com.yj.shopapp.util.StringHelper;
 
 import java.util.HashMap;
@@ -91,6 +91,8 @@ public class SGoodsDetailActivity extends BaseActivity {
     TextView warningTv;
     @BindView(R.id.warning_tv_super)
     LinearLayout warningTvSuper;
+    @BindView(R.id.backTv)
+    ImageView backTv;
     private boolean Collect = false;
     private boolean isRequesting = false;//标记，是否正在刷新
     String checkGoods = "";
@@ -136,6 +138,7 @@ public class SGoodsDetailActivity extends BaseActivity {
                 break;
             case R.id.add:
                 checkGoods = "order";
+                if (null == lookItem) return;
                 if (lookItem.getStock().equals("0")) {
                     DialogUtils dialog = new DialogUtils();
                     dialog.getMaterialDialog(mContext, "温馨提示", "库存不足，是否需要为您匹配类似商品？", new MaterialDialog.SingleButtonCallback() {
@@ -208,9 +211,11 @@ public class SGoodsDetailActivity extends BaseActivity {
 
     @Override
     protected void setStatusBar() {
-        StatusBarUtils.from(this).setLightStatusBar(true).setTransparentStatusbar(true).setActionbarView(bgView).process();
-//        StatusBarUtil.setTransparentForImageView(this, bgView);
-//        StatusBarUtil.setDarkMode(this);
+        //StatusBarUtils.from(this).setLightStatusBar(true).setTransparentStatusbar(true).setActionbarView(bgView).process();
+        StatusBarUtil.setTranslucentForImageView(SGoodsDetailActivity.this, 100, backTv);
+//        StatusBarUtils.from(this)
+//                .setLightStatusBar(true)
+//                .process();
     }
 
     @Override
@@ -357,7 +362,7 @@ public class SGoodsDetailActivity extends BaseActivity {
             promotionPrice.setText(lookItem.getIs_promotion() == 1 ? String.format("￥%s", lookItem.getSprice()) : "".equals(lookItem.getDisstr()) ? "" : String.format("￥%s", lookItem.getDisstr()));
             promotionPrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
             fontLarger(String.format("￥%s", lookItem.getIs_promotion() == 1 ? lookItem.getDisstr() : lookItem.getSprice()), shopprice);
-            tips.setText("".equals(lookItem.getSpecialnote()) ? "" : String.format("商品提示  %1$s", lookItem.getSpecialnote()));
+            tips.setText("".equals(lookItem.getSpecialnote()) ? "" : String.format("%1$s", lookItem.getSpecialnote()));
             goodspec.setText(String.format("%1$s/%2$s", lookItem.getSpecs(), lookItem.getUnit()));
             industryName.setText(lookItem.getIndustry_name());
             className.setText(lookItem.getClass_name());

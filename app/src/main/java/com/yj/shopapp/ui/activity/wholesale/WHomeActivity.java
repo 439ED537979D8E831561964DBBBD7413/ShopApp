@@ -3,8 +3,10 @@ package com.yj.shopapp.ui.activity.wholesale;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
@@ -14,6 +16,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -21,33 +24,29 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.kaopiz.kprogresshud.KProgressHUD;
 import com.mining.app.zxing.MipcaActivityCapture;
 import com.squareup.okhttp.Request;
 import com.yj.shopapp.R;
 import com.yj.shopapp.config.Contants;
 import com.yj.shopapp.dialog.CenterDialog;
+import com.yj.shopapp.dialog.WGoodsSearchV4DialogFragment;
 import com.yj.shopapp.http.HttpHelper;
 import com.yj.shopapp.http.OkHttpResponseHandler;
 import com.yj.shopapp.ubeen.Notice;
-import com.yj.shopapp.ubeen.ReCode;
+import com.yj.shopapp.ui.activity.ImgUtil.NewBaseFragment;
 import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.ui.activity.adapter.ClassPagerAdpter;
-import com.yj.shopapp.ui.activity.base.BaseFragment;
-import com.yj.shopapp.ui.activity.shopkeeper.FragmentSearchBoxSelect;
 import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.DateUtils;
 import com.yj.shopapp.util.JsonHelper;
-import com.yj.shopapp.util.NetUtils;
+import com.yj.shopapp.util.KeybordS;
 import com.yj.shopapp.util.NoticeDialog;
 import com.yj.shopapp.util.PreferenceUtils;
+import com.yj.shopapp.util.StatusBarUtils;
 import com.yj.shopapp.wbeen.BannerInfo;
 import com.yj.shopapp.wbeen.ClassList;
-import com.yj.shopapp.wbeen.Lookitem;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
+import com.yj.shopapp.wbeen.Classify;
+import com.yj.shopapp.wbeen.Power;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,7 +62,7 @@ import q.rorbin.badgeview.QBadgeView;
 /**
  * Created by jm on 2016/4/25.
  */
-public class WHomeActivity extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
+public class WHomeActivity extends NewBaseFragment {
 
     @BindView(R.id.id_right_btu)
     ImageView idRightBtu;
@@ -73,6 +72,13 @@ public class WHomeActivity extends BaseFragment implements SwipeRefreshLayout.On
     TabLayout hometablayout;
     @BindView(R.id.classViewPager)
     ViewPager classViewPager;
+    @BindView(R.id.title_view)
+    LinearLayout titleView;
+    @BindView(R.id.swipe_refresh_layout)
+    SwipeRefreshLayout swipeRefreshLayout;
+    @BindView(R.id.mAppBar)
+    AppBarLayout mAppBar;
+
 
     private List<Notice> noticeLists = new ArrayList<>();
     private List<BannerInfo> advers = new ArrayList<>();
@@ -83,6 +89,9 @@ public class WHomeActivity extends BaseFragment implements SwipeRefreshLayout.On
     private ClassPagerAdpter pagerAdpter;
     private CenterDialog dialog;
     private boolean scanType = false;
+    private List<Classify> classifies = new ArrayList<>();
+    private Power power;
+    private String preCode;
 
     public static WHomeActivity newInstance() {
         Bundle args = new Bundle();
@@ -91,92 +100,133 @@ public class WHomeActivity extends BaseFragment implements SwipeRefreshLayout.On
         return fragment;
     }
 
-
     @Override
-    public int getLayoutID() {
+    protected int getLayoutId() {
         return R.layout.wtab_home;
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void init(Bundle savedInstanceState) {
+    protected void initView(View view, Bundle savedInstanceState) {
+        StatusBarUtils.from(getActivity())
+                .setActionbarView(titleView)
+                .setTransparentStatusbar(true)
+                .setLightStatusBar(false)
+                .process();
         qBadgeView2 = new QBadgeView(mActivity);
         qBadgeView2.bindTarget(idRightBtu).setExactMode(true).setBadgeGravity(Gravity.END | Gravity.TOP);
         pagerAdpter = new ClassPagerAdpter(getChildFragmentManager());
         classViewPager.setAdapter(pagerAdpter);
         hometablayout.setupWithViewPager(classViewPager);
 
+
+        swipeRefreshLayout.setOnRefreshListener(this::Refresh);
         bannerGuideContent.setAdapter((BGABanner.Adapter<ImageView, String>) (banner, itemView, model, position) -> Glide.with(WHomeActivity.this)
                 .load(model)
                 .apply(new RequestOptions().centerCrop().dontAnimate())
                 .into(itemView));
-        if (NetUtils.isMobileConnected(mActivity)) {
-            Refresh();
-        }
-        dialog = new CenterDialog(mActivity, R.layout.dialog_barcodeview, new int[]{R.id.dialog_close, R.id.dialog_cancel, R.id.dialog_sure}, 0.8);
-        dialog.setOnCenterItemClickListener((Dialog, V) -> {
-            switch (V.getId()) {
-                case R.id.dialog_close:
-                    dialog.dismiss();
-                    break;
-                case R.id.dialog_cancel:
-                    scanType = true;
-                    startScavenging();
-                    dialog.dismiss();
-                    break;
-                case R.id.dialog_sure:
-                    EditText editText = dialog.findViewById(R.id.ecit_phone);
-                    if (editText.getText().toString().equals("")) {
-                        Bundle b = new Bundle();
-                        b.putString("itemnoid", "");
-                        b.putInt("type", 0);
-                        CommonUtils.goActivity(mActivity, WGoodsAddActivity.class, b, false);
-                    } else {
-                        foundGoods("goodsIsExist", editText.getText().toString());
-                    }
-                    dialog.dismiss();
-                    break;
-                default:
-                    break;
+        mAppBar.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
+            if (verticalOffset >= 0) {
+                swipeRefreshLayout.setEnabled(true);
+            } else {
+                swipeRefreshLayout.setEnabled(false);
             }
         });
+        //EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void initData() {
+        if (isNetWork(mActivity)) {
+            Refresh();
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
     }
 
     @OnClick({R.id.searchBtn, R.id.addGoods, R.id.lowBtn, R.id.search2Btn, R.id.salesPromotion_lin, R.id.search_rl, R.id.id_right_btu})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.searchBtn:
+                scanType = false;
                 startScavenging();
                 break;
             case R.id.addGoods:
-                dialog.show();
-                //addShop();
+                showDialog();
                 break;
             case R.id.lowBtn:
-                CommonUtils.goActivity(mActivity, WSalesActivity.class, null, false);
+                Bundle salesBundle = new Bundle();
+                salesBundle.putParcelableArrayList("classlist", (ArrayList<? extends Parcelable>) classifies);
+                salesBundle.putInt("sales_status", power.getIs_sales());
+                CommonUtils.goActivity(mActivity, WSalesActivity.class, salesBundle);
                 break;
             case R.id.search2Btn:
-                CommonUtils.goActivity(mActivity, WNewGoodAcitvity.class, null);
+                Bundle newsBundle = new Bundle();
+                newsBundle.putParcelableArrayList("classlist", (ArrayList<? extends Parcelable>) classifies);
+                CommonUtils.goActivity(mActivity, WNewGoodAcitvity.class, newsBundle);
                 break;
             case R.id.salesPromotion_lin:
-                CommonUtils.goActivity(mActivity, WStopGoodsActivity.class, null, false);
+                Bundle stopBundle = new Bundle();
+                stopBundle.putParcelableArrayList("classlist", (ArrayList<? extends Parcelable>) classifies);
+                stopBundle.putInt("stop_status", power.getSupplierid());
+                CommonUtils.goActivity(mActivity, WStopGoodsActivity.class, stopBundle);
                 break;
             case R.id.search_rl:
                 //商品搜索
-                FragmentSearchBoxSelect.newInstance(0).show(mActivity.getFragmentManager(), "selectBox");
+                WGoodsSearchV4DialogFragment.newInstance("0").show(getFragmentManager(), "goodssearch");
+                //FragmentSearchBoxSelect.newInstance(3).show(getFragmentManager(), "selectBox");
                 break;
             case R.id.id_right_btu:
                 //信息
-                CommonUtils.goActivity(mActivity, WNewListActivity.class, null, false);
+                CommonUtils.goActivity(mActivity, WNewListActivity.class, null);
                 break;
             default:
                 break;
         }
+    }
+
+    private void showDialog() {
+        dialog = new CenterDialog(mActivity, R.layout.dialog_barcodeview, new int[]{R.id.dialog_close, R.id.dialog_cancel, R.id.dialog_sure}, 0.8);
+        dialog.setOnCenterItemClickListener((Dialog, V) -> {
+            switch (V.getId()) {
+                case R.id.dialog_close:
+                    KeybordS.closeKeybord(dialog.findViewById(R.id.ecit_phone), mActivity);
+                    dialog.dismiss();
+                    break;
+                case R.id.dialog_cancel:
+                    scanType = true;
+                    KeybordS.closeKeybord(dialog.findViewById(R.id.ecit_phone), mActivity);
+                    new Handler().postDelayed(this::startScavenging, 100);
+                    dialog.dismiss();
+                    break;
+                case R.id.dialog_sure:
+                    EditText editText = dialog.findViewById(R.id.ecit_phone);
+
+                    if (editText.getText().toString().equals("")) {
+                        new Handler().postDelayed(() -> {
+                            Bundle b = new Bundle();
+                            b.putString("itemnoid", "");
+                            b.putInt("type", 0);
+                            b.putBoolean("isshow", true);
+                            CommonUtils.goActivity(mActivity, WGoodsAddActivity.class, b, false);
+                        }, 200);
+                    } else {
+                        //new Handler().postDelayed(() -> foundGoods("goodsIsExist", editText.getText().toString()), 200);
+                        foundGoods("goodsIsExist", editText.getText().toString());
+                    }
+                    KeybordS.closeKeybord(dialog.findViewById(R.id.ecit_phone), mActivity);
+                    dialog.dismiss();
+                    break;
+                default:
+                    break;
+            }
+        });
+        dialog.show();
+        ((EditText) dialog.findViewById(R.id.ecit_phone)).setInputType(InputType.TYPE_CLASS_NUMBER);
+        KeybordS.openKeybord(dialog.findViewById(R.id.ecit_phone), mActivity);
     }
 
     private void Refresh() {
@@ -184,6 +234,8 @@ public class WHomeActivity extends BaseFragment implements SwipeRefreshLayout.On
         getAdvinfo();
         noticeSwitchList();
         getClassList();
+        getNewsCount();
+        operableField();
     }
 
     private void startScavenging() {
@@ -195,6 +247,43 @@ public class WHomeActivity extends BaseFragment implements SwipeRefreshLayout.On
         }
     }
 
+    /**
+     * 全局权限
+     */
+    private void operableField() {
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("uid", uid);
+        params.put("token", token);
+        //显示ProgressDialog
+        HttpHelper.getInstance().post(mActivity, Contants.PortA.OPERABLEFIELD, params, new OkHttpResponseHandler<String>(mActivity) {
+
+            @Override
+            public void onAfter() {
+                super.onAfter();
+            }
+
+            @Override
+            public void onBefore() {
+                super.onBefore();
+            }
+
+            @Override
+            public void onResponse(Request request, String json) {
+                super.onResponse(request, json);
+                ShowLog.e(json);
+                if (JsonHelper.isRequstOK(json, mActivity)) {
+                    power = JSONObject.parseObject(json, Power.class);
+                }
+            }
+
+            @Override
+            public void onError(Request request, Exception e) {
+                super.onError(request, e);
+            }
+        });
+    }
+
     public void noticeSwitchList() {
         Map<String, String> params = new HashMap<>(16);
         params.put("uid", uid);
@@ -203,7 +292,7 @@ public class WHomeActivity extends BaseFragment implements SwipeRefreshLayout.On
             @Override
             public void onError(Request request, Exception e) {
                 super.onError(request, e);
-                showToastShort(Contants.NetStatus.NETDISABLEORNETWORKDISABLE);
+                showToast(Contants.NetStatus.NETDISABLEORNETWORKDISABLE);
             }
 
             @Override
@@ -217,7 +306,7 @@ public class WHomeActivity extends BaseFragment implements SwipeRefreshLayout.On
                     String yestday = PreferenceUtils.getPrefString(mActivity, "w" + uid, "");
                     String today = DateUtils.getNowDate();
                     if (!yestday.equals(today)) {
-                        NoticeDialog.newInstance(noticeLists).show(mActivity.getFragmentManager(), "noticeDialog");
+                        NoticeDialog.newInstance(noticeLists).show(getFragmentManager(), "noticeDialog");
                         PreferenceUtils.setPrefString(mActivity, "w" + uid, today);
                     }
 
@@ -260,28 +349,29 @@ public class WHomeActivity extends BaseFragment implements SwipeRefreshLayout.On
                     }
 
                 } else {
-                    showToastShort(JsonHelper.errorMsg(response));
+                    showToast(JsonHelper.errorMsg(response));
                 }
             }
 
             @Override
             public void onError(Request request, Exception e) {
                 super.onError(request, e);
-                showToastShort(Contants.NetStatus.NETDISABLEORNETWORKDISABLE);
+                showToast(Contants.NetStatus.NETDISABLEORNETWORKDISABLE);
             }
 
         });
 
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(ReCode msg) {
-        if (msg.getStatus() == 1) {
-            foundGoods("searchGoods", msg.getCode());
-        } else {
-            foundGoods("goodsIsExist", msg.getCode());
-        }
-    }
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    public void onEvent(ReCode msg) {
+//        ShowLog.e(msg.getCode());
+//        if (msg.getStatus() == 1) {
+//            foundGoods("searchGoods", msg.getCode());
+//        } else if (msg.getStatus() == 2) {
+//            foundGoods("goodsIsExist", msg.getCode());
+//        }
+    //  }
 //    private void getHotbigtype() {
 //        Map<String, String> params = new HashMap<String, String>();
 //        params.put("uid", uid);
@@ -331,11 +421,15 @@ public class WHomeActivity extends BaseFragment implements SwipeRefreshLayout.On
             @Override
             public void onAfter() {
                 super.onAfter();
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.setRefreshing(false);
+                }
             }
 
             @Override
             public void onBefore() {
                 super.onBefore();
+                classifies.clear();
             }
 
             @Override
@@ -345,12 +439,18 @@ public class WHomeActivity extends BaseFragment implements SwipeRefreshLayout.On
                 if (JsonHelper.isRequstOK(response, mActivity)) {
                     classLists = JSONArray.parseArray(response, ClassList.class);
                     pagerAdpter.setClassLists(classLists);
+                    for (ClassList c : classLists) {
+                        classifies.add(new Classify(c.getCid(), c.getName()));
+                    }
                 }
             }
 
             @Override
             public void onError(Request request, Exception e) {
                 super.onError(request, e);
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.setRefreshing(false);
+                }
             }
         });
     }
@@ -392,7 +492,7 @@ public class WHomeActivity extends BaseFragment implements SwipeRefreshLayout.On
             @Override
             public void onError(Request request, Exception e) {
                 super.onError(request, e);
-                showToastShort(Contants.NetStatus.NETDISABLEORNETWORKDISABLE);
+                showToast(Contants.NetStatus.NETDISABLEORNETWORKDISABLE);
 
             }
         });
@@ -403,56 +503,29 @@ public class WHomeActivity extends BaseFragment implements SwipeRefreshLayout.On
         Map<String, String> params = new HashMap<String, String>();
         params.put("uid", uid);
         params.put("token", token);
-        params.put("itemnoid", itemnoid);
-        params.put("id", "");
-
+//        params.put("itemnoid", itemnoid);
+        //params.put("id", "");
+        params.put("keyword", itemnoid);
         //显示ProgressDialog
-
-        final KProgressHUD progressDialog = growProgress(Contants.Progress.LOAD_ING);
-
-        HttpHelper.getInstance().post(mActivity, Contants.PortA.LOOKITEM, params, new OkHttpResponseHandler<String>(mActivity) {
-
-            @Override
-            public void onAfter() {
-                super.onAfter();
-                progressDialog.dismiss();
-            }
-
-            @Override
-            public void onBefore() {
-                super.onBefore();
-                progressDialog.show();
-            }
+        HttpHelper.getInstance().post(mActivity, Contants.PortA.GOODSITEMLIST, params, new OkHttpResponseHandler<String>(mActivity) {
 
             @Override
             public void onResponse(Request request, String json) {
                 super.onResponse(request, json);
                 ShowLog.e(json);
                 if (JsonHelper.isRequstOK(json, mActivity)) {
-                    if (Ation.equals("searchGoods")) {
-                        JsonHelper<Lookitem> jsonHelper = new JsonHelper<Lookitem>(Lookitem.class);
-                        Lookitem lookitem = jsonHelper.getData(json, null);
-
-                        Bundle bundle = new Bundle();
-                        bundle.putString("itemnoid", "");
-                        bundle.putString("id", lookitem.getId());
-                        CommonUtils.goActivity(mActivity, WGoodsDetailActivity.class, bundle, false);
-                    }
                     if (Ation.equals("goodsIsExist")) {
                         Toast.makeText(getContext(), "商品已经存在了", Toast.LENGTH_SHORT).show();
                     }
-
                 } else {
-                    if (Ation.equals("searchGoods")) {
-                        showToastShort("系统查询不到该商品");
-                        Bundle bundle = new Bundle();
-                        bundle.putInt(Contants.ScanValueType.KEY, Contants.ScanValueType.W_type);
-                        CommonUtils.goActivityForResult(mActivity, MipcaActivityCapture.class, bundle, 0, false);
-                    } else if (Ation.equals("goodsIsExist")) {
-                        Bundle bundle = new Bundle();
-                        bundle.putString("itemnoid", itemnoid == null ? "" : itemnoid);
-                        bundle.putInt("type", 1);
-                        CommonUtils.goActivity(mActivity, WGoodsAddActivity.class, bundle, false);
+                    if (Ation.equals("goodsIsExist")) {
+                        new Handler().postDelayed(() -> {
+                            Bundle bundle = new Bundle();
+                            bundle.putString("itemnoid", itemnoid == null ? "" : itemnoid);
+                            bundle.putInt("type", 1);
+                            bundle.putBoolean("isshow", true);
+                            CommonUtils.goActivity(mActivity, WGoodsAddActivity.class, bundle, false);
+                        }, 200);
                     }
                 }
 
@@ -461,32 +534,28 @@ public class WHomeActivity extends BaseFragment implements SwipeRefreshLayout.On
             @Override
             public void onError(Request request, Exception e) {
                 super.onError(request, e);
-                showToastShort(Contants.NetStatus.NETDISABLEORNETWORKDISABLE);
+                showToast(Contants.NetStatus.NETDISABLEORNETWORKDISABLE);
             }
         });
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        EventBus.getDefault().unregister(this);
-    }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        getNewsCount();
-    }
+//    @Override
+//    public void onDestroy() {
+//        super.onDestroy();
+//        EventBus.getDefault().unregister(this);
+//    }
 
     private void toScan() {
         Bundle bundle = new Bundle();
         bundle.putInt(Contants.ScanValueType.KEY, Contants.ScanValueType.W_type);
+        ShowLog.e("scanType" + scanType);
         if (scanType) {
-
+            bundle.putString("type", "whomedialog");
         } else {
-            bundle.putString("type", "home");
+            bundle.putString("type", "whome");
         }
-        CommonUtils.goActivityForResult(mActivity, MipcaActivityCapture.class, bundle, 0, false);
+        CommonUtils.goActivity(mActivity, MipcaActivityCapture.class, bundle);
 
     }
 
@@ -495,13 +564,8 @@ public class WHomeActivity extends BaseFragment implements SwipeRefreshLayout.On
         if (requestCode == 1) {
             toScan();
         } else {
-            showToastShort("您未获取手机权限，请点击重试");
+            showToast("您未获取手机权限，请点击重试");
         }
-    }
-
-    @Override
-    public void onRefresh() {
-        Refresh();
     }
 
     public void addShop() {
@@ -529,4 +593,5 @@ public class WHomeActivity extends BaseFragment implements SwipeRefreshLayout.On
                 })
                 .show();
     }
+
 }

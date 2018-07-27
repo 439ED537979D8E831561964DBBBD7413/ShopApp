@@ -5,7 +5,6 @@
     android:background="@color/colorf5f5f5"
     android:orientation="vertical">
 
-
     <RelativeLayout
         android:id="@+id/bgView"
         android:layout_width="match_parent"

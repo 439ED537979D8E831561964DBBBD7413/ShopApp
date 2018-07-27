@@ -54,6 +54,24 @@ public class BrandGroup implements Parcelable {
         private String gid;
         private int position;//记录标题的位置
         private int index;
+        private int is_open;
+        private String info;
+
+        public int getIs_open() {
+            return is_open;
+        }
+
+        public void setIs_open(int is_open) {
+            this.is_open = is_open;
+        }
+
+        public String getInfo() {
+            return info == null ? "" : info;
+        }
+
+        public void setInfo(String info) {
+            this.info = info;
+        }
 
         public int getIndex() {
             return index;
@@ -169,6 +187,8 @@ public class BrandGroup implements Parcelable {
             dest.writeString(this.gid);
             dest.writeInt(this.position);
             dest.writeInt(this.index);
+            dest.writeInt(this.is_open);
+            dest.writeString(this.info);
         }
 
         protected ListBean(Parcel in) {
@@ -181,9 +201,11 @@ public class BrandGroup implements Parcelable {
             this.gid = in.readString();
             this.position = in.readInt();
             this.index = in.readInt();
+            this.is_open = in.readInt();
+            this.info = in.readString();
         }
 
-        public static final Parcelable.Creator<ListBean> CREATOR = new Parcelable.Creator<ListBean>() {
+        public static final Creator<ListBean> CREATOR = new Creator<ListBean>() {
             @Override
             public ListBean createFromParcel(Parcel source) {
                 return new ListBean(source);

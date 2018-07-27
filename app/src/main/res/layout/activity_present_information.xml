@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -22,219 +21,237 @@
             android:layout_gravity="center"
             android:text="提现账号"
             android:textColor="@color/black"
-            android:textSize="16sp"/>
+            android:textSize="16sp" />
     </android.support.v7.widget.Toolbar>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/colore3e3e3"/>
+        android:background="@color/colore3e3e3" />
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:orientation="vertical"
-        android:padding="10dp">
+        android:layout_height="match_parent">
 
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="支付宝"
-                android:textColor="@color/black"/>
-
-            <TextView
-                android:id="@+id/zAdministration"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:text="修改"
-                android:textColor="@color/colorc666666"
-                android:visibility="gone"/>
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/addzhifubao"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:background="@drawable/stroke1dp"
-            android:padding="@dimen/H10dp">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:drawableLeft="@drawable/ic_add"
-                android:drawablePadding="6dp"
-                android:text="添加支付宝"
-                android:textColor="@color/color_999999"/>
-        </RelativeLayout>
+                android:background="@color/white"
+                android:orientation="vertical"
+                android:padding="10dp">
 
-        <RelativeLayout
-            android:id="@+id/zhifubaoCard"
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="支付宝"
+                        android:textColor="@color/black" />
+
+                    <TextView
+                        android:id="@+id/zAdministration"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:text="修改"
+                        android:textColor="@color/colorc666666"
+                        android:visibility="gone" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/addzhifubao"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:background="@drawable/stroke1dp"
+                    android:padding="@dimen/H10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:drawableLeft="@drawable/ic_add"
+                        android:drawablePadding="6dp"
+                        android:text="添加支付宝"
+                        android:textColor="@color/color_999999" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/zhifubaoCard"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/H100dp"
+                    android:layout_marginTop="@dimen/H10dp"
+                    android:background="@drawable/gradientblue"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/H10dp"
+                        android:drawableLeft="@drawable/zfbinversion"
+                        android:drawablePadding="@dimen/H8dp"
+                        android:gravity="center"
+                        android:text="支付宝"
+                        android:textColor="@color/white"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/zname"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="@dimen/H10dp"
+                        android:layout_marginTop="15dp"
+                        android:text=""
+                        android:textColor="@color/white"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/zaccount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginBottom="15dp"
+                        android:layout_marginRight="@dimen/H8dp"
+                        android:text=""
+                        android:textColor="@color/white"
+                        android:textSize="24sp" />
+
+
+                </RelativeLayout>
+
+                <CheckBox
+                    android:id="@+id/zcheckbox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:button="@drawable/buy_checkbox_style"
+                    android:padding="@dimen/H5dp"
+                    android:text=""
+                    android:textColor="#17A5F8"
+                    android:textSize="13sp"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@color/white"
+                android:orientation="vertical"
+                android:padding="@dimen/H10dp">
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="微信"
+                        android:textColor="@color/black" />
+
+                    <TextView
+                        android:id="@+id/wAdministration"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:text="修改"
+                        android:textColor="@color/colorc666666"
+                        android:visibility="gone" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/addweixin"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:background="@drawable/stroke1dp"
+                    android:padding="10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:drawableLeft="@drawable/ic_add"
+                        android:drawablePadding="6dp"
+                        android:gravity="center"
+                        android:text="添加微信"
+                        android:textColor="@color/color_999999" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/weixinCard"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/H100dp"
+                    android:layout_marginTop="@dimen/H10dp"
+                    android:background="@drawable/gradientgreen"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="15dp"
+                        android:drawableLeft="@drawable/wxinversion"
+                        android:drawablePadding="8dp"
+                        android:gravity="center"
+                        android:text="微信"
+                        android:textColor="@color/white"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/wname"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginTop="15dp"
+                        android:text=""
+                        android:textColor="@color/white"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/waccount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginBottom="15dp"
+                        android:layout_marginRight="10dp"
+                        android:text=""
+                        android:textColor="@color/white"
+                        android:textSize="24sp" />
+                </RelativeLayout>
+
+                <CheckBox
+                    android:id="@+id/wcheckbox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:button="@drawable/buy_checkbox_style"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:text=""
+                    android:textColor="@color/color_999999"
+                    android:textSize="13sp"
+                    android:visibility="gone" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <View
+            android:id="@+id/bgView"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/H100dp"
-            android:layout_marginTop="@dimen/H10dp"
-            android:background="@drawable/gradientblue"
-            android:visibility="gone">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/H10dp"
-                android:drawableLeft="@drawable/zfbinversion"
-                android:drawablePadding="@dimen/H8dp"
-                android:gravity="center"
-                android:text="支付宝"
-                android:textColor="@color/white"
-                android:textSize="13sp"/>
-
-            <TextView
-                android:id="@+id/zname"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="@dimen/H10dp"
-                android:layout_marginTop="15dp"
-                android:text=""
-                android:textColor="@color/white"
-                android:textSize="13sp"/>
-
-            <TextView
-                android:id="@+id/zaccount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
-                android:layout_marginBottom="15dp"
-                android:layout_marginRight="@dimen/H8dp"
-                android:text=""
-                android:textColor="@color/white"
-                android:textSize="24sp"/>
-
-
-        </RelativeLayout>
-
-        <CheckBox
-            android:id="@+id/zcheckbox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:button="@drawable/buy_checkbox_style"
-            android:padding="@dimen/H5dp"
-            android:text=""
-            android:textColor="#17A5F8"
-            android:textSize="13sp"
-            android:visibility="gone"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:background="@color/white"
-        android:orientation="vertical"
-        android:padding="@dimen/H10dp">
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="微信"
-                android:textColor="@color/black"/>
-
-            <TextView
-                android:id="@+id/wAdministration"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:text="修改"
-                android:textColor="@color/colorc666666"
-                android:visibility="gone"/>
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/addweixin"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:background="@drawable/stroke1dp"
-            android:padding="10dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:drawableLeft="@drawable/ic_add"
-                android:drawablePadding="6dp"
-                android:gravity="center"
-                android:text="添加微信"
-                android:textColor="@color/color_999999"/>
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/weixinCard"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/H100dp"
-            android:layout_marginTop="@dimen/H10dp"
-            android:background="@drawable/gradientgreen"
-            android:visibility="gone">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="15dp"
-                android:drawableLeft="@drawable/wxinversion"
-                android:drawablePadding="8dp"
-                android:gravity="center"
-                android:text="微信"
-                android:textColor="@color/white"
-                android:textSize="13sp"/>
-
-            <TextView
-                android:id="@+id/wname"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="15dp"
-                android:text=""
-                android:textColor="@color/white"
-                android:textSize="13sp"/>
-
-            <TextView
-                android:id="@+id/waccount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
-                android:layout_marginBottom="15dp"
-                android:layout_marginRight="10dp"
-                android:text=""
-                android:textColor="@color/white"
-                android:textSize="24sp"/>
-        </RelativeLayout>
-
-        <CheckBox
-            android:id="@+id/wcheckbox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:button="@drawable/buy_checkbox_style"
-            android:gravity="center"
-            android:padding="5dp"
-            android:text=""
-            android:textColor="@color/color_999999"
-            android:textSize="13sp"
-            android:visibility="gone"/>
-    </LinearLayout>
-
+            android:layout_height="match_parent"
+            android:background="@color/color_60000000"
+            android:visibility="gone" />
+    </RelativeLayout>
 </LinearLayout>

@@ -2,6 +2,7 @@ package com.yj.shopapp.ui.activity.adapter;
 
 import android.content.Context;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,9 +11,12 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.controller.BaseControllerListener;
+import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
 import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.common.ResizeOptions;
@@ -119,9 +123,17 @@ public class SBrandAdapter extends Common2Adapter {
             if (bean.isSort()) {
                 holder.getTextView(R.id.itemname).setText(bean.getName());
             } else {
-                //setImg(holder.getSimpleDraweeView(R.id.simpleDraweeView), bean.getImgurl());
-                Glide.with(context).load(bean.getImgurl()).apply(new RequestOptions().circleCrop()).into(holder.getSimpleDraweeView(R.id.simpleDraweeView));
-                holder.getTextView(R.id.name_tv).setText(bean.getName());
+                if (bean.getIs_open() == 0) {
+                    Glide.with(context).load(bean.getImgurl()).apply(new RequestOptions().transforms(new CircleCrop()))
+                            .into(holder.getSimpleDraweeView(R.id.simpleDraweeView));
+                    holder.getTextView(R.id.name_tv).setText(bean.getName());
+                    holder.getSimpleDraweeView(R.id.top_simpleDraweeView).setVisibility(View.VISIBLE);
+                    Glide.with(context).load(R.drawable.ic_restock).into(holder.getSimpleDraweeView(R.id.top_simpleDraweeView));
+                } else {
+                    holder.getSimpleDraweeView(R.id.top_simpleDraweeView).setVisibility(View.GONE);
+                    Glide.with(context).load(bean.getImgurl()).apply(new RequestOptions().circleCrop()).into(holder.getSimpleDraweeView(R.id.simpleDraweeView));
+                    holder.getTextView(R.id.name_tv).setText(bean.getName());
+                }
             }
         } else {
             IndustryCatelist.DataBean.TagGroup group = (IndustryCatelist.DataBean.TagGroup) list.get(position);
@@ -135,6 +147,36 @@ public class SBrandAdapter extends Common2Adapter {
         }
     }
 
+    //    private void setImg(SimpleDraweeView mImg, String url) {
+//        Uri uri = Uri.parse(url);
+//        ImageRequest request = ImageRequestBuilder.newBuilderWithSource(uri)
+//                .setResizeOptions(new ResizeOptions(CommonUtils.dip2px(context, 90), CommonUtils.dip2px(context, 90)))
+//                .build();
+//        GenericDraweeHierarchy hierarchy = new GenericDraweeHierarchyBuilder(context.getResources())
+//                .setOverlay(context.getResources().getDrawable(R.drawable.ic_nogoods))
+//                .build();
+//        mImg.setHierarchy(hierarchy);
+//        DraweeController controller = Fresco.newDraweeControllerBuilder()
+//                .setOldController(mImg.getController())
+//                .setControllerListener(new BaseControllerListener<>())
+//                .setImageRequest(request).build();
+//        mImg.setController(controller);
+//    }
+    private void setImg(SimpleDraweeView mImg, String url) {
+        Uri uri = Uri.parse(url);
+        GenericDraweeHierarchy hierarchy = new GenericDraweeHierarchyBuilder(context.getResources())
+                .setOverlay(context.getResources().getDrawable(R.drawable.ic_restock))
+                .build();
+        ImageRequest request = ImageRequestBuilder.newBuilderWithSource(uri)
+                .setResizeOptions(new ResizeOptions(CommonUtils.dip2px(context, 45), CommonUtils.dip2px(context, 45)))
+                .build();
+        DraweeController controller = Fresco.newDraweeControllerBuilder()
+                .setOldController(mImg.getController())
+                .setControllerListener(new BaseControllerListener<ImageInfo>())
+                .setImageRequest(request).build();
+        mImg.setHierarchy(hierarchy);
+        mImg.setController(controller);
+    }
 
     @Override
     public int getItemViewType(int position) {
@@ -161,7 +203,7 @@ public class SBrandAdapter extends Common2Adapter {
      * 添加支持GridLayoutManager * @param recyclerView
      */
     @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
         RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
         if (manager instanceof GridLayoutManager) {
@@ -190,18 +232,6 @@ public class SBrandAdapter extends Common2Adapter {
         this.foootView = foootView;
         isFootview = 1;
         notifyDataSetChanged();
-    }
-
-    private void setImg(SimpleDraweeView mImg, String url) {
-        Uri uri = Uri.parse(url);
-        ImageRequest request = ImageRequestBuilder.newBuilderWithSource(uri)
-                .setResizeOptions(new ResizeOptions(CommonUtils.dip2px(context, 45), CommonUtils.dip2px(context, 45)))
-                .build();
-        DraweeController controller = Fresco.newDraweeControllerBuilder()
-                .setOldController(mImg.getController())
-                .setControllerListener(new BaseControllerListener<ImageInfo>())
-                .setImageRequest(request).build();
-        mImg.setController(controller);
     }
 
     private AdapterView.OnItemClickListener onItemClickListener;

@@ -50,6 +50,49 @@ public class Lookitem implements Serializable {
     private String minmum;
     private String maxmum;
     private String stopitemsum;
+    private String is_hot;
+    private String is_sales;
+    private String vipprice;
+
+    public String getVipprice() {
+        return vipprice == null ? "" : vipprice;
+    }
+
+    public void setVipprice(String vipprice) {
+        this.vipprice = vipprice;
+    }
+
+    public String getIs_sales() {
+        return is_sales == null ? "" : is_sales;
+    }
+
+    public void setIs_sales(String is_sales) {
+        this.is_sales = is_sales;
+    }
+
+    public String getMinmum() {
+        return minmum == null ? "" : minmum;
+    }
+
+    public void setMinmum(String minmum) {
+        this.minmum = minmum;
+    }
+
+    public String getMaxmum() {
+        return maxmum == null ? "" : maxmum;
+    }
+
+    public void setMaxmum(String maxmum) {
+        this.maxmum = maxmum;
+    }
+
+    public String getIs_hot() {
+        return is_hot == null ? "" : is_hot;
+    }
+
+    public void setIs_hot(String is_hot) {
+        this.is_hot = is_hot;
+    }
 
     public String getStopitemsum() {
         return stopitemsum;
@@ -78,6 +121,7 @@ public class Lookitem implements Serializable {
     public String getBrandname() {
         return brandname;
     }
+
     public void setBrandname(String brand) {
         this.brandname = brand;
     }

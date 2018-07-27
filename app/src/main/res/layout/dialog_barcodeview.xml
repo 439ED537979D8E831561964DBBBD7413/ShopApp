@@ -24,8 +24,9 @@
             android:id="@+id/dialog_close"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:layout_margin="@dimen/H10dp"
+            android:padding="@dimen/H10dp"
             android:src="@drawable/ic_close" />
 
     </RelativeLayout>
@@ -40,7 +41,6 @@
         android:layout_marginTop="10dp"
         android:background="@drawable/buttonborders2"
         android:hint="如果不填写请按确认"
-        android:maxLength="11"
         android:padding="12dp"
         android:textColor="#bbbbbb"
         android:textSize="14sp" />

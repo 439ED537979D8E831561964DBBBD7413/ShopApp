@@ -20,16 +20,25 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSONObject;
 import com.kaopiz.kprogresshud.KProgressHUD;
+import com.squareup.okhttp.Request;
 import com.yj.shopapp.config.AppManager;
+import com.yj.shopapp.config.Contants;
 import com.yj.shopapp.config.MyApplication;
+import com.yj.shopapp.http.HttpHelper;
+import com.yj.shopapp.http.OkHttpResponseHandler;
+import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.ui.activity.upversion.Callback;
 import com.yj.shopapp.ui.activity.upversion.ConfirmDialog;
+import com.yj.shopapp.ui.activity.upversion.UpdateAppUtils;
 import com.yj.shopapp.util.CommonUtils;
-import com.yj.shopapp.util.VersionUpdata;
+import com.yj.shopapp.util.PreferenceUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public abstract class BaseTabActivity extends FinalFragmentActivity {
@@ -39,6 +48,8 @@ public abstract class BaseTabActivity extends FinalFragmentActivity {
     protected MyApplication myApplication;
 
     protected List<Fragment> mFragments = new ArrayList<Fragment>();
+    private int vercode;
+    private String appurl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +64,10 @@ public abstract class BaseTabActivity extends FinalFragmentActivity {
         init(savedInstanceState);
 
         myApplication = (MyApplication) getApplication();
-        checkAndUpdate(mContext);
+        if (PreferenceUtils.getPrefInt(mContext, "updateStatus", 0) == 1) {
+            cupdate();
+        }
+
     }
 
     /**
@@ -81,10 +95,57 @@ public abstract class BaseTabActivity extends FinalFragmentActivity {
     }
 
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+    //是否更新新版本
+    public void cupdate() {
+        ShowLog.e("更新版本");
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("app", "");
+        HttpHelper.getInstance().post(mContext, Contants.appu, params, new OkHttpResponseHandler<String>(mContext) {
 
+            @Override
+            public void onResponse(Request request, String json) {
+                super.onResponse(request, json);
+                ShowLog.e(json);
+                JSONObject jsonObject = JSONObject.parseObject(json);
+                vercode = Integer.parseInt(jsonObject.getString("version"));
+                appurl = jsonObject.getString("appurl");
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                    updata();
+                } else {
+                    if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                            == PackageManager.PERMISSION_GRANTED) {
+                        updata();
+                    } else {//申请权限
+                        ActivityCompat.requestPermissions((Activity) mContext,
+                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                    }
+                }
+
+            }
+
+            @Override
+            public void onError(Request request, Exception e) {
+                super.onError(request, e);
+                Toast.makeText(mContext, Contants.NetStatus.NETDISABLEORNETWORKDISABLE, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
+    private void updata() {
+        UpdateAppUtils.from(this)
+                .apkPath(appurl)
+                .serverVersionName("ShopApp")
+                .isForce(true)
+                .update();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        if (PreferenceUtils.getPrefInt(mContext, "updateStatus", 0) == 1) {
+            cupdate();
+        }
     }
 
     /**
@@ -107,7 +168,6 @@ public abstract class BaseTabActivity extends FinalFragmentActivity {
         super.onDestroy();
         // 结束Activity&从堆栈中移除
         AppManager.getAppManager().removeActivityFromStack(this);
-        VersionUpdata.getInstance().onDestroy();
     }
 
 
@@ -137,32 +197,12 @@ public abstract class BaseTabActivity extends FinalFragmentActivity {
         }
     }
 
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        checkAndUpdate(mContext);
-    }
-
     public KProgressHUD growProgress(String label) {
         final KProgressHUD builder = KProgressHUD.create(mContext)
                 .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
                 .setLabel(label)
                 .setCancellable(true);
         return builder;
-    }
-
-    private void checkAndUpdate(Context context) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            VersionUpdata.getInstance().init(getApplicationContext(), getFragmentManager()).updateVersion();
-        } else {
-            if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    == PackageManager.PERMISSION_GRANTED) {
-                VersionUpdata.getInstance().init(getApplicationContext(), getFragmentManager()).updateVersion();
-            } else {//申请权限
-                ActivityCompat.requestPermissions((Activity) context,
-                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-            }
-        }
     }
 
     @Override
@@ -172,7 +212,7 @@ public abstract class BaseTabActivity extends FinalFragmentActivity {
             case 1:
                 try {
                     if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                        VersionUpdata.getInstance().init(getApplicationContext(), getFragmentManager()).updateVersion();
+                        updata();
                     } else {
                         new ConfirmDialog(this, new Callback() {
                             @Override
@@ -188,8 +228,6 @@ public abstract class BaseTabActivity extends FinalFragmentActivity {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                break;
-            default:
                 break;
         }
     }

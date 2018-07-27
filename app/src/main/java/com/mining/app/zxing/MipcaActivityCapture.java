@@ -6,13 +6,14 @@ import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
-import android.text.TextUtils;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,17 +23,26 @@ import com.mining.app.zxing.camera.CameraManager;
 import com.mining.app.zxing.decoding.CaptureActivityHandler;
 import com.mining.app.zxing.decoding.InactivityTimer;
 import com.mining.app.zxing.view.ViewfinderView;
+import com.squareup.okhttp.Request;
 import com.yj.shopapp.R;
 import com.yj.shopapp.config.Contants;
+import com.yj.shopapp.dialog.WGoodsSearchDialogFragment;
+import com.yj.shopapp.dialog.WGoodsSearchV4DialogFragment;
+import com.yj.shopapp.http.HttpHelper;
+import com.yj.shopapp.http.OkHttpResponseHandler;
 import com.yj.shopapp.ubeen.ReCode;
+import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.ui.activity.base.BaseActivity;
 import com.yj.shopapp.ui.activity.shopkeeper.SLikeCkeckActivity;
-import com.yj.shopapp.ui.activity.wholesale.WLikeCkeckActivity;
+import com.yj.shopapp.ui.activity.wholesale.WGoodsAddActivity;
 import com.yj.shopapp.util.CommonUtils;
+import com.yj.shopapp.util.JsonHelper;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 public class MipcaActivityCapture extends BaseActivity implements Callback {
@@ -52,7 +62,7 @@ public class MipcaActivityCapture extends BaseActivity implements Callback {
     private static final float BEEP_VOLUME = 0.10f;
     private boolean vibrate;
 
-
+    private RelativeLayout titleView;
     private static final int REQUEST_CODE = 100;
     private static final int PARSE_BARCODE_SUC = 300;
     private static final int PARSE_BARCODE_FAIL = 303;
@@ -62,6 +72,7 @@ public class MipcaActivityCapture extends BaseActivity implements Callback {
 
     private int ScanType = -1;
     private String type = "";
+    private SurfaceView surfaceView;
 
     @Override
     protected int getLayoutId() {
@@ -70,12 +81,12 @@ public class MipcaActivityCapture extends BaseActivity implements Callback {
 
     @Override
     protected void initData() {
+        surfaceView = (SurfaceView) findViewById(R.id.preview_view);
         viewfinderView = (ViewfinderView) findViewById(R.id.viewfinder_view);
         title = (TextView) findViewById(R.id.title);
         title.setText("扫描");
-
+        titleView = findViewById(R.id.title_view);
         id_right_btu = (TextView) findViewById(R.id.id_right_btu);
-
         if (getIntent().hasExtra(Contants.ScanValueType.KEY)) {
             ScanType = getIntent().getExtras().getInt(Contants.ScanValueType.KEY);
         }
@@ -88,7 +99,7 @@ public class MipcaActivityCapture extends BaseActivity implements Callback {
         if (ScanType == Contants.ScanValueType.original_type) {
 
         } else if (ScanType == Contants.ScanValueType.W_type || ScanType == Contants.ScanValueType.S_type) {
-            id_right_btu.setText("条码输入");
+            id_right_btu.setText("手动输入");
             id_right_btu.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -114,11 +125,17 @@ public class MipcaActivityCapture extends BaseActivity implements Callback {
 //                            })
 //                            .show();
                     if (ScanType == Contants.ScanValueType.W_type) {
-                        CommonUtils.goActivity(mContext, WLikeCkeckActivity.class, null);
+                        //FragmentSearchBoxSelect.newInstance(3).show(getSupportFragmentManager(), "selectBox");
+                        //CommonUtils.goActivity(mContext, WLikeCkeckActivity.class, null);
+                        //BarCodeFuzzyQueryDialogFragment.newInstance().show(getSupportFragmentManager(), "barcodefragment");
+                        WGoodsSearchDialogFragment.newInstance("0").show(getFragmentManager(), "mipca");
                     }
                     if (ScanType == Contants.ScanValueType.S_type) {
 //                            Bundle bundle = new Bundle();
 //                            bundle.putString("checkGoods", type);
+//                        AllScanCodeDialogFragment.newInstance("").setListener(() ->
+//                            restartPreview()
+//                        ).show(getSupportFragmentManager(), "allscancode");
                         CommonUtils.goActivity(mContext, SLikeCkeckActivity.class, null);
                     }
                 }
@@ -128,7 +145,6 @@ public class MipcaActivityCapture extends BaseActivity implements Callback {
 //        else if(ScanType==Contants.ScanValueType.S_type){
 //
 //        }
-
         CameraManager.init(getApplication());
         hasSurface = false;
         inactivityTimer = new InactivityTimer(this);
@@ -138,7 +154,6 @@ public class MipcaActivityCapture extends BaseActivity implements Callback {
     @Override
     protected void onResume() {
         super.onResume();
-        SurfaceView surfaceView = (SurfaceView) findViewById(R.id.preview_view);
         SurfaceHolder surfaceHolder = surfaceView.getHolder();
         if (hasSurface) {
             initCamera(surfaceHolder);
@@ -155,7 +170,6 @@ public class MipcaActivityCapture extends BaseActivity implements Callback {
             playBeep = false;
         }
         vibrate = true;
-
     }
 
     @Override
@@ -185,45 +199,106 @@ public class MipcaActivityCapture extends BaseActivity implements Callback {
         inactivityTimer.onActivity();
         playBeepSoundAndVibrate();
         String resultString = result.getText();
+        ShowLog.e(resultString + "测试摄像头" + type);
         //onResultHandler(resultString, barcode);
-        if (type.equals("home")) {
-            EventBus.getDefault().postSticky(new ReCode(1, resultString));
-        } else {
-            EventBus.getDefault().postSticky(new ReCode(2, resultString));
+        switch (type) {
+            case "home":
+                foundGoods(resultString);
+                // EventBus.getDefault().post(new ReCode(1, resultString));
+                break;
+            case "goodsRecord":
+                EventBus.getDefault().post(new ReCode(2, resultString));
+                finish();
+                break;
+            case "whome":
+                wFoundGoods(resultString);
+                //EventBus.getDefault().post(new ReCode(1, resultString));
+                break;
+            case "whomedialog":
+                wFoundGoods(resultString);
+                //EventBus.getDefault().post(new ReCode(2, resultString));
+                break;
+            case "goodsAdd":
+                EventBus.getDefault().post(new ReCode(3, resultString));
+                break;
         }
 
-        finish();
+        // finish();
     }
 
-    /**
-     * 跳转到上一个页面
-     *
-     * @param resultString
-     * @param bitmap
-     */
-    private void onResultHandler(String resultString, Bitmap bitmap) {
-        if (TextUtils.isEmpty(resultString)) {
-            Toast.makeText(MipcaActivityCapture.this, "Scan failed!", Toast.LENGTH_SHORT).show();
-            return;
-        }
+    public void foundGoods(String itemnoid) {
 
-//        Intent resultIntent = new Intent();
-//        Bundle bundle = new Bundle();
-//        bundle.putString("result", resultString);
-//        resultIntent.putExtras(bundle);
-        //this.setResult(Contants.Photo.REQUEST_SCAN_CODE, resultIntent);
-//        // EventBus.getDefault().post(new EventMassg(resultString));
-//        MipcaActivityCapture.this.finish();
-        MipcaActivityCapture.this.finish();
-//        if (ScanType==Contants.ScanValueType.W_type)
-//        {
-//            CommonUtils.goActivity(mContext, WGoodsDetailActivity.class, null);
-//        }
-//        if (ScanType==Contants.ScanValueType.S_type) {
-////                            Bundle bundle = new Bundle();
-////                            bundle.putString("checkGoods", type);
-//            CommonUtils.goActivity(mContext, SGoodsDetailActivity.class, null);
-//        }
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("uid", uid);
+        params.put("token", token);
+        params.put("keyword", itemnoid);
+        HttpHelper.getInstance().post(mContext, Contants.PortU.ITEMLIST, params, new OkHttpResponseHandler<String>(mContext) {
+
+            @Override
+            public void onResponse(Request request, String json) {
+                super.onResponse(request, json);
+                ShowLog.e(json);
+                if (JsonHelper.isRequstOK(json, mContext)) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("itemNoid", itemnoid);
+                    CommonUtils.goActivity(mContext, SLikeCkeckActivity.class, bundle);
+                    //AllScanCodeDialogFragment.newInstance(itemnoid).setListener(() -> restartPreview()).show(getSupportFragmentManager(), "allscancode");
+                } else {
+                    Toast.makeText(mContext, "没有搜索到该商品", Toast.LENGTH_LONG).show();
+                    restartPreview();
+                }
+
+            }
+        });
+    }
+
+    public void wFoundGoods(final String itemnoid) {
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("uid", uid);
+        params.put("token", token);
+        params.put("keyword", itemnoid);
+        //显示ProgressDialog
+        HttpHelper.getInstance().post(mContext, Contants.PortA.GOODSITEMLIST, params, new OkHttpResponseHandler<String>(mContext) {
+
+            @Override
+            public void onResponse(Request request, String json) {
+                super.onResponse(request, json);
+                ShowLog.e(json);
+                if (JsonHelper.isRequstOK(json, mContext)) {
+                    if (type.equals("whome")) {
+                        WGoodsSearchV4DialogFragment.newInstance(2, itemnoid).setListener(() -> restartPreview()).show(getSupportFragmentManager(), "v4search");
+                    } else {
+                        Toast.makeText(mContext, "商品已经存在了", Toast.LENGTH_SHORT).show();
+                        restartPreview();
+                    }
+                } else {
+                    if (type.equals("whome")) {
+                        Toast.makeText(mContext, "系统查询不到该商品", Toast.LENGTH_SHORT).show();
+                        restartPreview();
+                    } else {
+                        Bundle bundle = new Bundle();
+                        bundle.putString("itemnoid", itemnoid == null ? "" : itemnoid);
+                        bundle.putInt("type", 1);
+                        bundle.putBoolean("isshow", true);
+                        CommonUtils.goActivity(mContext, WGoodsAddActivity.class, bundle, false);
+                        finish();
+                    }
+                }
+
+            }
+
+        });
+    }
+
+
+    private void restartPreview() {
+        ShowLog.e("zhixingdaozheli ");
+        new Handler().postDelayed(() -> {
+            if (handler != null) {
+                handler.restartPreviewAndDecode();
+            }
+        }, 3000);
     }
 
     private void initCamera(SurfaceHolder surfaceHolder) {

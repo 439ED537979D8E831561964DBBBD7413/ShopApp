@@ -46,6 +46,7 @@ public class WMainTabActivity extends BaseTabActivity implements RadioGroup.OnCh
         whomeViewPager.setAdapter(pagerAdpter);
         whomeViewPager.setOpenAnimation(false);
         whomeViewPager.setScanScroll(false);
+        whomeViewPager.setOffscreenPageLimit(2);
         whomeViewPager.addOnPageChangeListener(this);
         tabsRg.setOnCheckedChangeListener(this);
     }
@@ -81,13 +82,7 @@ public class WMainTabActivity extends BaseTabActivity implements RadioGroup.OnCh
         } else {
             this.backPressedToExitOnce = true;
             Toast.makeText(mContext, "再按一次「返回键」退出", Toast.LENGTH_SHORT).show();
-            new Handler().postDelayed(new Runnable() {
-
-                @Override
-                public void run() {
-                    backPressedToExitOnce = false;
-                }
-            }, 2000);
+            new Handler().postDelayed(() -> backPressedToExitOnce = false, 2000);
         }
     }
 

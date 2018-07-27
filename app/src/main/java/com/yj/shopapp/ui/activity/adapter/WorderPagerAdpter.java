@@ -28,11 +28,11 @@ public class WorderPagerAdpter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return Contants.OrderDrawer.length;
+        return Contants.OrderNewDrawerw.length;
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return Contants.OrderDrawer[position];
+        return Contants.OrderNewDrawerw[position];
     }
 }

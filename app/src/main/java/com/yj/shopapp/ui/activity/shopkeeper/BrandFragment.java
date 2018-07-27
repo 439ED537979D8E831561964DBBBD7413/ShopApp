@@ -20,6 +20,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.squareup.okhttp.Request;
 import com.yj.shopapp.R;
 import com.yj.shopapp.config.Contants;
+import com.yj.shopapp.dialog.AllScanCodeDialogFragment;
 import com.yj.shopapp.http.HttpHelper;
 import com.yj.shopapp.http.OkHttpResponseHandler;
 import com.yj.shopapp.ubeen.BrandGroup;
@@ -41,7 +42,7 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import butterknife.Unbinder;
+import ezy.ui.layout.LoadingLayout;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -58,7 +59,9 @@ public class BrandFragment extends NewBaseFragment implements AdapterView.OnItem
     RecyclerView topRecyclerview;
     @BindView(R.id.title_layout)
     RelativeLayout titleLayout;
-    Unbinder unbinder;
+    @BindView(R.id.loading)
+    LoadingLayout loading;
+
 
     private List<Industry> industryList = new ArrayList<>();
     private String Cid = "";
@@ -72,6 +75,7 @@ public class BrandFragment extends NewBaseFragment implements AdapterView.OnItem
     private int brandindex = 0;
     private TopRecyAdpter topRecyAdpter;
     private boolean mIsRefreshing;
+    private boolean isRefresh;
 
     @Override
     protected int getLayoutId() {
@@ -93,12 +97,9 @@ public class BrandFragment extends NewBaseFragment implements AdapterView.OnItem
         liftList.setAdapter(lift3Adpter);
         lift3Adpter.setDefSelect(0);
         brandAdapter.setOnItemClickListener(this);
-        liftList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                lift3Adpter.setDefSelect(position);
-                ((LinearLayoutManager) rightRecy.getLayoutManager()).scrollToPositionWithOffset(tabname_brand.get(position).getPosition(), 0);
-            }
+        liftList.setOnItemClickListener((parent, view1, position, id) -> {
+            lift3Adpter.setDefSelect(position);
+            ((LinearLayoutManager) rightRecy.getLayoutManager()).scrollToPositionWithOffset(tabname_brand.get(position).getPosition(), 0);
         });
 //        valueEt.addTextChangedListener(new TextWatcher() {
 //            @Override
@@ -179,11 +180,13 @@ public class BrandFragment extends NewBaseFragment implements AdapterView.OnItem
         topRecyAdpter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (industryList.get(position).getId() != null) {
-                    Cid = industryList.get(position).getId();
-                    getBrand();
-                    lift3Adpter.setDefSelect(0);
-                    topRecyAdpter.setDefSelect(position);
+                if (!isRefresh) {
+                    if (industryList.get(position).getId() != null) {
+                        Cid = industryList.get(position).getId();
+                        getBrand();
+                        lift3Adpter.setDefSelect(0);
+                        topRecyAdpter.setDefSelect(position);
+                    }
                 }
             }
         });
@@ -202,12 +205,7 @@ public class BrandFragment extends NewBaseFragment implements AdapterView.OnItem
     @Override
     protected void initData() {
         if (isNetWork(mActivity)) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    getindustry();
-                }
-            }, 200);
+            new Handler().postDelayed(this::getindustry, 200);
 
         }
     }
@@ -257,12 +255,6 @@ public class BrandFragment extends NewBaseFragment implements AdapterView.OnItem
     }
 
     public void getBrand() {
-        brandGroup.clear();
-        listBeans.clear();
-        brandindex = 0;
-        tabname_brand.clear();
-        brandAdapter.notifyDataSetChanged();
-        mIsRefreshing = true;
         Map<String, String> params = new HashMap<String, String>();
         params.put("uid", uid);
         params.put("token", token);
@@ -278,12 +270,26 @@ public class BrandFragment extends NewBaseFragment implements AdapterView.OnItem
             public void onAfter() {
                 super.onAfter();
                 mIsRefreshing = false;
+                if (loading != null) {
+                    loading.showContent();
+                }
+                if (topRecyclerview != null) {
+                    topRecyclerview.setFocusable(true);
+                    topRecyclerview.setFocusableInTouchMode(true);
+                }
+                isRefresh = false;
             }
 
             @Override
             public void onResponse(Request request, String json) {
                 super.onResponse(request, json);
                 ShowLog.e(json);
+                brandGroup.clear();
+                listBeans.clear();
+                tabname_brand.clear();
+                brandindex = 0;
+                brandAdapter.notifyDataSetChanged();
+                mIsRefreshing = true;
                 if (JsonHelper.isRequstOK(json, mActivity)) {
                     if (!"".equals(json)) {
                         brandGroup = JSONArray.parseArray(json, BrandGroup.class);
@@ -296,8 +302,8 @@ public class BrandFragment extends NewBaseFragment implements AdapterView.OnItem
                                 listBeans.add(b);
                             }
                             brandindex += group.getList().size() + 1;
+                            brandAdapter.notifyDataSetChanged();
                         }
-                        brandAdapter.notifyDataSetChanged();
                         lift3Adpter.notifyDataSetChanged();
                         addEmptyView();
                     }
@@ -306,19 +312,29 @@ public class BrandFragment extends NewBaseFragment implements AdapterView.OnItem
                     lift3Adpter.notifyDataSetChanged();
                 }
             }
+
+            @Override
+            public void onBefore() {
+                super.onBefore();
+                if (loading != null) {
+                    loading.showLoading();
+                }
+                isRefresh = true;
+            }
         });
     }
 
     private void addEmptyView() {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
+        new Handler().postDelayed(() -> {
+            try {
                 int itemHight = rightRecy.getLayoutManager().getChildAt(1).getHeight();
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT
                         , rightRecy.getHeight() - itemHight);
                 View view = new View(mActivity);
                 view.setLayoutParams(layoutParams);
                 brandAdapter.setFoootView(view);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }, 300);
     }
@@ -328,20 +344,30 @@ public class BrandFragment extends NewBaseFragment implements AdapterView.OnItem
         if (isSereen) {
             if (newBrandGroup.size() == 0) return;
             if (!newBrandGroup.get(position).isSort()) {
-                Bundle bundle = new Bundle();
-                bundle.putString("cid", Cid);
-                bundle.putString("name", newBrandGroup.get(position).getName());
-                bundle.putString("bid", newBrandGroup.get(position).getId());
-                CommonUtils.goActivity(mActivity, SGoodsActivity.class, bundle);
+                if (newBrandGroup.get(position).getIs_open() == 1) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("cid", Cid);
+                    bundle.putString("name", newBrandGroup.get(position).getName());
+                    bundle.putString("bid", newBrandGroup.get(position).getId());
+                    bundle.putString("gid", newBrandGroup.get(position).getGid());
+                    CommonUtils.goActivity(mActivity, SGoodsActivity.class, bundle);
+                } else {
+                    showToast(newBrandGroup.get(position).getInfo());
+                }
             }
         } else {
             if (listBeans.size() == 0) return;
             if (!listBeans.get(position).isSort()) {
-                Bundle bundle = new Bundle();
-                bundle.putString("cid", Cid);
-                bundle.putString("name", listBeans.get(position).getName());
-                bundle.putString("bid", listBeans.get(position).getId());
-                CommonUtils.goActivity(mActivity, SGoodsActivity.class, bundle);
+                if (listBeans.get(position).getIs_open() == 1) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("cid", Cid);
+                    bundle.putString("name", listBeans.get(position).getName());
+                    bundle.putString("bid", listBeans.get(position).getId());
+                    bundle.putString("gid", listBeans.get(position).getGid());
+                    CommonUtils.goActivity(mActivity, SGoodsActivity.class, bundle);
+                } else {
+                    showToast(listBeans.get(position).getInfo());
+                }
             }
         }
 
@@ -349,6 +375,8 @@ public class BrandFragment extends NewBaseFragment implements AdapterView.OnItem
 
     @OnClick(R.id.value_Et)
     public void onViewClicked() {
-        FragmentSearchBoxSelect.newInstance(0).show(mActivity.getFragmentManager(), "selectBox");
+        AllScanCodeDialogFragment.newInstance("").show(getFragmentManager(), "allscancode");
+        // FragmentSearchBoxSelect.newInstance(0).show(getFragmentManager(), "selectBox");
     }
+
 }

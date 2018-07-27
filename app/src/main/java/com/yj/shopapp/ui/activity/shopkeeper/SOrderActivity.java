@@ -1,9 +1,16 @@
 package com.yj.shopapp.ui.activity.shopkeeper;
 
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.yj.shopapp.R;
@@ -28,6 +35,9 @@ public class SOrderActivity extends NewBaseFragment {
     LinearLayout titleView;
     @BindView(R.id.search_tv)
     TextView searchTv;
+    @BindView(R.id.orderRecord)
+    ImageView orderRecord;
+
     private OrderViewPageAdpter adpter;
     private int[] status = {0, 1, 4, 3};
 
@@ -46,6 +56,7 @@ public class SOrderActivity extends NewBaseFragment {
         adpter = new OrderViewPageAdpter(getFragmentManager(), status);
         viewpager.setOpenAnimation(false);
         viewpager.setScanScroll(false);
+
     }
 
     @Override
@@ -68,12 +79,39 @@ public class SOrderActivity extends NewBaseFragment {
                 CommonUtils.goActivity(mActivity, PieChartActivity.class, null);
                 break;
             case R.id.search_rl:
-                FragmentSearchBoxSelect.newInstance(1).show(mActivity.getFragmentManager(), "searchBox");
+                FragmentSearchBoxSelect.newInstance(1).show(getFragmentManager(), "searchBox");
                 break;
             case R.id.orderRecord:
-                CommonUtils.goActivity(mActivity, GoodsRecord.class, null);
+                showPopwpwindows();
                 break;
         }
+    }
+
+    private void showPopwpwindows() {
+        View rootView = LayoutInflater.from(mActivity).inflate(R.layout.pwd_orderhistory_select, null);
+        PopupWindow pw = new PopupWindow(rootView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
+        TextView goGoodsHistory = rootView.findViewById(R.id.go_goodshistory);
+        TextView goReturnGoods = rootView.findViewById(R.id.go_returngoods);
+        goGoodsHistory.setOnClickListener(v -> {
+            CommonUtils.goActivity(mActivity, GoodsRecord.class, null);
+            pw.dismiss();
+        });
+        goReturnGoods.setOnClickListener(v -> {
+            CommonUtils.goActivity(mActivity, ReturnGoodsHistory.class, null);
+            pw.dismiss();
+        });
+
+        pw.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        pw.setOutsideTouchable(true);
+        pw.setTouchable(true);
+        backgroundAlpha(0.8f);
+        pw.showAsDropDown(orderRecord, 0, 20);
+        pw.setOnDismissListener(() -> backgroundAlpha(1f));
+    }
+    public void backgroundAlpha(float bgAlpha) {
+        WindowManager.LayoutParams lp = mActivity.getWindow().getAttributes();
+        lp.alpha = bgAlpha; //0.0-1.0
+        mActivity.getWindow().setAttributes(lp);
     }
 
 }

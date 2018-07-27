@@ -71,7 +71,7 @@ public class MyItemRecyclerViewAdapter extends Common2Adapter<MyBuGood.ListsBean
             holder.getTextView(R.id.status_tv).setText(statuds[bean.getStatus()]);
         }
         holder.getTextView(R.id.shopnum).setText(String.format("数量：%s", bean.getItemcount()));
-        holder.getTextView(R.id.allprice).setText(String.format("合计：%s", bean.getMoneysum()));
+        holder.getTextView(R.id.allprice).setText(Html.fromHtml("合计:" + "<font color=red>" + "￥"+bean.getMoneysum() + "</fon>"));
         cancletv.setOnClickListener(this);
         cancletv.setTag(position);
         holder.getView(R.id.itemview).setOnClickListener(this);

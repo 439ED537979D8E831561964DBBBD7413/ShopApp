@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,9 +25,11 @@ import com.yj.shopapp.http.OkHttpResponseHandler;
 import com.yj.shopapp.ubeen.Address;
 import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.ui.activity.base.BaseActivity;
+import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.JsonHelper;
 import com.yj.shopapp.util.NetUtils;
 import com.yj.shopapp.util.PreferenceUtils;
+import com.yj.shopapp.util.StatusBarUtils;
 import com.yj.shopapp.util.StringHelper;
 
 import java.util.HashMap;
@@ -43,6 +46,8 @@ public class SAddressRefreshActivity extends BaseActivity {
     public static final int REFRESHY_MSG = 2;
     @BindView(R.id.submit)
     TextView submit;
+    @BindView(R.id.title_view)
+    RelativeLayout titleView;
 
     private Address mAddress;
     @BindView(R.id.title)
@@ -92,6 +97,15 @@ public class SAddressRefreshActivity extends BaseActivity {
     @Override
     protected int getLayoutId() {
         return R.layout.sactivity_address_refresh;
+    }
+
+    @Override
+    protected void setStatusBar() {
+        StatusBarUtils.from(this)
+                .setActionbarView(titleView)
+                .setTransparentStatusbar(true)
+                .setLightStatusBar(false)
+                .process();
     }
 
     @Override
@@ -150,6 +164,10 @@ public class SAddressRefreshActivity extends BaseActivity {
         }
         if (StringHelper.isEmpty(phone)) {
             showToastShort("请填写手机号码");
+            return false;
+        }
+        if (!CommonUtils.isMobileNum(phone)) {
+            showToastShort("无效手机号码");
             return false;
         }
         if (StringHelper.isEmpty(address)) {
@@ -350,4 +368,5 @@ public class SAddressRefreshActivity extends BaseActivity {
         });
 
     }
+
 }

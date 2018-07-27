@@ -1,302 +1,271 @@
 package com.yj.shopapp.ui.activity.wholesale;
 
+import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.AdapterView;
 
+import com.alibaba.fastjson.JSONArray;
+import com.gavin.com.library.StickyDecoration;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.squareup.okhttp.Request;
 import com.yj.shopapp.R;
 import com.yj.shopapp.config.Contants;
 import com.yj.shopapp.http.HttpHelper;
 import com.yj.shopapp.http.OkHttpResponseHandler;
-import com.yj.shopapp.loading.ILoadView;
-import com.yj.shopapp.loading.ILoadViewImpl;
-import com.yj.shopapp.loading.LoadMoreClickListener;
-import com.yj.shopapp.presenter.BaseRecyclerView;
+import com.yj.shopapp.ui.activity.ImgUtil.NewBaseFragment;
 import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.ui.activity.adapter.SalesAdapter;
-import com.yj.shopapp.ui.activity.base.BaseFragment;
 import com.yj.shopapp.util.CommonUtils;
+import com.yj.shopapp.util.DateUtils;
+import com.yj.shopapp.util.DisplayUtil;
 import com.yj.shopapp.util.JsonHelper;
 import com.yj.shopapp.util.NetUtils;
-import com.yj.shopapp.util.PreferenceUtils;
-import com.yj.shopapp.view.headfootrecycleview.OnRecyclerViewScrollListener;
-import com.yj.shopapp.view.headfootrecycleview.RecyclerViewHeaderFooterAdapter;
+import com.yj.shopapp.wbeen.MessgEvt;
 import com.yj.shopapp.wbeen.SPlist;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import butterknife.BindView;
+import ezy.ui.layout.LoadingLayout;
 
 /**
  * Created by jm on 2016/4/25.
  * 促销
  */
-public class WSalesViewActivity extends BaseFragment implements BaseRecyclerView {
-
-    @BindView(R.id.swipe_refresh_layout)
-    SwipeRefreshLayout swipeRefreshLayout;
+public class WSalesViewActivity extends NewBaseFragment {
 
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
-
-    private ILoadView iLoadView = null;
-    private View loadMoreView = null;
-
-    private RecyclerViewHeaderFooterAdapter adapter;
-
-    private RecyclerView.LayoutManager layoutManager;
-
-    private boolean isRequesting = false;//标记，是否正在刷新
+    @BindView(R.id.loading)
+    LoadingLayout loading;
+    @BindView(R.id.smart_refresh_layout)
+    SmartRefreshLayout smartRefreshLayout;
 
     private int mCurrentPage = 0;
-
     private List<SPlist> sPlistList = new ArrayList<>();
+    private String cid;
+    private String statusid = "0";
+    private String keyword = "";
+    private SalesAdapter sAdapter;
+    private int status_sales;
+    private String saleStatus;
 
-    String uid;
-    String token;
-    String statusid = "0";
+    public static WSalesViewActivity newInstance(String cid, int status) {
 
-    public static WSalesViewActivity newInstance(String content) {
+        Bundle args = new Bundle();
+        args.putString("cid", cid);
+        args.putInt("status", status);
         WSalesViewActivity fragment = new WSalesViewActivity();
-        fragment.statusid = content;
+        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
-    public void init(Bundle savedInstanceState) {
-
-        uid = PreferenceUtils.getPrefString(mActivity, Contants.Preference.UID, "");
-        token = PreferenceUtils.getPrefString(mActivity, Contants.Preference.TOKEN, "");
-
-        swipeRefreshLayout.setColorSchemeResources(Contants.Refresh.refreshColorScheme);
-        swipeRefreshLayout.setOnRefreshListener(listener);
-
-        SalesAdapter sAdapter = new SalesAdapter(mActivity, sPlistList, this);
-
-        layoutManager = new LinearLayoutManager(mActivity);
-
-        adapter = new RecyclerViewHeaderFooterAdapter(layoutManager, sAdapter);
-
-        iLoadView = new ILoadViewImpl(mActivity, new mLoadMoreClickListener());
-
-        loadMoreView = iLoadView.inflate();
-
-        recyclerView.addOnScrollListener(new MyScrollListener());
-
-
-        if (recyclerView != null) {
-            recyclerView.setLayoutManager(layoutManager);
-            recyclerView.setAdapter(adapter);
-        }
-
-
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (NetUtils.isNetworkConnected(mActivity)) {
-            if (null != swipeRefreshLayout) {
-
-                swipeRefreshLayout.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        swipeRefreshLayout.setRefreshing(true);
-
-                        refreshRequest();
-                    }
-                }, 200);
-            }
-        } else {
-            showToastShort("网络不给力");
-        }
-    }
-
-    @Override
-    public int getLayoutID() {
+    protected int getLayoutId() {
         return R.layout.wactivity_salesview;
+    }
+
+    @Override
+    protected void initView(View view, Bundle savedInstanceState) {
+        cid = Objects.requireNonNull(getArguments()).getString("cid");
+        status_sales = getArguments().getInt("status");
+        sAdapter = new SalesAdapter(mActivity);
+        StickyDecoration decoration = StickyDecoration.Builder
+                .init(position -> {
+                    //组名回调
+                    //获取组名，用于判断是否是同一组
+                    if (sPlistList.size() > 0) {
+                        return DateUtils.timet(sPlistList.get(position).getAddtime(), "yyyy-MM-dd");
+                    }
+                    return "";
+                })
+                .setGroupBackground(Color.parseColor("#f4f5f9"))
+                .setGroupHeight(CommonUtils.dip2px(mActivity, 34))
+                .setDivideColor(Color.parseColor("#E3E3E3"))
+                .setGroupTextColor(Color.parseColor("#000000"))
+                .setDivideHeight(1)
+                .setGroupTextSize(DisplayUtil.sp2px(mActivity, 14))
+                .setTextSideMargin(CommonUtils.dip2px(mActivity, 14))
+                .build();
+        recyclerView.addItemDecoration(decoration);
+        if (recyclerView != null) {
+            recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
+            recyclerView.setAdapter(sAdapter);
+        }
+        sAdapter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Bundle bundle = new Bundle();
+                bundle.putString("itemid", "");
+                bundle.putParcelable("been", sPlistList.get(position));
+                bundle.putString("goodsname", sPlistList.get(position).getName());
+                bundle.putString("isModify", String.valueOf(status_sales));
+                CommonUtils.goActivity(mActivity, WSalesDetailActivity.class, bundle);
+            }
+        });
+        Refresh();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void initData() {
+        if (NetUtils.isNetworkConnected(mActivity)) {
+            refreshRequest();
+        } else {
+            showToast("网络不给力");
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(MessgEvt messgEvt) {
+        switch (messgEvt.getStatus()) {
+            case 1:
+                statusid = messgEvt.getValue();
+                refreshRequest();
+                break;
+            case 2:
+                saleStatus = messgEvt.getValue();
+                refreshRequest();
+                break;
+        }
+    }
+
+    private void Refresh() {
+        smartRefreshLayout.setHeaderHeight(50);
+        smartRefreshLayout.setFooterHeight(50);
+        smartRefreshLayout.setOnRefreshListener((v) -> {
+            refreshRequest();
+            if (null != smartRefreshLayout) {
+                smartRefreshLayout.setNoMoreData(false);
+            }
+        });
+        smartRefreshLayout.setOnLoadMoreListener((v) -> loadMoreRequest());
+        smartRefreshLayout.setDisableContentWhenRefresh(true);//是否在刷新的时候禁止列表的操作
+        smartRefreshLayout.setDisableContentWhenLoading(true);//是否在加载的时候禁止列表的操作
     }
 
 
     public void refreshRequest() {
         mCurrentPage = 1;
-
         Map<String, String> params = new HashMap<String, String>();
         params.put("uid", uid);
         params.put("token", token);
         params.put("p", String.valueOf(mCurrentPage));
-        params.put("statusid", statusid);
-        adapter.removeFooter(loadMoreView);
-        HttpHelper.getInstance().post(mActivity, Contants.PortA.SPLIST, params, new OkHttpResponseHandler<String>(mActivity) {
+        params.put("cid", cid);
+        params.put("keyword", keyword);
+        params.put("status", statusid);
+        params.put("sale_status", saleStatus);
+        HttpHelper.getInstance().post(mActivity, Contants.PortA.SALELIST, params, new OkHttpResponseHandler<String>(mActivity) {
 
             @Override
             public void onAfter() {
                 super.onAfter();
-                swipeRefreshLayout.setRefreshing(false);
-                isRequesting = false;
+                if (smartRefreshLayout != null) {
+                    smartRefreshLayout.finishLoadMore();
+                    smartRefreshLayout.finishRefresh();
+                }
             }
 
             @Override
             public void onBefore() {
                 super.onBefore();
-                isRequesting = true;
+                sPlistList.clear();
+                if (smartRefreshLayout != null) {
+                    smartRefreshLayout.setNoMoreData(false);
+                }
             }
 
             @Override
             public void onResponse(Request request, String json) {
                 super.onResponse(request, json);
-                sPlistList.clear();
                 ShowLog.e(json);
+                if (loading != null) {
+                    loading.showContent();
+                }
                 if (JsonHelper.isRequstOK(json, mActivity)) {
-                    JsonHelper<SPlist> jsonHelper = new JsonHelper<SPlist>(SPlist.class);
-                    sPlistList.addAll(jsonHelper.getDatas(json));
-                    //ShowLog.e(sPlistList.get(0).getSale_status());
+                    sPlistList.addAll(JSONArray.parseArray(json, SPlist.class));
+                    sAdapter.setList(sPlistList);
                     if (sPlistList.size() == 0) {
-
-                    } else if (sPlistList.size() >= 20) {
-                        adapter.addFooter(loadMoreView);
-                    } else {
-                        adapter.removeFooter(loadMoreView);
+                        if (loading != null) {
+                            loading.showEmpty();
+                        }
                     }
                 }
-
-                adapter.notifyDataSetChanged();
             }
 
             @Override
             public void onError(Request request, Exception e) {
                 super.onError(request, e);
-                showToastShort(Contants.NetStatus.NETDISABLEORNETWORKDISABLE);
+                showToast(Contants.NetStatus.NETDISABLEORNETWORKDISABLE);
                 sPlistList.clear();
-                adapter.notifyDataSetChanged();
             }
         });
 
     }
 
     public void loadMoreRequest() {
-        if (isRequesting)
-            return;
-
         mCurrentPage++;
-
-        iLoadView.showLoadingView(loadMoreView);
-
         Map<String, String> params = new HashMap<String, String>();
         params.put("uid", uid);
         params.put("token", token);
         params.put("p", String.valueOf(mCurrentPage));
-        params.put("statusid", statusid);
-
-        HttpHelper.getInstance().post(mActivity, Contants.PortA.SPLIST, params, new OkHttpResponseHandler<String>(mActivity) {
+        params.put("status", statusid);
+        params.put("cid", cid);
+        HttpHelper.getInstance().post(mActivity, Contants.PortA.SALELIST, params, new OkHttpResponseHandler<String>(mActivity) {
 
             @Override
             public void onAfter() {
                 super.onAfter();
-                isRequesting = false;
+                if (smartRefreshLayout != null) {
+                    smartRefreshLayout.finishLoadMore();
+                    smartRefreshLayout.finishRefresh();
+                }
             }
 
             @Override
             public void onBefore() {
                 super.onBefore();
-                isRequesting = true;
+
             }
 
             @Override
             public void onResponse(Request request, String json) {
                 super.onResponse(request, json);
-
-                System.out.println("response" + json);
+                ShowLog.e(json);
                 if (JsonHelper.isRequstOK(json, mActivity)) {
-                    JsonHelper<SPlist> jsonHelper = new JsonHelper<SPlist>(SPlist.class);
-
-                    if (jsonHelper.getDatas(json).size() == 0) {
-                        iLoadView.showFinishView(loadMoreView);
-                    } else {
-                        sPlistList.addAll(jsonHelper.getDatas(json));
-                    }
+                    sPlistList.addAll(JSONArray.parseArray(json, SPlist.class));
+                    sAdapter.setList(sPlistList);
                 } else if (JsonHelper.getRequstOK(json) == 6) {
-                    iLoadView.showFinishView(loadMoreView);
-                } else {
                     mCurrentPage--;
+                    if (smartRefreshLayout != null) {
+                        smartRefreshLayout.finishLoadMoreWithNoMoreData();
+                    }
                 }
-
-                adapter.notifyDataSetChanged();
             }
 
             @Override
             public void onError(Request request, Exception e) {
                 super.onError(request, e);
-                showToastShort(Contants.NetStatus.NETDISABLEORNETWORKDISABLE);
+                showToast(Contants.NetStatus.NETDISABLEORNETWORKDISABLE);
                 mCurrentPage--;
-                iLoadView.showErrorView(loadMoreView);
             }
         });
     }
 
-    SwipeRefreshLayout.OnRefreshListener listener = new SwipeRefreshLayout.OnRefreshListener() {
-        @Override
-        public void onRefresh() {
-
-            refreshRequest();
-        }
-    };
-
     @Override
-    public void onItemClick(int position) {
-        Bundle bundle = new Bundle();
-        bundle.putString("itemid", "");
-        bundle.putSerializable("been", sPlistList.get(position));
-        System.out.println(sPlistList.get(position).getTime1() + "___________-" + sPlistList.get(position).getTime2());
-        bundle.putString("goodsname", sPlistList.get(position).getItemname());
-        CommonUtils.goActivity(mActivity, WSalesDetailActivity.class, bundle, false);
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
-
-    @Override
-    public void onLongItemClick(final int position) {
-//        showToastShort("changan"+position);
-
-    }
-
-
-    public class mLoadMoreClickListener implements LoadMoreClickListener {
-
-        @Override
-        public void clickLoadMoreData() {
-            loadMoreRequest();
-        }
-    }
-
-
-    public class MyScrollListener extends OnRecyclerViewScrollListener {
-
-        @Override
-        public void onScrollUp() {
-
-        }
-
-        @Override
-        public void onScrollDown() {
-
-        }
-
-        @Override
-        public void onBottom() {
-            loadMoreRequest();
-        }
-
-        @Override
-        public void onMoved(int distanceX, int distanceY) {
-
-        }
-    }
-
-
 }

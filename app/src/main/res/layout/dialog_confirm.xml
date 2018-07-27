@@ -75,7 +75,7 @@
                 android:layout_weight="1"
                 android:clickable="true"
                 android:gravity="center"
-                android:text="@string/cancel"
+                android:text="@string/right"
                 android:textColor="@color/text_blue"
                 android:textSize="17sp"
                 />

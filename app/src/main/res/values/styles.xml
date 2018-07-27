@@ -11,7 +11,19 @@
         <item name="android:windowBackground">@drawable/bg_start</item>
         <item name="android:windowNoTitle">true</item>
         <item name="styleLoadingLayout">@style/LoadingLayoutStyle</item>
+        <item name="searchViewStyle">@style/SearchViewStyle</item>
     </style>
+
+    <!--&lt;!&ndash; searchView 设置搜索图标去掉hint图标&ndash;&gt;-->
+    <style name="SearchViewStyle" parent="Widget.AppCompat.SearchView">
+        <item name="searchIcon">@drawable/ic_search</item>
+        <item name="searchHintIcon">@null</item>
+    </style>
+    <!--&lt;!&ndash; &ndash;&gt;-->
+    <!--<style name="ToolbarStyle" parent="Base.Widget.AppCompat.Toolbar">-->
+    <!--<item name="contentInsetStart">0dp</item>-->
+    <!--<item name="contentInsetStartWithNavigation">0dp</item>-->
+    <!--</style>-->
 
     <style name="AppTheme.NoActionBarWithBackGround">
         <item name="windowActionBar">false</item>//取消Actionbar
@@ -141,18 +153,18 @@
     </style>
 
     <style name="bottom_menu_animation" parent="android:Animation">
-        <item name="@android:windowEnterAnimation">@anim/bottom_menu_enter</item>
-        <item name="@android:windowExitAnimation">@anim/bottom_menu_exit</item>
+        <item name="android:windowEnterAnimation">@anim/bottom_menu_enter</item>
+        <item name="android:windowExitAnimation">@anim/bottom_menu_exit</item>
     </style>
 
     <style name="timeselect_animation" parent="android:Animation">
-        <item name="@android:windowEnterAnimation">@anim/timeselectenter</item>
-        <item name="@android:windowExitAnimation">@anim/timeselectexit</item>
+        <item name="android:windowEnterAnimation">@anim/timeselectenter</item>
+        <item name="android:windowExitAnimation">@anim/timeselectexit</item>
     </style>
 
     <style name="popuwindow_animation" parent="android:Animation">
-        <item name="@android:windowEnterAnimation">@anim/popuwindow_in</item>
-        <item name="@android:windowExitAnimation">@anim/popuwindow_out</item>
+        <item name="android:windowEnterAnimation">@anim/popuwindow_in</item>
+        <item name="android:windowExitAnimation">@anim/popuwindow_out</item>
     </style>
 
     <declare-styleable name="SmoothCheckBox">
@@ -212,4 +224,5 @@
         <!-- 提示文案的文字颜色 -->
         <item name="banner_tipTextColor">@android:color/white</item>
     </style>
+
 </resources>

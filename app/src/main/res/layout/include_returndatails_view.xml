@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="@dimen/H5dp"
+    android:paddingLeft="@dimen/H8dp"
+    android:background="@color/colorf5f5f5"
+    android:paddingTop="@dimen/H5dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/time_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:text="" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/purchase_num"
+                android:layout_width="@dimen/H100dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_999999"
+                android:text=""
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/purchase_money"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="@color/color_999999"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/returngoods_num"
+                android:layout_width="@dimen/H100dp"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="@color/color_999999"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/returngoods_money"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="@color/color_999999"
+                android:textSize="12sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/timeSelectView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:padding="@dimen/H8dp"
+        android:src="@drawable/ic_statis_deta" />
+</RelativeLayout>

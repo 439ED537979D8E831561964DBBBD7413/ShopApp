@@ -5,8 +5,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
@@ -14,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,6 +29,7 @@ import com.yj.shopapp.config.Contants;
 import com.yj.shopapp.config.MyApplication;
 import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.NetUtils;
+import com.yj.shopapp.util.NotchUtils;
 import com.yj.shopapp.util.PreferenceUtils;
 import com.yj.shopapp.util.StatusBarUtil;
 
@@ -60,17 +64,20 @@ public abstract class BaseActivity extends AppCompatActivity {
         return bundle;
     }
 
+    private Toast mToast;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         bundle = savedInstanceState;
         PushAgent.getInstance(mContext).onAppStart();
+
         setContentView(getLayoutId());
         unbinder = ButterKnife.bind(this);
-        mContext = this;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             setStatusBar();
         }
+        mContext = this;
 //        mImmersionBar = ImmersionBar.with(this).fitsSystemWindows(true).statusBarColor(R.color.colorPrimary);
 //        mImmersionBar.init();   //所有子类都将继承这些相同的属性
         uid = PreferenceUtils.getPrefString(mContext, Contants.Preference.UID, "");
@@ -88,6 +95,22 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
         initData();
 
+    }
+
+    protected boolean isNotch() {
+        if (NotchUtils.hasNotchInScreen(mContext)) {
+            NotchUtils.addStatusViewWithColor(this, Color.parseColor("#474747"), NotchUtils.getNotchSize(mContext)[1]);
+            return true;
+        }
+        if (NotchUtils.hasNotchInScreenAtOppo(mContext)) {
+            NotchUtils.addStatusViewWithColor(this, Color.parseColor("#474747"), 80);
+            return true;
+        }
+        if (NotchUtils.hasNotchInScreenAtVoio(mContext)) {
+            NotchUtils.addStatusViewWithColor(this, Color.parseColor("#474747"), CommonUtils.dip2px(mContext, 32));
+            return true;
+        }
+        return false;
     }
 
     protected String getAddressId() {
@@ -143,6 +166,20 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
+    protected void showKeyBoard(EditText valuet) {
+        new Handler().postDelayed(() -> {
+            InputMethodManager inManager = (InputMethodManager) valuet.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            assert inManager != null;
+            inManager.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+        }, 300);
+    }
+
+    protected void hideImm(EditText valuet) {
+        InputMethodManager inputMethodManager = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+        assert inputMethodManager != null;
+        inputMethodManager.hideSoftInputFromWindow(valuet.getWindowToken(), 0);
+    }
+
     /**
      * 检测网络
      *
@@ -158,7 +195,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
-    private Toast mToast = null;
 
     public void toast(String msg, int duration) {
         TextView toastTv = null;

@@ -228,8 +228,8 @@ public class OkHttpClientManager {
                 try {
                     final String string = response.body().string();
 
-                    System.out.println("这里截取==" + string.length());
-                    System.out.println("这里截取==" + string);
+//                    System.out.println("这里截取==" + string.length());
+//                    System.out.println("这里截取==" + string);
                     if (resCallBack.mType == String.class) {
                         sendSuccessResultCallback(request, string, resCallBack);
                     } else {

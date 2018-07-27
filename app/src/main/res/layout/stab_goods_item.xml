@@ -3,8 +3,7 @@
     xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/recyitem"
-    android:padding="@dimen/H8dp">
+    android:background="@color/white">
 
     <LinearLayout
         android:id="@+id/itemview"
@@ -29,8 +28,9 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:layout_width="100dp"
-            android:layout_height="100dp">
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:layout_margin="@dimen/H8dp">
 
             <com.facebook.drawee.view.SimpleDraweeView
                 android:id="@+id/simpleDraweeView"
@@ -53,9 +53,9 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingLeft="10dp">
+            android:layout_gravity="center_vertical">
 
             <TextView
                 android:id="@+id/goodsnameTv"
@@ -65,6 +65,17 @@
                 android:singleLine="true"
                 android:text="名字"
                 android:textColor="@color/color333333" />
+
+            <TextView
+                android:id="@+id/goodAddress_Tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/H2dp"
+                android:singleLine="true"
+                android:text="位置"
+                android:visibility="gone"
+                android:textColor="@color/color_999999"
+                android:textSize="13sp" />
 
             <TextView
                 android:id="@+id/specsTv"
@@ -109,8 +120,8 @@
                     android:id="@+id/sales_price"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="5dp"
                     android:layout_weight="1"
+                    android:paddingLeft="5dp"
                     android:text=""
                     android:textColor="@color/color_999999" />
 

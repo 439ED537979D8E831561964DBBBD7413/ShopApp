@@ -6,10 +6,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.yj.shopapp.R;
 import com.yj.shopapp.ui.activity.base.BaseActivity;
+import com.yj.shopapp.util.StatusBarUtils;
 
 import butterknife.BindView;
 
@@ -25,10 +27,21 @@ public class WNewListActivity extends BaseActivity {
     TextView title;
     @BindView(R.id.id_right_btu)
     TextView idRightBtu;
+    @BindView(R.id.title_view)
+    RelativeLayout titleView;
 
     @Override
     protected int getLayoutId() {
         return R.layout.activity_news;
+    }
+
+    @Override
+    protected void setStatusBar() {
+        StatusBarUtils.from(this)
+                .setActionbarView(titleView)
+                .setTransparentStatusbar(true)
+                .setLightStatusBar(false)
+                .process();
     }
 
     @Override

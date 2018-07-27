@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.PermissionChecker;
 import android.view.View;
 import android.view.WindowManager;
@@ -92,7 +91,7 @@ public class SMyInfoActivity extends NewBaseFragment implements CenterDialog.OnC
     private static final int REQUEST_CODE = 1;
     private List<Address> notes = new ArrayList<Address>();
     private String cameraPath;
-    private final int REQUEST_CODEC = 0x1001;
+       private final int REQUEST_CODEC = 0x1001;
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
@@ -121,12 +120,12 @@ public class SMyInfoActivity extends NewBaseFragment implements CenterDialog.OnC
         if (getBundle() != null) {
             cameraPath = getBundle().getString("cameraPath");
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED) {
-                requestAlertWindowPermission();
-            }
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//            if (ContextCompat.checkSelfPermission(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+//                    != PackageManager.PERMISSION_GRANTED) {
+//                requestAlertWindowPermission();
+//            }
+//        }
         CustomerService.setText(PreferenceUtils.getPrefString(mActivity, "CustomerService", ""));
 
     }
@@ -312,7 +311,6 @@ public class SMyInfoActivity extends NewBaseFragment implements CenterDialog.OnC
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_CODEC && PermissionChecker.checkSelfPermission(mActivity, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
-            showToast("授权成功");
             callPhone();
         } else {
             showToast("授权失败");

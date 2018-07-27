@@ -35,7 +35,7 @@ public class IntegraAdapter extends CommonAdapter<ExcGoods.DataBean> implements 
         ExcGoods.DataBean goods = list.get(position);
         holder.getTextView(R.id.goodsName).setText(goods.getName());
         holder.getTextView(R.id.integral_num).setText(goods.getIntegral());
-        holder.getTextView(R.id.number).setText(String.format("剩余%s件", goods.getNum()));
+        //holder.getTextView(R.id.number).setText(String.format("剩余%s件", goods.getNum()));
         holder.getTextView(R.id.Redeem_now).setOnClickListener(this);
         holder.getTextView(R.id.Redeem_now).setTag(position);
         holder.getView(R.id.onItemclick).setOnClickListener(this);

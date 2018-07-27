@@ -46,7 +46,7 @@ public class my_Recommenduser extends BaseFragment implements RecommendAdpter.Ca
     private List<Extend> list;
     private RecommendAdpter adpter;
     private List<Integer> showControl = new ArrayList<>();
-    private int position;
+    private int position=0;
 
     @Override
     public void init(Bundle savedInstanceState) {
@@ -54,13 +54,10 @@ public class my_Recommenduser extends BaseFragment implements RecommendAdpter.Ca
         swipeRefreshLayout.setOnRefreshListener(listener);
         emptyView.setText("暂无推荐\r\n\r\n推荐用户领百元红包，你还在等什么!");
         adpter = new RecommendAdpter(mActivity, this);
-        if (NetUtils.isNetworkConnected(mActivity)) {
-            if (null != swipeRefreshLayout) {
-                swipeRefreshLayout.postDelayed(this::fresh, 200);
-            }
-        } else {
-            showToastShort("网络不给力");
-        }
+        listView.setAdapter(adpter);
+        listView.setEmptyView(emptyView);
+        listView.setSelection(position);
+
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -82,15 +79,14 @@ public class my_Recommenduser extends BaseFragment implements RecommendAdpter.Ca
                 swipeRefreshLayout.setEnabled(enable);
             }
         });
-
+        if (NetUtils.isNetworkConnected(mActivity)) {
+            if (null != swipeRefreshLayout) {
+                swipeRefreshLayout.postDelayed(this::fresh, 200);
+            }
+        } else {
+            showToastShort("网络不给力");
+        }
     }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        fresh();
-    }
-
     public void fresh() {
         swipeRefreshLayout.setRefreshing(true);
         refreshRequest();
@@ -136,9 +132,6 @@ public class my_Recommenduser extends BaseFragment implements RecommendAdpter.Ca
                     assert adpter != null;
                     adpter.setList(list);
                     adpter.setmshowControl(showControl);
-                    listView.setAdapter(adpter);
-                    listView.setEmptyView(emptyView);
-                    listView.setSelection(position);
                 }
 
             }

@@ -62,7 +62,7 @@ public class OrderFragmentAdapte extends Common2Adapter<OrderDatesBean.ItemlistB
         }
         OrderDatesBean.ItemlistBean bean = list.get(position);
         holder.getTextView(R.id.itemname).setText(bean.getItemname());
-        holder.getTextView(R.id.itemsum).setText(String.format("数量：%s", bean.getItemcount()));
+        holder.getTextView(R.id.itemsum).setText(String.format("数量：%s%s", bean.getItemcount(),bean.getUnit()));
         holder.getTextView(R.id.itemmoery).setText(String.format("小计：￥%s", bean.getMoneysum()));
         holder.getTextView(R.id.unitprice).setText(String.format("￥%s", bean.getUnitprice()));
         Glide.with(context).load(bean.getImageUrl()).apply(new RequestOptions().centerCrop()).into(holder.getImageView(R.id.itemimg));

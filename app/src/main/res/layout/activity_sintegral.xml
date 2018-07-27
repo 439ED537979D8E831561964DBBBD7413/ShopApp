@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.SwipeRefreshLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/super_swipe_refresh_layout"
@@ -38,15 +37,48 @@
                         android:text="积分商城"
                         android:textColor="@color/white"
                         android:textSize="15sp"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" />
 
                 </android.support.v7.widget.Toolbar>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="当前积分"
+                        android:textColor="@color/white" />
+
+                    <TextView
+                        android:id="@+id/current_integral"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="500"
+                        android:textColor="@color/white"
+                        android:textSize="32sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/redeemed_integral"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="已兑换7000积分"
+                        android:textColor="@color/white" />
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:visibility="gone">
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -63,7 +95,7 @@
                             android:text="兑换积分3000分"
                             android:textAllCaps="false"
                             android:textColor="@color/white"
-                            android:textSize="13sp"/>
+                            android:textSize="13sp" />
 
                         <TextView
                             android:id="@+id/ranking"
@@ -73,7 +105,7 @@
                             android:padding="5dp"
                             android:text="(兑换商品)"
                             android:textColor="@color/white"
-                            android:textSize="12sp"/>
+                            android:textSize="12sp" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -91,7 +123,7 @@
                             android:gravity="center"
                             android:text="提现积分3000分"
                             android:textColor="@color/white"
-                            android:textSize="13sp"/>
+                            android:textSize="13sp" />
 
                         <TextView
                             android:id="@+id/condition"
@@ -101,7 +133,7 @@
                             android:padding="5dp"
                             android:text="(满一万可提现)"
                             android:textColor="@color/white"
-                            android:textSize="12sp"/>
+                            android:textSize="12sp" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -110,9 +142,9 @@
             <View
                 android:id="@+id/allbgView"
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
+                android:layout_height="90dp"
                 android:layout_below="@id/bgView"
-                android:background="@color/all_bg"/>
+                android:background="@color/all_bg" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -138,7 +170,7 @@
                         android:gravity="center"
                         android:text="大家在换"
                         android:textColor="@color/red"
-                        android:textSize="15sp"/>
+                        android:textSize="15sp" />
 
                     <com.gongwen.marqueen.SimpleMarqueeView
                         android:id="@+id/hot_mv"
@@ -149,14 +181,14 @@
                         android:layout_marginRight="5dp"
                         android:layout_weight="1"
                         android:flipInterval="2500"
-                        app:smvTextSize="12sp"
                         android:inAnimation="@anim/in_right"
                         android:outAnimation="@anim/out_left"
                         app:marqueeAnimDuration="2000"
-                        app:smvTextEllipsize="end"
                         app:smvTextColor="#65686f"
+                        app:smvTextEllipsize="end"
                         app:smvTextGravity="center"
-                        app:smvTextSingleLine="true"/>
+                        app:smvTextSingleLine="true"
+                        app:smvTextSize="12sp" />
 
                     <TextView
                         android:id="@+id/more"
@@ -166,7 +198,7 @@
                         android:drawableRight="@drawable/ic_right_arrow"
                         android:text="点击查看"
                         android:textColor="@color/bottom_line"
-                        android:textSize="13sp"/>
+                        android:textSize="13sp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -181,11 +213,11 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:drawablePadding="10dp"
-                        android:drawableTop="@drawable/ic_shop"
+                        android:drawableTop="@drawable/ic_payment_info"
                         android:gravity="center"
-                        android:text="兑换商品"
+                        android:text="提现资料"
                         android:textColor="#666666"
-                        android:textSize="13sp"/>
+                        android:textSize="13sp" />
 
                     <TextView
                         android:id="@+id/exchangeRecord"
@@ -195,9 +227,9 @@
                         android:drawablePadding="10dp"
                         android:drawableTop="@drawable/ic_record"
                         android:gravity="center"
-                        android:text="我的兑换"
+                        android:text="兑换记录"
                         android:textColor="#666666"
-                        android:textSize="13sp"/>
+                        android:textSize="13sp" />
 
                     <TextView
                         android:id="@+id/integraldatails"
@@ -209,7 +241,7 @@
                         android:gravity="center"
                         android:text="积分明细"
                         android:textColor="#666666"
-                        android:textSize="13sp"/>
+                        android:textSize="13sp" />
 
                     <RelativeLayout
                         android:id="@+id/my_Vip"
@@ -223,7 +255,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="25dp"
                             android:layout_marginTop="3dp"
-                            android:src="@drawable/ic_vip"/>
+                            android:src="@drawable/ic_vip" />
 
                         <TextView
                             android:layout_width="match_parent"
@@ -232,7 +264,7 @@
                             android:gravity="center"
                             android:text="VIP特权"
                             android:textColor="#666666"
-                            android:textSize="13sp"/>
+                            android:textSize="13sp" />
                     </RelativeLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -247,10 +279,10 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:paddingLeft="10dp"
-                android:text="兑换商品"
+                android:text="积分兑换"
                 android:textColor="@color/color333333"
                 android:textSize="12sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/shopmore"
@@ -261,19 +293,20 @@
                 android:paddingRight="10dp"
                 android:text="更多"
                 android:textColor="@color/color888888"
-                android:textSize="13sp"/>
+                android:textSize="13sp"
+                android:visibility="gone" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_alignParentBottom="true"
-                android:background="@color/colore7e7e7"/>
+                android:background="@color/colore7e7e7" />
         </RelativeLayout>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 

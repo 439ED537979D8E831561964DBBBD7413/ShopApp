@@ -3,28 +3,32 @@ package com.yj.shopapp.ui.activity.shopkeeper;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.support.annotation.NonNull;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.RelativeSizeSpan;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.alibaba.fastjson.JSONObject;
 import com.bumptech.glide.Glide;
 import com.squareup.okhttp.Request;
+import com.tencent.smtt.sdk.WebView;
+import com.tencent.smtt.sdk.WebViewClient;
 import com.yj.shopapp.R;
 import com.yj.shopapp.config.Contants;
 import com.yj.shopapp.http.HttpHelper;
 import com.yj.shopapp.http.OkHttpResponseHandler;
 import com.yj.shopapp.ubeen.BuGoodShopDatail;
+import com.yj.shopapp.ubeen.LimitedSale;
 import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.ui.activity.base.BaseActivity;
 import com.yj.shopapp.util.CommonUtils;
@@ -34,12 +38,14 @@ import com.yj.shopapp.util.PreferenceUtils;
 import com.yj.shopapp.util.StatusBarUtil;
 import com.yj.shopapp.util.StatusBarUtils;
 import com.yj.shopapp.view.SaleProgressView;
+import com.yj.shopapp.view.X5WebView;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class BuGoodShopDatailsActivity extends BaseActivity {
@@ -81,7 +87,7 @@ public class BuGoodShopDatailsActivity extends BaseActivity {
     @BindView(R.id.warning_tv_super)
     LinearLayout warningTvSuper;
     private String shopId;
-    private WebView mWebView;
+    private X5WebView mWebView;
     private String addressId = "";
     private BuGoodShopDatail shopDatail;
     private int type = 0;
@@ -101,7 +107,7 @@ public class BuGoodShopDatailsActivity extends BaseActivity {
         if (getIntent().hasExtra("type")) {
             type = getIntent().getIntExtra("type", 0);
         }
-        mWebView = new WebView(mContext);
+        mWebView = new X5WebView(mContext);
         htmlView.addView(mWebView);
         mWebView.setWebViewClient(new WebViewClient() {
             @Override
@@ -271,6 +277,7 @@ public class BuGoodShopDatailsActivity extends BaseActivity {
                     if (object.getInteger("status") == 1) {
                         Bundle b = new Bundle();
                         b.putParcelable("shopDatail", shopDatail.getData());
+                        EventBus.getDefault().post(new LimitedSale("3"));
                         showToastShort("恭喜你，抢购成功!");
                         CommonUtils.goActivity(mContext, BuShopDetailsAcitivity.class, b, true);
                     } else {
@@ -302,16 +309,28 @@ public class BuGoodShopDatailsActivity extends BaseActivity {
                 if (!isStartsales) {
                     showToastShort("此商品暂未开枪");
                 } else {
-                    submitData();
+                    //判断是否有地址
+                    ShowLog.e(getAddressId() + "地址id");
+                    if (!getAddressId().equals("")) {
+                        addressId = getAddressId();
+                        submitData();
+                    } else {
+                        new MaterialDialog.Builder(mContext).title("温馨提示!")
+                                .content("您暂未添加收货地址!")
+                                .positiveText("去完善信息")
+                                .negativeText("下次吧")
+                                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        CommonUtils.goActivity(mContext, SAddressRefreshActivity.class, null);
+                                        dialog.dismiss();
+                                    }
+                                }).show();
+                    }
+
                 }
                 break;
         }
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // TODO: add setContentView(...) invocation
-        ButterKnife.bind(this);
-    }
 }

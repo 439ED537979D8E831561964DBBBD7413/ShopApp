@@ -54,6 +54,7 @@ import butterknife.OnClick;
 
 /**
  * Created by LK on 2017/12/20.
+ * 零售商
  *
  * @author LK
  */
@@ -160,9 +161,9 @@ public class SOrderDatesActivity extends BaseActivity {
                         if (!tabLayout.getTabAt(mData.getItemlist().get(firstItemPosition).getIndex()).isSelected()) {
                             tabLayout.getTabAt(mData.getItemlist().get(firstItemPosition).getIndex()).select();
                         }
-                        if (firstItemPosition == mData.getItemlist().size() - 1) {
-                            ((LinearLayoutManager) myRecyclerView.getLayoutManager()).scrollToPositionWithOffset(mData.getItemlist().size() - 1, 0);
-                        }
+//                        if (firstItemPosition == mData.getItemlist().size() - 1) {
+//                            ((LinearLayoutManager) myRecyclerView.getLayoutManager()).scrollToPositionWithOffset(mData.getItemlist().size() - 1, 0);
+//                        }
                     }
 
                 }
@@ -173,8 +174,7 @@ public class SOrderDatesActivity extends BaseActivity {
 
     @Override
     protected void setStatusBar() {
-        StatusBarUtil.setColor(this, getResources().getColor(R.color.white), 30);
-        StatusBarUtil.setStatusBarTextColor(getWindow(), true);
+        StatusBarUtil.setColor(this, getResources().getColor(R.color.color_4c4c4c), 0);
     }
 
     private void refreshRequest() {
@@ -196,6 +196,7 @@ public class SOrderDatesActivity extends BaseActivity {
                 ShowLog.e(json);
                 if (JsonHelper.isRequstOK(json, mContext)) {
                     mData = JSONObject.parseObject(json, OrderDatesBean.class);
+                    if (isFinishing()) return;
                     setData();
                 } else {
                     showToastShort(JsonHelper.errorMsg(json));
@@ -217,16 +218,16 @@ public class SOrderDatesActivity extends BaseActivity {
             DecimalFormat df = new DecimalFormat("#.00");
             paidMoney.setText(String.format("应付金额：￥%s", df.format(Double.parseDouble(mData.getMoney()) - (double) Integer.parseInt(mData.getCoupon()))));
             if (mData.getCoupon().equals("0")) {
-                discountMoney.setText(String.format("优惠：￥%s", mData.getCoupon()));
+                discountMoney.setText("优惠：0");
             } else {
-                discountMoney.setText("优惠:0");
+                discountMoney.setText(String.format("优惠：￥%s", mData.getCoupon()));
             }
 
             switch (mData.getStatus()) {
                 case "1":
                     driverdatails.setVisibility(View.GONE);
                     break;
-                case "4":
+                case "2":
                     if (mData.getDriver_info() == null) {
                         driverdatails.setVisibility(View.GONE);
                     } else {
@@ -253,57 +254,36 @@ public class SOrderDatesActivity extends BaseActivity {
             if (Integer.parseInt(mData.getSale_id()) > 0) {
                 tabViewpager.setVisibility(View.GONE);
                 buGoods.setVisibility(View.VISIBLE);
-                bgoodsname.setText(mData.getItemlist().get(0).getItemname());
-                bgoodsspesc.setText(String.format("数量:%s", mData.getItemlist().get(0).getItemcount()));
-                bgoodsprice.setText(String.format("￥%s", mData.getItemlist().get(0).getUnitprice()));
-                Glide.with(mContext).load(mData.getItemlist().get(0).getImageUrl()).into(shopimag);
+                OrderDatesBean.ItemlistBean bean = mData.getItemlist().get(0);
+                bgoodsname.setText(bean.getItemname());
+                bgoodsspesc.setText(String.format("数量:%s%s", bean.getItemcount(), bean.getUnit()));
+                bgoodsprice.setText(String.format("￥%s", bean.getUnitprice()));
+                Glide.with(mContext).load(bean.getImageUrl()).into(shopimag);
                 discountMoney.setVisibility(View.GONE);
                 totalPackage.setText("优惠：限量抢购");
             } else {
                 tabViewpager.setVisibility(View.VISIBLE);
                 initdata();
             }
-            ContactDriver.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    new MaterialDialog.Builder(mContext).title("提示").positiveText("拨打").negativeText("取消")
-                            .content(String.format("是否要拨打司机%s电话?", mData.getDriver_info().getName()))
-                            .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                @Override
-                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                    //拨打电话
-                                    if (Build.VERSION.SDK_INT >= 23) {
-                                        //判断有没有拨打电话权限
-                                        if (PermissionChecker.checkSelfPermission(mContext, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                                            //请求拨打电话权限
-                                            requestPermissions(new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CODEC);
 
-                                        } else {
-                                            callPhone();
-                                        }
-
-                                    } else {
-                                        callPhone();
-                                    }
-                                }
-                            }).show();
-                }
-            });
         } catch (NumberFormatException e) {
             e.printStackTrace();
         }
         settabpsi();
         //动态设置空位的高度
         if (Integer.parseInt(mData.getSale_id()) == 0) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-
-                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT
-                            , (int) (CommonUtils.screenHeight(mContext) * 0.7));
-                    View view = new View(mContext);
-                    view.setLayoutParams(layoutParams);
-                    adapte.setFoootView(view);
+            new Handler().postDelayed(() -> {
+                try {
+                    if (myRecyclerView != null && null != myRecyclerView.getLayoutManager() && mData.getItemlist().size() > 0) {
+                        int itemHeight = myRecyclerView.getLayoutManager().getChildAt(0).getHeight();
+                        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT
+                                , (int) (myRecyclerView.getHeight() - itemHeight - CommonUtils.dp2px(mContext, 12)));
+                        View view = new View(mContext);
+                        view.setLayoutParams(layoutParams);
+                        adapte.setFoootView(view);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }, 300);
         }
@@ -416,8 +396,35 @@ public class SOrderDatesActivity extends BaseActivity {
         }
     }
 
-    @OnClick(R.id.right_tv)
-    public void onViewClicked() {
-        OutOfStockListDialog.newInstance(mData.getOosdata(), 1).show(getFragmentManager(), "outofstock");
+    @OnClick({R.id.right_tv, R.id.Contact_driver})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.right_tv:
+                OutOfStockListDialog.newInstance(mData.getOosdata(), 1).show(getFragmentManager(), "outofstock");
+                break;
+            case R.id.Contact_driver:
+                new MaterialDialog.Builder(mContext).title("提示").positiveText("拨打").negativeText("取消")
+                        .content(String.format("是否要拨打司机%s电话?", mData.getDriver_info().getName()))
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                //拨打电话
+                                if (Build.VERSION.SDK_INT >= 23) {
+                                    //判断有没有拨打电话权限
+                                    if (PermissionChecker.checkSelfPermission(mContext, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                                        //请求拨打电话权限
+                                        requestPermissions(new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CODEC);
+
+                                    } else {
+                                        callPhone();
+                                    }
+
+                                } else {
+                                    callPhone();
+                                }
+                            }
+                        }).show();
+                break;
+        }
     }
 }

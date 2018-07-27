@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.squareup.okhttp.Request;
@@ -17,6 +18,7 @@ import com.yj.shopapp.http.OkHttpResponseHandler;
 import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.ui.activity.base.BaseActivity;
 import com.yj.shopapp.util.CommonUtils;
+import com.yj.shopapp.util.StatusBarUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,11 +44,22 @@ public class Recommend extends BaseActivity {
     TextView title;
     @BindView(R.id.id_right_btu)
     TextView idRightBtu;
+    @BindView(R.id.title_view)
+    RelativeLayout titleView;
     private myAdapter adapter;
 
     @Override
     protected int getLayoutId() {
         return R.layout.activity_recommended_awards;
+    }
+
+    @Override
+    protected void setStatusBar() {
+        StatusBarUtils.from(this)
+                .setActionbarView(titleView)
+                .setTransparentStatusbar(true)
+                .setLightStatusBar(false)
+                .process();
     }
 
     @Override
@@ -102,7 +115,6 @@ public class Recommend extends BaseActivity {
             }
         });
     }
-
 
     public class myAdapter extends FragmentPagerAdapter {
 

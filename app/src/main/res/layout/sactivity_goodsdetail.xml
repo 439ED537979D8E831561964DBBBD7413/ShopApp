@@ -185,6 +185,7 @@
                     android:id="@+id/warning_tv_super"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:paddingBottom="@dimen/H10dp"
                     android:paddingLeft="@dimen/H10dp">
 
                     <ImageView
@@ -196,8 +197,8 @@
                         android:id="@+id/warning_tv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="@dimen/H5dp"
                         android:lineSpacingExtra="@dimen/H3dp"
+                        android:paddingLeft="@dimen/H5dp"
                         android:paddingRight="@dimen/H3dp"
                         android:text=""
                         android:textColor="@color/color_fc2b32"

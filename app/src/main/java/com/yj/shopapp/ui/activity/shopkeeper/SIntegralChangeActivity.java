@@ -1,6 +1,5 @@
 package com.yj.shopapp.ui.activity.shopkeeper;
 
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,7 +26,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import ezy.ui.layout.LoadingLayout;
 
 public class SIntegralChangeActivity extends BaseActivity implements OnRefreshListener {
@@ -63,7 +61,7 @@ public class SIntegralChangeActivity extends BaseActivity implements OnRefreshLi
 
     @Override
     protected void setStatusBar() {
-        StatusBarUtil.setColor(this, getResources().getColor(R.color.white), 30);
+        StatusBarUtil.setColor(this, getResources().getColor(R.color.color_4c4c4c), 0);
     }
 
     @Override
@@ -136,10 +134,4 @@ public class SIntegralChangeActivity extends BaseActivity implements OnRefreshLi
         getIntegralChange();
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // TODO: add setContentView(...) invocation
-        ButterKnife.bind(this);
-    }
 }

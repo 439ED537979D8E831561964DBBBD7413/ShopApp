@@ -1,121 +1,216 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="@color/white"
-    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/colorf5f5f5"
+    android:orientation="vertical">
 
-    <include layout="@layout/titlebar"/>
+    <include layout="@layout/base_toolbar" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorf5f5f5" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_vertical"
-        android:background="@color/color_FFF3E6">
+        android:background="@color/white"
+        android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_weight="1"
-            android:gravity="center_vertical"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="12dp"
-            android:layout_marginRight="12dp"
-            android:layout_marginTop="12dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:textColor="@color/text_color"
-                android:text="用户:"/>
-
-            <TextView
-                android:id="@+id/usernameTv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:textColor="@color/text_color3"
-                android:layout_marginRight="12dp"
-                android:text=""/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:textColor="@color/text_color"
-                android:text="订单号:"/>
+            android:layout_marginTop="@dimen/H8dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp">
 
             <TextView
                 android:id="@+id/oidTv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:textColor="@color/text_color3"
-                android:text=""/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="12dp"
-            android:layout_marginRight="12dp"
-            android:orientation="horizontal">
+                android:text=""
+                android:textColor="@color/color333333" />
 
             <TextView
+                android:id="@+id/order_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:textColor="@color/text_color"
-                android:text="金额:"/>
+                android:layout_alignParentRight="true"
+                android:text=""
+                android:textColor="@color/color_01ABFF" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/usernameTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="12dp"
+            android:layout_marginTop="@dimen/H8dp"
+            android:drawablePadding="@dimen/H5dp"
+            android:drawableRight="@drawable/btn_arrow_r"
+            android:paddingLeft="20dp"
+            android:text=""
+            android:textColor="@color/color_01ABFF" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/H8dp"
+            android:orientation="horizontal"
+            android:paddingLeft="20dp">
+
+            <TextView
+                android:id="@+id/order_total"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="@color/color_999999" />
 
             <TextView
                 android:id="@+id/moneyTv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:textColor="@color/color_fd2f2f"
-                android:text=""/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:textColor="@color/text_color"
-                android:layout_marginLeft="12dp"
-                android:text="时间:"/>
-
-            <TextView
-                android:id="@+id/oedertimeTv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:textColor="@color/text_color3"
-                android:text=""/>
-
+                android:layout_marginLeft="@dimen/H10dp"
+                android:text=""
+                android:textColor="@color/color_999999" />
         </LinearLayout>
 
+
+        <TextView
+            android:id="@+id/oedertimeTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/H8dp"
+            android:layout_marginTop="@dimen/H8dp"
+            android:paddingLeft="20dp"
+            android:text=""
+            android:textColor="@color/color_999999" />
+
+        <RelativeLayout
+            android:id="@+id/driver_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/H10dp"
+            android:paddingLeft="20dp"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/driver"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="@color/color_999999" />
+
+            <TextView
+                android:id="@+id/Contact_driver"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/fillet_tv"
+                android:paddingBottom="3dp"
+                android:paddingLeft="@dimen/H8dp"
+                android:paddingRight="@dimen/H8dp"
+                android:paddingTop="3dp"
+                android:text="联系司机"
+                android:textColor="@color/color_01abff"
+                android:textSize="12sp" />
+        </RelativeLayout>
     </LinearLayout>
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_refresh_layout"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_marginTop="4dp"
-        android:background="@color/color_white">
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/H8dp" />
+
+    <LinearLayout
+        android:id="@+id/tab_viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tab_layout"
+            android:background="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/H40dp"
+            app:tabIndicatorColor="@color/color_01ABFF"
+            app:tabMode="scrollable"
+            app:tabSelectedTextColor="@color/color_01ABFF"
+            app:tabTextColor="@color/black" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/H1dp"
+            android:background="@color/colorf5f5f5" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:overScrollMode="never"
+            android:scrollbars="none" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/buGoods"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:visibility="gone"
+        android:paddingBottom="@dimen/H8dp">
+
+        <ImageView
+            android:id="@+id/shopimag"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:paddingLeft="@dimen/H8dp"
+            android:paddingTop="@dimen/H8dp"
+            android:src="@drawable/load" />
+
+        <ImageView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"/>
+            android:paddingLeft="@dimen/H8dp"
+            android:src="@drawable/ic_bugoods" />
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/shopimag"
+            android:orientation="vertical"
+            android:layout_centerVertical="true"
+            android:paddingLeft="@dimen/H10dp">
 
+            <TextView
+                android:id="@+id/bgoodsname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/H3dp"
+                android:text=""
+                android:textColor="@color/color333333"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/bgoodsspesc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/H4dp"
+                android:paddingTop="@dimen/H4dp"
+                android:text=""
+                android:textColor="@color/color_999999"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/bgoodsprice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:text=""
+                android:textColor="@color/color333333"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </RelativeLayout>
 </LinearLayout>

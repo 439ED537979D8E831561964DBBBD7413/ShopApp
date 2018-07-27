@@ -1,12 +1,12 @@
 package com.yj.shopapp.util;
 
-import android.app.DialogFragment;
-import android.app.FragmentManager;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -14,13 +14,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.tencent.smtt.sdk.WebView;
+import com.tencent.smtt.sdk.WebViewClient;
 import com.yj.shopapp.R;
 import com.yj.shopapp.ubeen.Notice;
+import com.yj.shopapp.view.X5WebView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +45,7 @@ public class NoticeDialog extends DialogFragment {
     @BindView(R.id.hot_time)
     TextView hotTime;
     @BindView(R.id.webView)
-    WebView webView;
+    X5WebView webView;
     @BindView(R.id.dialog_up)
     TextView dialogUp;
     @BindView(R.id.dialog_next)

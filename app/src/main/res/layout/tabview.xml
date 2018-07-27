@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:gravity="center"
     android:orientation="vertical">
@@ -10,15 +9,15 @@
         android:id="@+id/tab_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@drawable/tab_tv_color"
-        android:text="全部"/>
+        android:text=""
+        android:textColor="@drawable/tab_tv_color" />
 
     <TextView
         android:id="@+id/tab_money"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text=""
         android:textColor="@drawable/tab_tv_color"
-        android:textSize="12sp"
-        android:text="￥59.0"/>
+        android:textSize="12sp" />
 
 </LinearLayout>

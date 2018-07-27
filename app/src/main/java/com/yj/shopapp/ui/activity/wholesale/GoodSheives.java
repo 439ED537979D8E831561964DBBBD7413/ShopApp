@@ -4,8 +4,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSONArray;
 import com.squareup.okhttp.Request;
 import com.yj.shopapp.R;
 import com.yj.shopapp.config.Contants;
@@ -17,6 +19,7 @@ import com.yj.shopapp.ui.activity.adapter.LiftAdpter;
 import com.yj.shopapp.ui.activity.adapter.RightAdpter;
 import com.yj.shopapp.ui.activity.base.BaseActivity;
 import com.yj.shopapp.util.JsonHelper;
+import com.yj.shopapp.util.StatusBarUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -48,12 +51,24 @@ public class GoodSheives extends BaseActivity {
     List<GoodAddress.ChildrenBean> childrenBeans;
     @BindView(R.id.empty_view)
     TextView emptyView;
+    @BindView(R.id.title_view)
+    RelativeLayout titleView;
     private LiftAdpter liftAdpter;
     private RightAdpter rightAdpter;
     private View tv2;
+
     @Override
     protected int getLayoutId() {
         return R.layout.activity_goodsheives;
+    }
+
+    @Override
+    protected void setStatusBar() {
+        StatusBarUtils.from(this)
+                .setActionbarView(titleView)
+                .setTransparentStatusbar(true)
+                .setLightStatusBar(false)
+                .process();
     }
 
     @Override
@@ -107,17 +122,17 @@ public class GoodSheives extends BaseActivity {
                 super.onResponse(request, json);
                 ShowLog.e(json);
                 if (JsonHelper.isRequstOK(json, mContext)) {
-                    JsonHelper<GoodAddress> helper = new JsonHelper<>(GoodAddress.class);
-                    goodAddresses = helper.getDatas(json);
+                    goodAddresses = JSONArray.parseArray(json, GoodAddress.class);
                     liftAdpter.setList(goodAddresses);
-                    liftAdpter.setDefSelect(0);
-                    childrenBeans = goodAddresses.get(0).getChildren();
-                    rightAdpter.setList(childrenBeans);
+                    if (goodAddresses.size() > 0) {
+                        liftAdpter.setDefSelect(0);
+                        childrenBeans = goodAddresses.get(0).getChildren();
+                        rightAdpter.setList(childrenBeans);
+                    }
                 }
 
             }
         });
     }
-
 
 }

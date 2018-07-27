@@ -57,6 +57,8 @@ public class PresentInformationActivity extends BaseActivity {
     RelativeLayout weixinCard;
     @BindView(R.id.zhifubaoCard)
     RelativeLayout zhifubaoCard;
+    @BindView(R.id.bgView)
+    View bgView;
     private UserAccount account;
     private KProgressHUD kProgressHUD;
 
@@ -75,12 +77,12 @@ public class PresentInformationActivity extends BaseActivity {
                 finish();
             }
         });
-        kProgressHUD = growProgress(Contants.LoadView.LOADING);
+        kProgressHUD = growProgress("修改成功");
     }
 
     @Override
     protected void setStatusBar() {
-        StatusBarUtil.setColor(this, getResources().getColor(R.color.white), 50);
+        StatusBarUtil.setColor(this, getResources().getColor(R.color.color_4c4c4c), 0);
     }
 
     @Override
@@ -227,5 +229,4 @@ public class PresentInformationActivity extends BaseActivity {
                 break;
         }
     }
-
 }

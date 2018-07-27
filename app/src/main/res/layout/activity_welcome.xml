@@ -18,19 +18,52 @@
         app:banner_pointTopBottomMargin="15dp"
         app:banner_transitionEffect="defaultEffect" />
 
-    <TextView
-        android:id="@+id/getintohome"
-        android:layout_width="120dp"
-        android:layout_height="40dp"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
         android:layout_marginBottom="60dp"
-        android:background="#FF7a7a"
-        android:gravity="center"
-        android:text="进入首页"
-        android:textColor="@color/white"
-        android:textSize="16sp"
-        android:visibility="gone" />
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:visibility="gone"
+            android:id="@+id/hide_Contact_us"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/Contact_us"
+                android:layout_width="120dp"
+                android:layout_height="40dp"
+                android:background="#FFcd3c"
+                android:gravity="center"
+                android:text="联系我们"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/hide_intohome"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:visibility="gone"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/getintohome"
+                android:layout_width="120dp"
+                android:layout_height="40dp"
+                android:background="#fdd45e"
+                android:gravity="center"
+                android:text="进入首页"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </LinearLayout>
 
     <TextView
         android:id="@+id/CountdownText"

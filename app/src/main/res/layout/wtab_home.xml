@@ -6,20 +6,12 @@
     android:background="@color/colorf5f5f5"
     android:orientation="vertical">
 
-    <!--<android.support.v4.widget.SwipeRefreshLayout-->
-    <!--android:id="@+id/swipe_refresh_layout"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:background="@color/all_bg">-->
-    <!--<LinearLayout-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:orientation="vertical">-->
     <LinearLayout
         android:id="@+id/title_view"
         android:layout_width="match_parent"
         android:layout_height="@dimen/title_height"
-        android:background="@drawable/gradient">
+        android:background="@drawable/gradient"
+        android:baselineAligned="false">
 
         <RelativeLayout
             android:id="@+id/searchBtn"
@@ -59,11 +51,10 @@
                 android:layout_marginLeft="8dp"
                 android:layout_toRightOf="@id/search_img"
                 android:hint="输入商品名或者商品条码"
-                android:textColorHint="#b3b1b1"
+                android:textColorHint="@color/color_999999"
                 android:textSize="13sp" />
 
         </RelativeLayout>
-
 
         <RelativeLayout
             android:layout_width="0dp"
@@ -80,165 +71,167 @@
         </RelativeLayout>
     </LinearLayout>
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="130dp">
 
-        <cn.bingoogolapple.bgabanner.BGABanner
-            android:id="@+id/banner_guide_content"
-            style="@style/BannerDefaultStyle"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:banner_pointDrawable="@drawable/selector_banner_unequal"
-            app:banner_transitionEffect="accordion" />
-
-    </FrameLayout>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:orientation="horizontal"
-        android:padding="@dimen/H5dp">
-
-        <LinearLayout
-            android:id="@+id/addGoods"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawableTop="@drawable/ic_addgood"
-                android:text="添加商品"
-                android:textColor="@color/text_gary_4d"
-                android:textSize="13sp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/lowBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawableTop="@drawable/ic_salesgoods"
-                android:text="促销商品"
-                android:textColor="@color/text_gary_4d"
-                android:textSize="13sp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/search2Btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawableTop="@drawable/ic_wnewgoods"
-                android:text="新品上市"
-                android:textColor="@color/text_gary_4d"
-                android:textSize="13sp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <ImageView
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:background="@drawable/icon_sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="我的收藏"
-                android:textColor="@color/text_color"
-                android:textSize="12sp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/salesPromotion_lin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:visibility="visible">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawableTop="@drawable/ic_wstopgoods"
-                android:text="暂停销售"
-                android:textColor="@color/text_gary_4d"
-                android:textSize="13sp" />
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <android.support.design.widget.TabLayout
-        android:id="@+id/hometablayout"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/H40dp"
-        android:layout_marginTop="@dimen/H5dp"
-        android:background="@color/white"
-        android:elevation="@dimen/H1dp"
-        app:tabMode="scrollable"
-        app:tabSelectedTextColor="@color/color_01ABFF"
-        app:tabTextColor="@color/black" />
-    <!--<RelativeLayout-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="60dp"-->
-    <!--android:background="@color/white"-->
-    <!--android:visibility="gone">-->
-
-    <!--<ImageView-->
-    <!--android:id="@+id/hot_img"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginBottom="5dp"-->
-    <!--android:layout_marginTop="5dp"-->
-    <!--android:src="@drawable/diandiannot" />-->
-
-    <!--<com.gongwen.marqueen.MarqueeView-->
-    <!--android:id="@+id/hot_mv"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:layout_centerVertical="true"-->
-    <!--android:layout_toRightOf="@+id/hot_img" />-->
-
-    <!--</RelativeLayout>-->
-
-    <android.support.v4.view.ViewPager
-        android:id="@+id/classViewPager"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/H1dp"
-        android:background="@color/white" />
-    <!--</LinearLayout>-->
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <!--</android.support.v4.widget.SwipeRefreshLayout>-->
+        <android.support.design.widget.CoordinatorLayout
+            android:id="@+id/coordinatorlayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
+            <android.support.design.widget.AppBarLayout
+                android:id="@+id/mAppBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorf5f5f5"
+                app:elevation="0dp">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="130dp"
+                    app:layout_scrollFlags="scroll">
+
+                    <cn.bingoogolapple.bgabanner.BGABanner
+                        android:id="@+id/banner_guide_content"
+                        style="@style/BannerDefaultStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:banner_pointDrawable="@drawable/selector_banner_unequal"
+                        app:banner_transitionEffect="accordion" />
+
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/H5dp"
+                    app:layout_scrollFlags="scroll">
+
+                    <LinearLayout
+                        android:id="@+id/addGoods"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:drawableTop="@drawable/ic_addgood"
+                            android:text="添加商品"
+                            android:textColor="@color/text_gary_4d"
+                            android:textSize="13sp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/lowBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:drawableTop="@drawable/ic_salesgoods"
+                            android:text="促销商品"
+                            android:textColor="@color/text_gary_4d"
+                            android:textSize="13sp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/search2Btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:drawableTop="@drawable/ic_wnewgoods"
+                            android:text="每日新品"
+                            android:textColor="@color/text_gary_4d"
+                            android:textSize="13sp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <ImageView
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:background="@drawable/icon_sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="我的收藏"
+                            android:textColor="@color/text_color"
+                            android:textSize="12sp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/salesPromotion_lin"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:visibility="visible">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:drawableTop="@drawable/ic_wstopgoods"
+                            android:text="暂停销售"
+                            android:textColor="@color/text_gary_4d"
+                            android:textSize="13sp" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/H5dp"
+                    app:layout_scrollFlags="scroll" />
+
+                <android.support.design.widget.TabLayout
+                    android:id="@+id/hometablayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/H40dp"
+                    android:background="@color/white"
+                    app:tabMode="scrollable"
+                    app:tabSelectedTextColor="@color/color_01ABFF"
+                    app:tabTextColor="@color/black" />
+
+            </android.support.design.widget.AppBarLayout>
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/classViewPager"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/H1dp"
+                android:background="@color/white"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        </android.support.design.widget.CoordinatorLayout>
+    </android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>

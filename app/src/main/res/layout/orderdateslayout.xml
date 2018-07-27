@@ -123,7 +123,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="36dp"
                 android:background="@drawable/borderbg1dp"
-                android:elevation="@dimen/H3dp"
+                android:elevation="@dimen/H2dp"
                 app:tabIndicatorColor="@color/red"
                 app:tabMode="scrollable"
                 app:tabSelectedTextColor="@color/red"
@@ -132,8 +132,8 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/my_RecyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/H6dp" />
+                android:layout_height="match_parent"
+                android:paddingTop="@dimen/H6dp" />
         </LinearLayout>
 
         <RelativeLayout
@@ -141,8 +141,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/white"
-            android:paddingBottom="@dimen/H8dp"
-            android:visibility="gone">
+            android:visibility="gone"
+            android:paddingBottom="@dimen/H8dp">
 
             <ImageView
                 android:id="@+id/shopimag"

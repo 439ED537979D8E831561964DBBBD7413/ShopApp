@@ -64,7 +64,8 @@ public class SNewGoodsAdpter extends CommonAdapter<Goods> implements View.OnClic
         holder.getTextView(R.id.specsTv).setText("规格：" + goods.getSpecs());
         holder.getView(R.id.itemview).setOnClickListener(this);
         holder.getView(R.id.itemview).setTag(position);
-        holder.getTextView(R.id.shopnum).setText(String.format("数量%1$s%2$s", goods.getItemsum(), goods.getUnit()));
+        holder.getTextView(R.id.shopnum).setText(String.format("数量：%1$s%2$s", goods.getItemsum(), goods.getUnit()));
+        holder.getTextView(R.id.goodAddress_Tv).setText(String.format("位置：%s", goods.getLocalhost()));
         Glide.with(context).load(goods.getImgurl()).apply(new RequestOptions().placeholder(R.drawable.load).centerCrop()).into(holder.getSimpleDraweeView(R.id.simpleDraweeView));
 
         if (!(goods.getIs_show_price().equals(""))) {

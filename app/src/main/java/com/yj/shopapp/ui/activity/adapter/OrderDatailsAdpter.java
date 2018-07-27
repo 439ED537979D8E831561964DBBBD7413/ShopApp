@@ -1,7 +1,6 @@
 package com.yj.shopapp.ui.activity.adapter;
 
 import android.content.Context;
-import android.text.Html;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
@@ -41,7 +40,7 @@ public class OrderDatailsAdpter extends CommonAdapter<OrderPreview.ClassBean> {
         itemview.setLayoutParams(new RelativeLayout.LayoutParams(CommonUtils.screenWidth(context) / 3, ViewGroup.LayoutParams.WRAP_CONTENT));
         OrderPreview.ClassBean bean = list.get(position);
         Glide.with(context).load(PreferenceUtils.Json2map(context, "imagurl").get(bean.getCid()).equals("") ? R.drawable.load : PreferenceUtils.Json2map(context, "imagurl").get(bean.getCid())).into(holder.getImageView(R.id.simpleDraweeView));
-        holder.getTextView(R.id.num2money).setText(Html.fromHtml("<font color=#f0322b>" + bean.getNum() + "</font>" + "件" + "<font color=#f0322b>" + bean.getMoney() + "</font>" + "元"));
+        holder.getTextView(R.id.num2money).setText(String.format("%s件%s元", bean.getNum(), bean.getMoney()));
         holder.getTextView(R.id.name_tv).setText(bean.getClassX());
     }
 }

@@ -13,10 +13,10 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.support.v4.content.FileProvider;
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.yj.shopapp.ui.activity.Interface.DownloadProgressCallback;
+import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.util.PreferenceUtils;
 
 import java.io.File;
@@ -48,10 +48,8 @@ public class Download {
 
     public static void downloadForAutoInstall(Context context, String url, String fileName, String title) {
         mContext = context;
-        if (TextUtils.isEmpty(url)) {
-            return;
-        }
         downloadUpdateApkId = PreferenceUtils.getPrefLong(mContext, "downloadUpdateApkId", -1);
+        ShowLog.e(downloadUpdateApkId+"下载Id");
         try {
             if (downloadUpdateApkId == -1) {
                 Uri uri = Uri.parse(url);
@@ -150,6 +148,7 @@ public class Download {
                             case DownloadManager.STATUS_SUCCESSFUL:
                                 //保存状态
                                 PreferenceUtils.setPrefBoolean(context, "DownloadSuccess", true);
+                                ShowLog.e("下载完成");
                                 if (Download.downloadUpdateApkFilePath != null) {
                                     Intent i = new Intent(Intent.ACTION_VIEW);
                                     File apkFile = new File(Download.downloadUpdateApkFilePath);

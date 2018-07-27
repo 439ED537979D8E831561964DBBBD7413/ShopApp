@@ -68,7 +68,7 @@ public class BugGoodsDialog extends DialogFragment implements TextWatcher {
     @BindView(R.id.shopCount)
     TextView shopCount;
     @BindView(R.id.count)
-    EditText count;
+    EditText countTv;
     @BindView(R.id.goodtips)
     TextView goodtips;
     @BindView(R.id.goods_imag)
@@ -93,6 +93,7 @@ public class BugGoodsDialog extends DialogFragment implements TextWatcher {
     private HotIndex index;
     Unbinder unbinder;
     private Double ratio;
+    private KProgressHUD kProgressHUD;
 
 
     @Override
@@ -117,7 +118,7 @@ public class BugGoodsDialog extends DialogFragment implements TextWatcher {
             index = getArguments().getParcelable("goods");
             unit = index.getUnit();
         }
-
+        kProgressHUD = growProgress(Contants.Progress.SUMBIT_ING);
     }
 
     public static BugGoodsDialog newInstance(Goods g) {
@@ -157,7 +158,7 @@ public class BugGoodsDialog extends DialogFragment implements TextWatcher {
     private void setDeta() {
         if (goods != null) {
             shapname.setText(goods.getName());
-            shopprice.setText("￥" + goods.getPrice());
+            shopprice.setText(String.format("￥%s", goods.getPrice()));
             shopspec.setText(goods.getSpecs());
             warningTvSuper.setVisibility(goods.getMsg().equals("") ? View.GONE : View.VISIBLE);
             warningTv.setText(goods.getMsg());
@@ -165,7 +166,7 @@ public class BugGoodsDialog extends DialogFragment implements TextWatcher {
             Glide.with(mContext).load(goods.getImgurl()).apply(new RequestOptions().centerCrop()).into(goodsImag);
         } else if (lookItem != null) {
             shapname.setText(lookItem.getName());
-            shopprice.setText("￥" + lookItem.getSprice());
+            shopprice.setText(String.format("￥%s", lookItem.getSprice()));
             shopspec.setText(lookItem.getSpecs());
             warningTvSuper.setVisibility(lookItem.getMsg().equals("") ? View.GONE : View.VISIBLE);
             warningTv.setText(lookItem.getMsg());
@@ -173,7 +174,7 @@ public class BugGoodsDialog extends DialogFragment implements TextWatcher {
             Glide.with(mContext).load(lookItem.getImgurl()).apply(new RequestOptions().centerCrop()).into(goodsImag);
         } else if (spitem != null) {
             shapname.setText(spitem.getItemname());
-            shopprice.setText("￥" + spitem.getPrice());
+            shopprice.setText(String.format("￥%s", spitem.getDisstr()));
             shopspec.setText(spitem.getSpecs());
             warningTvSuper.setVisibility(spitem.getMsg().equals("") ? View.GONE : View.VISIBLE);
             warningTv.setText(spitem.getMsg());
@@ -181,7 +182,7 @@ public class BugGoodsDialog extends DialogFragment implements TextWatcher {
             Glide.with(mContext).load(spitem.getImgurl()).apply(new RequestOptions().centerCrop()).into(goodsImag);
         } else {
             shapname.setText(index.getName());
-            shopprice.setText("￥" + index.getPrice());
+            shopprice.setText(String.format("￥%s", index.getPrice()));
             shopspec.setText(index.getSpecs());
             warningTvSuper.setVisibility(index.getMsg().equals("") ? View.GONE : View.VISIBLE);
             warningTv.setText(index.getMsg());
@@ -195,6 +196,7 @@ public class BugGoodsDialog extends DialogFragment implements TextWatcher {
         super.onStart();
         getDialog().setCanceledOnTouchOutside(true);
         Window dialogWindow = getDialog().getWindow();
+        assert dialogWindow != null;
         dialogWindow.setGravity(Gravity.BOTTOM);
         WindowManager.LayoutParams lp = dialogWindow.getAttributes();
         DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
@@ -219,7 +221,7 @@ public class BugGoodsDialog extends DialogFragment implements TextWatcher {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        count.addTextChangedListener(this);
+        countTv.addTextChangedListener(this);
         //软键盘隐藏edittext 失去焦点
 //        mReplayRelativeLayout.getViewTreeObserver().addOnGlobalLayoutListener(
 //                new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -241,8 +243,8 @@ public class BugGoodsDialog extends DialogFragment implements TextWatcher {
 //                    }
 //
 //                });
-        count.setHighlightColor(getResources().getColor(R.color.Orange));
-        count.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        countTv.setHighlightColor(getResources().getColor(R.color.Orange));
+        countTv.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 checkNum();
@@ -297,16 +299,16 @@ public class BugGoodsDialog extends DialogFragment implements TextWatcher {
                 if (maxnum == 0) {
                     if (number < gsum) {
                         number++;
-                        count.setText(number + "");
-                        count.setSelection(this.count.getText().length());
+                        countTv.setText(number + "");
+                        countTv.setSelection(this.countTv.getText().length());
                     } else {
                         Toast.makeText(mContext, "最多购买" + gsum + unit, Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     if (number < maxnum) {
                         number++;
-                        count.setText(number + "");
-                        count.setSelection(this.count.getText().length());
+                        countTv.setText(number + "");
+                        countTv.setSelection(this.countTv.getText().length());
                     } else {
                         Toast.makeText(mContext, "最多购买" + maxnum + unit, Toast.LENGTH_SHORT).show();
                     }
@@ -317,8 +319,8 @@ public class BugGoodsDialog extends DialogFragment implements TextWatcher {
                 if (minnum == 0) {
                     if (number > 1) {
                         number--;
-                        count.setText(number + "");
-                        count.setSelection(this.count.getText().length());
+                        countTv.setText(number + "");
+                        countTv.setSelection(this.countTv.getText().length());
                     } else {
                         try {
                             Toast.makeText(mContext, "最少购买一" + unit, Toast.LENGTH_SHORT).show();
@@ -329,8 +331,8 @@ public class BugGoodsDialog extends DialogFragment implements TextWatcher {
                 } else {
                     if (number > 1 && number > minnum) {
                         number--;
-                        count.setText(number + "");
-                        count.setSelection(this.count.getText().length());
+                        countTv.setText(number + "");
+                        countTv.setSelection(this.countTv.getText().length());
                     } else {
                         try {
                             Toast.makeText(mContext, "最少购买" + minnum + unit, Toast.LENGTH_SHORT).show();
@@ -352,25 +354,25 @@ public class BugGoodsDialog extends DialogFragment implements TextWatcher {
     private void judge() {
         if (gsum < minnum) {
             //editText.setFocusable(false);
-            text1 = "起购数量为" + minnum;
-            text2 = "库存" + gsum;
+            text1 = "起购：" + minnum;
+            text2 = "库存:" + gsum;
             minnum = gsum;
             maxnum = gsum;
         } else if (gsum < maxnum) {
             if (minnum != 0) {
-                text1 = "起购数量为" + minnum;
-                text2 = "限购数量为" + gsum;
+                text1 = "起购：" + minnum;
+                text2 = "限购：" + gsum;
             } else {
-                text1 = "限购数量为" + minnum;
-                text2 = "库存" + gsum;
+                text1 = "限购：" + minnum;
+                text2 = "库存:" + gsum;
             }
             maxnum = gsum;
         } else {
             if (minnum != 0) {
-                text1 = "起购数量为" + minnum;
+                text1 = "起购：" + minnum;
             }
             if (maxnum != 0) {
-                text2 = "限购数量为" + maxnum;
+                text2 = "限购：" + maxnum;
             }
         }
         if (gsum != 0) {
@@ -390,15 +392,28 @@ public class BugGoodsDialog extends DialogFragment implements TextWatcher {
             }
         }
         try {
+
             if (goodtips != null) {
-                goodtips.setText(text1 + text2);
+                ShowLog.e("text1"+text1+"text2"+text2);
+                if (!text1.equals("") && !text2.equals("")) {
+                    goodtips.setText(text1 + unit +" "+ text2 + unit);
+                } else if (text1.equals("")&&text2.equals("")) {
+                    goodtips.setText("");
+                } else if (text2.equals("")) {
+                    goodtips.setText(text1 + unit);
+                } else {
+                    goodtips.setText(text2 + unit);
+                }
             }
-            if (minnum == 0) {
-                count.setText(number + "");
-            } else {
-                //editText.setText("" + minnum);
-                count.setText("" + minnum);
-                number = minnum;
+
+            if (countTv != null) {
+                if (minnum == 0) {
+                    countTv.setText(number + "");
+                } else {
+                    //editText.setText("" + minnum);
+                    countTv.setText("" + minnum);
+                    number = minnum;
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -406,12 +421,16 @@ public class BugGoodsDialog extends DialogFragment implements TextWatcher {
     }
 
     private void checkNum() {
-        if (count.getText().toString().equals("") || !isNumeric(count.getText().toString())) {
+        if (countTv.getText().toString().equals("") || !isNumeric(countTv.getText().toString())) {
             Toast.makeText(mContext, "输入内容为空", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (Integer.parseInt(count.getText().toString()) < minnum) {
-            goodtips.setText("商品最少购买" + minnum + "件");
+        if (Integer.parseInt(countTv.getText().toString()) < minnum) {
+            Toast.makeText(mContext, "商品最少购买" + minnum + "件", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (countTv.getText().toString().equals("0")) {
+            Toast.makeText(mContext, "至少购买一件", Toast.LENGTH_SHORT).show();
             return;
         }
         if (goods != null) {
@@ -485,22 +504,24 @@ public class BugGoodsDialog extends DialogFragment implements TextWatcher {
         params.put("uid", uid);
         params.put("token", token);
         params.put("itemid", itemid);
-        params.put("itemsum", count.getText().toString().trim());
-
-        final KProgressHUD kProgressHUD = growProgress(Contants.Progress.SUMBIT_ING);
+        params.put("itemsum", countTv.getText().toString().trim());
 
         HttpHelper.getInstance().post(mContext, Contants.PortU.DOLISTCART, params, new OkHttpResponseHandler<String>(mContext) {
 
             @Override
             public void onAfter() {
                 super.onAfter();
-                kProgressHUD.dismiss();
+                if (kProgressHUD != null) {
+                    kProgressHUD.dismiss();
+                }
             }
 
             @Override
             public void onBefore() {
                 super.onBefore();
-                kProgressHUD.show();
+                if (kProgressHUD != null) {
+                    kProgressHUD.show();
+                }
             }
 
             @Override
@@ -525,17 +546,17 @@ public class BugGoodsDialog extends DialogFragment implements TextWatcher {
     }
 
     public KProgressHUD growProgress(String label) {
-        KProgressHUD builder = KProgressHUD.create(mContext)
+        return KProgressHUD.create(mContext)
                 .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
                 .setLabel(label)
                 .setCancellable(false);
-        return builder;
+
     }
 
 
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-        this.count.setSelectAllOnFocus(true);
+        this.countTv.setSelectAllOnFocus(true);
     }
 
     @Override
@@ -544,14 +565,24 @@ public class BugGoodsDialog extends DialogFragment implements TextWatcher {
             //有数据
             int sum = Integer.parseInt(s.toString());
             if (maxnum == 0 && minnum == 0) {
-                number = sum;
+                if (sum <= gsum) {
+                    number = sum;
+                } else {
+                    number = gsum;
+                    this.countTv.setText(String.valueOf(number));
+                    countTv.setSelection(this.countTv.getText().length());
+                    Toast.makeText(mContext, "数量超出库存", Toast.LENGTH_SHORT).show();
+                }
+
             } else {
                 if (maxnum != 0) {
                     if (sum > maxnum) {
-                        this.count.setText(maxnum + "");
+                        this.countTv.setText(String.valueOf(maxnum));
                         number = maxnum;
                         goodtips.setText("商品最大购买数量为" + maxnum);
-                        this.count.setSelection(this.count.getText().length());
+                        this.countTv.setSelection(this.countTv.getText().length());
+                    } else {
+                        number = sum;
                     }
                 }
             }
@@ -561,6 +592,15 @@ public class BugGoodsDialog extends DialogFragment implements TextWatcher {
 
     @Override
     public void afterTextChanged(Editable s) {
-
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (kProgressHUD != null) {
+            kProgressHUD.dismiss();
+            kProgressHUD = null;
+        }
+    }
+
 }

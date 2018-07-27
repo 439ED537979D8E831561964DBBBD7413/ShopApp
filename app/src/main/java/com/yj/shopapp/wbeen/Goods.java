@@ -22,6 +22,24 @@ public class Goods {
     private String itemsum;
     private String price;
     private String sale_status;
+    private String addtime;
+    private String localhost;
+
+    public String getLocalhost() {
+        return localhost == null ? "" : localhost;
+    }
+
+    public void setLocalhost(String localhost) {
+        this.localhost = localhost;
+    }
+
+    public String getAddtime() {
+        return addtime == null ? "" : addtime;
+    }
+
+    public void setAddtime(String addtime) {
+        this.addtime = addtime;
+    }
 
     public String getSale_status() {
         return sale_status;
@@ -82,10 +100,26 @@ public class Goods {
     public Goods() {
     }
 
-    public Goods(String imgurl, String name, String itemsum, String price) {
+    public Goods(String imgurl, String name, String itemsum, String price, String sale_status) {
         this.imgurl = imgurl;
         this.name = name;
         this.itemsum = itemsum;
         this.price = price;
+        this.sale_status = sale_status;
+    }
+
+    @Override
+    public String toString() {
+        return "Goods{" +
+                "imgurl='" + imgurl + '\'' +
+                ", id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", numberid='" + numberid + '\'' +
+                ", itemsum='" + itemsum + '\'' +
+                ", price='" + price + '\'' +
+                ", sale_status='" + sale_status + '\'' +
+                ", addtime='" + addtime + '\'' +
+                ", localhost='" + localhost + '\'' +
+                '}';
     }
 }

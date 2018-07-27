@@ -22,21 +22,19 @@
 
     <!-- <permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION"/> -->
     <!-- 这个权限用于进行网络定位 -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!--<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />-->
     <!-- 这个权限用于访问GPS定位 -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!--<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />-->
     <!-- 用于访问wifi网络信息，wifi信息会用于进行网络定位 -->
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <!--<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />-->
     <!-- 获取运营商信息，用于支持提供运营商信息相关的接口 -->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!--<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />-->
     <!-- 这个权限用于获取wifi的获取权限，wifi信息会用来进行网络定位 -->
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <!--<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />-->
     <!-- 用于读取手机当前的状态 -->
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <!--<uses-permission android:name="android.permission.READ_PHONE_STATE" />-->
     <!-- 写入扩展存储，向扩展卡写入数据，用于写入离线定位数据 -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <!-- 访问网络，网络定位需要上网 -->
-    <uses-permission android:name="android.permission.INTERNET" />
+    <!--<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />-->
     <!-- SD卡读取权限，用户写入离线定位数据 -->
     <!-- 百度地图 -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -46,7 +44,7 @@
     <uses-permission android:name="android.permission.BAIDU_LOCATION_SERVICE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.INTERNET" />
+
     <uses-permission android:name="android.permission.ACCES_MOCK_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS" />
@@ -69,7 +67,10 @@
     <!-- 摄影机 -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
-
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <!--<permission-->
+        <!--android:name="com.example.broadcast.permission"-->
+        <!--android:protectionLevel="normal" />-->
     <application
         android:name=".config.MyApplication"
         android:allowBackup="true"
@@ -78,9 +79,7 @@
         android:persistent="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <!--<meta-data-->
-            <!--android:name="com.baidu.lbsapi.API_KEY"-->
-            <!--android:value="A369Hb3iKnhlgwel6546P17vabwnzoov" />-->
+
         <meta-data
             android:name="UMENG_APPKEY"
             android:value="5a1911eaf29d984e4300023e" />
@@ -107,8 +106,9 @@
         </activity>
         <activity
             android:name=".ui.activity.LoginActivity"
-            android:windowSoftInputMode="adjustPan|stateHidden"
-            android:screenOrientation="portrait" />
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -131,7 +131,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.wholesale.WMainTabActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
             android:name=".ui.activity.ChooseActivity"
             android:screenOrientation="portrait" />
@@ -149,8 +150,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.wholesale.WGoodsDetailActivity"
-            android:windowSoftInputMode="adjustPan|stateHidden"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ui.activity.wholesale.WRefunorderActivity"
             android:screenOrientation="portrait" />
@@ -226,7 +227,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.wholesale.WLikeCkeckActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
             android:name=".ui.activity.wholesale.WaddCategoryActivity"
             android:screenOrientation="portrait" />
@@ -238,13 +240,13 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.wholesale.WAgencyActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ui.activity.shopkeeper.SNewListActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.wholesale.WGoodsAddActivity"
-            android:windowSoftInputMode="adjustPan|stateHidden"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.wholesale.WSalesDetailActivity"
@@ -287,7 +289,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.shopkeeper.SLikeCkeckActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ui.activity.shopkeeper.SSecondActivity"
             android:screenOrientation="portrait"
@@ -297,7 +300,6 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.shopkeeper.Seek_brand"
-            android:windowSoftInputMode="adjustPan|stateVisible"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.shopkeeper.RedPackActivity"
@@ -340,12 +342,15 @@
         <!--<receiver-->
             <!--android:name=".ui.activity.upversion.UpdateAppReceiver"-->
             <!--android:enabled="true"-->
-            <!--android:exported="true">-->
+            <!--android:exported="true"-->
+            <!--android:permission="com.example.broadcast.permission">-->
             <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.DOWNLOAD_COMPLETE" />-->
-                <!--<action android:name="android.intent.action.DOWNLOAD_NOTIFICATION_CLICKED" />-->
+                <!--&lt;!&ndash;<action android:name="android.intent.action.DOWNLOAD_COMPLETE" />&ndash;&gt;-->
+                <!--&lt;!&ndash;<action android:name="android.intent.action.DOWNLOAD_NOTIFICATION_CLICKED" />&ndash;&gt;-->
+                <!--<action android:name="shopapp.update"/>-->
             <!--</intent-filter>-->
         <!--</receiver>-->
+
 
         <!--
  ATTENTION: This was auto-generated to add Google Play services to your project for
@@ -357,8 +362,7 @@
 
         <activity
             android:name=".ui.activity.shopkeeper.SIntegralActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.shopkeeper.SMsgDetailActivity"
             android:screenOrientation="portrait" />
@@ -401,7 +405,6 @@
         <activity
             android:name=".ui.activity.shopkeeper.ScreenActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".ui.activity.shopkeeper.ExchangeOfGoodsDetails"
             android:screenOrientation="portrait" />
@@ -445,7 +448,17 @@
         <activity
             android:name=".ui.activity.shopkeeper.HotGoodActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.activity.shopkeeper.GoodsRecordDatails"/>
+        <activity
+            android:name=".ui.activity.shopkeeper.GoodsRecordDatails"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.wholesale.WBaseSelectActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.wholesale.ErrorCorrectionActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ui.activity.shopkeeper.ReturnGoodsHistory" />
+        <activity android:name=".ui.activity.shopkeeper.ReturnGoodsHistoryDatailsAcitivy" />
     </application>
 
 </manifest>

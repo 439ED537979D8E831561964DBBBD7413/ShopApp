@@ -8,6 +8,47 @@ import android.os.Parcelable;
  */
 public class Goods implements Parcelable {
 
+
+    /**
+     * id : 1799
+     * name : XX饼干
+     * specs : 1*12
+     * price : 20.00
+     * unitid : 13
+     * imgurl :
+     * unit : 个
+     */
+
+    private String id;
+    private String name;
+    private String specs;
+    private String price;
+    private String unitid;
+    private String imgurl;
+    private String unit;
+    private String is_show_price;
+    private String is_show_stock;
+    private String sale_status;
+    private String costprice;
+    private String itemnumber;
+    private String bigtypeid;
+    private String imageurl;
+    private String sales_price;
+    private boolean isSelected;
+    private String date;
+    private String itemsum;
+    private String msg;
+    private String specialnote;
+    private String localhost;
+
+    public String getLocalhost() {
+        return localhost == null ? "" : localhost;
+    }
+
+    public void setLocalhost(String localhost) {
+        this.localhost = localhost;
+    }
+
     public String getId() {
         return id == null ? "" : id;
     }
@@ -152,37 +193,6 @@ public class Goods implements Parcelable {
         this.itemsum = itemsum;
     }
 
-    /**
-     * id : 1799
-     * name : XX饼干
-     * specs : 1*12
-     * price : 20.00
-     * unitid : 13
-     * imgurl :
-     * unit : 个
-     */
-
-    private String id;
-    private String name;
-    private String specs;
-    private String price;
-    private String unitid;
-    private String imgurl;
-    private String unit;
-    private String is_show_price;
-    private String is_show_stock;
-    private String sale_status;
-    private String costprice;
-    private String itemnumber;
-    private String bigtypeid;
-    private String imageurl;
-    private String sales_price;
-    private boolean isSelected;
-    private String date;
-    private String itemsum;
-    private String msg;
-    private String specialnote;
-
     public String getSpecialnote() {
         return specialnote == null ? "" : specialnote;
     }
@@ -229,6 +239,7 @@ public class Goods implements Parcelable {
         dest.writeString(this.itemsum);
         dest.writeString(this.msg);
         dest.writeString(this.specialnote);
+        dest.writeString(this.localhost);
     }
 
     protected Goods(Parcel in) {
@@ -252,6 +263,7 @@ public class Goods implements Parcelable {
         this.itemsum = in.readString();
         this.msg = in.readString();
         this.specialnote = in.readString();
+        this.localhost = in.readString();
     }
 
     public static final Creator<Goods> CREATOR = new Creator<Goods>() {

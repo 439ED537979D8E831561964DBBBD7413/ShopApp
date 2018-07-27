@@ -5,9 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -20,6 +18,7 @@ import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.squareup.okhttp.Request;
 import com.yj.shopapp.R;
 import com.yj.shopapp.config.Contants;
+import com.yj.shopapp.dialog.BugGoodsDialog;
 import com.yj.shopapp.http.HttpHelper;
 import com.yj.shopapp.http.OkHttpResponseHandler;
 import com.yj.shopapp.ubeen.Goods;
@@ -27,7 +26,6 @@ import com.yj.shopapp.ui.activity.Interface.GoodsItemListenter;
 import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.ui.activity.adapter.SNewGoodsAdpter;
 import com.yj.shopapp.ui.activity.base.BaseActivity;
-import com.yj.shopapp.dialog.BugGoodsDialog;
 import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.DDecoration;
 import com.yj.shopapp.util.JsonHelper;
@@ -61,18 +59,18 @@ public class SGoodsActivity extends BaseActivity implements GoodsItemListenter, 
     @BindView(R.id.id_right_btu)
     ImageView idRightBtu;
 
-    @BindView(R.id.submitTv)
-    TextView submitTv;
-    @BindView(R.id.value_Et)
-    EditText valueEt;
-    @BindView(R.id.topsearchLy)
-    LinearLayout topsearchLy;
-    @BindView(R.id.bgView)
-    View bgView;
+    //    @BindView(R.id.submitTv)
+//    TextView submitTv;
+//    @BindView(R.id.value_Et)
+//    EditText valueEt;
+//    @BindView(R.id.topsearchLy)
+//    LinearLayout topsearchLy;
+//    @BindView(R.id.bgView)
+//    View bgView;
     String categoryId;//商品分类ID
     String keyWord;//首页关键词搜索
-    @BindView(R.id.popupwindow)
-    RelativeLayout popupwindow;
+    //    @BindView(R.id.popupwindow)
+//    RelativeLayout popupwindow;
     @BindView(R.id.loading)
     LoadingLayout loading;
     @BindView(R.id.title_layout)
@@ -89,6 +87,7 @@ public class SGoodsActivity extends BaseActivity implements GoodsItemListenter, 
     private String brandid = "";
     private String cid = "";
     private int isSet = 0;
+    private String gid;
     private SNewGoodsAdpter GoodAdpter;
 
     @Override
@@ -123,6 +122,10 @@ public class SGoodsActivity extends BaseActivity implements GoodsItemListenter, 
         if (getIntent().hasExtra("name")) {
             titlename = getIntent().getStringExtra("name");
         }
+        if (getIntent().hasExtra("gid")) {
+            gid = getIntent().getStringExtra("gid");
+        }
+        ShowLog.e("gid" + gid);
         agentuid = myApplication.getAgentuid();
         agentuName = myApplication.getAgentuname();
         title.setText(titlename);
@@ -136,7 +139,7 @@ public class SGoodsActivity extends BaseActivity implements GoodsItemListenter, 
         GoodAdpter.setListenter(this);
         if (recyclerView != null) {
             recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-            recyclerView.addItemDecoration(new DDecoration(mContext));
+            recyclerView.addItemDecoration(new DDecoration(mContext, getResources().getDrawable(R.drawable.recyviewdecoration1dp)));
             recyclerView.setAdapter(GoodAdpter);
         }
         if (isNetWork(mContext)) {
@@ -175,36 +178,29 @@ public class SGoodsActivity extends BaseActivity implements GoodsItemListenter, 
 
     @OnClick(R.id.forewadImg)
     public void onClick() {
-        if (topsearchLy.getVisibility() == View.VISIBLE) {
-            bgView.setVisibility(View.GONE);
-            topsearchLy.setVisibility(View.GONE);
-        } else {
-            finish();
-        }
-
-
+        finish();
     }
 
-    /**
-     * 右侧事件操作
-     **/
-
-    @OnClick(R.id.submitTv)
-    public void search() {
-        bgView.setVisibility(View.GONE);
-        topsearchLy.setVisibility(View.GONE);
-        if (isRequesting)
-            return;
-        keyWord = valueEt.getText().toString().trim();
-
-        if (NetUtils.isNetworkConnected(mContext)) {
-            if (null != swipeRefreshLayout) {
-                swipeRefreshLayout.autoRefresh(300, 300, 1.5f);
-            }
-        } else {
-            showToastShort("网络不给力");
-        }
-    }
+//    /**
+//     * 右侧事件操作
+//     **/
+//
+//    @OnClick(R.id.submitTv)
+//    public void search() {
+//        bgView.setVisibility(View.GONE);
+//        topsearchLy.setVisibility(View.GONE);
+//        if (isRequesting)
+//            return;
+//        keyWord = valueEt.getText().toString().trim();
+//
+//        if (NetUtils.isNetworkConnected(mContext)) {
+//            if (null != swipeRefreshLayout) {
+//                swipeRefreshLayout.autoRefresh(300, 300, 1.5f);
+//            }
+//        } else {
+//            showToastShort("网络不给力");
+//        }
+//    }
 
     /***
      * 网络数据
@@ -222,6 +218,7 @@ public class SGoodsActivity extends BaseActivity implements GoodsItemListenter, 
         params.put("bigtypeid", typeid);
         params.put("itemname", username);
         params.put("keyword", keyWord);
+        params.put("gid", gid);
         HttpHelper.getInstance().post(mContext, Contants.PortU.ITEMLIST, params, new OkHttpResponseHandler<String>(mContext) {
 
             @Override
@@ -376,6 +373,7 @@ public class SGoodsActivity extends BaseActivity implements GoodsItemListenter, 
     public void onRefresh(@NonNull RefreshLayout refreshLayout) {
         if (isNetWork(mContext)) {
             goodsList.clear();
+            GoodAdpter.notifyDataSetChanged();
             mCurrentPage = 1;
             refreshRequest();
             swipeRefreshLayout.setNoMoreData(false);

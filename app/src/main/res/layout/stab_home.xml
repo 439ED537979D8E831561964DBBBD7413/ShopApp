@@ -49,7 +49,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="8dp"
                 android:layout_toRightOf="@id/search_img"
-                android:hint="输入商品名或者商品条码"
+                android:hint="请输入商品名称或条码"
                 android:textColorHint="#b3b1b1"
                 android:textSize="13sp" />
 

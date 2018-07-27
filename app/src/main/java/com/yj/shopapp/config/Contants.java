@@ -61,6 +61,7 @@ public class Contants {
         public final static String USERS = url_ + "users";
         public final static String DELUSER = url_ + "deluser";
         public final static String ORDERS = url_ + "orders";
+        public final static String MYORDERS = url_ + "myorders";
         public final static String GOODSITEMLIST = url_ + "itemlist";
         public final static String LOOKITEM = url_ + "lookitem";
         public final static String ITEMTYPE = url_ + "itemtype";
@@ -70,6 +71,7 @@ public class Contants {
         public final static String DELIMG = url_ + "delimg";
         public final static String UPIMG = url_ + "upimg";
         public final static String SPLIST = url_ + "splist";
+        public final static String SALELIST = url_ + "salelist";
         public final static String SAVESP = url_ + "savesp";
         public final static String DOSHOPIMG = url_ + "doshopimg";
         public final static String GETUSERINFO = url_ + "getuserinfo";
@@ -82,13 +84,16 @@ public class Contants {
 
 
         public final static String OrderDetails = url_ + "orderdetails";
+        public final static String Details = url_ + "details";
         public final static String GetItemStr = url_ + "getitemstr";
         public final static String Edituser = url_ + "edituser";
         public final static String Newitemlist = url_ + "newitemlist";
+        public final static String TODAYNEWITEMS = url_ + "TodayNewItems";
         public final static String Noreadmsg = url_ + "noreadmsg";
         public final static String Agency = url_ + "supplierlist";
         public final static String delstopitem = url_ + "delstopitem";
         public final static String Stopsaleitemlist = url_ + "stopsaleitemlist";
+        public final static String STOPLIST = url_ + "stoplist";
         public final static String Advsave = url_ + "saveadv";
         public final static String Advinfo = url_ + "advinfo";
 
@@ -99,6 +104,9 @@ public class Contants {
         public final static String NOTICESWITCH_LIST = url_ + "noticeswitch_list";
         //http://u.19diandian.com/index.php/Appa/classlist
         public final static String CLASSLIST = url_ + "classlist";
+        public final static String OPERABLEFIELD = url_ + "operableField";
+        public final static String SALEDETAILS = url_ + "saledetails";
+        public final static String ERROR_RECOVERY = url_ + "error_recovery";
     }
 
     public static final class PortU {
@@ -205,6 +213,11 @@ public class Contants {
         public final static String LIMITEDSALE_INDEX = url_2 + "limitedSale_index";
         public final static String GETTODAYITEMSNUM = url_2 + "getTodayItemsNum";
         public final static String RETURN_LISTCART = url_2 + "return_listcart";
+        public final static String RETURNHISTORY = url_2 + "returnHistory";
+        public final static String SHOWRETURNHISTORY = url_2 + "showReturnHistory";
+        public final static String SUM_OF_MONEY = url_2 + "sum_of_money";
+        public final static String OPENNUM = url_2 + "opennum";
+
     }
 
     public static final class PortS {
@@ -345,12 +358,14 @@ public class Contants {
     // public static final string[] MsgsDrawer = {"全部", "用户", "系统"};
     public static final String[] OrderDrawer = {"全部", "新订单", "配送中", "已完成"};//,"作废"
     public static final String[] OrderDrawerw = {"全部", "新订单", "已确认", "交易完成"};//去掉作废
+    public static final String[] OrderNewDrawerw = {"全部", "新订单", "配送中", "已完成"};
+
     public static final String[] Coupon = {"可用", "不可用"};
     public static final String[] SalesDrawer = {"全部", "未开始", "促销中", "已过期"};//去掉作废
     public static final String[] OrderStatusString = {"作废", "新订单", "已确认", "交易完成"};
     public static final String[] SalesStatusString = {"作废", "未开始", "促销中", "已过期"};
     public static final int[] StateImg = {R.drawable.no_begin, R.drawable.no_begin, R.drawable.promotion, R.drawable.expired};
-    public static final int[] OrderStatusColor = {R.color.color_999999, R.color.color_F37A1C, R.color.color_DD504C, R.color.color_5EB95E};
+    public static final int[] OrderStatusColor = {R.color.color_999999, R.color.color_01ABFF, R.color.color_FE3000, R.color.color_999999};
     public static final String[] OrderStadus = {"作废", "新订单", "配送中", "已完成"};
     public static final String[] StatusList = {"", "新换购", "配送中", "已完成"};
     public static final String[] OrderState = {"", "下单", "兑换", "返现", "奖励", "清零"};

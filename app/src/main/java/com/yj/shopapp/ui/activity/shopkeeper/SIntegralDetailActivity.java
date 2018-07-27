@@ -4,6 +4,8 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.AdapterView;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -13,6 +15,7 @@ import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.squareup.okhttp.Request;
 import com.yj.shopapp.R;
 import com.yj.shopapp.config.Contants;
+import com.yj.shopapp.dialog.IntegraDtlDialogFragment;
 import com.yj.shopapp.http.HttpHelper;
 import com.yj.shopapp.http.OkHttpResponseHandler;
 import com.yj.shopapp.ubeen.IntegralDetail;
@@ -56,7 +59,6 @@ public class SIntegralDetailActivity extends BaseActivity implements OnRefreshLi
     protected void initData() {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-
         toolbar.setNavigationOnClickListener(v -> finish());
         //设置adapter
         adapter = new IntegralAdapter(mContext);
@@ -66,6 +68,12 @@ public class SIntegralDetailActivity extends BaseActivity implements OnRefreshLi
             recyclerView.setAdapter(adapter);
         }
         Refresh();
+        adapter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                IntegraDtlDialogFragment.newInstance(integralDetails.get(position)).show(getFragmentManager(), "integralDetails");
+            }
+        });
     }
 
     private void Refresh() {
@@ -78,7 +86,7 @@ public class SIntegralDetailActivity extends BaseActivity implements OnRefreshLi
 
     @Override
     protected void setStatusBar() {
-        StatusBarUtil.setColor(this, getResources().getColor(R.color.white), 30);
+        StatusBarUtil.setColor(this, getResources().getColor(R.color.color_4c4c4c), 0);
     }
 
     @Override
@@ -95,6 +103,7 @@ public class SIntegralDetailActivity extends BaseActivity implements OnRefreshLi
         params.put("token", token);
         params.put("start", startTime);
         params.put("end", endTime);
+        //  ShowLog.e("start" + startTime + "|" + "end" + endTime);
         HttpHelper.getInstance().post(mContext, Contants.PortS.DETAILS, params, new OkHttpResponseHandler<String>(mContext) {
             @Override
             public void onBefore() {
@@ -126,6 +135,10 @@ public class SIntegralDetailActivity extends BaseActivity implements OnRefreshLi
                     if (json.charAt(0) == '{') {
                         if (integralDetails.size() == 0) {
                             showToastShort(JSONObject.parseObject(json).getString("info"));
+                        } else {
+                            integralDetails.clear();
+                            adapter.notifyDataSetChanged();
+                            showToastShort("筛选无结果");
                         }
                     } else {
                         integralDetails = JSONArray.parseArray(json, IntegralDetail.class);
@@ -143,7 +156,9 @@ public class SIntegralDetailActivity extends BaseActivity implements OnRefreshLi
         new SelectTimeFragmnet().setListenter((starttime, endtime) -> {
             startTime = starttime;
             endTime = endtime;
-            onResume();
+            if (isNetWork(mContext)) {
+                getIntegralDetail();
+            }
         }).show(getFragmentManager(), "select");
     }
 

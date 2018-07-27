@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/borderbg1dp"
-        android:elevation="@dimen/H3dp"
+        android:elevation="@dimen/H2dp"
         android:orientation="vertical">
 
         <LinearLayout
@@ -52,7 +52,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="8dp"
                     android:layout_toRightOf="@id/search_img"
-                    android:text="输入商品名或者商品条码"
+                    android:text="请输入商品名称、条码、订单号"
                     android:textSize="13sp" />
 
 
@@ -72,7 +72,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight="1"
-                android:src="@drawable/historical" />
+                android:src="@drawable/ic_add_pwd" />
         </LinearLayout>
 
         <android.support.design.widget.TabLayout

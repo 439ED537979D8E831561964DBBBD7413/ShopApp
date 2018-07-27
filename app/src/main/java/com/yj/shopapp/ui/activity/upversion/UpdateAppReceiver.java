@@ -1,17 +1,21 @@
 package com.yj.shopapp.ui.activity.upversion;
 
-import android.app.DownloadManager;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v4.content.FileProvider;
+import android.text.TextUtils;
 
-import com.yj.shopapp.util.PreferenceUtils;
+import com.yj.shopapp.R;
 
 import java.io.File;
+import java.util.Objects;
 
 
 /**
@@ -19,52 +23,87 @@ import java.io.File;
  */
 
 public class UpdateAppReceiver extends BroadcastReceiver {
+    private NotificationManager nm = null;
+    private static final String TAG = "1";
+
     public UpdateAppReceiver() {
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onReceive(Context context, Intent intent) {
-// 处理下载完成
-        Cursor c = null;
+        //分割线
+        if (Objects.requireNonNull(intent.getAction()).equals("shopapp.update")) {
+            int notifyId = 1;
+            int progress = intent.getIntExtra("progress", 0);
+            String title = intent.getStringExtra("title");
 
-        if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(intent.getAction())) {
-            if (Download.downloadUpdateApkId >= 0) {
-                long downloadId = Download.downloadUpdateApkId;
-                DownloadManager.Query query = new DownloadManager.Query();
-                query.setFilterById(downloadId);
-                DownloadManager downloadManager = (DownloadManager) context
-                        .getSystemService(Context.DOWNLOAD_SERVICE);
-                c = downloadManager.query(query);
-                if (c.moveToFirst()) {
-                    int status = c.getInt(c
-                            .getColumnIndex(DownloadManager.COLUMN_STATUS));
-                    if (status == DownloadManager.STATUS_FAILED) {
-                        downloadManager.remove(downloadId);
+            nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            notifyDownloading(context, progress, 100, title);
 
-                    } else if (status == DownloadManager.STATUS_SUCCESSFUL) {
-                        //保存状态
-                        PreferenceUtils.setPrefBoolean(context, "DownloadSuccess", true);
-                        if (Download.downloadUpdateApkFilePath != null) {
-                            Intent i = new Intent(Intent.ACTION_VIEW);
-                            File apkFile = new File(Download.downloadUpdateApkFilePath);
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                i.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                                Uri contentUri = FileProvider.getUriForFile(
-                                        context, context.getPackageName() + ".fileProvider", apkFile);
-                                i.setDataAndType(contentUri, "application/vnd.android.package-archive");
-                            } else {
-                                i.setDataAndType(Uri.fromFile(apkFile),
-                                        "application/vnd.android.package-archive");
-                            }
-                            intent.addCategory("android.intent.category.DEFAULT");
-                            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            context.startActivity(i);
-                        }
-
-                    }
+            if (progress == 100) {
+                if (nm != null) {
+                    nm.cancel(notifyId);
+                    nm.deleteNotificationChannel("1");
                 }
-                c.close();
+                installApk(context, DownloadAppUtils.downloadUpdateApkFilePath);
             }
         }
+    }
+
+    /**
+     * 安装apk
+     */
+    private void installApk(Context context, String path) {
+        if (context == null || TextUtils.isEmpty(path)) {
+            return;
+        }
+//        if (DownloadAppUtils.downloadUpdateApkFilePath != null) {
+//            Intent i = new Intent(Intent.ACTION_VIEW);
+//            File apkFile = new File(DownloadAppUtils.downloadUpdateApkFilePath);
+//            if (UpdateAppUtils.needFitAndroidN && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//                i.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+//                Uri contentUri = FileProvider.getUriForFile(
+//                        context, context.getPackageName() + ".fileProvider", apkFile);
+//                i.setDataAndType(contentUri, "application/vnd.android.package-archive");
+//            } else {
+//                i.setDataAndType(Uri.fromFile(apkFile),
+//                        "application/vnd.android.package-archive");
+//            }
+//            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//            context.startActivity(i);
+//        }
+        File file = new File(path);
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        //判读版本是否在7.0以上安卓8.0一下
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            //provider authorities
+            Uri contentUri = FileProvider.getUriForFile(
+                    context, context.getPackageName() + ".fileProvider", file);
+            //Granting Temporary Permissions to a URI
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            intent.setDataAndType(contentUri, "application/vnd.android.package-archive");
+        } else {
+            intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
+        }
+        context.startActivity(intent);
+        //ApkController.installSilent(apkPath);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void notifyDownloading(Context context, long progress, long num, String file_name) {
+        Notification.Builder mBuilder;
+        mBuilder = new Notification.Builder(context, TAG);
+        NotificationChannel channel;
+        channel = new NotificationChannel(TAG, file_name, NotificationManager.IMPORTANCE_LOW);
+        channel.setShowBadge(true);
+        nm.createNotificationChannel(channel);
+        mBuilder.setSmallIcon(R.drawable.ic_launcher);
+        mBuilder.setProgress((int) num, (int) progress, false);
+        mBuilder.setOngoing(true);
+        mBuilder.setWhen(System.currentTimeMillis());
+        mBuilder.setContentTitle(file_name);
+        mBuilder.setContentText("下载中");
+        nm.notify(1, mBuilder.build());
     }
 }

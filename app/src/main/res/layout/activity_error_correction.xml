@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    tools:context=".ui.activity.wholesale.ErrorCorrectionActivity">
+
+    <include layout="@layout/titlebar" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:background="@color/colorf5f5f5"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/H10dp"
+        android:text="请选择纠错的内容"
+        android:textColor="#c1c1c1" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/H10dp"
+        android:text="请描述具体的内容"
+        android:textColor="@color/color333333" />
+
+    <RelativeLayout
+        android:id="@+id/errorCorrect_RL"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_margin="@dimen/H10dp"
+        android:background="@drawable/border1dp">
+
+        <TextView
+            android:id="@+id/errorCorrect_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="请输入纠错内容"
+            android:padding="@dimen/H8dp"
+            android:text="" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/submit_tv"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/H40dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/color_01ABFF"
+        android:gravity="center"
+        android:text="确认提交"
+        android:textColor="@color/white"
+        android:textSize="15sp" />
+</LinearLayout>
+
+

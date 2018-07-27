@@ -25,6 +25,15 @@ public class WelcomeImags {
     private String goods_id;
     private String url;
     private String remark;
+    private String tel;
+
+    public String getTel() {
+        return tel == null ? "" : tel;
+    }
+
+    public void setTel(String tel) {
+        this.tel = tel;
+    }
 
     public String getImgurl() {
         return imgurl;

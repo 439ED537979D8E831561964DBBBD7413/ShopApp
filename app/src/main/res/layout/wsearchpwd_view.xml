@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorf5f5f5"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/title_view"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/H50dp"
+        android:background="@color/white"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/finish_tv"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_lift_arrayblack" />
+
+        <com.yj.shopapp.view.ClearEditText
+            android:id="@+id/value_Et"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/tv_bg_shape_5"
+            android:drawableLeft="@drawable/magnifier_white"
+            android:drawablePadding="@dimen/H5dp"
+            android:hint="请输入商品名或条码"
+            android:padding="@dimen/H8dp"
+            android:paddingLeft="10dp"
+            android:paddingStart="10dp"
+            android:text=""
+            android:textColorHint="@color/color_aaaaaa"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/search2Btn"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="搜索"
+            android:textColor="@color/color333333" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/H1dp"
+        android:background="@color/colorf5f5f5" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.scwang.smartrefresh.layout.SmartRefreshLayout
+            android:id="@+id/smart_refresh_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ezy.ui.layout.LoadingLayout
+                android:id="@+id/loading"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:llEmptyImage="@drawable/ic_dialog_emptyimag"
+                app:llEmptyText="抱歉找不到你要的结果">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </ezy.ui.layout.LoadingLayout>
+        </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+
+        <View
+            android:id="@+id/translucent_mask"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/color_60000000"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+</LinearLayout>

@@ -25,7 +25,6 @@ import com.yj.shopapp.http.OkHttpResponseHandler;
 import com.yj.shopapp.ubeen.ExcGoods;
 import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.ui.activity.base.BaseActivity;
-import com.yj.shopapp.util.StatusBarUtil;
 import com.yj.shopapp.util.StatusBarUtils;
 
 import java.util.HashMap;
@@ -94,9 +93,10 @@ public class ExchangeOfGoodsDetails extends BaseActivity {
 
     @Override
     protected void setStatusBar() {
-        StatusBarUtils.from(this).setActionbarView(bgView).setTransparentStatusbar(true)
-                .setLightStatusBar(false).process();
-        StatusBarUtil.setColor(this, getResources().getColor(R.color.white), 50);
+        StatusBarUtils.from(this).setLightStatusBar(true).setTransparentStatusbar(true).setActionbarView(bgView).process();
+//        StatusBarUtils.from(this).setActionbarView(bgView).setTransparentStatusbar(true)
+//                .setLightStatusBar(false).process();
+//        StatusBarUtil.setColor(this, getResources().getColor(R.color.white), 50);
     }
 
     private void showInputDialog() {

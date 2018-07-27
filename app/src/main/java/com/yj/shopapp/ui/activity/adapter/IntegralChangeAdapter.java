@@ -2,7 +2,6 @@ package com.yj.shopapp.ui.activity.adapter;
 
 import android.content.Context;
 
-import com.bumptech.glide.Glide;
 import com.yj.shopapp.R;
 import com.yj.shopapp.ubeen.IntegralChange;
 import com.yj.shopapp.ui.activity.ImgUtil.CommonAdapter;
@@ -32,7 +31,7 @@ public class IntegralChangeAdapter extends CommonAdapter<IntegralChange.DataBean
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         IntegralChange.DataBean detail = list.get(position);
-        Glide.with(context).load(detail.getImgurl()).into(holder.getImageView(R.id.shopimag));
+        //Glide.with(context).load(detail.getImgurl()).into(holder.getImageView(R.id.shopimag));
         holder.getTextView(R.id.shopname).setText(detail.getName());
         holder.getTextView(R.id.addtiem).setText(DateUtils.timet(detail.getAddtime(), "yyyy-MM-dd  HH:mm"));
         holder.getTextView(R.id.integral).setText("-" + detail.getIntegral());

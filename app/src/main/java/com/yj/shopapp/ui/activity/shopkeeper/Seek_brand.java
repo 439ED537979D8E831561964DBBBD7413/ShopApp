@@ -149,7 +149,7 @@ public class Seek_brand extends BaseActivity {
             View v = getCurrentFocus();
             if (isShouldHideInput(v, ev)) {
                 if (hideInputMethod(this, v)) {
-                    return true; //隐藏键盘时，其他控件不响应点击事件==》注释则不拦截点击事件
+                    //return true; //隐藏键盘时，其他控件不响应点击事件==》注释则不拦截点击事件
                 }
             }
         }

@@ -34,8 +34,17 @@ public class NewOrder {
     private String money;
     private String addtime;
     private int coupon;
-    private int receipt;
+    private String receipt;
+    private String newreceipt;
     private List<DataBean> data;
+
+    public String getNewreceipt() {
+        return newreceipt == null ? "" : newreceipt;
+    }
+
+    public void setNewreceipt(String newreceipt) {
+        this.newreceipt = newreceipt;
+    }
 
     public String getOid() {
         return oid;
@@ -109,11 +118,11 @@ public class NewOrder {
         this.coupon = coupon;
     }
 
-    public int getReceipt() {
+    public String getReceipt() {
         return receipt;
     }
 
-    public void setReceipt(int receipt) {
+    public void setReceipt(String receipt) {
         this.receipt = receipt;
     }
 

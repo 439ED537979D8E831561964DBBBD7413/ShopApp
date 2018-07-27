@@ -8,7 +8,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +27,7 @@ import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.squareup.okhttp.Request;
 import com.yj.shopapp.R;
 import com.yj.shopapp.config.Contants;
+import com.yj.shopapp.dialog.BugGoodsDialog;
 import com.yj.shopapp.http.HttpHelper;
 import com.yj.shopapp.http.OkHttpResponseHandler;
 import com.yj.shopapp.ubeen.Industry;
@@ -37,10 +37,10 @@ import com.yj.shopapp.ui.activity.adapter.NewGoodRecyAdpter;
 import com.yj.shopapp.ui.activity.adapter.SSPitemAdapter;
 import com.yj.shopapp.ui.activity.adapter.ScreenLvAdpter;
 import com.yj.shopapp.ui.activity.base.BaseActivity;
-import com.yj.shopapp.dialog.BugGoodsDialog;
 import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.DDecoration;
 import com.yj.shopapp.util.JsonHelper;
+import com.yj.shopapp.util.StatusBarUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,6 +49,7 @@ import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 import ezy.ui.layout.LoadingLayout;
 
@@ -57,13 +58,6 @@ import ezy.ui.layout.LoadingLayout;
  */
 public class SSPitemActivity extends BaseActivity implements SSPitemAdapter.OnViewClickListener, OnLoadMoreListener, OnRefreshListener {
 
-
-    @BindView(R.id.content_tv)
-    TextView contentTv;
-    @BindView(R.id.right_tv)
-    ImageView rightTv;
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
     @BindView(R.id.tab_layout)
     TabLayout tabLayout;
     @BindView(R.id.screenTv)
@@ -78,6 +72,14 @@ public class SSPitemActivity extends BaseActivity implements SSPitemAdapter.OnVi
     LoadingLayout loading;
     @BindView(R.id.flipping)
     ImageView flipping;
+    @BindView(R.id.forewadImg)
+    ImageView forewadImg;
+    @BindView(R.id.title)
+    TextView title;
+    @BindView(R.id.id_right_btu)
+    TextView idRightBtu;
+    @BindView(R.id.title_view)
+    RelativeLayout titleView;
     private int mCurrentPage = 1;
     private List<Spitem> spitemList = new ArrayList<>();
     private String cid = "0";
@@ -99,20 +101,21 @@ public class SSPitemActivity extends BaseActivity implements SSPitemAdapter.OnVi
     }
 
     @Override
+    protected void setStatusBar() {
+        StatusBarUtils.from(this)
+                .setActionbarView(titleView)
+                .setTransparentStatusbar(true)
+                .setLightStatusBar(false)
+                .process();
+    }
+
+    @Override
     protected void initData() {
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-        rightTv.setVisibility(View.GONE);
+
         if (getIntent().hasExtra("industrylist")) {
             mdatas = getIntent().getParcelableArrayListExtra("industrylist");
         }
-        contentTv.setText("促销特价");
+        title.setText("促销特价");
         oAdapter = new SSPitemAdapter(mContext);
         if (recyclerView != null) {
             recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
@@ -393,4 +396,10 @@ public class SSPitemActivity extends BaseActivity implements SSPitemAdapter.OnVi
         }
     }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // TODO: add setContentView(...) invocation
+        ButterKnife.bind(this);
+    }
 }

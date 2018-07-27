@@ -8,7 +8,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +20,6 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.gavin.com.library.StickyDecoration;
-import com.gavin.com.library.listener.GroupListener;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
@@ -29,6 +27,7 @@ import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.squareup.okhttp.Request;
 import com.yj.shopapp.R;
 import com.yj.shopapp.config.Contants;
+import com.yj.shopapp.dialog.BugGoodsDialog;
 import com.yj.shopapp.http.HttpHelper;
 import com.yj.shopapp.http.OkHttpResponseHandler;
 import com.yj.shopapp.ubeen.Goods;
@@ -39,11 +38,11 @@ import com.yj.shopapp.ui.activity.adapter.NewGoodRecyAdpter;
 import com.yj.shopapp.ui.activity.adapter.SNewGoodsAdpter;
 import com.yj.shopapp.ui.activity.adapter.ScreenLvAdpter;
 import com.yj.shopapp.ui.activity.base.BaseActivity;
-import com.yj.shopapp.dialog.BugGoodsDialog;
 import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.DateUtils;
 import com.yj.shopapp.util.DisplayUtil;
 import com.yj.shopapp.util.JsonHelper;
+import com.yj.shopapp.util.StatusBarUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -59,13 +58,6 @@ import ezy.ui.layout.LoadingLayout;
  */
 public class SNewGoodsActivity extends BaseActivity implements OnRefreshListener, OnLoadMoreListener, GoodsItemListenter {
 
-
-    @BindView(R.id.content_tv)
-    TextView contentTv;
-    @BindView(R.id.right_tv)
-    ImageView rightTv;
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
     @BindView(R.id.tab_layout)
     TabLayout tabLayout;
     @BindView(R.id.screenTv)
@@ -80,6 +72,13 @@ public class SNewGoodsActivity extends BaseActivity implements OnRefreshListener
     LoadingLayout loading;
     @BindView(R.id.flipping)
     ImageView flipping;
+    @BindView(R.id.title)
+    TextView title;
+    @BindView(R.id.id_right_btu)
+    TextView idRightBtu;
+    @BindView(R.id.title_view)
+    RelativeLayout titleView;
+
     private int mCurrentPage = 1;
     private List<Goods> goodsList = new ArrayList<>();
 
@@ -106,17 +105,18 @@ public class SNewGoodsActivity extends BaseActivity implements OnRefreshListener
     }
 
     @Override
+    protected void setStatusBar() {
+        StatusBarUtils.from(this)
+                .setActionbarView(titleView)
+                .setTransparentStatusbar(true)
+                .setLightStatusBar(false)
+                .process();
+    }
+
+    @Override
     protected void initData() {
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-        contentTv.setText("每日新品");
-        rightTv.setVisibility(View.GONE);
+
+        title.setText("每日新品");
         if (getIntent().hasExtra("agentuid")) {
             agentuid = getIntent().getStringExtra("agentuid");
         }
@@ -125,16 +125,13 @@ public class SNewGoodsActivity extends BaseActivity implements OnRefreshListener
         }
         Refresh();
         StickyDecoration decoration = StickyDecoration.Builder
-                .init(new GroupListener() {
-                    @Override
-                    public String getGroupName(int position) {
-                        //组名回调
-                        //获取组名，用于判断是否是同一组
-                        if (goodsList.size() > 0) {
-                            return goodsList.get(position).getDate();
-                        }
-                        return "";
+                .init(position -> {
+                    //组名回调
+                    //获取组名，用于判断是否是同一组
+                    if (goodsList.size() > 0) {
+                        return goodsList.get(position).getDate();
                     }
+                    return "";
                 })
                 .setGroupBackground(Color.parseColor("#f4f5f9"))
                 .setGroupHeight(CommonUtils.dip2px(this, 34))
@@ -434,5 +431,6 @@ public class SNewGoodsActivity extends BaseActivity implements OnRefreshListener
         pw = null;
         itemView = null;
     }
+
 }
 

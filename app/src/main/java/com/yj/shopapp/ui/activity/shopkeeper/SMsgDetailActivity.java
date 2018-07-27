@@ -1,20 +1,24 @@
 package com.yj.shopapp.ui.activity.shopkeeper;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.yj.shopapp.R;
 import com.yj.shopapp.ubeen.Notice;
 import com.yj.shopapp.ui.activity.adapter.NotContentAdapter;
 import com.yj.shopapp.ui.activity.base.BaseActivity;
+import com.yj.shopapp.util.StatusBarUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class SMsgDetailActivity extends BaseActivity {
@@ -30,13 +34,25 @@ public class SMsgDetailActivity extends BaseActivity {
     LinearLayout activityMsgDetail;
     @BindView(R.id.Not_list)
     ListView NotList;
+    @BindView(R.id.title_view)
+    RelativeLayout titleView;
     private Context context = this;
     private List<Notice> notlist = new ArrayList<Notice>();
     private int id;
     private NotContentAdapter adapter;
+
     @Override
     protected int getLayoutId() {
         return R.layout.activity_msg_detail;
+    }
+
+    @Override
+    protected void setStatusBar() {
+        StatusBarUtils.from(this)
+                .setActionbarView(titleView)
+                .setTransparentStatusbar(true)
+                .setLightStatusBar(false)
+                .process();
     }
 
     @Override
@@ -63,4 +79,10 @@ public class SMsgDetailActivity extends BaseActivity {
     }
 
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // TODO: add setContentView(...) invocation
+        ButterKnife.bind(this);
+    }
 }

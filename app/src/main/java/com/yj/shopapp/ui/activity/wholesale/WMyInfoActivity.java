@@ -1,17 +1,23 @@
 package com.yj.shopapp.ui.activity.wholesale;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.PermissionChecker;
 import android.view.View;
-import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.yj.shopapp.R;
 import com.yj.shopapp.config.Contants;
 import com.yj.shopapp.dialog.BottomDialog;
@@ -23,6 +29,7 @@ import com.yj.shopapp.ui.activity.PicasaActivity;
 import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.PreferenceUtils;
+import com.yj.shopapp.util.StatusBarUtils;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -47,18 +54,20 @@ public class WMyInfoActivity extends NewBaseFragment implements BottomDialog.OnC
     @BindView(R.id.help)
     RelativeLayout help;
     @BindView(R.id.exit)
-    Button exit;
+    TextView exit;
     String cameraPath;
-    @BindView(R.id.title)
-    TextView title;
-    @BindView(R.id.id_right_btu)
-    TextView idRightBtu;
 
     @BindView(R.id.new_goods_rl)
     RelativeLayout newGoodsRl;
     @BindView(R.id.account_tv)
     TextView accountTv;
+    @BindView(R.id.title_view)
+    LinearLayout titleView;
+    @BindView(R.id.Customer_service)
+    TextView CustomerService;
+    private final int REQUEST_CODEC = 0x1001;
     private BottomDialog bottomDialog;
+    private static final int REQUEST_CODE = 1;
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
@@ -73,12 +82,15 @@ public class WMyInfoActivity extends NewBaseFragment implements BottomDialog.OnC
 
     @Override
     protected void initView(View view, Bundle savedInstanceState) {
-
+        StatusBarUtils.from(getActivity())
+                .setActionbarView(titleView)
+                .setTransparentStatusbar(true)
+                .setLightStatusBar(false)
+                .process();
     }
 
     @Override
     protected void initData() {
-        title.setText("个人中心");
         String account = PreferenceUtils.getPrefString(mActivity, Contants.Preference.USER_NAME, "");
         accountTv.setText(account);
         if (getBundle() != null) {
@@ -86,6 +98,8 @@ public class WMyInfoActivity extends NewBaseFragment implements BottomDialog.OnC
         }
         bottomDialog = new BottomDialog(mActivity, R.layout.bottom_dialog, new int[]{R.id.save_photoalbum, R.id.dialog_cancel});
         bottomDialog.setOnCenterItemClickListener(this);
+        CustomerService.setText(PreferenceUtils.getPrefString(mActivity, "CustomerService", ""));
+
     }
 
 
@@ -154,12 +168,7 @@ public class WMyInfoActivity extends NewBaseFragment implements BottomDialog.OnC
     public void onClickExpand() {
         CustomPopDialog2 dialog2 = new CustomPopDialog2(mActivity);
         dialog2.setCanceledOnTouchOutside(true);
-        dialog2.setLongClick(new CustomPopDialog2.onLongClick() {
-            @Override
-            public void onLClick(View view) {
-                bottomDialog.show();
-            }
-        });
+        dialog2.setLongClick(view -> bottomDialog.show());
         dialog2.show();
     }
 
@@ -185,5 +194,53 @@ public class WMyInfoActivity extends NewBaseFragment implements BottomDialog.OnC
         }
     }
 
+    @OnClick(R.id.call_phone)
+    public void onViewClicked() {
+        new MaterialDialog.Builder(mActivity).title("提示").positiveText("拨打").negativeText("取消")
+                .content("是否要拨打客服电话?")
+                .onPositive((dialog, which) -> {
+                    //拨打电话
+                    if (Build.VERSION.SDK_INT >= 23) {
+                        //判断有没有拨打电话权限
+                        if (PermissionChecker.checkSelfPermission(mActivity, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                            //请求拨打电话权限
+                            requestPermissions(new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CODEC);
 
+                        } else {
+                            callPhone();
+                        }
+
+                    } else {
+                        callPhone();
+                    }
+                }).show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_CODEC && PermissionChecker.checkSelfPermission(mActivity, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
+            showToast("授权成功");
+            callPhone();
+        } else {
+            showToast("授权失败");
+        }
+    }
+
+    private void callPhone() {
+        if (ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
+            Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + CustomerService.getText().toString()));
+            startActivity(intent);
+        } else {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(mActivity, Manifest.permission.CALL_PHONE)) {
+                //已经禁止提示了
+                showToast("您已禁止该权限，需要重新开启");
+            } else {
+                ActivityCompat.requestPermissions(mActivity, new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CODE);
+
+            }
+
+        }
+
+    }
 }

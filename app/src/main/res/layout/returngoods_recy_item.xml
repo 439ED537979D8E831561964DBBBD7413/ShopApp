@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/H5dp"
+        android:paddingLeft="@dimen/H10dp"
+        android:paddingRight="@dimen/H10dp"
+        android:paddingTop="@dimen/H5dp">
+
+        <TextView
+            android:id="@+id/shopname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:drawableLeft="@drawable/ic_dd"
+            android:drawablePadding="@dimen/H8dp"
+            android:drawableRight="@drawable/btn_arrow_r"
+            android:text=""
+            android:textColor="@color/color_1ca5f5"
+            android:textSize="13sp" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#fafafa"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/H8dp"
+        android:paddingTop="@dimen/H8dp">
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/shopimag"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/load" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="7"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/shopnumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/H2dp"
+                android:text=""
+                android:textColor="@color/color909090"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/shopspec"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/H2dp"
+                android:text=""
+                android:textColor="@color/color909090"
+                android:textSize="13sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/H2dp">
+
+                <TextView
+                    android:id="@+id/buygoods_sum"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textColor="@color/color909090"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/buygoods_money"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="30dp"
+                    android:text=""
+                    android:textColor="@color/color909090"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/H2dp">
+
+                <TextView
+                    android:id="@+id/returngoods_num"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textColor="@color/color909090"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/returngoods_money"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="30dp"
+                    android:text=""
+                    android:textColor="@color/color909090"
+                    android:textSize="13sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+</LinearLayout>

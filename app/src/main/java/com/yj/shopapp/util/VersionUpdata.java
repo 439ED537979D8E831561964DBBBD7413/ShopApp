@@ -43,7 +43,7 @@ public class VersionUpdata {
                 PreferenceUtils.remove(mContext, "downloadUpdateApkId");
             }
         } else {
-            UpdataDialog.newInstance(PreferenceUtils.getPrefBoolean(mContext, "DownloadSuccess", false)).show(manager, "updata");
+           // UpdataDialog.newInstance(PreferenceUtils.getPrefBoolean(mContext, "DownloadSuccess", false)).show(manager, "updata");
         }
 
     }

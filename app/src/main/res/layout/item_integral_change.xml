@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white">
 
     <RelativeLayout
-        android:layout_width="90dp"
-        android:layout_height="90dp">
+        android:layout_width="100dp"
+        android:visibility="gone"
+        android:layout_height="100dp">
 
         <com.yj.shopapp.view.CircleImageView
             android:id="@+id/shopimag"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:layout_centerInParent="true"/>
+            android:layout_centerInParent="true" />
     </RelativeLayout>
 
 
@@ -21,13 +21,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:paddingLeft="10dp">
+        android:padding="10dp">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="@dimen/H5dp">
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/shopname"
@@ -35,19 +34,21 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:gravity="center_vertical"
-                android:text="精品零食套餐"
+                android:text=""
                 android:textColor="@color/black"
-                android:textSize="16sp"/>
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/shopsum"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
+                android:layout_marginBottom="@dimen/H5dp"
+                android:layout_marginTop="@dimen/H5dp"
                 android:layout_weight="1"
                 android:gravity="center_vertical"
-                android:text="数量： 2件"
+                android:text=""
                 android:textColor="@color/color_999999"
-                android:textSize="16sp"/>
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/addtiem"
@@ -55,9 +56,8 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:gravity="center_vertical"
-                android:text="03-27      17:58"
-                android:textColor="@color/color_999999"/>
-
+                android:text=""
+                android:textColor="@color/color_999999" />
 
         </LinearLayout>
 
@@ -67,10 +67,9 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:paddingRight="10dp"
-            android:text="-8000"
+            android:text=""
             android:textColor="@color/black"
-            android:textSize="20sp"/>
-
+            android:textSize="20sp" />
 
     </RelativeLayout>
 

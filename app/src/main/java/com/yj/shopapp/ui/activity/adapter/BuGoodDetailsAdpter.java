@@ -3,6 +3,7 @@ package com.yj.shopapp.ui.activity.adapter;
 import android.content.Context;
 import android.graphics.Paint;
 import android.os.CountDownTimer;
+import android.support.annotation.NonNull;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -19,11 +20,14 @@ import com.bumptech.glide.request.RequestOptions;
 import com.yj.shopapp.R;
 import com.yj.shopapp.ubeen.LimitedSale;
 import com.yj.shopapp.ui.activity.ImgUtil.CommonAdapter;
+import com.yj.shopapp.ui.activity.ImgUtil.RVHolder;
 import com.yj.shopapp.ui.activity.ImgUtil.ViewHolder;
 import com.yj.shopapp.ui.activity.Interface.OnItemChildViewOnClickListener;
 import com.yj.shopapp.util.DateUtils;
 import com.yj.shopapp.view.SaleProgressView;
 import com.yj.shopapp.view.mTextView;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
@@ -94,6 +98,7 @@ public class BuGoodDetailsAdpter extends CommonAdapter<LimitedSale> implements V
                     @Override
                     public void onFinish() {
                         cdTv.setText("倒计时完成");
+                        EventBus.getDefault().post("2");
                     }
                 }.start();
                 countDownTimers.put(cdTv.hashCode(), holder.countDownTimer);
@@ -107,6 +112,22 @@ public class BuGoodDetailsAdpter extends CommonAdapter<LimitedSale> implements V
         gorob.setTag(position);
 
 
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull RVHolder holder, int position, @NonNull List<Object> payloads) {
+        if (payloads.isEmpty()) {
+            onBindViewHolder(holder, position);
+        } else {
+            LimitedSale sale = list.get(position);
+            SaleProgressView saleProgressView = (SaleProgressView) holder.getViewHolder().getView(R.id.spv);
+            saleProgressView.setTotalAndCurrentCount(Integer.parseInt(sale.getNum()), Integer.parseInt(sale.getSalesnum()), sale.getUnit());
+            if (sale.getIs_sale() == 1) {
+                holder.getViewHolder().getView(R.id.gorob).setBackground(context.getResources().getDrawable(R.drawable.fillet_tv_gray));
+            } else {
+                holder.getViewHolder().getView(R.id.gorob).setBackground(context.getResources().getDrawable(R.drawable.fillet_tv_red));
+            }
+        }
     }
 
     private TextView getTextView(List<String> mList) {

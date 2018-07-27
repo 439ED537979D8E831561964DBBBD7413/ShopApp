@@ -17,7 +17,6 @@ import com.yj.shopapp.ui.activity.ImgUtil.ViewHolder;
 
 public class GoodsRecordAdpter extends Common2Adapter<OrderRecord> {
 
-
     public GoodsRecordAdpter(Context context) {
         super(context);
     }

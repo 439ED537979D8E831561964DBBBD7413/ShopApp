@@ -4,22 +4,22 @@
     android:id="@+id/itemview"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="@dimen/H8dp"
     android:orientation="horizontal">
 
     <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/shopimag"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="110dp"
+        android:layout_height="110dp"
+        android:layout_margin="@dimen/H8dp"
         android:background="@drawable/border1dp"
         android:padding="@dimen/H1dp"
-        app:pressedStateOverlayImage="@drawable/load"/>
+        app:pressedStateOverlayImage="@drawable/load" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingLeft="@dimen/H10dp">
+        android:layout_gravity="center_vertical"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/shopname"
@@ -29,10 +29,20 @@
             android:textColor="@color/color333333" />
 
         <TextView
+            android:id="@+id/goodAddress_Tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/H2dp"
+            android:text=""
+            android:visibility="gone"
+            android:textColor="@color/color_999999"
+            android:textSize="13sp" />
+
+        <TextView
             android:id="@+id/account_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="@dimen/H3dp"
+            android:padding="@dimen/H2dp"
             android:text=""
             android:textColor="@color/color_999999"
             android:textSize="13sp" />
@@ -41,7 +51,7 @@
             android:id="@+id/shopnum"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="@dimen/H3dp"
+            android:padding="@dimen/H2dp"
             android:text=""
             android:textColor="@color/color_999999"
             android:textSize="13sp" />
@@ -49,7 +59,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/H3dp">
+            android:padding="@dimen/H2dp">
 
             <TextView
                 android:id="@+id/allprice"

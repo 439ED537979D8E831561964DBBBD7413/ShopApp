@@ -5,13 +5,12 @@ import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v7.widget.CardView;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSONObject;
-import com.kaopiz.kprogresshud.KProgressHUD;
 import com.squareup.okhttp.Request;
 import com.yj.shopapp.R;
 import com.yj.shopapp.config.AppManager;
@@ -21,7 +20,6 @@ import com.yj.shopapp.http.OkHttpResponseHandler;
 import com.yj.shopapp.ui.activity.base.BaseActivity;
 import com.yj.shopapp.ui.activity.shopkeeper.SMainTabActivity;
 import com.yj.shopapp.ui.activity.wholesale.VerificationPhoneActivity;
-import com.yj.shopapp.ui.activity.wholesale.WMainTabActivity;
 import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.JsonHelper;
 import com.yj.shopapp.util.NetUtils;
@@ -61,10 +59,10 @@ public class LoginActivity extends BaseActivity {
     ScrollView scroll;
     @BindView(R.id.fillView)
     View fillView;
-    private KProgressHUD progressDialog;
+    @BindView(R.id.login_img_bg)
+    RelativeLayout loginImgBg;
     int index;
     boolean isReqing;
-    private int status;
 
     @Override
     protected int getLayoutId() {
@@ -84,20 +82,14 @@ public class LoginActivity extends BaseActivity {
             login();
             return true;
         });
-        CommonUtils.setHideOrShowSoftInput(userNameEt, LoginActivity.this);
-        CommonUtils.setHideOrShowSoftInput(userPasswordEt, LoginActivity.this);
         SoftKeyBoardListener.setListener(LoginActivity.this, new SoftKeyBoardListener.OnSoftKeyBoardChangeListener() {
             @Override
             public void keyBoardShow(int height) {
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) (height * 0.8));
-                fillView.setLayoutParams(params);
                 scrollToBottom();
             }
 
             @Override
             public void keyBoardHide(int height) {
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
-                fillView.setLayoutParams(params);
             }
         });
     }
@@ -125,8 +117,6 @@ public class LoginActivity extends BaseActivity {
         Bundle bundle = new Bundle();
         bundle.putString(VerificationPhoneActivity.ACTION_KEY, VerificationPhoneActivity.REGISTER);
         CommonUtils.goActivity(mContext, VerificationPhoneActivity.class, bundle);
-
-
     }
 
     @OnClick(R.id.forget_password_tv)
@@ -223,7 +213,6 @@ public class LoginActivity extends BaseActivity {
         //显示ProgressDialog
 
         login(username, userpwd);
-        progressDialog = growProgress(Contants.Progress.LOGIN_ING).show();
     }
 
     private void login(final String userName, final String userPwd) {
@@ -237,17 +226,6 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void onAfter() {
                 super.onAfter();
-                if (progressDialog != null) {
-                    progressDialog.dismiss();
-                }
-            }
-
-            @Override
-            public void onBefore() {
-                super.onBefore();
-                if (isReqing == true) {
-                    return;
-                }
             }
 
             @Override
@@ -272,8 +250,9 @@ public class LoginActivity extends BaseActivity {
                     if ("1".equals(uinfo.getUtype())) {
                         getrewardArea(uinfo.getUid(), uinfo.getToken());
                     } else {
-                        CommonUtils.goActivity(mContext, WMainTabActivity.class, null, true);
+                        //CommonUtils.goActivity(mContext, WMainTabActivity.class, null, true);
                     }
+                    PreferenceUtils.setPrefBoolean(mContext, "firstMain", true);
                 } else {
                     showToastShort(JSONObject.parseObject(json).getString("info"));
                 }
@@ -287,4 +266,5 @@ public class LoginActivity extends BaseActivity {
             }
         });
     }
+
 }

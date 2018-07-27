@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/borderbg1dp"
-        android:elevation="@dimen/H3dp"
+        android:elevation="@dimen/H2dp"
         android:orientation="vertical">
 
         <RelativeLayout
@@ -64,12 +64,12 @@
         android:orientation="vertical"
         app:llEmptyImage="@drawable/ic_emptyimag">
 
-        <com.yj.shopapp.view.headfootrecycleview.RecycleViewEmpty
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/my_RecyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/colorf5f5f5"
-            android:paddingTop="5dp" />
+            android:paddingTop="@dimen/H6dp"
+            android:background="@color/colorf5f5f5" />
 
     </ezy.ui.layout.LoadingLayout>
 

@@ -6,6 +6,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -26,6 +27,7 @@ import com.yj.shopapp.ui.activity.base.BaseActivity;
 import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.JsonHelper;
 import com.yj.shopapp.util.PreferenceUtils;
+import com.yj.shopapp.util.StatusBarUtils;
 import com.yj.shopapp.view.headfootrecycleview.OnRecyclerViewScrollListener;
 import com.yj.shopapp.view.headfootrecycleview.RecyclerViewHeaderFooterAdapter;
 
@@ -48,6 +50,8 @@ public class SAddressActivity extends BaseActivity implements BaseRecyclerView, 
     TextView id_right_btu;
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
+    @BindView(R.id.title_view)
+    RelativeLayout titleView;
 
 
     private ILoadView iLoadView = null;
@@ -63,6 +67,15 @@ public class SAddressActivity extends BaseActivity implements BaseRecyclerView, 
     @Override
     protected int getLayoutId() {
         return R.layout.sactivity_address;
+    }
+
+    @Override
+    protected void setStatusBar() {
+        StatusBarUtils.from(this)
+                .setActionbarView(titleView)
+                .setTransparentStatusbar(true)
+                .setLightStatusBar(false)
+                .process();
     }
 
     @Override
@@ -177,7 +190,6 @@ public class SAddressActivity extends BaseActivity implements BaseRecyclerView, 
         bundle.putSerializable("been", notes.get(pos));
         CommonUtils.goActivity(mContext, SAddressRefreshActivity.class, bundle);
     }
-
 
     public class mLoadMoreClickListener implements LoadMoreClickListener {
 

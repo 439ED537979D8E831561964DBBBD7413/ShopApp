@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -48,7 +49,6 @@ import com.yj.shopapp.util.NetUtils;
 import com.yj.shopapp.util.PreferenceUtils;
 import com.yj.shopapp.util.StatusBarUtils;
 import com.yj.shopapp.view.CustomViewPager;
-import com.yj.shopapp.view.headfootrecycleview.RecycleViewEmpty;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -74,26 +74,31 @@ import ezy.ui.layout.LoadingLayout;
 
 public class SNewCartListActivity extends NewBaseFragment implements shopcartlistInterface.ModifyCountInterface, Center2Dialog.OnCenterItemClickListener {
 
-    @BindView(R.id.total_num)
-    TextView totalNum;
-    @BindView(R.id.tab_layout)
-    TabLayout tabLayout;
-    @BindView(R.id.myviewpager)
-    CustomViewPager myviewpager;
-    @BindView(R.id.my_checkbox)
-    CheckBox myCheckbox;
-    @BindView(R.id.buttonMenuLL)
-    LinearLayout buttonMenuLL;
+
+    @BindView(R.id.title)
+    TextView title;
     @BindView(R.id.id_del_btu)
     ImageView idDelBtu;
     @BindView(R.id.title_view)
     RelativeLayout titleView;
-    @BindView(R.id.title)
-    TextView title;
+    @BindView(R.id.tab_layout)
+    TabLayout tabLayout;
     @BindView(R.id.my_RecyclerView)
-    RecycleViewEmpty myRecyclerView;
+    RecyclerView myRecyclerView;
     @BindView(R.id.loading)
     LoadingLayout loading;
+    @BindView(R.id.myviewpager)
+    CustomViewPager myviewpager;
+    @BindView(R.id.my_checkbox)
+    CheckBox myCheckbox;
+    @BindView(R.id.total_num)
+    TextView totalNum;
+    @BindView(R.id.submit_order)
+    TextView submitOrder;
+    @BindView(R.id.buttonMenuLL)
+    LinearLayout buttonMenuLL;
+    @BindView(R.id.swipe_refresh_layout)
+    LinearLayout swipeRefreshLayout;
 
     private CarListViewPagerAdpter pagerAdpter;
     private boolean ishaveanaddress;
@@ -103,7 +108,6 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
     private List<Classify> classname = new ArrayList<>();
     private int cid = 0;
     private int currposition = 0;
-    private ViewHolder holder;
     //private Map<String, CartList> cartListMap = new HashMap<>();
     private SNewCarListAdapter adapter;
     private List<CartList> cartLists = new ArrayList<>();
@@ -114,9 +118,10 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
     private double totalPrice = 0.00;
     private DecimalFormat df = new DecimalFormat("######0.00");
     private boolean isload = true;
-    private CenterDialog dialog;
-    private boolean isSubmitgoods;
     private boolean isShowToast = false;
+    private int startMoney;
+    private boolean isScrollTop = false;
+    private int tabPosition = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -159,18 +164,14 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
                     int firstItemPosition = linearManager.findFirstVisibleItemPosition();
                     if (firstItemPosition == -1) return;
                     if (tabLayout == null) return;
-                    tabLayout.setFocusable(true);
-                    tabLayout.setFocusableInTouchMode(true);
                     try {
                         if (cartLists.size() > 0) {
                             if (firstItemPosition < cartLists.size()) {
                                 if (!Objects.requireNonNull(tabLayout.getTabAt(cartLists.get(firstItemPosition).getTabposition())).isSelected()) {
                                     Objects.requireNonNull(tabLayout.getTabAt(cartLists.get(firstItemPosition).getTabposition())).select();
+                                    tabPosition = cartLists.get(firstItemPosition).getTabposition();
                                 }
                             }
-                        }
-                        if (firstItemPosition == cartLists.size() - 1) {
-                            ((LinearLayoutManager) myRecyclerView.getLayoutManager()).scrollToPositionWithOffset(cartLists.size() - 1, 0);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -191,6 +192,7 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
         if (isNetWork(mActivity)) {
             isload = true;
             refreshRequest();
+            getStartMoney();
         } else {
             showToast("无网络");
         }
@@ -229,9 +231,9 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
     }
 
     private void showDialog(Double moeny, final String idstr) {
-        dialog = new CenterDialog(mActivity, R.layout.carlistsubmitinfo, new int[]{R.id.exit_tv, R.id.finish_tv}, 0.8);
-        dialog.show();
-        dialog.setOnCenterItemClickListener((dialog, view) -> {
+        CenterDialog dialog1 = new CenterDialog(mActivity, R.layout.carlistsubmitinfo, new int[]{R.id.exit_tv, R.id.finish_tv}, 0.8);
+        dialog1.show();
+        dialog1.setOnCenterItemClickListener((dialog, view) -> {
             switch (view.getId()) {
                 case R.id.exit_tv:
                     Bundle bundle = new Bundle();
@@ -247,8 +249,8 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
                     break;
             }
         });
-        ((TextView) dialog.findViewById(R.id.onetext)).setText(Html.fromHtml("平台配送金额" + "<font color=#e72c21>" + "500" + "</font>" + "元起送"));
-        ((TextView) dialog.findViewById(R.id.Single_amount)).setText(Html.fromHtml("您本次下单金额为" + "<font color=#e72c21>" + df.format(moeny) + "</font>" + "元"));
+        ((TextView) dialog1.findViewById(R.id.onetext)).setText(Html.fromHtml("平台配送金额" + "<font color=#e72c21>" + startMoney + "</font>" + "元起送"));
+        ((TextView) dialog1.findViewById(R.id.Single_amount)).setText(Html.fromHtml("您本次下单金额为" + "<font color=#e72c21>" + df.format(moeny) + "</font>" + "元"));
     }
 
     /**
@@ -257,11 +259,12 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
     private void setTabView() {
         if (tabLayout == null) return;
         tabLayout.removeAllTabs();
-        holder = null;
+        ViewHolder holder = null;
         tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.color_fc2b32));
         for (int i = 0; i < classname.size(); i++) {
             //依次获取标签
             TabLayout.Tab tab = tabLayout.newTab();
+
             //为每个标签设置布局
             tab.setCustomView(R.layout.tabview);
             holder = new ViewHolder(tab.getCustomView());
@@ -270,7 +273,17 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
             holder.tvTabName.setText(classify.getName());
             holder.tvTabNumber.setText("￥" + classify.getMoney());
             tabLayout.addTab(tab);
+            if (i == tabPosition) {
+                tab.select();
+            }
         }
+        if (myRecyclerView != null && classname.size() > 0 && isScrollTop) {
+            isScrollTop = false;
+            ((LinearLayoutManager) myRecyclerView.getLayoutManager()).scrollToPositionWithOffset(0, 0);
+        }
+//        if (classname.size() > 0) {
+//            Objects.requireNonNull(tabLayout.getTabAt(tabPosition)).select();
+//        }
         setTablayoutclick();
     }
 
@@ -302,8 +315,15 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
         }
     }
 
+    /**
+     * 点击事件
+     *
+     * @param position  元素位置
+     * @param isChecked 元素选中与否
+     */
     @Override
     public void checkGroup(int position, boolean isChecked) {
+        if (cartLists.size() == 0) return;
         if (cartLists.get(position).getSale_status().equals("0")) {
             //cartLists.get(position).setChoosed(true);
             delOneGoods(cartLists.get(position).getId());
@@ -317,7 +337,7 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
 
     private void isAllCheck() {
         isSelect = false;
-        isSubmitgoods = true;
+        boolean isSubmitgoods = true;
         for (CartList i : cartLists) {
             if (!i.getSale_status().equals("0")) {
                 isSubmitgoods = false;
@@ -336,6 +356,7 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
             showToast("暂无可提交商品!");
         }
         myCheckbox.setChecked(isSelect);
+
         if (myCheckbox.isChecked()) {
             alltabbg();
         } else {
@@ -344,7 +365,8 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
     }
 
     private void alltabbg() {
-        for (int i = 0; i < tabLayout.getTabCount(); i++) {
+
+        for (int i = 0; i < classname.size(); i++) {
             if (classname.get(i).isSelect()) {
                 TabLayout.Tab t = tabLayout.getTabAt(i);
                 ((TextView) t.getCustomView().findViewById(R.id.tab_name)).setTextColor(getResources().getColor(R.color.color_fc2b32));
@@ -378,6 +400,22 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
                 tvTabNumber = (TextView) tabView.findViewById(R.id.tab_money);
             }
         }
+    }
+
+    private void getStartMoney() {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("uid", uid);
+        params.put("token", token);
+        HttpHelper.getInstance().post(mActivity, Contants.PortU.SUM_OF_MONEY, params, new OkHttpResponseHandler<String>(mActivity) {
+            @Override
+            public void onResponse(Request request, String response) {
+                super.onResponse(request, response);
+                ShowLog.e(response);
+                if (JsonHelper.isRequstOK(response, mActivity)) {
+                    startMoney = JSONObject.parseObject(response).getInteger("money");
+                }
+            }
+        });
     }
 
     private void checkOrderOpen() {
@@ -419,7 +457,7 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
         }
         if (stringBuffer.toString().length() > 0) {
             idstr = stringBuffer.substring(0, stringBuffer.length() - 1);
-            if (totalPrice < 500) {
+            if (totalPrice < startMoney) {
                 showDialog(totalPrice, idstr);
             } else {
                 Bundle bundle = new Bundle();
@@ -486,6 +524,7 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
             public void onBefore() {
                 super.onBefore();
                 cartLists.clear();
+                adapter.notifyDataSetChanged();
             }
 
             @Override
@@ -498,13 +537,21 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
     }
 
     private void addEmptyView() {
+        if (cartLists.size() == 0) return;
         new Handler().postDelayed(() -> {
-            if (cartLists.size() > 0 && myRecyclerView != null) {
-                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT
-                        , (int) (CommonUtils.screenHeight(mActivity) * 0.65));
-                View view = new View(mActivity);
-                view.setLayoutParams(layoutParams);
-                adapter.setFoootView(view);
+            try {
+                if (myRecyclerView != null && myRecyclerView.getLayoutManager() != null) {
+                    int itemHeight = myRecyclerView.getLayoutManager().getChildAt(0).getHeight();
+                    if (cartLists.size() > 0 && myRecyclerView != null) {
+                        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT
+                                , (int) (myRecyclerView.getHeight() - itemHeight - CommonUtils.dp2px(mActivity, 12)));
+                        View view = new View(mActivity);
+                        view.setLayoutParams(layoutParams);
+                        adapter.setFoootView(view);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }, 300);
     }
@@ -556,6 +603,8 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
             if (loading != null) {
                 loading.showLoading();
             }
+            isScrollTop = true;
+            tabPosition = 0;
             refreshRequest();
         }
     }
@@ -729,6 +778,7 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
                     @Override
                     public void onClick(View v) {
                         int position = (int) view.getTag();
+                        tabPosition = position;
                         //这里就可以根据业务需求处理点击事件了。
                         ((LinearLayoutManager) myRecyclerView.getLayoutManager()).scrollToPositionWithOffset(classname.get(position).getPage(), 0);
                     }
@@ -826,7 +876,7 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
                         if (count >= Integer.parseInt(gMinMaxes.getMinnum())) {
                             changeNumber(cartList.getId(), count + "", position);
                         } else {
-                            showToast("最小购买数量为" + gMinMaxes.getMaxnum());
+                            showToast("最小购买数量为" + gMinMaxes.getMinnum());
                             kProgressHUD.dismiss();
                         }
                     } else {
@@ -874,6 +924,8 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
                     isload = false;
                     refreshRequest();
                     statisticalData();
+                } else {
+                    Toast.makeText(mActivity, JsonHelper.errorMsg(json), Toast.LENGTH_SHORT).show();
                 }
             }
         });

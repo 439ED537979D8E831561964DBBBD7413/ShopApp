@@ -33,7 +33,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:paddingRight="@dimen/default_padding"
+        android:padding="@dimen/H5dp"
+        android:layout_margin="@dimen/H5dp"
         android:src="@drawable/search" />
 
 </RelativeLayout>

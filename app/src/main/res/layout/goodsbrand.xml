@@ -1,95 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical">
 
-    <RelativeLayout
-        android:id="@+id/title_view"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/title_height"
-        android:background="@drawable/gradient"
-        android:gravity="center_vertical">
-
-        <TextView
-            android:id="@+id/forewadImg"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:clickable="true"
-            android:drawableLeft="@drawable/forward"
-            android:gravity="center_vertical"
-            android:text="返回"
-            android:textColor="@android:color/white"/>
-
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:maxWidth="240dp"
-            android:singleLine="true"
-            android:textColor="@color/color_white"
-            android:textSize="18sp"/>
-
-        <TextView
-            android:id="@+id/id_right_btu"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="16dp"
-            android:textColor="@color/color_white"
-            android:textSize="32sp"/>
-    </RelativeLayout>
+    <include layout="@layout/titlebar" />
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="@color/color_white">
+        android:layout_height="wrap_content"
+        android:background="@color/color_white"
+        android:padding="@dimen/H8dp">
 
-        <TextView
-            android:id="@+id/submitTv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:padding="10dp"
-            android:text="搜索"
-            android:textColor="@color/text_color"
-            android:textSize="14sp"/>
-
-        <LinearLayout
+        <com.yj.shopapp.view.ClearEditText
+            android:id="@+id/value_Et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_toLeftOf="@+id/submitTv"
-            android:background="@drawable/ic_default_item_bg"
-            android:orientation="horizontal"
-            android:paddingLeft="5dp">
-
-            <ImageView
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/search_icon"/>
-
-            <EditText
-                android:id="@+id/value_Et"
-                android:layout_width="match_parent"
-                android:layout_height="32dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="10dp"
-                android:background="@null"
-                android:gravity="center_vertical"
-                android:hint="批发商名称搜索"
-                android:singleLine="true"
-                android:textColor="@color/text_color"
-                android:textSize="14sp"/>
-
-        </LinearLayout>
+            android:background="@drawable/tv_bg_shape_5"
+            android:drawableLeft="@drawable/magnifier_white"
+            android:drawablePadding="@dimen/H10dp"
+            android:hint="输入品牌名称"
+            android:padding="@dimen/H8dp"
+            android:singleLine="true"
+            android:textColor="@color/color_aaaaaa"
+            android:textSize="14sp" />
 
     </RelativeLayout>
 
@@ -97,5 +33,7 @@
         android:id="@+id/my_RecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"/>
+        android:background="@color/white"
+        android:paddingLeft="@dimen/H15dp"
+        android:paddingRight="@dimen/H15dp" />
 </LinearLayout>

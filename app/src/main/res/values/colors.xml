@@ -27,7 +27,7 @@
     <color name="line3">#CCCCCC</color>
     <color name="title_font">#262626</color>
     <color name="redyellow">#e01616</color>
-
+    <color name="demo_dark_transparent">#24000000</color>
     <color name="text_blue">#0076FF</color>
     <color name="text_gary">#808080</color>
     <color name="text_gary_4d">#4d4d4d</color>
@@ -80,5 +80,9 @@
     <color name="color_fafafa">#FAFAFA</color>
     <color name="color_f44421">#F44421</color>
     <color name="color_cccccc">#cccccc</color>
+    <color name="color_eeeeee">#EEEEEE</color>
+    <color name="color_FE3000">#FE3000</color>
+    <color name="color_4c4c4c">#4c4c4c</color>
+    <color name="color_ff9000">#ff9000</color>
 
 </resources>

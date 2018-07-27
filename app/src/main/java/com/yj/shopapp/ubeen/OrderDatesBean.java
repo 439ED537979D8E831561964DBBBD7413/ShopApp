@@ -328,6 +328,15 @@ public class OrderDatesBean {
         private String cid;
         private int index;
         private String classname;
+        private String unit;
+
+        public String getUnit() {
+            return unit == null ? "" : unit;
+        }
+
+        public void setUnit(String unit) {
+            this.unit = unit;
+        }
 
         public String getClassname() {
             return classname == null ? "" : classname;
@@ -409,6 +418,9 @@ public class OrderDatesBean {
             this.cid = cid;
         }
 
+        public ItemlistBean() {
+        }
+
         @Override
         public int describeContents() {
             return 0;
@@ -424,9 +436,9 @@ public class OrderDatesBean {
             dest.writeString(this.oos);
             dest.writeInt(this.oosmoney);
             dest.writeString(this.cid);
-        }
-
-        public ItemlistBean() {
+            dest.writeInt(this.index);
+            dest.writeString(this.classname);
+            dest.writeString(this.unit);
         }
 
         protected ItemlistBean(Parcel in) {
@@ -438,9 +450,12 @@ public class OrderDatesBean {
             this.oos = in.readString();
             this.oosmoney = in.readInt();
             this.cid = in.readString();
+            this.index = in.readInt();
+            this.classname = in.readString();
+            this.unit = in.readString();
         }
 
-        public static final Parcelable.Creator<ItemlistBean> CREATOR = new Parcelable.Creator<ItemlistBean>() {
+        public static final Creator<ItemlistBean> CREATOR = new Creator<ItemlistBean>() {
             @Override
             public ItemlistBean createFromParcel(Parcel source) {
                 return new ItemlistBean(source);

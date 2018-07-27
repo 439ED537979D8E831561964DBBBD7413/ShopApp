@@ -15,6 +15,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.squareup.okhttp.Request;
@@ -33,7 +34,7 @@ import com.yj.shopapp.util.ImgUtils;
 import com.yj.shopapp.util.JsonHelper;
 import com.yj.shopapp.util.NetUtils;
 import com.yj.shopapp.util.PhotoUtil;
-import com.yj.shopapp.util.PreferenceUtils;
+import com.yj.shopapp.util.StatusBarUtils;
 import com.yj.shopapp.view.headfootrecycleview.OnRecyclerViewScrollListener;
 import com.yj.shopapp.view.headfootrecycleview.RecyclerViewHeaderFooterAdapter;
 import com.yj.shopapp.wbeen.Imglist;
@@ -79,9 +80,10 @@ public class ChooseActivity extends BaseActivity implements BaseRecyclerView {
 
     int UploadcCategoryImgURLRequestCode = 1005;
 
-
     GridLayoutManager staggeredGridLayoutManager;
     List<Imglist> imglists = new ArrayList<>();
+    @BindView(R.id.title_view)
+    RelativeLayout titleView;
 
     private RecyclerViewHeaderFooterAdapter adapter;
 
@@ -94,9 +96,6 @@ public class ChooseActivity extends BaseActivity implements BaseRecyclerView {
     private ILoadView iLoadView = null;
     private View loadMoreView = null;
     Intent intent;
-
-    String uid;
-    String token;
     String number;
 
     @Override
@@ -114,14 +113,9 @@ public class ChooseActivity extends BaseActivity implements BaseRecyclerView {
     protected void initData() {
         intent = getIntent();
         title.setText("图片选择");
-        idRightBtu.setText("图片管理");
-
-        uid = PreferenceUtils.getPrefString(mContext, Contants.Preference.UID, "");
-        token = PreferenceUtils.getPrefString(mContext, Contants.Preference.TOKEN, "");
         if (getIntent().hasExtra("GoodsNumber")) {
-            number = getIntent().getExtras().getString("GoodsNumber");
+            number = getIntent().getStringExtra("GoodsNumber");
         }
-
         imglists.add(new Imglist("", "res://com.yj.shopapp/" + R.drawable.select_image_p, "", ""));
         imglists.add(new Imglist("", "res://com.yj.shopapp/" + R.drawable.select_image_x, "", ""));
         if (getBundle() != null) {
@@ -131,6 +125,14 @@ public class ChooseActivity extends BaseActivity implements BaseRecyclerView {
         init();
     }
 
+    @Override
+    protected void setStatusBar() {
+        StatusBarUtils.from(ChooseActivity.this)
+                .setActionbarView(titleView)
+                .setTransparentStatusbar(true)
+                .setLightStatusBar(false)
+                .process();
+    }
 
     public void setUploadURL() {
         if (intent.hasExtra("funtion")) {
@@ -479,7 +481,6 @@ public class ChooseActivity extends BaseActivity implements BaseRecyclerView {
                     || ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, 1);
             } else {
-
                 File cameraFile = PhotoUtil.camera(ChooseActivity.this);
                 if (cameraFile != null) {
                     cameraPath = cameraFile.getAbsolutePath();
@@ -502,7 +503,6 @@ public class ChooseActivity extends BaseActivity implements BaseRecyclerView {
     public void onLongItemClick(int position) {
 
     }
-
 
     public class mLoadMoreClickListener implements LoadMoreClickListener {
 

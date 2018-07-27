@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/stopgoods_recycler_item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white">
+
+    <RelativeLayout
+        android:id="@+id/super_imag_rl"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_margin="@dimen/H10dp"
+        android:background="@drawable/border1dp"
+        android:padding="@dimen/H1dp">
+
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/simpleDraweeView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            fresco:placeholderImage="@drawable/load" />
+
+        <ImageView
+            android:id="@+id/top_status_imag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/pause"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/super_imag_rl"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/goodsnameTv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textColor="@color/color_theme"
+            android:textSize="15sp" />
+
+
+        <TextView
+            android:id="@+id/specsTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/H8dp"
+            android:layout_marginTop="@dimen/H8dp"
+            android:text=""
+            android:textColor="@color/color_999999"
+            android:textSize="14sp" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/priceTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="@color/color_fd2f2f"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/delect_tv"
+                android:layout_width="65dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="20dp"
+                android:background="@drawable/goodcar_bg3"
+                android:gravity="center"
+                android:padding="@dimen/H3dp"
+                android:text="移除列表"
+                android:textColor="@color/white" />
+        </RelativeLayout>
+
+    </LinearLayout>
+</RelativeLayout>

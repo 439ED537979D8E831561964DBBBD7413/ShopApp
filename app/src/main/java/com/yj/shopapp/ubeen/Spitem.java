@@ -41,6 +41,15 @@ public class Spitem implements Parcelable {
     private String specs;
     private String msg;
     private String specialnote;
+    private String localhost;
+
+    public String getLocalhost() {
+        return localhost == null ? "" : localhost;
+    }
+
+    public void setLocalhost(String localhost) {
+        this.localhost = localhost;
+    }
 
     public String getSpecialnote() {
         return specialnote == null ? "" : specialnote;
@@ -214,6 +223,7 @@ public class Spitem implements Parcelable {
         dest.writeString(this.specs);
         dest.writeString(this.msg);
         dest.writeString(this.specialnote);
+        dest.writeString(this.localhost);
     }
 
     protected Spitem(Parcel in) {
@@ -235,6 +245,7 @@ public class Spitem implements Parcelable {
         this.specs = in.readString();
         this.msg = in.readString();
         this.specialnote = in.readString();
+        this.localhost = in.readString();
     }
 
     public static final Creator<Spitem> CREATOR = new Creator<Spitem>() {

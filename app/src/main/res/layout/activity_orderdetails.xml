@@ -289,7 +289,7 @@
                 android:background="@color/white"
                 android:gravity="center_vertical"
                 android:paddingLeft="@dimen/H10dp"
-                android:text="应付金额：￥305.05"
+                android:text=""
                 android:textColor="@color/black" />
 
             <TextView

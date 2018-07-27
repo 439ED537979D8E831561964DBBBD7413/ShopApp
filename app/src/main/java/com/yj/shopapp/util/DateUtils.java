@@ -128,6 +128,25 @@ public class DateUtils {
         return times;
     }
 
+    /**
+     * 日期字符串转时间戳
+     *
+     * @param dateStr
+     * @param "yyyy-mm-dd"
+     * @return
+     */
+    public static Integer transForMilliSecondByTim(String dateStr, String tim) {
+        SimpleDateFormat sdf = new SimpleDateFormat(tim);
+        Date date = null;
+        try {
+            date = sdf.parse(dateStr);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        if (date == null) return 0;
+        return (int)(date.getTime() / 1000);
+    }
+
     @SuppressLint("DefaultLocale")
     public static String timed(Long time) {
         long hours = (time / (1000 * 60 * 60));
@@ -170,7 +189,7 @@ public class DateUtils {
             }
             long time = Long.parseLong(str);
             Date d = new Date(time);
-            SimpleDateFormat sf = new SimpleDateFormat("yyyy年MM月dd日 hh时mm分", Locale.CHINA);
+            SimpleDateFormat sf = new SimpleDateFormat("yyyy年MM月dd日 HH时mm分", Locale.CHINA);
             return sf.format(d);
         } catch (Exception e) {
             return "";

@@ -4,22 +4,20 @@
     android:id="@+id/scroll"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
-
-    <!--<ScrollView-->
-    <!--android:id="@+id/scroll"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent">-->
+    android:background="@color/white"
+    android:scrollbars="none">
 
     <LinearLayout
         android:id="@+id/bgView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:orientation="vertical">
 
         <RelativeLayout
+            android:id="@+id/login_img_bg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -28,33 +26,6 @@
                 android:layout_height="250dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/logingbg" />
-
-            <!--<RelativeLayout-->
-            <!--android:id="@+id/title_view"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="44dp">-->
-
-            <!--<TextView-->
-            <!--android:id="@+id/title"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_centerVertical="true"-->
-            <!--android:layout_marginLeft="24dip"-->
-            <!--android:singleLine="true"-->
-            <!--android:text="登陆"-->
-            <!--android:textColor="@color/color_white"-->
-            <!--android:textSize="18sp"/>-->
-
-            <!--<TextView-->
-            <!--android:id="@+id/id_right_btu"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_alignParentRight="true"-->
-            <!--android:layout_centerVertical="true"-->
-            <!--android:layout_marginRight="16dp"-->
-            <!--android:textColor="@color/color_white"-->
-            <!--android:textSize="14sp"/>-->
-            <!--</RelativeLayout>-->
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -84,79 +55,42 @@
             android:layout_height="wrap_content"
             android:layout_margin="15dp"
             android:background="@drawable/buttonborders"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="@dimen/H10dp">
 
-            <!--<com.rengwuxian.materialedittext.MaterialEditText-->
-            <!--android:id="@+id/user_name_et"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:hint="用户名"-->
-            <!--android:textSize="16sp"-->
-            <!--app:met_clearButton="true"-->
-            <!--app:met_floatingLabel="highlight"-->
-            <!--app:met_maxCharacters="20"-->
-            <!--app:met_primaryColor="?colorAccent"-->
-            <!--app:met_singleLineEllipsis="true"/>-->
-
-            <!--<com.rengwuxian.materialedittext.MaterialEditText-->
-            <!--android:id="@+id/user_password_et"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:hint="密码"-->
-            <!--android:password="true"-->
-            <!--android:text=""-->
-            <!--android:textSize="16sp"-->
-            <!--app:met_clearButton="true"-->
-            <!--app:met_floatingLabel="highlight"-->
-            <!--app:met_maxCharacters="20"-->
-            <!--app:met_primaryColor="?colorAccent"-->
-            <!--app:met_singleLineEllipsis="true"/>-->
-            <LinearLayout
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="15dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="用户名"
-                    android:textSize="16sp" />
+                app:counterEnabled="true"
+                app:counterMaxLength="11">
 
                 <com.yj.shopapp.view.ClearEditText
                     android:id="@+id/user_name_et"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:hint="用户名"
                     android:imeOptions="actionNext"
                     android:inputType="number"
                     android:maxLines="11"
                     android:nextFocusForward="@+id/user_password_et"
                     android:text=""
                     android:textColorHint="@color/all_bg" />
-            </LinearLayout>
+            </android.support.design.widget.TextInputLayout>
 
-            <LinearLayout
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="15dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="密    码"
-                    android:textSize="16sp" />
+                android:layout_height="wrap_content">
 
                 <com.yj.shopapp.view.ClearEditText
                     android:id="@+id/user_password_et"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:hint="密码"
                     android:imeOptions="actionDone"
                     android:inputType="textPassword"
                     android:text=""
                     android:textColorHint="@color/all_bg" />
-            </LinearLayout>
-
+            </android.support.design.widget.TextInputLayout>
 
         </LinearLayout>
 
@@ -211,7 +145,7 @@
         <View
             android:id="@+id/fillView"
             android:layout_width="match_parent"
-            android:layout_height="0dp" />
+            android:layout_height="200dp" />
     </LinearLayout>
 </ScrollView>
 

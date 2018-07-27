@@ -20,6 +20,7 @@ import com.yj.shopapp.R;
 import com.yj.shopapp.config.Contants;
 import com.yj.shopapp.http.HttpHelper;
 import com.yj.shopapp.http.OkHttpResponseHandler;
+import com.yj.shopapp.ubeen.LimitedSale;
 import com.yj.shopapp.ubeen.MyBuGood;
 import com.yj.shopapp.ui.activity.ImgUtil.NewBaseFragment;
 import com.yj.shopapp.ui.activity.Interface.OnItemChildViewOnClickListener;
@@ -27,7 +28,12 @@ import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.DateUtils;
 import com.yj.shopapp.util.DisplayUtil;
+import com.yj.shopapp.util.JsonHelper;
 import com.yj.shopapp.util.PreferenceUtils;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -85,6 +91,7 @@ public class MyBuGoodFragment extends NewBaseFragment implements OnRefreshListen
         myRecyclerView.setAdapter(adapter);
         addressId = PreferenceUtils.getPrefString(mActivity, "addressId", "");
         kProgressHUD = growProgress("正在取消");
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -137,30 +144,42 @@ public class MyBuGoodFragment extends NewBaseFragment implements OnRefreshListen
                 super.onResponse(request, response);
                 ShowLog.e(response);
                 adapter.closeCountDownTimers();
-                JSONObject object = JSONObject.parseObject(response);
-                if (object.getInteger("status") == 1) {
-                    myBuGood = object.toJavaObject(MyBuGood.class);
-                    if (myBuGood != null) {
-                        listsBeans.addAll(myBuGood.getLists());
-                    }
-                    if (loading != null) {
-                        loading.showContent();
-                    }
-                    adapter.setList(listsBeans);
-                } else {
-                    if (listsBeans.size() > 0) {
-                        swipeRefreshLayout.finishLoadMoreWithNoMoreData();
-                    } else {
-                        if (loading != null) {
-                            loading.showEmpty();
+                if (JsonHelper.isRequstOK(response, mActivity)) {
+                    JSONObject object = JSONObject.parseObject(response);
+                    if (object.getInteger("status") == 1) {
+                        listsBeans.clear();
+                        myBuGood = object.toJavaObject(MyBuGood.class);
+                        if (myBuGood != null) {
+                            listsBeans.addAll(myBuGood.getLists());
                         }
+                        if (loading != null) {
+                            loading.showContent();
+                        }
+                        adapter.setList(listsBeans);
+                    } else {
+                        if (listsBeans.size() > 0) {
+                            swipeRefreshLayout.finishLoadMoreWithNoMoreData();
+                        } else {
+                            if (loading != null) {
+                                loading.showEmpty();
+                            }
+                        }
+                        p--;
+                        //showToast(object.getString("info"));
+                        adapter.notifyDataSetChanged();
                     }
-                    p--;
-                    //showToast(object.getString("info"));
-                    adapter.notifyDataSetChanged();
                 }
             }
         });
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(LimitedSale sale) {
+        if (sale.getId().equals("3")) {
+            if (swipeRefreshLayout != null) {
+                swipeRefreshLayout.autoRefresh();
+            }
+        }
     }
 
     @Override
@@ -169,6 +188,7 @@ public class MyBuGoodFragment extends NewBaseFragment implements OnRefreshListen
             case R.id.itemview:
                 Bundle bundle = new Bundle();
                 bundle.putParcelable("mybugood", listsBeans.get(position));
+                bundle.putString("isRequest", "false");
                 CommonUtils.goActivity(mActivity, BuShopDetailsAcitivity.class, bundle);
                 break;
             case R.id.cancelButton:
@@ -216,6 +236,7 @@ public class MyBuGoodFragment extends NewBaseFragment implements OnRefreshListen
                     if (swipeRefreshLayout != null) {
                         swipeRefreshLayout.autoRefresh();
                     }
+                    EventBus.getDefault().post(new LimitedSale("2"));
                 } else {
                     showToast(JSONObject.parseObject(response).getString("info"));
                 }
@@ -248,6 +269,7 @@ public class MyBuGoodFragment extends NewBaseFragment implements OnRefreshListen
 
     @Override
     public void onDestroy() {
+        EventBus.getDefault().unregister(this);
         super.onDestroy();
         loading = null;
     }

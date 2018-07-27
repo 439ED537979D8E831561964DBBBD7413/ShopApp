@@ -96,13 +96,14 @@ public class GoodsRecord extends BaseActivity implements OnRefreshListener, OnLo
         swipeRefreshLayout.setHeaderHeight(50);
         swipeRefreshLayout.setFooterHeight(50);
         swipeRefreshLayout.setEnableRefresh(false);
+        swipeRefreshLayout.setEnableLoadMore(false);
         swipeRefreshLayout.setOnRefreshListener(this);
         swipeRefreshLayout.setOnLoadMoreListener(this);
         swipeRefreshLayout.setDisableContentWhenRefresh(true);//是否在刷新的时候禁止列表的操作
         swipeRefreshLayout.setDisableContentWhenLoading(true);//是否在加载的时候禁止列表的操作
     }
 
-    private void RequstData() {
+    private void requstHistoricalGoods() {
         Map<String, String> params = new HashMap<>();
         params.put("uid", uid);
         params.put("token", token);
@@ -126,6 +127,7 @@ public class GoodsRecord extends BaseActivity implements OnRefreshListener, OnLo
                 if (swipeRefreshLayout != null) {
                     swipeRefreshLayout.finishRefresh(true);
                     swipeRefreshLayout.finishLoadMore(true);
+                    swipeRefreshLayout.setEnableLoadMore(true);
                 }
             }
 
@@ -165,7 +167,7 @@ public class GoodsRecord extends BaseActivity implements OnRefreshListener, OnLo
     @Override
     public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
         CurrentPage++;
-        RequstData();
+        requstHistoricalGoods();
     }
 
     @Override
@@ -173,7 +175,7 @@ public class GoodsRecord extends BaseActivity implements OnRefreshListener, OnLo
         CurrentPage = 1;
         orderRecords.clear();
         kw = "";
-        RequstData();
+        requstHistoricalGoods();
         if (swipeRefreshLayout != null) {
             swipeRefreshLayout.setNoMoreData(false);
         }
@@ -242,7 +244,7 @@ public class GoodsRecord extends BaseActivity implements OnRefreshListener, OnLo
         if (!"".equals(s.toString())) {
             kw = s.toString().trim();
             orderRecords.clear();
-            RequstData();
+            requstHistoricalGoods();
         }
 
     }

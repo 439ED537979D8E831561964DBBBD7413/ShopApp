@@ -1,82 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <RelativeLayout
         android:id="@+id/onItemclick"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="90dp"
         android:background="@color/white"
         android:orientation="horizontal">
 
         <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/Goods_imag"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_margin="@dimen/H10dp"
-            android:background="@drawable/border1dp"
-            android:padding="1dp"/>
+            android:layout_width="170dp"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/H5dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/Goods_imag"
             android:orientation="vertical"
-            android:paddingTop="10dp">
+            android:paddingLeft="@dimen/H5dp"
+            android:paddingTop="@dimen/H5dp">
 
             <TextView
                 android:id="@+id/goodsName"
                 android:layout_width="wrap_content"
-                android:layout_height="35dp"
+                android:layout_height="38dp"
                 android:maxLines="2"
                 android:padding="2dp"
-                android:text="华为手机"
-                android:textColor="@color/color474747"/>
+                android:text=""
+                android:textColor="@color/color474747" />
 
             <TextView
                 android:id="@+id/shopspec"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="2dp"
-                android:text="规格"
+                android:text=""
                 android:textColor="@color/color909090"
-                android:textSize="12sp"/>
+                android:textSize="12sp"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/number"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:padding="2dp"
                 android:paddingRight="10dp"
-                android:text="90件"
+                android:text="积分"
+                android:paddingLeft="@dimen/H2dp"
                 android:textColor="@color/color909090"
-                android:textSize="12sp"/>
+                android:textSize="12sp" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:text="积分:  "
-                    android:padding="@dimen/H2dp"
-                    android:textColor="@color/color909090"
-                    android:textSize="12sp"/>
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/H8dp">
 
                 <TextView
                     android:id="@+id/integral_num"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:text="100"
+                    android:text=""
+                    android:padding="@dimen/H2dp"
                     android:textColor="#fe3000"
                     android:textSize="15sp"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold" />
             </LinearLayout>
 
         </LinearLayout>
@@ -84,21 +76,21 @@
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/Goods_imag"
-            android:layout_marginRight="12dp"
-            android:layout_alignParentRight="true">
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_margin="@dimen/H8dp">
 
             <TextView
                 android:id="@+id/Redeem_now"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/fillet_tv_5"
+                android:background="@drawable/fillet_tv_orange"
                 android:gravity="center"
-                android:padding="3dp"
+                android:padding="@dimen/H4dp"
                 android:text="立即兑换"
                 android:textColor="@color/white"
                 android:textSize="12sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
         </RelativeLayout>
 
     </RelativeLayout>

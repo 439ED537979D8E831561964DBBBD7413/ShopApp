@@ -44,8 +44,10 @@ public class LiftAdpter extends CommonBaseAdapter<GoodAddress> {
         }
         if (defItem == i) {
             view.setBackgroundColor(context.getResources().getColor(R.color.skyblue));
+            holder.commText.setTextColor(context.getResources().getColor(R.color.white));
         } else {
             view.setBackgroundColor(context.getResources().getColor(R.color.all_bg));
+            holder.commText.setTextColor(context.getResources().getColor(R.color.color333333));
         }
         holder.commText.setText(list.get(i).getName());
         return view;

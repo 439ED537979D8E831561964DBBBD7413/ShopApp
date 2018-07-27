@@ -43,6 +43,12 @@
             android:orientation="horizontal">
 
             <ProgressBar
+                style="?android:progressBarStyleSmall"
+                android:layout_width="@dimen/H50dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical" />
+
+            <ProgressBar
                 android:id="@+id/npb"
                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                 android:layout_width="0dp"

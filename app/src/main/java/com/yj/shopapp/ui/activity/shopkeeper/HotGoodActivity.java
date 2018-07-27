@@ -114,11 +114,8 @@ public class HotGoodActivity extends BaseActivity implements OnRefreshListener, 
             public void onError(Request request, Exception e) {
                 super.onError(request, e);
                 p--;
-
                 if (swipeRefreshLayout != null) {
                     swipeRefreshLayout.finishRefresh(false);
-                }
-                if (swipeRefreshLayout != null) {
                     swipeRefreshLayout.finishLoadMore(false);
                 }
             }
@@ -128,8 +125,6 @@ public class HotGoodActivity extends BaseActivity implements OnRefreshListener, 
                 super.onAfter();
                 if (swipeRefreshLayout != null) {
                     swipeRefreshLayout.finishRefresh(true);
-                }
-                if (swipeRefreshLayout != null) {
                     swipeRefreshLayout.finishLoadMore(true);
                 }
             }
@@ -143,6 +138,11 @@ public class HotGoodActivity extends BaseActivity implements OnRefreshListener, 
                     adpter.setList(hotIndexList);
                     if (loading != null) {
                         loading.showContent();
+                    }
+                    if (response.equals("[]")) {
+                        if (hotIndexList.size() > 0) {
+                            p--;
+                        }
                     }
                 } else if (JsonHelper.getRequstOK(response) == 6) {
                     p--;
@@ -170,7 +170,9 @@ public class HotGoodActivity extends BaseActivity implements OnRefreshListener, 
                 break;
             case R.id.goCarlist:
                 if (hotIndexList.get(position).getSale_status().equals("0")) {
-
+                    Bundle bundle1 = new Bundle();
+                    bundle1.putString("goodsId", hotIndexList.get(position).getId());
+                    CommonUtils.goActivity(mContext, SGoodsDetailActivity.class, bundle1);
                 } else {
                     if (getAddressId().equals("")) {
                         new MaterialDialog.Builder(mContext).title("温馨提示!")

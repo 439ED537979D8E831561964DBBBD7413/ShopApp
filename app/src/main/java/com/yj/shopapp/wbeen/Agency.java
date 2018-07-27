@@ -11,7 +11,7 @@ public class Agency {
     private String  uid;
 
     public String getId() {
-        return id;
+        return id == null ? "" : id;
     }
 
     public void setId(String id) {
@@ -19,7 +19,7 @@ public class Agency {
     }
 
     public String getName() {
-        return name;
+        return name == null ? "" : name;
     }
 
     public void setName(String name) {
@@ -27,7 +27,7 @@ public class Agency {
     }
 
     public String getTel() {
-        return tel;
+        return tel == null ? "" : tel;
     }
 
     public void setTel(String tel) {
@@ -35,7 +35,7 @@ public class Agency {
     }
 
     public String getMobile() {
-        return mobile;
+        return mobile == null ? "" : mobile;
     }
 
     public void setMobile(String mobile) {
@@ -43,7 +43,7 @@ public class Agency {
     }
 
     public String getUid() {
-        return uid;
+        return uid == null ? "" : uid;
     }
 
     public void setUid(String uid) {

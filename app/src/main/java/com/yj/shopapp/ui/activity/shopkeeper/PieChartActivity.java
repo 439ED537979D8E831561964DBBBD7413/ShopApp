@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -73,13 +74,8 @@ public class PieChartActivity extends BaseActivity {
     @Override
     protected void initData() {
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
+        toolbar.setNavigationOnClickListener(v -> finish());
         rightTv.setText("全部");
         contentTv.setText("订单统计");
         adpter = new PieChartAdpter(mContext);
@@ -116,7 +112,6 @@ public class PieChartActivity extends BaseActivity {
         params.put("uid", uid);
         params.put("token", token);
         params.put("month", time);
-        ShowLog.e(time);
         HttpHelper.getInstance().post(mContext, Contants.PortU.ORDER_CHART, params, new OkHttpResponseHandler<String>(mContext) {
             @Override
             public void onResponse(Request request, String json) {
@@ -124,10 +119,14 @@ public class PieChartActivity extends BaseActivity {
                 ShowLog.e(json);
                 if (json.startsWith("{")) {
                     chart = JSONObject.parseObject(json, OrderChart.class);
-                    screenData.setText(String.format("总金额：%1$s   共%3$s个订单   共%2$s件商品", chart.getAllmoney(), chart.getAllcount(), chart.getOrder_num()));
+                    if (screenData != null) {
+                        screenData.setText(String.format("总金额：%1$s   共%3$s个订单   共%2$s件商品", chart.getAllmoney(), chart.getAllcount(), chart.getOrder_num()));
+                    }
                     listBeans.addAll(chart.getList());
                     adpter.setList(listBeans);
-                    initDatas();
+                    if (!isFinishing()) {
+                        initDatas();
+                    }
                     if (loading != null) {
                         loading.showContent();
                     }

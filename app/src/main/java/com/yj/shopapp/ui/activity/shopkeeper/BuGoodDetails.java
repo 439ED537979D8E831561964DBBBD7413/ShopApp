@@ -78,6 +78,7 @@ public class BuGoodDetails extends BaseActivity {
         buGoodDetailsViewPager = new BuGoodDetailsViewPager(mContext, getSupportFragmentManager(), new String[]{"正在疯抢", "即将开抢", "我的抢购"});
         myViewpager.setAdapter(buGoodDetailsViewPager);
         myViewpager.setOpenAnimation(false);
+        myViewpager.setOffscreenPageLimit(2);
         tabLayout.setupWithViewPager(myViewpager);
         rightTv.setText("规则");
         getRule();
@@ -97,17 +98,25 @@ public class BuGoodDetails extends BaseActivity {
         //更新CustomView
         tab.setCustomView(buGoodDetailsViewPager.getTabItemView(position, size));
         //需加上以下代码, 不然会出现更新Tab角标后, 选中的Tab字体颜色不是选中状态的颜色
-        //tabLayout.getTabAt(tabLayout.getSelectedTabPosition()).getCustomView().setSelected(true);
+        //Objects.requireNonNull(Objects.requireNonNull(tabLayout.getTabAt(tabLayout.getSelectedTabPosition())).getCustomView()).setSelected(true);
+        if (tab.isSelected()) {
+            tab.select();
+        }
     }
 
     @Override
     protected void setStatusBar() {
-        StatusBarUtil.setColor(this, getResources().getColor(R.color.white), 50);
+        StatusBarUtil.setColor(this, getResources().getColor(R.color.color_4c4c4c), 0);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(LimitedSale sale) {
-        myViewpager.setCurrentItem(2);
+        if (sale.getId().equals("1")) {
+            myViewpager.setCurrentItem(2);
+        } else if (sale.getId().equals("2")) {
+            getGoodsNum();
+        }
+
     }
 
     private void getRule() {

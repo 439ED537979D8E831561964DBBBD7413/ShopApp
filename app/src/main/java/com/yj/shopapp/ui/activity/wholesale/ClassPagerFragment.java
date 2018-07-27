@@ -46,23 +46,25 @@ public class ClassPagerFragment extends NewBaseFragment {
         assert getArguments() != null;
         listBeans = getArguments().getParcelableArrayList("listbeans");
         GridLayoutManager layoutManager = new GridLayoutManager(mActivity, 4);
-        adapter = new SWhomeAdapter(mActivity, listBeans);
+        adapter = new SWhomeAdapter(mActivity);
+        classiGv.setNestedScrollingEnabled(false);
         if (classiGv != null) {
             classiGv.setLayoutManager(layoutManager);
             classiGv.setNestedScrollingEnabled(false);
             classiGv.setAdapter(adapter);
 
         }
-    }
-
-    @Override
-    protected void initData() {
         adapter.setOnItemClickListener((a, b, c, d) -> {
             Bundle bundle = new Bundle();
             bundle.putString("bigtypeid", listBeans.get(c).getId());
             bundle.putString("bigtypeName", listBeans.get(c).getName());
             CommonUtils.goActivity(mActivity, WGoodsActivity.class, bundle);
         });
+    }
+
+    @Override
+    protected void initData() {
+        adapter.setList(listBeans);
     }
 
 }

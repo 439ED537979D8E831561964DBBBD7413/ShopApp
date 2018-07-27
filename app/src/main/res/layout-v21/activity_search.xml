@@ -8,7 +8,7 @@
     <LinearLayout
         android:id="@+id/title_layout"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/title_height"
+        android:layout_height="@dimen/H50dp"
         android:elevation="@dimen/H3dp"
         android:gravity="center"
         android:orientation="horizontal">
@@ -35,7 +35,7 @@
                 android:layout_gravity="center_vertical"
                 android:src="@drawable/magnifier_white" />
 
-            <EditText
+            <com.yj.shopapp.view.ClearEditText
                 android:id="@+id/value_Et"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -44,11 +44,11 @@
                 android:focusable="true"
                 android:focusableInTouchMode="true"
                 android:gravity="center_vertical"
-                android:hint="请输入关键字或条码"
-                android:padding="@dimen/H5dp"
+                android:hint="请输入商品名称、条码、订单号"
+                android:padding="@dimen/H8dp"
                 android:paddingLeft="@dimen/H10dp"
                 android:singleLine="true"
-                android:textColor="@color/text_color"
+                android:textColor="@color/color_999999"
                 android:textSize="13sp" />
 
         </LinearLayout>
@@ -60,9 +60,9 @@
             android:layout_marginRight="8dp"
             android:background="@drawable/tv_bg_shape_4"
             android:gravity="center"
-            android:padding="@dimen/H5dp"
+            android:padding="@dimen/H8dp"
             android:text="搜索"
-            android:textColor="@color/color_999999"
+            android:textColor="@color/color333333"
             android:textSize="13sp" />
     </LinearLayout>
 

@@ -33,7 +33,7 @@ public class IntegralAdapter extends CommonAdapter<IntegralDetail> {
 
         holder.getTextView(R.id.order_time).setText(DateUtils.timet(integral.getTime()));
 
-        holder.getTextView(R.id.orderStatus).setText(String.format("【%1$s】  %2$s", Contants.OrderState[Integer.parseInt(integral.getType())], integral.getRemark()));
+        holder.getTextView(R.id.orderStatus).setText(String.format("【%1$s】  %2$s", Contants.OrderState[Integer.parseInt(integral.getType())], integral.getType_name()));
 
         holder.getTextView(R.id.ordermoney).setText(String.format("[金额] %s元", integral.getMoney()));
         TextView tv = holder.getTextView(R.id.integral);

@@ -1,9 +1,12 @@
 package com.yj.shopapp.wbeen;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by jm on 2016/5/2.
  */
-public class Itemtype {
+public class Itemtype implements Parcelable {
 
     /**
      * id : 22
@@ -68,4 +71,43 @@ public class Itemtype {
     public void setUid(String uid) {
         this.uid = uid;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.id);
+        dest.writeString(this.industryid);
+        dest.writeString(this.pid);
+        dest.writeString(this.name);
+        dest.writeString(this.sort);
+        dest.writeString(this.uid);
+    }
+
+    public Itemtype() {
+    }
+
+    protected Itemtype(Parcel in) {
+        this.id = in.readString();
+        this.industryid = in.readString();
+        this.pid = in.readString();
+        this.name = in.readString();
+        this.sort = in.readString();
+        this.uid = in.readString();
+    }
+
+    public static final Parcelable.Creator<Itemtype> CREATOR = new Parcelable.Creator<Itemtype>() {
+        @Override
+        public Itemtype createFromParcel(Parcel source) {
+            return new Itemtype(source);
+        }
+
+        @Override
+        public Itemtype[] newArray(int size) {
+            return new Itemtype[size];
+        }
+    };
 }

@@ -65,12 +65,7 @@ public class GoodsRecordDatails extends BaseActivity {
     protected void initData() {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        toolbar.setNavigationOnClickListener(v -> finish());
         rightTv.setVisibility(View.GONE);
         contentTv.setText("商品记录详情");
         if (getIntent().hasExtra("orderrecord")) {
@@ -99,10 +94,40 @@ public class GoodsRecordDatails extends BaseActivity {
         shopspec.setText(String.format("规格：%1$s/%2$s", orderRecord.getSpecs(), orderRecord.getUnit()));
         if (isNetWork(mContext)) {
             RequstData();
+            requstReturnGoodsDatails();
         }
     }
 
     private void RequstData() {
+        Map<String, String> params = new HashMap<>();
+        params.put("uid", uid);
+        params.put("token", token);
+        params.put("itemid", itemid);
+        params.put("p", CurrentPage + "");
+        HttpHelper.getInstance().post(mContext, Contants.PortU.SHOWHISTORY, params, new OkHttpResponseHandler<String>(mContext) {
+            @Override
+            public void onError(Request request, Exception e) {
+                super.onError(request, e);
+            }
+
+            @Override
+            public void onAfter() {
+                super.onAfter();
+            }
+
+            @Override
+            public void onResponse(Request request, String json) {
+                super.onResponse(request, json);
+                ShowLog.e(json);
+                if (JsonHelper.isRequstOK(json, mContext)) {
+                    shopHistories = JSONArray.parseArray(json, ShopHistory.class);
+                    adpter.setList(shopHistories);
+                }
+            }
+        });
+    }
+
+    private void requstReturnGoodsDatails() {
         Map<String, String> params = new HashMap<>();
         params.put("uid", uid);
         params.put("token", token);

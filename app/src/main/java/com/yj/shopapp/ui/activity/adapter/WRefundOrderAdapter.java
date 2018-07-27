@@ -1,7 +1,6 @@
 package com.yj.shopapp.ui.activity.adapter;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,8 +9,6 @@ import android.widget.TextView;
 import com.yj.shopapp.R;
 import com.yj.shopapp.config.Contants;
 import com.yj.shopapp.presenter.BaseRecyclerView;
-import com.yj.shopapp.ui.activity.wholesale.WChilOrderActivity;
-import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.DateUtils;
 import com.yj.shopapp.util.StringHelper;
 import com.yj.shopapp.view.headfootrecycleview.IRecyclerViewIntermediary;
@@ -118,13 +115,13 @@ public class WRefundOrderAdapter implements IRecyclerViewIntermediary {
         @Override
         public void onClick(View v) {
 
-            if (v.getId() == R.id.lookchillorder_tv) {
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("childOrder", notes.get(getPosition()));
-                CommonUtils.goActivity(mContext, WChilOrderActivity.class, bundle);
-                return;
-
-            }
+//            if (v.getId() == R.id.lookchillorder_tv) {
+//                Bundle bundle = new Bundle();
+//                bundle.putSerializable("childOrder", notes.get(getPosition()));
+//                CommonUtils.goActivity(mContext, WChilOrderActivity.class, bundle);
+//                return;
+//
+//            }
             if (mListener != null) {
                 mListener.onItemClick(getPosition());
             }

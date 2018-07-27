@@ -3,6 +3,7 @@ package com.yj.shopapp.ui.activity.wholesale;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.text.InputType;
@@ -29,6 +30,7 @@ import com.yj.shopapp.dialog.CenterDialog;
 import com.yj.shopapp.http.HttpHelper;
 import com.yj.shopapp.http.OkHttpResponseHandler;
 import com.yj.shopapp.ubeen.GoodAddress;
+import com.yj.shopapp.ubeen.ReCode;
 import com.yj.shopapp.ubeen.UserGroup;
 import com.yj.shopapp.ui.activity.ChooseActivity;
 import com.yj.shopapp.ui.activity.ShowLog;
@@ -36,8 +38,10 @@ import com.yj.shopapp.ui.activity.base.BaseActivity;
 import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.ImgUtils;
 import com.yj.shopapp.util.JsonHelper;
+import com.yj.shopapp.util.KeybordS;
 import com.yj.shopapp.util.NetUtils;
 import com.yj.shopapp.util.PreferenceUtils;
+import com.yj.shopapp.util.StatusBarUtils;
 import com.yj.shopapp.util.StringHelper;
 import com.yj.shopapp.wbeen.Itemtype;
 import com.yj.shopapp.wbeen.Itemunit;
@@ -106,7 +110,7 @@ public class WGoodsAddActivity extends BaseActivity implements CompoundButton.On
     @BindView(R.id.changeLy)
     LinearLayout changeLy;
     @BindView(R.id.goodsdetaail_Tx)
-    EditText goodsdetaailTx;
+    TextView goodsdetaailTx;
     @BindView(R.id.chengbenpriceTx)
     TextView chengbenpriceTx;
     @BindView(R.id.goodsupplierRL)
@@ -131,6 +135,8 @@ public class WGoodsAddActivity extends BaseActivity implements CompoundButton.On
     CheckBox addHotindex;
     @BindView(R.id.add_stopsale)
     CheckBox addStopsale;
+    @BindView(R.id.title_view)
+    RelativeLayout titleView;
     private String agencyname;
     private String agencyId;
     private int isstopsels = 1;//如果选中=1不选中=0
@@ -161,6 +167,15 @@ public class WGoodsAddActivity extends BaseActivity implements CompoundButton.On
     }
 
     @Override
+    protected void setStatusBar() {
+        StatusBarUtils.from(this)
+                .setActionbarView(titleView)
+                .setTransparentStatusbar(true)
+                .setLightStatusBar(false)
+                .process();
+    }
+
+    @Override
     protected int getLayoutId() {
         return R.layout.wactivity_goodsdetail;
     }
@@ -168,10 +183,14 @@ public class WGoodsAddActivity extends BaseActivity implements CompoundButton.On
     @Override
     protected void initData() {
         title.setText("添加商品");
-        goodsdetailRL.setFocusable(true);
+        //goodsdetailRL.setFocusable(true);
         goodsdetaailTx.setHint("请输入商品介绍");
-        isshow = getIntent().getExtras().getBoolean("isshow");
-        Itemnoid = getIntent().getExtras().getString("itemnoid");
+        if (getIntent().hasExtra("isshow")) {
+            isshow = getIntent().getBooleanExtra("isshow", false);
+        }
+        if (getIntent().hasExtra("itemnoid")) {
+            Itemnoid = getIntent().getStringExtra("itemnoid");
+        }
         goodsbarTx.setText(Itemnoid);
         progressDialog = growProgress(Contants.Progress.LOAD_ING);
         addHotindex.setOnCheckedChangeListener(this);
@@ -195,6 +214,12 @@ public class WGoodsAddActivity extends BaseActivity implements CompoundButton.On
         goodAddressTx.setText(bean.getName());
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void getQRCode(ReCode msg) {
+        if (msg.getStatus() == 3) {
+            getGoodsInfo("goodsIsExist", msg.getCode());
+        }
+    }
 
     /**
      * 加载单位
@@ -385,11 +410,10 @@ public class WGoodsAddActivity extends BaseActivity implements CompoundButton.On
         params.put("unitname", goodsunitTx.getText().toString().trim());
         params.put("specs", goodsnormsTx.getText().toString().trim());
         params.put("brochure", goodsdetaailTx.getText().toString().trim());
-        params.put("is_new", ischooseNewGood + "");
+        //params.put("is_hot", ischooseNewGood + "");
         params.put("customnumber", goodsode_Tx.getText().toString().trim());
         params.put("brand", brandId);
-        params.put("sale_status", isstopsels + "");
-        params.put("brochure", goodsdetaailTx.getText().toString().trim());
+        //params.put("sale_status", isstopsels + "");
         params.put("specialnote", goodExplain_Tx.getText().toString().trim());
         params.put("supplierid", agencyId);
         params.put("localhost", bean != null ? bean.getId() : "");//商品地址id
@@ -413,14 +437,15 @@ public class WGoodsAddActivity extends BaseActivity implements CompoundButton.On
                 ShowLog.e(json);
 
                 if (JsonHelper.isRequstOK(json, mContext)) {
-                    if (!isshow) {
+
+                    if (isshow) {
+                        showToastShort("提交成功");
+                        finish();
+                    } else {
                         showToastShort("提交成功");
                         Bundle bundle = new Bundle();
                         bundle.putInt(Contants.ScanValueType.KEY, Contants.ScanValueType.W_type);
                         CommonUtils.goActivityForResult(mContext, MipcaActivityCapture.class, bundle, 0, false);
-                    } else {
-                        showToastShort("提交成功");
-                        finish();
                     }
 //                    new MaterialDialog.Builder(mContext)
 //                            .content("添加商品成功")
@@ -539,7 +564,8 @@ public class WGoodsAddActivity extends BaseActivity implements CompoundButton.On
                 break;
             //商品提示
             case R.id.goodsExplainRL:
-                showDialogToastM("商品特别说明", "输入说明", goodExplain_Tx);
+                showDialogs(4, "商品提示", "请输入商品提示", "取消", goodExplain_Tx);
+                //showDialogToastM("商品特别说明", "输入说明", goodExplain_Tx);
                 break;
             //修改价格库存
             case R.id.changeLy:
@@ -571,43 +597,40 @@ public class WGoodsAddActivity extends BaseActivity implements CompoundButton.On
             //修改货号编码
             case R.id.goodscodeRL:
                 //showDialogToastM("请输入货号编码", "输入货号编码", goodsode_Tx);
-                showDialogs(2, "货号编码", "请输入货号编码", "取消");
+                showDialogs(2, "货号编码", "请输入货号编码", "取消", goodsode_Tx);
                 break;
             //修改单位
             case R.id.goodsunitRL:
-                String goodstr = goodsunitTx.getText().toString();
-
-                String[] selectItemArr = new String[itemunitList.size()];
-
-                int goodsNum = -1;
-                int i = 0;
-                for (Itemunit itemunit : itemunitList) {
-                    selectItemArr[i] = itemunit.getName();
-                    if (goodstr.equals(itemunit.getName())) {
-                        goodsNum = i;
-                    }
-                    i++;
-                }
-                showDialogList("请选择商品单位", selectItemArr, goodsNum, goodsunitTx);
+                Bundle bundle4 = new Bundle();
+                bundle4.putString("title_name", "选择单位");
+                bundle4.putInt("type", 1);
+                bundle4.putParcelableArrayList("list", (ArrayList<? extends Parcelable>) itemunitList);
+                CommonUtils.goActivityForResult(WGoodsAddActivity.this, WBaseSelectActivity.class, bundle4, 10014, false);
                 break;
             //修改商品分类
             case R.id.goodsclassifyRL:
                 mItemtype = null;
-                showChooseify("请选择分类", "0");
+                //showChooseify("请选择分类", "0");
+                Bundle bundle3 = new Bundle();
+                bundle3.putString("title_name", "选择分类");
+                bundle3.putInt("type", 0);
+                bundle3.putParcelableArrayList("list", (ArrayList<? extends Parcelable>) itemtypeList);
+                CommonUtils.goActivityForResult(WGoodsAddActivity.this, WBaseSelectActivity.class, bundle3, 10015, false);
                 break;
             //修改商品名称
             case R.id.goodsnameRL:
-                showDialogs(0, "商品名称", "请输入商品名称", "取消");
+                showDialogs(0, "商品名称", "请输入商品名称", "取消", goodsnaneTx);
                 //showDialogToast("请输入商品名称", "请输入商品名称", goodsnaneTx);
                 break;
             //修改商品条码
             case R.id.goodsbarRL:
-                showDialogs(1, "商品条码", "请输入商品条码", "取消");
+                showDialogs(1, "商品条码", "请输入商品条码", "扫描", goodsbarTx);
                 //showDialogToast2("请输入商品条码", "请输入商品条码", goodsbarTx);
                 break;
             //修改商品规格
             case R.id.goodsnormsRL:
-                showDialogToast("请输入商品规格", "请输入商品规格", goodsnormsTx);
+                //showDialogToast("请输入商品规格", "请输入商品规格", goodsnormsTx);
+                showDialogs(3, "商品规格", "请输入商品规格", "取消", goodsnormsTx);
                 break;
             //提交
             case R.id.submit:
@@ -632,57 +655,50 @@ public class WGoodsAddActivity extends BaseActivity implements CompoundButton.On
                 break;
             //商品介绍
             case R.id.goodsdetailRL:
+                showDialogs(5, "商品介绍", "请输入商品介绍", "取消", goodsdetaailTx);
                 break;
         }
     }
 
-    private void showDialogs(int type, String title, String hint, String lift_bt_text) {
+    private void showDialogs(int type, String title, String hint, String lift_bt_text, TextView itemview) {
         dialog.show();
         ((TextView) dialog.findViewById(R.id.dialog_title)).setText(title);
         dialog_edit = dialog.findViewById(R.id.ecit_phone);
+        dialog_edit.setText("");
+        KeybordS.openKeybord(dialog_edit, mContext);
         dialog_edit.setHint(hint);
         ((TextView) dialog.findViewById(R.id.dialog_cancel)).setText(lift_bt_text);
         dialog.setOnCenterItemClickListener((dialog, view) -> {
             switch (view.getId()) {
                 case R.id.dialog_close:
+                    KeybordS.closeKeybord(dialog_edit, mContext);
                     dialog.dismiss();
                     break;
                 case R.id.dialog_cancel:
                     switch (type) {
-                        case 2:
                         case 1:
-                        case 0:
+                            //扫描
+                            Bundle bundle = new Bundle();
+                            bundle.putInt(Contants.ScanValueType.KEY, Contants.ScanValueType.original_type);
+                            bundle.putString("type", "goodsAdd");
+                            CommonUtils.goActivity(mContext, MipcaActivityCapture.class, bundle);
+                            KeybordS.closeKeybord(dialog_edit, mContext);
                             dialog.dismiss();
                             break;
-
+                        default:
+                            KeybordS.closeKeybord(dialog_edit, mContext);
+                            dialog.dismiss();
+                            break;
                     }
                     break;
                 case R.id.dialog_sure:
-                    switch (type) {
-                        case 0:
-                            if (!dialog_edit.getText().toString().equals("")) {
-                                goodsnaneTx.setText(dialog_edit.getText().toString());
-                                dialog.dismiss();
-                            } else {
-                                showToastShort("请输入商品名");
-                            }
-                            break;
-                        case 1:
-                            if (!dialog_edit.getText().toString().equals("")) {
-                                goodsbarTx.setText(dialog_edit.getText().toString());
-                                dialog.dismiss();
-                            } else {
-                                showToastShort("请输入商品条码");
-                            }
-                            break;
-                        case 2:
-                            if (!dialog_edit.getText().toString().equals("")) {
-                                goodsode_Tx.setText(dialog_edit.getText().toString());
-                                dialog.dismiss();
-                            } else {
-                                showToastShort("请输入货号编码");
-                            }
-                            break;
+                    if (!dialog_edit.getText().toString().equals("")) {
+                        itemview.setHint("");
+                        itemview.setText(dialog_edit.getText().toString());
+                        KeybordS.closeKeybord(dialog_edit, mContext);
+                        dialog.dismiss();
+                    } else {
+                        showToastShort(hint);
                     }
                     break;
             }
@@ -1049,10 +1065,8 @@ public class WGoodsAddActivity extends BaseActivity implements CompoundButton.On
                 }
                 break;
             case Contants.Photo.REQUEST_SCAN_CODE:
-                System.out.println("============" + data.getExtras().getString("result"));
+                ShowLog.e(data.getExtras().getString("result"));
 
-                getGoodsInfo("goodsIsExist", data.getExtras().getString("result"));
-                Log.e("m_tag", "3");
                 break;
             case WAgencyActivity.CHOOSEAGENT_TYPE_WHAT:
                 agencyname = data.getExtras().getString("agentuName");
@@ -1073,6 +1087,20 @@ public class WGoodsAddActivity extends BaseActivity implements CompoundButton.On
                 itemMinNum.setText(data.getStringExtra("minnum"));
                 itemMaxNum.setText(data.getStringExtra("maxnum"));
                 stopitemsum.setText(data.getStringExtra("stopnum"));
+                break;
+            case WBaseSelectActivity.ITEMTYPE:
+//                int posititon = data.getIntExtra("item", -1);
+//                goodsclassifyTx.setText(itemtypeList.get(posititon).getName());
+                Itemtype itemtype = data.getParcelableExtra("item");
+                ShowLog.e(itemtype.getName());
+                goodsclassifyTx.setText(itemtype.getName());
+                break;
+            case WBaseSelectActivity.ITEMUNIT:
+//                int posititon2 = data.getIntExtra("item", -1);
+//                goodsunitTx.setText(itemunitList.get(posititon2).getName());
+                Itemunit itemunit = data.getParcelableExtra("item");
+                goodsunitTx.setText(itemunit.getName());
+                ShowLog.e(itemunit.getName());
                 break;
             default:
                 break;

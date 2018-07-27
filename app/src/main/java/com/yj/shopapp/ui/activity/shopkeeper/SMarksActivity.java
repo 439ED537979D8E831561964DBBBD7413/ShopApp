@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -20,6 +21,7 @@ import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.squareup.okhttp.Request;
 import com.yj.shopapp.R;
 import com.yj.shopapp.config.Contants;
+import com.yj.shopapp.dialog.BugGoodsDialog;
 import com.yj.shopapp.http.HttpHelper;
 import com.yj.shopapp.http.OkHttpResponseHandler;
 import com.yj.shopapp.ubeen.Goods;
@@ -28,10 +30,10 @@ import com.yj.shopapp.ui.activity.Interface.OnViewScrollListenter;
 import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.ui.activity.adapter.SNewGoodsAdpter;
 import com.yj.shopapp.ui.activity.base.BaseActivity;
-import com.yj.shopapp.dialog.BugGoodsDialog;
 import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.DDecoration;
 import com.yj.shopapp.util.JsonHelper;
+import com.yj.shopapp.util.StatusBarUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,6 +66,8 @@ public class SMarksActivity extends BaseActivity implements GoodsItemListenter, 
     LinearLayout allchoose;
     @BindView(R.id.submit)
     LinearLayout submit;
+    @BindView(R.id.title_view)
+    RelativeLayout titleView;
 
     private boolean isRequesting = false;//标记，是否正在刷新
     private int mCurrentPage = 1;
@@ -75,6 +79,15 @@ public class SMarksActivity extends BaseActivity implements GoodsItemListenter, 
     @Override
     protected int getLayoutId() {
         return R.layout.sactivity_marks;
+    }
+
+    @Override
+    protected void setStatusBar() {
+        StatusBarUtils.from(this)
+                .setActionbarView(titleView)
+                .setTransparentStatusbar(true)
+                .setLightStatusBar(false)
+                .process();
     }
 
     @Override
@@ -96,11 +109,6 @@ public class SMarksActivity extends BaseActivity implements GoodsItemListenter, 
             recyclerView.setAdapter(GoodAdpter);
         }
         Refresh();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
         if (isNetWork(mContext)) {
             refreshRequest();
         }
@@ -113,7 +121,6 @@ public class SMarksActivity extends BaseActivity implements GoodsItemListenter, 
         swipeRefreshLayout.setOnLoadMoreListener(this);
         swipeRefreshLayout.setDisableContentWhenRefresh(true);//是否在刷新的时候禁止列表的操作
         swipeRefreshLayout.setDisableContentWhenLoading(true);//是否在加载的时候禁止列表的操作
-        swipeRefreshLayout.setEnableFooterFollowWhenLoadFinished(true);
     }
 
     public void countMoney() {
@@ -184,14 +191,20 @@ public class SMarksActivity extends BaseActivity implements GoodsItemListenter, 
     }
 
     private void delCartReport() {
-
+        StringBuilder builder = new StringBuilder();
         for (int i = 0; i < goodsList.size(); i++) {
             if (goodsList.get(i).isSelected()) {
-                del(i, true);
+                builder.append(goodsList.get(i).getId());
+                builder.append("|");
+                //  del(i, true);
             }
         }
-        if (swipeRefreshLayout != null) {
-            swipeRefreshLayout.autoRefresh();
+        if (builder.toString().length() > 0) {
+            String idstr = builder.substring(0, builder.length() - 1);
+            //执行删除
+            del(idstr);
+        } else {
+            showToastShort("请选择商品");
         }
     }
 
@@ -277,8 +290,6 @@ public class SMarksActivity extends BaseActivity implements GoodsItemListenter, 
                 super.onAfter();
                 if (swipeRefreshLayout != null) {
                     swipeRefreshLayout.finishRefresh(true);
-                }
-                if (swipeRefreshLayout != null) {
                     swipeRefreshLayout.finishLoadMore(true);
                 }
                 isRequesting = false;
@@ -302,15 +313,11 @@ public class SMarksActivity extends BaseActivity implements GoodsItemListenter, 
                     mCurrentPage--;
                     if (swipeRefreshLayout != null) {
                         swipeRefreshLayout.finishRefresh(false);
-                    }
-                    if (swipeRefreshLayout != null) {
                         swipeRefreshLayout.finishLoadMoreWithNoMoreData();
                     }
                 } else {
                     if (swipeRefreshLayout != null) {
                         swipeRefreshLayout.finishRefresh(false);
-                    }
-                    if (swipeRefreshLayout != null) {
                         swipeRefreshLayout.finishLoadMoreWithNoMoreData();
                     }
                     showToastShort(JsonHelper.errorMsg(json));
@@ -328,8 +335,6 @@ public class SMarksActivity extends BaseActivity implements GoodsItemListenter, 
                 mCurrentPage--;
                 if (swipeRefreshLayout != null) {
                     swipeRefreshLayout.finishLoadMore(false);
-                }
-                if (swipeRefreshLayout != null) {
                     swipeRefreshLayout.finishRefresh(false);
                 }
                 GoodAdpter.notifyDataSetChanged();
@@ -339,7 +344,7 @@ public class SMarksActivity extends BaseActivity implements GoodsItemListenter, 
     }
 
 
-    public void del(int pos, final boolean toast) {
+    public void del(String idstr) {
         if (isRequesting)
             return;
 
@@ -348,7 +353,8 @@ public class SMarksActivity extends BaseActivity implements GoodsItemListenter, 
         Map<String, String> params = new HashMap<String, String>();
         params.put("uid", uid);
         params.put("token", token);
-        params.put("id", goodsList.get(pos).getId());
+//        params.put("id", goodsList.get(pos).getId());
+        params.put("idstr", idstr);
 
         HttpHelper.getInstance().post(mContext, Contants.PortU.DelBookmark, params, new OkHttpResponseHandler<String>(mContext) {
 
@@ -367,20 +373,16 @@ public class SMarksActivity extends BaseActivity implements GoodsItemListenter, 
             @Override
             public void onResponse(Request request, String json) {
                 super.onResponse(request, json);
-                System.out.println("response===============" + json);
+                ShowLog.e(json);
                 carttotalpriceTv.setText("0");
                 //choose.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_shopcart_unhook));
                 if (JsonHelper.isRequstOK(json, mContext)) {
-                    if (toast) {
-                        showToastShort("删除成功");
-                    } else {
-                        showToastShort("添加购物车成功！");
+                    showToastShort("删除成功");
+                    if (swipeRefreshLayout!=null){
+                        swipeRefreshLayout.autoRefresh();
                     }
-
                 } else {
-                    if (toast) {
-                        showToastShort(JsonHelper.errorMsg(json));
-                    }
+                    showToastShort(JsonHelper.errorMsg(json));
                 }
             }
 

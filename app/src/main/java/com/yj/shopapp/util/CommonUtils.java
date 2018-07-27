@@ -303,7 +303,7 @@ public class CommonUtils {
      */
     public static void goActivity(Context context, Class<?> activity, Bundle bundle) {
         Intent intent = new Intent();
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setClass(context, activity);
         if (bundle != null) {
             intent.putExtras(bundle);
@@ -384,12 +384,26 @@ public class CommonUtils {
     }
 
     public static boolean isMobileNum(String mobiles) {
-        Pattern p = Pattern.compile("^((13[0-9])|(14[0-9])|(15[0-9])|(16[0-9])|((17[0-9]))|((18[0-9])))\\d{8}$");
+        Pattern p = Pattern.compile("^1[3|4|5|8][0-9]\\d{8}$");
         Matcher m = p.matcher(mobiles);
         return m.matches();
 
     }
-
+    /**
+     * 判断字符串中是否包含中文
+     * @param str
+     * 待校验字符串
+     * @return 是否为中文
+     * @warn 不能校验是否为中文标点符号
+     */
+    public static boolean isContainChinese(String str) {
+        Pattern p = Pattern.compile("[\u4e00-\u9fa5]");
+        Matcher m = p.matcher(str);
+        if (m.find()) {
+            return true;
+        }
+        return false;
+    }
     public static boolean isChinese(String str) {
         String regEx = "[\u4e00-\u9fa5]";
         Pattern p = Pattern.compile(regEx);

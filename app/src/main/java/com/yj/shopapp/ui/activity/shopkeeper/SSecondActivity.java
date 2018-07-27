@@ -9,7 +9,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.OnScrollListener;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,13 +28,13 @@ import com.yj.shopapp.http.HttpHelper;
 import com.yj.shopapp.http.OkHttpResponseHandler;
 import com.yj.shopapp.ubeen.BrandGroup;
 import com.yj.shopapp.ubeen.IndustryCatelist;
-import com.yj.shopapp.ui.activity.Interface.OnItemChildViewOnClickListener;
 import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.ui.activity.adapter.SBrandAdapter;
 import com.yj.shopapp.ui.activity.adapter.ScreenLvAdpter;
 import com.yj.shopapp.ui.activity.base.BaseActivity;
 import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.JsonHelper;
+import com.yj.shopapp.util.StatusBarUtils;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -47,17 +46,11 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import ezy.ui.layout.LoadingLayout;
 
-public class SSecondActivity extends BaseActivity implements AdapterView.OnItemClickListener, OnItemChildViewOnClickListener {
+public class SSecondActivity extends BaseActivity implements AdapterView.OnItemClickListener {
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
     @BindView(R.id.tab_layout)
     TabLayout tabLayout;
-    @BindView(R.id.content_tv)
-    TextView contentTv;
-    @BindView(R.id.right_tv)
-    TextView rightTv;
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
     @BindView(R.id.more)
     RelativeLayout more;
     @BindView(R.id.image2)
@@ -66,6 +59,12 @@ public class SSecondActivity extends BaseActivity implements AdapterView.OnItemC
     View bgView;
     @BindView(R.id.loading)
     LoadingLayout loading;
+    @BindView(R.id.title)
+    TextView title;
+    @BindView(R.id.id_right_btu)
+    TextView idRightBtu;
+    @BindView(R.id.title_view)
+    RelativeLayout titleView;
     private GridLayoutManager layoutManager;
     boolean isBrang;
     private IndustryCatelist industryCatelist;
@@ -93,23 +92,25 @@ public class SSecondActivity extends BaseActivity implements AdapterView.OnItemC
     }
 
     @Override
+    protected void setStatusBar() {
+        StatusBarUtils.from(this)
+                .setActionbarView(titleView)
+                .setTransparentStatusbar(true)
+                .setLightStatusBar(false)
+                .process();
+    }
+
+    @Override
     protected void initData() {
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+
         if (getIntent().hasExtra("Name")) {
-            contentTv.setText(getIntent().getStringExtra("Name"));
+            title.setText(getIntent().getStringExtra("Name"));
         }
         if (getIntent().hasExtra("CId")) {
             cid = getIntent().getStringExtra("CId");
         }
         brandAdapter = new SBrandAdapter(mContext);
-        rightTv.setText("品牌");
+        idRightBtu.setText("按品牌");
         layoutManager = new GridLayoutManager(mContext, 4);
         if (recyclerView != null) {
             recyclerView.setLayoutManager(layoutManager);
@@ -120,10 +121,10 @@ public class SSecondActivity extends BaseActivity implements AdapterView.OnItemC
         screenLvAdpter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                currposition = position;
                 tabLayout.getTabAt(position).select();
                 //这里就可以根据业务需求处理点击事件了。
                 if (isBrang) {
+                    currposition = position;
                     ((LinearLayoutManager) recyclerView.getLayoutManager()).scrollToPositionWithOffset(tabname_brand.get(position).getPosition(), 0);
                 } else {
                     classifyposition = position;
@@ -227,13 +228,10 @@ public class SSecondActivity extends BaseActivity implements AdapterView.OnItemC
                     //获取第一个可见view的位置
                     int firstItemPosition = linearManager.findFirstVisibleItemPosition();
                     if (firstItemPosition == -1) return;
-
                     try {
                         if (isBrang) {
                             if (listBeans.size() > 0) {
                                 //                            if (listBeans.get(firstItemPosition).isSort()) {
-                                tabLayout.setFocusable(true);
-                                tabLayout.setFocusableInTouchMode(true);
                                 if (!tabLayout.getTabAt(listBeans.get(firstItemPosition).getIndex()).isSelected()) {
                                     tabLayout.getTabAt(listBeans.get(firstItemPosition).getIndex()).select();
                                     currposition = listBeans.get(firstItemPosition).getIndex();
@@ -243,8 +241,6 @@ public class SSecondActivity extends BaseActivity implements AdapterView.OnItemC
                         } else {
                             if (groups.size() > 0) {
                                 //   if (groups.get(firstItemPosition).isSort()) {
-                                tabLayout.setFocusable(true);
-                                tabLayout.setFocusableInTouchMode(true);
                                 if (!tabLayout.getTabAt(groups.get(firstItemPosition).getIndex()).isSelected()) {
                                     tabLayout.getTabAt(groups.get(firstItemPosition).getIndex()).select();
                                     classifyposition = groups.get(firstItemPosition).getIndex();
@@ -339,6 +335,7 @@ public class SSecondActivity extends BaseActivity implements AdapterView.OnItemC
                 e.printStackTrace();
             }
         }
+
     }
 
     private void industry() {
@@ -391,30 +388,14 @@ public class SSecondActivity extends BaseActivity implements AdapterView.OnItemC
         });
     }
 
-    @OnClick({R.id.right_tv, R.id.more})
+    @OnClick({R.id.id_right_btu, R.id.more})
     public void onClick(View view) {
         switch (view.getId()) {
 
-            case R.id.right_tv:
+            case R.id.id_right_btu:
                 isBrang = !isBrang;
-                rightTv.setText(isBrang ? "分类" : "品牌");
-                //valueEt.setHint(isBrang ? "分类搜索" : "品牌搜索");
-                tabLayout.removeAllTabs();
-                if (isBrang) {
-                    brandAdapter.setList(listBeans);
-                    for (BrandGroup.ListBean s : tabname_brand) {
-                        tabLayout.addTab(tabLayout.newTab().setText(s.getName()));
-                    }
-                    addEmptyView();
-                } else {
-                    brandAdapter.setList(groups);
-                    for (IndustryCatelist.DataBean.TagGroup s : tabname_classify) {
-                        tabLayout.addTab(tabLayout.newTab().setText(s.getName()));
-                    }
-                    addEmptyView();
-                }
-                setTablayoutclick();
-                reflex(tabLayout, 0);
+                idRightBtu.setText(isBrang ? "按分类" : "按品牌");
+                Mosaic();
                 break;
             case R.id.more:
                 showPW();
@@ -445,7 +426,7 @@ public class SSecondActivity extends BaseActivity implements AdapterView.OnItemC
                 if (loading != null) {
                     loading.showContent();
                 }
-                Mosaic();
+                //Mosaic();
             }
 
             @Override
@@ -481,20 +462,29 @@ public class SSecondActivity extends BaseActivity implements AdapterView.OnItemC
         if (tabLayout != null) {
             tabLayout.removeAllTabs();
             if (isBrang) {
-                brandAdapter.setList(listBeans);
                 for (BrandGroup.ListBean s : tabname_brand) {
                     tabLayout.addTab(tabLayout.newTab().setText(s.getName()));
                 }
-                addEmptyView();
+                brandAdapter.setList(listBeans);
             } else {
-                brandAdapter.setList(groups);
                 for (IndustryCatelist.DataBean.TagGroup s : tabname_classify) {
                     tabLayout.addTab(tabLayout.newTab().setText(s.getName()));
                 }
-                addEmptyView();
+                brandAdapter.setList(groups);
             }
-
+            addEmptyView();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    // tabLayout.setScrollPosition(0, 0, false);
+                    tabLayout.getTabAt(0).select();
+                }
+            }, 30);
+            ((LinearLayoutManager) recyclerView.getLayoutManager()).scrollToPositionWithOffset(0, 0);
+            currposition = 0;
+            classifyposition = 0;
             isRefresh = false;
+            reflex(tabLayout, 0);
             setTablayoutclick();
         }
     }
@@ -511,7 +501,7 @@ public class SSecondActivity extends BaseActivity implements AdapterView.OnItemC
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }, 300);
+        }, 200);
     }
 
     @Override
@@ -519,17 +509,27 @@ public class SSecondActivity extends BaseActivity implements AdapterView.OnItemC
         if (isBrang) {
             Bundle bundle = new Bundle();
             if (isSereen) {
+                if (NewlistBeans.get(position).getIs_open() == 0) {
+                    showToastShort(NewlistBeans.get(position).getInfo());
+                    return;
+                }
                 if (NewlistBeans.get(position).isSort()) {
                     return;
                 }
                 bundle.putString("bid", NewlistBeans.get(position).getId());
                 bundle.putString("typeName", NewlistBeans.get(position).getName());
+                bundle.putString("gid", NewlistBeans.get(position).getGid());
             } else {
+                if (listBeans.get(position).getIs_open() == 0) {
+                    showToastShort(listBeans.get(position).getInfo());
+                    return;
+                }
                 if (listBeans.get(position).isSort()) {
                     return;
                 }
                 bundle.putString("bid", listBeans.get(position).getId());
                 bundle.putString("typeName", listBeans.get(position).getName());
+                bundle.putString("gid", listBeans.get(position).getGid());
             }
             bundle.putString("cid", cid);
             CommonUtils.goActivity(mContext, SGoodsActivity.class, bundle);
@@ -554,16 +554,16 @@ public class SSecondActivity extends BaseActivity implements AdapterView.OnItemC
         }
     }
 
-    @Override
-    public void onChildViewClickListener(View view, int position) {
-        pw.dismiss();
-        currposition = position;
-        if (isBrang) {
-            ((LinearLayoutManager) recyclerView.getLayoutManager()).scrollToPositionWithOffset(tabname_brand.get(position).getPosition(), 0);
-        } else {
-            ((LinearLayoutManager) recyclerView.getLayoutManager()).scrollToPositionWithOffset(tabname_classify.get(position).getPosition(), 0);
-        }
-    }
+//    @Override
+//    public void onChildViewClickListener(View view, int position) {
+//        pw.dismiss();
+//        currposition = position;
+//        if (isBrang) {
+//            ((LinearLayoutManager) recyclerView.getLayoutManager()).scrollToPositionWithOffset(tabname_brand.get(position).getPosition(), 0);
+//        } else {
+//            ((LinearLayoutManager) recyclerView.getLayoutManager()).scrollToPositionWithOffset(tabname_classify.get(position).getPosition(), 0);
+//        }
+//    }
 
     @Override
     protected void onDestroy() {

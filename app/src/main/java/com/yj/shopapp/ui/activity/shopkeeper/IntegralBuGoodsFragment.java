@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -68,7 +69,7 @@ public class IntegralBuGoodsFragment extends BaseActivity implements IntegraAdap
     @Override
     protected void initData() {
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
         toolbar.setNavigationOnClickListener(v -> finish());
         kProgressHUD = growProgress(Contants.Progress.LOAD_ING);
         adapter = new IntegraAdapter(mContext, this);
@@ -214,7 +215,7 @@ public class IntegralBuGoodsFragment extends BaseActivity implements IntegraAdap
                 if (JsonHelper.isRequstOK(response, mContext)) {
                     JSONObject object = JSONObject.parseObject(response);
                     if (object.getInteger("status") == 0) {
-                        if (mData.getData().size() > 0) {
+                        if (mData != null) {
                             if (!isSereen) {
                                 if (swipeRefreshLayout != null) {
                                     swipeRefreshLayout.finishLoadMoreWithNoMoreData();

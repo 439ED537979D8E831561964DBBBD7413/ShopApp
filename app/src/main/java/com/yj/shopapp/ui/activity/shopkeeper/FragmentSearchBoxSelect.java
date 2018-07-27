@@ -1,25 +1,11 @@
 package com.yj.shopapp.ui.activity.shopkeeper;
 
-import android.app.DialogFragment;
-import android.app.FragmentManager;
-import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -28,16 +14,17 @@ import com.alibaba.fastjson.JSONArray;
 import com.squareup.okhttp.Request;
 import com.yj.shopapp.R;
 import com.yj.shopapp.config.Contants;
+import com.yj.shopapp.dialog.BaseV4DialogFragment;
 import com.yj.shopapp.http.HttpHelper;
 import com.yj.shopapp.http.OkHttpResponseHandler;
 import com.yj.shopapp.ubeen.NewOrder;
 import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.ui.activity.adapter.SNewOrderAdpter;
+import com.yj.shopapp.ui.activity.wholesale.WGoodsActivity;
 import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.DDecoration;
 import com.yj.shopapp.util.JsonHelper;
-import com.yj.shopapp.util.PreferenceUtils;
-import com.yj.shopapp.util.StatusBarManager;
+import com.yj.shopapp.view.ClearEditText;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,9 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.Unbinder;
 import ezy.ui.layout.LoadingLayout;
 
 /**
@@ -56,24 +41,20 @@ import ezy.ui.layout.LoadingLayout;
  * @author LK
  */
 
-public class FragmentSearchBoxSelect extends DialogFragment {
+public class FragmentSearchBoxSelect extends BaseV4DialogFragment {
     @BindView(R.id.exit_tv)
     ImageView exitTv;
     @BindView(R.id.value_Et)
-    EditText valueEt;
+    ClearEditText valueEt;
     @BindView(R.id.submitTv)
     TextView submitTv;
     @BindView(R.id.my_RecyclerView)
     RecyclerView myRecyclerView;
-    Unbinder unbinder;
     @BindView(R.id.title_layout)
     LinearLayout titleLayout;
     @BindView(R.id.loading)
     LoadingLayout loading;
-    private Context mActivity;
     private int Type = 0;
-    public String uid;
-    public String token;
     private SNewOrderAdpter adapter;
     private List<NewOrder> orderList = new ArrayList<>();
 
@@ -87,28 +68,14 @@ public class FragmentSearchBoxSelect extends DialogFragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected int getLayoutId() {
+        return R.layout.activity_search;
+    }
+
+    @Override
+    protected void initData() {
         Type = getArguments().getInt("type");
-        mActivity = getActivity();
-        uid = PreferenceUtils.getPrefString(mActivity, Contants.Preference.UID, "");
-        token = PreferenceUtils.getPrefString(mActivity, Contants.Preference.TOKEN, "");
-        setStyle(DialogFragment.STYLE_NO_TITLE, R.style.UpdateAppDialog);
-    }
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        StatusBarManager.getInstance().setDialogWindowStyle(getDialog().getWindow(), getResources().getColor(R.color.colorf5f5f5));
-        StatusBarManager.getInstance().setStatusBarTextColor(getDialog().getWindow(), true);
-        View rootView = inflater.inflate(R.layout.activity_search, container);
-        unbinder = ButterKnife.bind(this, rootView);
-        return rootView;
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
         loading.showContent();
         myRecyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
         myRecyclerView.addItemDecoration(new DDecoration(mActivity, getResources().getDrawable(R.drawable.recyviewdecoration3)));
@@ -121,79 +88,11 @@ public class FragmentSearchBoxSelect extends DialogFragment {
                     Bundle bundle = new Bundle();
                     bundle.putString("oid", orderList.get(position).getOid());
                     CommonUtils.goActivity(mActivity, SOrderDatesActivity.class, bundle);
-                    dismiss();
+                   // dismiss();
                 }
             }
         });
-        if (Type != 0) {
-            valueEt.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    if (s.toString().equals("")) {
-
-                    } else {
-                        String input = valueEt.getText().toString();
-                        refreshRequest(input);
-                        loading.showLoading();
-                    }
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-
-                }
-            });
-        }
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        getDialog().setCanceledOnTouchOutside(true);
-        Window dialogWindow = getDialog().getWindow();
-        assert dialogWindow != null;
-        dialogWindow.setGravity(Gravity.CENTER);
-        WindowManager.LayoutParams lp = dialogWindow.getAttributes();
-        lp.height = WindowManager.LayoutParams.MATCH_PARENT;
-        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
-        dialogWindow.setAttributes(lp);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                InputMethodManager inManager = (InputMethodManager) valueEt.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                inManager.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
-            }
-        }, 300);
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        unbinder.unbind();
-    }
-
-    @Override
-    public void show(FragmentManager manager, String tag) {
-
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
-            if (manager.isDestroyed())
-                return;
-        }
-        try {
-            super.show(manager, tag);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        showKeyBoard(valueEt);
     }
 
     @OnClick({R.id.exit_tv, R.id.submitTv})
@@ -203,22 +102,39 @@ public class FragmentSearchBoxSelect extends DialogFragment {
                 dismiss();
                 break;
             case R.id.submitTv:
-                if (Type == 0) {
-                    String input = valueEt.getText().toString();
-                    if (!input.equals("")) {
-                        Bundle bundle = new Bundle();
-                        bundle.putString("name", "商品详情");
-                        bundle.putString("keyword", input);
-                        CommonUtils.goActivity(mActivity, SGoodsActivity.class, bundle);
-                        dismiss();
-                    }
-                } else {
-                    String input = valueEt.getText().toString();
-                    if (!input.equals("")) {
-                        hideImm();
-                        refreshRequest(input);
-                        loading.showLoading();
-                    }
+                switch (Type) {
+                    case 0:
+                        String input = valueEt.getText().toString();
+                        if (!input.equals("")) {
+                            Bundle bundle = new Bundle();
+                            bundle.putString("name", "商品详情");
+                            bundle.putString("keyword", input);
+                            CommonUtils.goActivity(mActivity, SGoodsActivity.class, bundle);
+                            dismiss();
+                        }
+                        break;
+                    case 1:
+                        String input1 = valueEt.getText().toString();
+                        if (!input1.equals("")) {
+                            hideImm(valueEt);
+                            refreshRequest(input1);
+                            loading.showLoading();
+                        }
+                        break;
+                    case 3:
+                        String input2 = valueEt.getText().toString();
+                        if (!input2.equals("")) {
+                            hideImm(valueEt);
+                            new Handler().postDelayed(() -> {
+                                Bundle bundle = new Bundle();
+                                bundle.putString("name", "商品详情");
+                                bundle.putString("keyword", input2);
+                                CommonUtils.goActivity(mActivity, WGoodsActivity.class, bundle);
+                                //dismiss();
+                            }, 100);
+
+                        }
+                        break;
                 }
                 break;
         }
@@ -241,15 +157,16 @@ public class FragmentSearchBoxSelect extends DialogFragment {
             public void onResponse(Request request, String json) {
                 super.onResponse(request, json);
                 ShowLog.e(json);
-                if (JsonHelper.isRequstOK(json, mActivity)) {
-                    orderList.addAll(JSONArray.parseArray(json, NewOrder.class));
-                    adapter.setList(orderList);
-                } else if (JsonHelper.getRequstOK(json) == 6) {
-                    loading.showEmpty();
-                }
                 if (loading != null) {
                     loading.showContent();
                 }
+                if (JsonHelper.isRequstOK(json, mActivity)) {
+                    orderList.addAll(JSONArray.parseArray(json, NewOrder.class));
+                    adapter.setList(orderList);
+                } else {
+                    loading.showEmpty();
+                }
+
             }
 
             @Override
@@ -263,11 +180,5 @@ public class FragmentSearchBoxSelect extends DialogFragment {
                 orderList.clear();
             }
         });
-    }
-
-    private void hideImm() {
-        InputMethodManager inputMethodManager = (InputMethodManager) mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
-        assert inputMethodManager != null;
-        inputMethodManager.hideSoftInputFromWindow(valueEt.getWindowToken(), 0);
     }
 }

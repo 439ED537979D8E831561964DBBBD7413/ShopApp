@@ -22,6 +22,7 @@ import com.yj.shopapp.config.Contants;
 import com.yj.shopapp.http.HttpHelper;
 import com.yj.shopapp.http.OkHttpResponseHandler;
 import com.yj.shopapp.ubeen.ExcGoods;
+import com.yj.shopapp.ubeen.IntegralRule;
 import com.yj.shopapp.ui.activity.Interface.OnViewScrollListenter;
 import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.ui.activity.adapter.IntegraAdapter;
@@ -59,7 +60,7 @@ public class VipActivity extends BaseActivity implements IntegraAdapter.OnViewCl
     private ExcGoods goods;
     private IntegraAdapter adapter;
     private String goodnumber = "";
-    private String IntegralRule = "";
+    private IntegralRule integralRule;
 
     @Override
     protected int getLayoutId() {
@@ -75,12 +76,7 @@ public class VipActivity extends BaseActivity implements IntegraAdapter.OnViewCl
                 .setTransparentStatusbar(true)
                 .setLightStatusBar(false)
                 .process();
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        toolbar.setNavigationOnClickListener(v -> finish());
         adapter = new IntegraAdapter(mContext, this);
         recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         recyclerView.addItemDecoration(new DDecoration(mContext, getResources().getDrawable(R.drawable.recyviewdecoration1dp)));
@@ -155,8 +151,7 @@ public class VipActivity extends BaseActivity implements IntegraAdapter.OnViewCl
                 super.onResponse(request, response);
                 ShowLog.e(response);
                 if (!response.isEmpty()) {
-                    JSONObject object = JSONObject.parseObject(response);
-                    IntegralRule = object.getString("rule");
+                    integralRule = JSONObject.parseObject(response, IntegralRule.class);
                 }
             }
         });
@@ -164,8 +159,8 @@ public class VipActivity extends BaseActivity implements IntegraAdapter.OnViewCl
 
     private void showRuleDialog() {
         new MaterialDialog.Builder(mContext)
-                .title("积分规则")
-                .content(IntegralRule)
+                .title(integralRule.getVip_title())
+                .content(integralRule.getVip_contents())
                 .positiveText("我知道了")
                 .show();
     }

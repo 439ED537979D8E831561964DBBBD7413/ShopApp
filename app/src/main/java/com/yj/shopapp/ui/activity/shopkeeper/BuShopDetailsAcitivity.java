@@ -1,11 +1,9 @@
 package com.yj.shopapp.ui.activity.shopkeeper;
 
-import android.text.Html;
+import android.annotation.SuppressLint;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -14,6 +12,8 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSONObject;
 import com.bumptech.glide.Glide;
 import com.squareup.okhttp.Request;
+import com.tencent.smtt.sdk.WebView;
+import com.tencent.smtt.sdk.WebViewClient;
 import com.yj.shopapp.R;
 import com.yj.shopapp.config.Contants;
 import com.yj.shopapp.http.HttpHelper;
@@ -25,6 +25,7 @@ import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.ui.activity.base.BaseActivity;
 import com.yj.shopapp.util.JsonHelper;
 import com.yj.shopapp.util.StatusBarUtil;
+import com.yj.shopapp.view.X5WebView;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -57,9 +58,10 @@ public class BuShopDetailsAcitivity extends BaseActivity {
     @BindView(R.id.title_view)
     RelativeLayout titleView;
     private LimitedSale limitedSale;
-    private WebView mWebView;
+    private X5WebView mWebView;
     private BuGoodShopDatail.DataBean shopDatailben;
     private MyBuGood.ListsBean listsBean;
+    private String isRequest="true";
 
     @Override
     protected int getLayoutId() {
@@ -77,7 +79,10 @@ public class BuShopDetailsAcitivity extends BaseActivity {
         if (getIntent().hasExtra("mybugood")) {
             listsBean = getIntent().getParcelableExtra("mybugood");
         }
-        mWebView = new WebView(mContext);
+        if (getIntent().hasExtra("isRequest")) {
+            isRequest = getIntent().getStringExtra("isRequest");
+        }
+        mWebView = new X5WebView(mContext);
         addwebView.addView(mWebView);
         mWebView.setWebViewClient(new WebViewClient() {
             @Override
@@ -97,6 +102,7 @@ public class BuShopDetailsAcitivity extends BaseActivity {
         }
     }
 
+    @SuppressLint("DefaultLocale")
     private void setData() {
         if (limitedSale != null) {
             Glide.with(mContext).load(limitedSale.getImgurl()).into(shopimag);
@@ -105,7 +111,7 @@ public class BuShopDetailsAcitivity extends BaseActivity {
             shopprice.setText(String.format("￥%s", limitedSale.getUnitprice()));
             shopnumber.setText(String.format("x%s", limitedSale.getItemcount()));
             shopnum.setText(String.format("%1$s%2$s", limitedSale.getItemcount(), limitedSale.getUnit()));
-            AmountPayable.setText(Html.fromHtml("￥" + calculatingPrice(limitedSale.getUnitprice(), limitedSale.getItemcount())));
+            AmountPayable.setText(String.format("￥%.2f", calculatingPrice(limitedSale.getUnitprice(), limitedSale.getItemcount())));
         } else if (shopDatailben != null) {
             Glide.with(mContext).load(shopDatailben.getImgurl()).into(shopimag);
             shopname.setText(shopDatailben.getName());
@@ -113,6 +119,7 @@ public class BuShopDetailsAcitivity extends BaseActivity {
             shopprice.setText(String.format("￥%s", shopDatailben.getUnitprice()));
             shopnumber.setText(String.format("x%s", shopDatailben.getItemcount()));
             shopnum.setText(String.format("%1$s%2$s", shopDatailben.getItemcount(), shopDatailben.getUnit()));
+            AmountPayable.setText(String.format("￥%.2f", calculatingPrice(shopDatailben.getUnitprice(), shopDatailben.getItemcount())));
         } else {
             Glide.with(mContext).load(listsBean.getImgurl()).into(shopimag);
             shopname.setText(listsBean.getName());
@@ -120,6 +127,7 @@ public class BuShopDetailsAcitivity extends BaseActivity {
             shopprice.setText(String.format("￥%s", listsBean.getUnitprice()));
             shopnumber.setText(String.format("x%s", listsBean.getItemcount()));
             shopnum.setText(String.format("%1$s%2$s", listsBean.getItemcount(), listsBean.getUnit()));
+            AmountPayable.setText(String.format("￥%.2f", calculatingPrice(listsBean.getUnitprice(), listsBean.getItemcount())));
         }
 
     }
@@ -168,7 +176,10 @@ public class BuShopDetailsAcitivity extends BaseActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.submit_tv:
-                EventBus.getDefault().post(new LimitedSale());
+                if (isRequest.equals("true")) {
+                    EventBus.getDefault().post(new LimitedSale("1"));
+                    EventBus.getDefault().post(new LimitedSale("3"));
+                }
                 finish();
                 break;
         }
@@ -176,7 +187,10 @@ public class BuShopDetailsAcitivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        EventBus.getDefault().post(new LimitedSale());
+        if (isRequest.equals("true")) {
+            EventBus.getDefault().post(new LimitedSale("1"));
+            EventBus.getDefault().post(new LimitedSale("3"));
+        }
         super.onBackPressed();
     }
 

@@ -1,90 +1,77 @@
 package com.yj.shopapp.ui.activity.wholesale;
 
-import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.SearchView;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.squareup.okhttp.Request;
 import com.yj.shopapp.R;
-import com.yj.shopapp.config.Contants;
-import com.yj.shopapp.http.HttpHelper;
-import com.yj.shopapp.http.OkHttpResponseHandler;
-import com.yj.shopapp.loading.ILoadView;
-import com.yj.shopapp.loading.ILoadViewImpl;
-import com.yj.shopapp.loading.LoadMoreClickListener;
-import com.yj.shopapp.presenter.BaseRecyclerView;
-import com.yj.shopapp.ui.activity.ShowLog;
-import com.yj.shopapp.ui.activity.adapter.WNewGoodsAdapter;
+import com.yj.shopapp.dialog.WNewGoodsSelectDialogFragment;
+import com.yj.shopapp.ui.activity.adapter.ScreenLvAdpter;
+import com.yj.shopapp.ui.activity.adapter.WNewGoodsPageAdpter;
 import com.yj.shopapp.ui.activity.base.BaseActivity;
-import com.yj.shopapp.util.CommonUtils;
-import com.yj.shopapp.util.JsonHelper;
-import com.yj.shopapp.util.NetUtils;
-import com.yj.shopapp.util.PreferenceUtils;
-import com.yj.shopapp.view.headfootrecycleview.OnRecyclerViewScrollListener;
-import com.yj.shopapp.view.headfootrecycleview.RecyclerViewHeaderFooterAdapter;
-import com.yj.shopapp.wbeen.Goods;
-import com.yj.shopapp.wbeen.Itemtype;
+import com.yj.shopapp.util.DateUtils;
+import com.yj.shopapp.util.StatusBarUtils;
+import com.yj.shopapp.wbeen.Classify;
+import com.yj.shopapp.wbeen.MessgEvt;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
 /**
  * Created by Administrator on 2016/8/30.
  */
-public class WNewGoodAcitvity extends BaseActivity implements BaseRecyclerView {
+public class WNewGoodAcitvity extends BaseActivity {
 
 
-    //    @BindView(R.id.first_low)
-//    TextView firstLow;
-//    @BindView(R.id.first_high)
-//    TextView firstHigh;
-    @BindView(R.id.recycler_view)
-    RecyclerView recyclerView;
-    @BindView(R.id.swipe_refresh_layout)
-    SwipeRefreshLayout swipeRefreshLayout;
-    //    @BindView(R.id.sort_price)
-//    TextView sortPrice;
-//    @BindView(R.id.IndustryList)
-//    RecyclerView IndustryList;
-//    @BindView(R.id.hide_view)
-    // LinearLayout hideView;
+    @BindView(R.id.forewadImg)
+    ImageView forewadImg;
+    @BindView(R.id.title)
+    TextView title;
+    @BindView(R.id.id_right_btu)
+    ImageView idRightBtu;
+    @BindView(R.id.title_layout)
+    RelativeLayout titleLayout;
+    @BindView(R.id.newgoods_tablayout)
+    TabLayout newgoodsTablayout;
+    @BindView(R.id.flipping)
+    ImageView flipping;
+    @BindView(R.id.screenTv)
+    RelativeLayout screenTv;
+    @BindView(R.id.newgoods_vp)
+    ViewPager newgoodsVp;
     @BindView(R.id.view_transparent)
     View viewTransparent;
-    @BindView(R.id.content_tv)
-    TextView contentTv;
-    @BindView(R.id.right_tv)
-    ImageView rightTv;
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
-    private ILoadView iLoadView = null;
-    private View loadMoreView = null;
+    private SearchView.SearchAutoComplete mSearchAutoComplete;
+    private SearchView searchView;
+    private WNewGoodsPageAdpter pageAdpter;
+    private List<Classify> classLists = new ArrayList<>();
+    private List<String> times = new ArrayList<>();
+    private List<String> times2 = new ArrayList<>();
+    private String[] name = {"默认", "升序", "降序"};
 
-
-    private RecyclerViewHeaderFooterAdapter adapter;
-    private RecyclerView.LayoutManager layoutManager;
-
-    private boolean isRequesting = false;//标记，是否正在刷新
-    private boolean isRequestingType = false;//标记，获取类型是否正在刷新
-
-    private int mCurrentPage = 0;
-
-    private List<Goods> goodsList = new ArrayList<>();
-    private List<Itemtype> itemtypeList = new ArrayList<>();
-    List<String> tArray = new ArrayList<>();
-
-    String uid;
-    String token;
-    String username = "";
-    String type = "";
+    private PopupWindow pw;
+    private View itemView;
+    private ScreenLvAdpter screenLvAdpter;
+    private ScreenLvAdpter screenLvAdpter2;
+    private ScreenLvAdpter screenLvAdpter3;
 
     @Override
     protected int getLayoutId() {
@@ -92,243 +79,142 @@ public class WNewGoodAcitvity extends BaseActivity implements BaseRecyclerView {
     }
 
     @Override
+    protected void setStatusBar() {
+        StatusBarUtils.from(this)
+                .setActionbarView(titleLayout)
+                .setTransparentStatusbar(true)
+                .setLightStatusBar(false)
+                .process();
+    }
+
+    @Override
     protected void initData() {
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-        contentTv.setVisibility(View.GONE);
-        uid = PreferenceUtils.getPrefString(mContext, Contants.Preference.UID, "");
-        token = PreferenceUtils.getPrefString(mContext, Contants.Preference.TOKEN, "");
 
-        swipeRefreshLayout.setColorSchemeResources(Contants.Refresh.refreshColorScheme);
-        swipeRefreshLayout.setOnRefreshListener(listener);
-
-        WNewGoodsAdapter oAdapter = new WNewGoodsAdapter(mContext, goodsList, this);
-
-
-//        layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        //设置adapter
-        layoutManager = new LinearLayoutManager(mContext);
-
-        adapter = new RecyclerViewHeaderFooterAdapter(layoutManager, oAdapter);
-
-        iLoadView = new ILoadViewImpl(mContext, new mLoadMoreClickListener());
-
-        loadMoreView = iLoadView.inflate();
-
-        recyclerView.addOnScrollListener(new MyScrollListener());
-
-
-        if (recyclerView != null) {
-            recyclerView.setLayoutManager(layoutManager);
-            recyclerView.setAdapter(adapter);
+        title.setText("每日新品");
+        if (getIntent().hasExtra("classlist")) {
+            classLists.addAll(getIntent().getParcelableArrayListExtra("classlist"));
         }
-
-        if (NetUtils.isNetworkConnected(mContext)) {
-            if (null != swipeRefreshLayout) {
-
-                swipeRefreshLayout.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        swipeRefreshLayout.setRefreshing(true);
-
-                        refreshRequest();
-                    }
-                }, 200);
-            }
-        } else {
-            showToastShort("网络不给力");
-        }
-        //setTabLayout();
+        classLists.add(0, new Classify("0", "全部"));
+        pageAdpter = new WNewGoodsPageAdpter(getSupportFragmentManager(), classLists);
+        newgoodsVp.setAdapter(pageAdpter);
+        newgoodsTablayout.setupWithViewPager(newgoodsVp);
+        times = DateUtils.test(10, "MM-dd");
+        times2 = DateUtils.test(10, "yyyy-MM-dd");
+        times.add(0, "全部");
+        initpw();
     }
 
-    public void refreshRequest() {
-        mCurrentPage = 1;
-        //setTagGroup();
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("uid", uid);
-        params.put("token", token);
-        adapter.removeFooter(loadMoreView);
-        HttpHelper.getInstance().post(mContext, Contants.PortA.Newitemlist, params, new OkHttpResponseHandler<String>(mContext) {
-
-            @Override
-            public void onAfter() {
-                super.onAfter();
-                swipeRefreshLayout.setRefreshing(false);
-                isRequesting = false;
+    private void initpw() {
+        screenLvAdpter = new ScreenLvAdpter(mContext, Arrays.asList(name));
+        screenLvAdpter.setOnItemClickListener((parent, view, position, id) -> {
+            EventBus.getDefault().post(new MessgEvt(1, String.valueOf(position)));
+            screenLvAdpter.setDef(position);
+            if (pw != null) {
+                pw.dismiss();
             }
-
-            @Override
-            public void onBefore() {
-                super.onBefore();
-                isRequesting = true;
+        });
+        screenLvAdpter2 = new ScreenLvAdpter(mContext, times);
+        screenLvAdpter2.setOnItemClickListener((parent, view, position, id) -> {
+            if (position == 0) {
+                EventBus.getDefault().post(new MessgEvt(2, ""));
+            } else {
+                EventBus.getDefault().post(new MessgEvt(2, times2.get(position - 1)));
             }
-
+            screenLvAdpter2.setDef(position);
+            if (pw != null) {
+                pw.dismiss();
+            }
+        });
+        screenLvAdpter3 = new ScreenLvAdpter(mContext, Arrays.asList(new String[]{"全部", "销售中", "停售中"}));
+        screenLvAdpter3.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onResponse(Request request, String json) {
-                super.onResponse(request, json);
-
-                goodsList.clear();
-                ShowLog.e(json);
-                if (JsonHelper.isRequstOK(json, mContext)) {
-                    JsonHelper<Goods> jsonHelper = new JsonHelper<Goods>(Goods.class);
-
-                    goodsList.addAll(jsonHelper.getDatas(json));
-
-                    if (goodsList.size() >= 10) {
-                        adapter.addFooter(loadMoreView);
-                    } else {
-                        adapter.removeFooter(loadMoreView);
-                    }
-                } else if (JsonHelper.getRequstOK(json) == 6) {
-                    adapter.removeFooter(loadMoreView);
-                } else {
-                    showToastShort(Contants.NetStatus.NETLOADERROR);
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                screenLvAdpter3.setDef(position);
+                EventBus.getDefault().post(new MessgEvt(3, String.valueOf(position)));
+                if (pw != null) {
+                    pw.dismiss();
                 }
-
-                adapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onError(Request request, Exception e) {
-                super.onError(request, e);
-                showToastShort(Contants.NetStatus.NETDISABLEORNETWORKDISABLE);
-                goodsList.clear();
-                adapter.notifyDataSetChanged();
             }
         });
-
+        itemView = LayoutInflater.from(mContext).inflate(R.layout.screening_view2, null);
+        ((TextView) itemView.findViewById(R.id.classify_tv2)).setText("价格");
+        RecyclerView recyclerView1 = itemView.findViewById(R.id.classify_2_rv);
+        RecyclerView recyclerView2 = itemView.findViewById(R.id.status_2_rv);
+        RecyclerView recyclerView3 = itemView.findViewById(R.id.status_3_rv);
+        recyclerView1.setLayoutManager(new GridLayoutManager(mContext, 3));
+        recyclerView2.setLayoutManager(new GridLayoutManager(mContext, 4));
+        recyclerView3.setLayoutManager(new GridLayoutManager(mContext, 3));
+        recyclerView1.setAdapter(screenLvAdpter);
+        recyclerView2.setAdapter(screenLvAdpter2);
+        recyclerView3.setAdapter(screenLvAdpter3);
     }
 
-    public void loadMoreRequest() {
-        if (isRequesting)
-            return;
-        if (goodsList.size() < 10) {
-            return;
-        }
-
-        mCurrentPage++;
-
-        iLoadView.showLoadingView(loadMoreView);
-
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("uid", uid);
-        params.put("token", token);
-        params.put("p", String.valueOf(mCurrentPage));
-//        params.put("type", type == null ? "" : type);
-//        params.put("itemname", username);
-
-        HttpHelper.getInstance().post(mContext, Contants.PortA.Newitemlist, params, new OkHttpResponseHandler<String>(mContext) {
-
-            @Override
-            public void onAfter() {
-                super.onAfter();
-                isRequesting = false;
-            }
-
-            @Override
-            public void onBefore() {
-                super.onBefore();
-                isRequesting = true;
-            }
-
-            @Override
-            public void onResponse(Request request, String json) {
-                super.onResponse(request, json);
-
-                System.out.println("response" + json);
-                if (JsonHelper.isRequstOK(json, mContext)) {
-                    JsonHelper<Goods> jsonHelper = new JsonHelper<Goods>(Goods.class);
-
-                    if (jsonHelper.getDatas(json).size() == 0) {
-                        iLoadView.showFinishView(loadMoreView);
-                    } else {
-                        goodsList.addAll(jsonHelper.getDatas(json));
-                    }
-                } else if (JsonHelper.getRequstOK(json) == 6) {
-                    iLoadView.showFinishView(loadMoreView);
-                } else {
-                    mCurrentPage--;
-                    showToastShort(Contants.NetStatus.NETLOADERROR);
-                }
-
-                adapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onError(Request request, Exception e) {
-                super.onError(request, e);
-                showToastShort(Contants.NetStatus.NETDISABLEORNETWORKDISABLE);
-                mCurrentPage--;
-                iLoadView.showErrorView(loadMoreView);
-            }
+    /**
+     * 显示弹出窗
+     */
+    private void showPW() {
+        pw = new PopupWindow(itemView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
+        pw.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        pw.setOutsideTouchable(true);
+        pw.setTouchable(true);
+        pw.showAsDropDown(screenTv);
+        pw.setOnDismissListener(() -> {
+            viewTransparent.setVisibility(View.GONE);
+            flipping.setRotation(0);
         });
+        flipping.setRotation(180);
     }
 
-    SwipeRefreshLayout.OnRefreshListener listener = new SwipeRefreshLayout.OnRefreshListener() {
-        @Override
-        public void onRefresh() {
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.menu_search_view, menu);
+//        //找到searchView
+//        MenuItem searchItem = menu.findItem(R.id.action_search);
+//        searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+//        searchView.setQueryHint("请输入商品名");
+//        mSearchAutoComplete = searchView.findViewById(R.id.search_src_text);
+//
+//        //设置输入框内容文字和提示文字的颜色
+//        mSearchAutoComplete.setHintTextColor(getResources().getColor(android.R.color.white));
+//        mSearchAutoComplete.setTextSize(15);
+//        mSearchAutoComplete.setTextColor(getResources().getColor(android.R.color.white));
+//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+//            @Override
+//            public boolean onQueryTextSubmit(String query) {
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean onQueryTextChange(String newText) {
+//                EventBus.getDefault().post(new MessgEvt(0, newText));
+//                return true;
+//            }
+//        });
+//        return super.onCreateOptionsMenu(menu);
+//    }
 
-            refreshRequest();
+    @OnClick({R.id.id_right_btu, R.id.screenTv})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.id_right_btu:
+//                new MaterialDialog.Builder(mContext).title("请输入条码或商品名").input("", "", false, new MaterialDialog.InputCallback() {
+//                    @Override
+//                    public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+//
+//                    }
+//                }).onPositive(new MaterialDialog.SingleButtonCallback() {
+//                    @Override
+//                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+//                        EventBus.getDefault().post(new MessgEvt(0, dialog.getInputEditText().getText().toString()));
+//                        dialog.dismiss();
+//                    }
+//                }).show();
+                WNewGoodsSelectDialogFragment.newInstance(classLists).show(getFragmentManager(), "newgoodsdialogfragment");
+                break;
+            case R.id.screenTv:
+                showPW();
+                viewTransparent.setVisibility(View.VISIBLE);
+                break;
         }
-    };
-
-    @Override
-    public void onItemClick(int position) {
-
-        Bundle bundle = new Bundle();
-        bundle.putString("itemnoid", goodsList.get(position).getNumberid());
-        bundle.putString("id", goodsList.get(position).getId());
-        CommonUtils.goActivity(mContext, WGoodsDetailActivity.class, bundle, false);
-    }
-
-    @Override
-    public void onLongItemClick(final int position) {
-    }
-
-
-    public class mLoadMoreClickListener implements LoadMoreClickListener {
-        @Override
-        public void clickLoadMoreData() {
-        }
-    }
-
-
-    public class MyScrollListener extends OnRecyclerViewScrollListener {
-
-        @Override
-        public void onScrollUp() {
-        }
-
-        @Override
-        public void onScrollDown() {
-        }
-
-        @Override
-        public void onBottom() {
-            loadMoreRequest();
-        }
-
-        @Override
-        public void onMoved(int distanceX, int distanceY) {
-
-        }
-    }
-
-    @Override
-    public void showToastShort(String msg) {
-        super.showToastShort(msg);
-    }
-
-
-    @Override
-    public void setContentView(int layoutResID) {
-        super.setContentView(layoutResID);
     }
 }

@@ -20,6 +20,10 @@ public class SWhomeAdapter extends CommonAdapter<ClassList.ListBean> {
         super(context, list);
     }
 
+    public SWhomeAdapter(Context context) {
+        super(context);
+    }
+
     @Override
     public int onCreateViewLayoutID(int viewType) {
         return R.layout.category_item;

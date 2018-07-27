@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSONObject;
 import com.squareup.okhttp.Request;
 import com.yj.shopapp.R;
 import com.yj.shopapp.config.Contants;
@@ -16,7 +17,6 @@ import com.yj.shopapp.http.HttpHelper;
 import com.yj.shopapp.http.OkHttpResponseHandler;
 import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.ui.activity.base.BaseActivity;
-import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.JsonHelper;
 import com.yj.shopapp.util.StatusBarUtil;
 import com.yj.shopapp.view.ClearEditText;
@@ -143,17 +143,19 @@ public class AuthenticationActivity extends BaseActivity {
             @Override
             public void onResponse(Request request, String json) {
                 super.onResponse(request, json);
-                if (JsonHelper.isRequstOK(json, mContext)) {
+                ShowLog.e(json);
+                JSONObject object = JSONObject.parseObject(json);
+                if (object.getString("errcode").equals("0")) {
                     timer.cancel();
                     Bundle bundle = new Bundle();
                     bundle.putInt("type", type);
                     Intent intent = new Intent(AuthenticationActivity.this, BindAccountActivity.class);
                     intent.putExtras(bundle);
+                    startActivity(intent);
                     finish();
                 } else {
                     showToastShort("验证失败！请重新输入");
                 }
-
             }
 
             @Override
@@ -179,9 +181,6 @@ public class AuthenticationActivity extends BaseActivity {
                 } else {
                     showToastShort("请输入验证码");
                 }
-                Bundle bundle = new Bundle();
-                bundle.putInt("type", type);
-                CommonUtils.goActivity(mContext, BindAccountActivity.class, bundle, true);
                 break;
         }
     }

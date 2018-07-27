@@ -86,7 +86,6 @@ public final class CaptureActivityHandler extends Handler {
         /***********************************************************************/
         Bitmap barcode = bundle == null ? null :
             (Bitmap) bundle.getParcelable(DecodeThread.BARCODE_BITMAP);//���ñ����߳�
-        
         activity.handleDecode((Result) message.obj, barcode);//���ؽ��?        /***********************************************************************/
         break;
       case R.id.decode_failed:
@@ -125,7 +124,7 @@ public final class CaptureActivityHandler extends Handler {
     removeMessages(R.id.decode_failed);
   }
 
-  private void restartPreviewAndDecode() {
+  public void restartPreviewAndDecode() {
     if (state == State.SUCCESS) {
       state = State.PREVIEW;
       CameraManager.get().requestPreviewFrame(decodeThread.getHandler(), R.id.decode);
@@ -133,5 +132,9 @@ public final class CaptureActivityHandler extends Handler {
       activity.drawViewfinder();
     }
   }
-
+  public void stopPreview(){
+    Message message = Message.obtain(activity.getHandler(),
+            R.id.decode_succeeded, null);
+    message.sendToTarget();
+  }
 }

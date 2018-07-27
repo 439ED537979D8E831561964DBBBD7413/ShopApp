@@ -5,28 +5,26 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
-import android.text.InputFilter;
 import android.util.Log;
-import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.yj.shopapp.R;
 import com.yj.shopapp.ui.activity.base.BaseActivity;
-import com.yj.shopapp.util.CashierInputFilter;
 import com.yj.shopapp.util.CommonUtils;
+import com.yj.shopapp.util.StatusBarUtils;
 import com.yj.shopapp.util.StringHelper;
+import com.yj.shopapp.wbeen.Power;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 
 public class WPriceEditActivity extends BaseActivity {
     public static final int BACK_TO = 88;
-
     public static int EDIT_CODE = 33;
-
     Context mContext = this;
     @BindView(R.id.forewadImg)
     ImageView forewadImg;
@@ -34,7 +32,6 @@ public class WPriceEditActivity extends BaseActivity {
     TextView title;
     @BindView(R.id.id_right_btu)
     TextView idRightBtu;
-
     @BindView(R.id.cost_price)
     EditText costPrice;
     @BindView(R.id.ed_minnum)
@@ -53,11 +50,13 @@ public class WPriceEditActivity extends BaseActivity {
     CardView loginBtn;
     @BindView(R.id.activity_wprice_edit)
     LinearLayout activityWpriceEdit;
-    String cost;
-    String minnum = "";
-    String maxnum = "";
     @BindView(R.id.stopunm)
     EditText stopunm;
+    @BindView(R.id.title_view)
+    RelativeLayout titleView;
+    @BindView(R.id.retail_price)
+    EditText retailPrice;
+    private Power power;
 
     @Override
     protected int getLayoutId() {
@@ -65,15 +64,24 @@ public class WPriceEditActivity extends BaseActivity {
     }
 
     @Override
+    protected void setStatusBar() {
+        StatusBarUtils.from(this)
+                .setActionbarView(titleView)
+                .setTransparentStatusbar(true)
+                .setLightStatusBar(false)
+                .process();
+    }
+
+    @Override
     protected void initData() {
-        InputFilter[] filters = new InputFilter[]{new CashierInputFilter()};
+       // InputFilter[] filters = new InputFilter[]{new CashierInputFilter()};
         title.setText("修改库存");
-        wholesalePrice.setFilters(filters);
-        costPrice.setFilters(filters);
-        costPrice.setFocusable(true);
-        costPrice.setFocusableInTouchMode(true);
-        costPrice.requestFocus();
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+       // wholesalePrice.setFilters(filters);
+        //costPrice.setFilters(filters);
+//        costPrice.setFocusable(true);
+//        costPrice.setFocusableInTouchMode(true);
+//        costPrice.requestFocus();
+        //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 
         if (getIntent().hasExtra("costPrice")) {
             costPrice.setText(getIntent().getStringExtra("costPrice"));
@@ -85,23 +93,64 @@ public class WPriceEditActivity extends BaseActivity {
             edMinnum.setText(getIntent().getStringExtra("minnum"));
             edMaxnum.setText(getIntent().getStringExtra("maxnum"));
             stopunm.setText(getIntent().getStringExtra("stopnum"));
+            retailPrice.setText(getIntent().getStringExtra("vipprice"));
+        }
+        if (getIntent().hasExtra("power")) {
+            power = getIntent().getParcelableExtra("power");
+            setEditFocus();
+        }
+    }
+
+    private void setEditFocus() {
+        if (power==null)return;
+        if (power.getMinitemsum() == 0) {
+            maximumInventory.setFocusable(false);
+            maximumInventory.setTextColor(getResources().getColor(R.color.color_999999));
+        }
+        if (power.getMaxitemsum() == 0) {
+            minimumInventory.setFocusable(false);
+            minimumInventory.setTextColor(getResources().getColor(R.color.color_999999));
+        }
+        if (power.getItemsum() == 0) {
+            inventory.setFocusable(false);
+            inventory.setTextColor(getResources().getColor(R.color.color_999999));
+        }
+        if (power.getMinnum() == 0) {
+            edMinnum.setFocusable(false);
+            edMinnum.setTextColor(getResources().getColor(R.color.color_999999));
+        }
+        if (power.getMaxnum() == 0) {
+            edMaxnum.setFocusable(false);
+            edMaxnum.setTextColor(getResources().getColor(R.color.color_999999));
+        }
+        if (power.getStopitemsum() == 0) {
+            stopunm.setFocusable(false);
+            stopunm.setTextColor(getResources().getColor(R.color.color_999999));
+        }
+        if (power.getCostprice() == 0) {
+            costPrice.setFocusable(false);
+            costPrice.setTextColor(getResources().getColor(R.color.color_999999));
+        }
+        if (power.getPrice() == 0) {
+            wholesalePrice.setFocusable(false);
+            wholesalePrice.setTextColor(getResources().getColor(R.color.color_999999));
+        }
+        if (power.getVipprice()==0){
+            retailPrice.setFocusable(false);
+            retailPrice.setTextColor(getResources().getColor(R.color.color_999999));
         }
     }
 
     @OnClick(R.id.login_btn)
     public void onViewClicked() {
-        if (costPrice.getText().toString() == null) {
-            cost = "";
-        } else {
-            cost = costPrice.getText().toString();
-        }
-
+        String cost;
+        cost = costPrice.getText().toString();
         String wholesale = wholesalePrice.getText().toString();
         String inv = inventory.getText().toString();
         String max = maximumInventory.getText().toString();
         String min = minimumInventory.getText().toString();
-        minnum = edMinnum.getText().toString();
-        maxnum = edMaxnum.getText().toString();
+        String minnum = edMinnum.getText().toString();
+        String maxnum = edMaxnum.getText().toString();
         Log.e("my_tag", minnum + maxnum);
         if (!CheckNum(minnum, maxnum)) {
             AlertDialog.Builder builder = new AlertDialog.Builder(WPriceEditActivity.this);
@@ -153,6 +202,7 @@ public class WPriceEditActivity extends BaseActivity {
         bundle.putString("minnum", minnum);//最小购买量
         bundle.putString("maxnum", maxnum);//最大购买量
         bundle.putString("stopnum", stopunm.getText().toString());
+        bundle.putString("vipprice", retailPrice.getText().toString());
         CommonUtils.goResult(mContext, bundle, BACK_TO);
     }
 
@@ -164,12 +214,6 @@ public class WPriceEditActivity extends BaseActivity {
         if (!arg2.equals("")) {
             var2 = Integer.parseInt(arg2);
         }
-        Log.e("my_tag", var1 + "check" + var2);
-        if (var1 == 0 || var2 == 0) {
-            return true;
-        }
-        return var2 > var1 ? true : false;
+        return var1 == 0 || var2 == 0 || var2 > var1;
     }
-
-
 }

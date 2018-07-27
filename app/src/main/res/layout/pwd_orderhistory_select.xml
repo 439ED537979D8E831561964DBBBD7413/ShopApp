@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialogue_box"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/H10dp"
+    android:paddingTop="@dimen/H10dp">
+
+    <TextView
+        android:id="@+id/go_goodshistory"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:drawableLeft="@drawable/ic_goodshistory"
+        android:drawablePadding="@dimen/H8dp"
+        android:gravity="center"
+        android:text="历史商品记录"
+        android:textColor="@color/color333333" />
+
+    <TextView
+        android:id="@+id/go_returngoods"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:drawableLeft="@drawable/ic_returngoods"
+        android:drawablePadding="@dimen/H8dp"
+        android:gravity="center"
+        android:text="退货商品记录"
+        android:textColor="@color/color333333" />
+</LinearLayout>

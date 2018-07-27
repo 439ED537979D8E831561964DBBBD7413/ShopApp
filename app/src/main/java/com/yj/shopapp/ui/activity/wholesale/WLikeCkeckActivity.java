@@ -8,29 +8,25 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.kaopiz.kprogresshud.KProgressHUD;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.squareup.okhttp.Request;
 import com.yj.shopapp.R;
 import com.yj.shopapp.config.Contants;
 import com.yj.shopapp.http.HttpHelper;
 import com.yj.shopapp.http.OkHttpResponseHandler;
-import com.yj.shopapp.loading.ILoadView;
-import com.yj.shopapp.loading.ILoadViewImpl;
-import com.yj.shopapp.loading.LoadMoreClickListener;
-import com.yj.shopapp.presenter.GoodsRecyclerView;
-import com.yj.shopapp.ubeen.Goods;
-import com.yj.shopapp.ui.activity.adapter.WLikeCheckAdapter;
+import com.yj.shopapp.ui.activity.ShowLog;
+import com.yj.shopapp.ui.activity.adapter.WGoodsAdapter;
 import com.yj.shopapp.ui.activity.base.BaseActivity;
 import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.JsonHelper;
 import com.yj.shopapp.util.StringHelper;
-import com.yj.shopapp.view.headfootrecycleview.OnRecyclerViewScrollListener;
-import com.yj.shopapp.view.headfootrecycleview.RecyclerViewHeaderFooterAdapter;
+import com.yj.shopapp.wbeen.Goods;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,7 +40,7 @@ import butterknife.OnClick;
  * Created by huanghao on 2016/11/11.
  */
 
-public class WLikeCkeckActivity extends BaseActivity implements GoodsRecyclerView {
+public class WLikeCkeckActivity extends BaseActivity {
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
     //    @BindView(R.id.swipe_refresh_layout)
@@ -55,18 +51,14 @@ public class WLikeCkeckActivity extends BaseActivity implements GoodsRecyclerVie
     TextView idRightBtu;
     @BindView(R.id.value_Et)
     EditText value_Et;
-    private RecyclerViewHeaderFooterAdapter adapter;
-
-    private RecyclerView.LayoutManager layoutManager;
+    @BindView(R.id.smart_refresh_layout)
+    SmartRefreshLayout smartRefreshLayout;
 
     private boolean isRequesting = false;//标记，是否正在刷新
     private boolean isRequestingType = false;//标记，获取类型是否正在刷新
-
     private int mCurrentPage = 0;
-
     private List<Goods> goodsList = new ArrayList<>();
-    private ILoadView iLoadView = null;
-    private View loadMoreView = null;
+    private WGoodsAdapter oAdapter;
 
     @Override
     protected int getLayoutId() {
@@ -76,34 +68,38 @@ public class WLikeCkeckActivity extends BaseActivity implements GoodsRecyclerVie
     @Override
     protected void initData() {
         title.setText("条码模糊查询");
-//        swipeRefreshLayout.setColorSchemeResources(Contants.Refresh.refreshColorScheme);
-//        swipeRefreshLayout.setOnRefreshListener(listener);
-
-        WLikeCheckAdapter oAdapter = new WLikeCheckAdapter(mContext, goodsList, this);
-
-        layoutManager = new LinearLayoutManager(mContext);
-
-        adapter = new RecyclerViewHeaderFooterAdapter(layoutManager, oAdapter);
-
-        iLoadView = new ILoadViewImpl(mContext, new WLikeCkeckActivity.mLoadMoreClickListener());
-
-        loadMoreView = iLoadView.inflate();
-
-        recyclerView.addOnScrollListener(new WLikeCkeckActivity.MyScrollListener());
-
-
+        oAdapter = new WGoodsAdapter(mContext);
         if (recyclerView != null) {
-            recyclerView.setLayoutManager(layoutManager);
-            recyclerView.setAdapter(adapter);
+            recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+            recyclerView.setAdapter(oAdapter);
         }
+        Refresh();
+        oAdapter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Bundle bundle = new Bundle();
+                bundle.putString("itemnoid", goodsList.get(position).getNumberid());
+                bundle.putString("id", goodsList.get(position).getId());
+                CommonUtils.goActivityForResult(mContext, WGoodsDetailActivity.class, bundle, 0, false);
+            }
+        });
+    }
+
+    private void Refresh() {
+        smartRefreshLayout.setHeaderHeight(50);
+        smartRefreshLayout.setFooterHeight(50);
+        smartRefreshLayout.setEnableRefresh(false);
+        smartRefreshLayout.setOnRefreshListener(v -> refreshRequest());
+        smartRefreshLayout.setOnLoadMoreListener(v -> loadMoreRequest());
+        smartRefreshLayout.setDisableContentWhenRefresh(true);//是否在刷新的时候禁止列表的操作
+        smartRefreshLayout.setDisableContentWhenLoading(true);//是否在加载的时候禁止列表的操作
     }
 
     @OnClick(R.id.submitTv)
-    public void sumitTvOnclick()
-    {
-
+    public void sumitTvOnclick() {
         refreshRequest();
     }
+
     /***
      * 网络数据
      ***********************************************************/
@@ -114,18 +110,12 @@ public class WLikeCkeckActivity extends BaseActivity implements GoodsRecyclerVie
         Map<String, String> params = new HashMap<String, String>();
         params.put("uid", uid);
         params.put("token", token);
-        params.put("keyword",value_Et.getText().toString().trim().replace(" ",""));
-       // params.put("agentuid", WId);
-
-
-
-        adapter.removeFooter(loadMoreView);
+        params.put("keyword", value_Et.getText().toString().trim().replace(" ", ""));
         HttpHelper.getInstance().post(mContext, Contants.PortA.Getitemsbynumber, params, new OkHttpResponseHandler<String>(mContext) {
 
             @Override
             public void onAfter() {
                 super.onAfter();
-                // swipeRefreshLayout.setRefreshing(false);
                 isRequesting = false;
             }
 
@@ -133,34 +123,25 @@ public class WLikeCkeckActivity extends BaseActivity implements GoodsRecyclerVie
             public void onBefore() {
                 super.onBefore();
                 isRequesting = true;
+                goodsList.clear();
             }
 
             @Override
             public void onResponse(Request request, String json) {
                 super.onResponse(request, json);
-
-                goodsList.clear();
-                System.out.println("response" + json);
+                ShowLog.e(json);
                 if (JsonHelper.isRequstOK(json, mContext)) {
                     JsonHelper<Goods> jsonHelper = new JsonHelper<Goods>(Goods.class);
-
                     goodsList.addAll(jsonHelper.getDatas(json));
-
-                    if (goodsList.size() >= 10) {
-                        adapter.addFooter(loadMoreView);
-                    }
-                    if (goodsList.size()==0)
-                    {
+                    oAdapter.setList(goodsList);
+                    if (goodsList.size() == 0) {
                         showToastShort("没有任何记录！");
                     }
-                } else if(JsonHelper.getRequstOK(json)==6){
+                } else if (JsonHelper.getRequstOK(json) == 6) {
                     showToastShort("没有任何记录！");
-                    adapter.removeFooter(loadMoreView);
-                }else {
+                } else {
                     showToastShort(JsonHelper.errorMsg(json));
                 }
-
-                adapter.notifyDataSetChanged();
             }
 
             @Override
@@ -168,7 +149,6 @@ public class WLikeCkeckActivity extends BaseActivity implements GoodsRecyclerVie
                 super.onError(request, e);
                 showToastShort(Contants.NetStatus.NETDISABLEORNETWORKDISABLE);
                 goodsList.clear();
-                adapter.notifyDataSetChanged();
             }
         });
 
@@ -181,17 +161,10 @@ public class WLikeCkeckActivity extends BaseActivity implements GoodsRecyclerVie
             return;
         }
 
-
-
-        iLoadView.showLoadingView(loadMoreView);
-
         Map<String, String> params = new HashMap<String, String>();
         params.put("uid", uid);
         params.put("token", token);
-        params.put("keyword",value_Et.getText().toString().trim().replace(" ",""));
-
-//        params.put("agentuid", WId);
-
+        params.put("keyword", value_Et.getText().toString().trim().replace(" ", ""));
 
         HttpHelper.getInstance().post(mContext, Contants.PortU.ITEMLIST, params, new OkHttpResponseHandler<String>(mContext) {
 
@@ -211,22 +184,19 @@ public class WLikeCkeckActivity extends BaseActivity implements GoodsRecyclerVie
             public void onResponse(Request request, String json) {
                 super.onResponse(request, json);
 
-                System.out.println("response" + json);
+               // System.out.println("response" + json);
                 if (JsonHelper.isRequstOK(json, mContext)) {
                     JsonHelper<Goods> jsonHelper = new JsonHelper<Goods>(Goods.class);
-
                     if (jsonHelper.getDatas(json).size() == 0) {
-                        iLoadView.showFinishView(loadMoreView);
                     } else {
                         goodsList.addAll(jsonHelper.getDatas(json));
                     }
                 } else if (JsonHelper.getRequstOK(json) == 6) {
-                    iLoadView.showFinishView(loadMoreView);
+
                 } else {
                     showToastShort(JsonHelper.errorMsg(json));
                 }
 
-                adapter.notifyDataSetChanged();
             }
 
             @Override
@@ -234,93 +204,60 @@ public class WLikeCkeckActivity extends BaseActivity implements GoodsRecyclerVie
                 super.onError(request, e);
                 showToastShort(Contants.NetStatus.NETDISABLEORNETWORKDISABLE);
                 mCurrentPage--;
-                iLoadView.showErrorView(loadMoreView);
             }
         });
     }
 
-    /**
-     * 保存购物车
-     */
-    public void saveDolistcart(String itemid, String itemsum) {
+//    /**
+//     * 保存购物车
+//     */
+//    public void saveDolistcart(String itemid, String itemsum) {
+//
+//        Map<String, String> params = new HashMap<String, String>();
+//        params.put("uid", uid);
+//        params.put("token", token);
+//        params.put("itemid", itemid);
+//        params.put("itemsum", itemsum);
+//
+//        final KProgressHUD kProgressHUD = growProgress(Contants.Progress.SUMBIT_ING);
+//
+//        HttpHelper.getInstance().post(mContext, Contants.PortU.DOLISTCART, params, new OkHttpResponseHandler<String>(mContext) {
+//
+//            @Override
+//            public void onAfter() {
+//                super.onAfter();
+//                kProgressHUD.dismiss();
+//            }
+//
+//            @Override
+//            public void onBefore() {
+//                super.onBefore();
+//                kProgressHUD.show();
+//            }
+//
+//            @Override
+//            public void onResponse(Request request, String json) {
+//                super.onResponse(request, json);
+//
+//                System.out.println("response" + json);
+//
+//                if (JsonHelper.isRequstOK(json, mContext)) {
+//                    // CommonUtils.setBroadCast(mContext, Contants.Bro.REFRESH_CARTLIST);
+//                    showToastShort("加入购物车成功");
+//                } else {
+//                    showToastShort(JsonHelper.errorMsg(json));
+//                }
+//                adapter.notifyDataSetChanged();
+//            }
+//
+//            @Override
+//            public void onError(Request request, Exception e) {
+//                super.onError(request, e);
+//                showToastShort(Contants.NetStatus.NETDISABLEORNETWORKDISABLE);
+//            }
+//        });
+//    }
 
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("uid", uid);
-        params.put("token", token);
-        params.put("itemid", itemid);
-        params.put("itemsum", itemsum);
-
-        final KProgressHUD kProgressHUD = growProgress(Contants.Progress.SUMBIT_ING);
-
-        HttpHelper.getInstance().post(mContext, Contants.PortU.DOLISTCART, params, new OkHttpResponseHandler<String>(mContext) {
-
-            @Override
-            public void onAfter() {
-                super.onAfter();
-                kProgressHUD.dismiss();
-            }
-
-            @Override
-            public void onBefore() {
-                super.onBefore();
-                kProgressHUD.show();
-            }
-
-            @Override
-            public void onResponse(Request request, String json) {
-                super.onResponse(request, json);
-
-                System.out.println("response" + json);
-
-                if (JsonHelper.isRequstOK(json, mContext)) {
-                   // CommonUtils.setBroadCast(mContext, Contants.Bro.REFRESH_CARTLIST);
-                    showToastShort("加入购物车成功");
-                } else {
-                    showToastShort(JsonHelper.errorMsg(json));
-                }
-                adapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onError(Request request, Exception e) {
-                super.onError(request, e);
-                showToastShort(Contants.NetStatus.NETDISABLEORNETWORKDISABLE);
-            }
-        });
-    }
-
-
-    public class mLoadMoreClickListener implements LoadMoreClickListener {
-
-        @Override
-        public void clickLoadMoreData() {
-
-        }
-    }
-
-
-    public class MyScrollListener extends OnRecyclerViewScrollListener {
-
-        @Override
-        public void onScrollUp() {
-
-        }
-
-        @Override
-        public void onScrollDown() {
-
-        }
-
-        @Override
-        public void onBottom() {
-            loadMoreRequest();
-        }
-
-        @Override
-        public void onMoved(int distanceX, int distanceY) {
-
-        }
-    }
     /*********
      * 弹出框
      ***********/
@@ -338,14 +275,14 @@ public class WLikeCkeckActivity extends BaseActivity implements GoodsRecyclerVie
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
 
                         String str = inputEt.getText().toString();
-                        if(StringHelper.isEmpty(str)){
+                        if (StringHelper.isEmpty(str)) {
                             showToastShort("请填写购买数量");
-                        }else {
+                        } else {
                             long num = Long.parseLong(str);
-                            if (num>0){
-                                saveDolistcart(goodsList.get(pos).getId(), str);
+                            if (num > 0) {
+                                //saveDolistcart(goodsList.get(pos).getId(), str);
                                 dialog.dismiss();
-                            }else{
+                            } else {
                                 showToastShort("购买数量必须大于0");
                             }
                         }
@@ -365,7 +302,7 @@ public class WLikeCkeckActivity extends BaseActivity implements GoodsRecyclerVie
 
         unitTv = (TextView) dialog.getCustomView().findViewById(R.id.unitTv);
         inputEt = (EditText) dialog.getCustomView().findViewById(R.id.inputEt);
-        unitTv.setText(goodsList.get(pos).getUnit());
+        unitTv.setText(goodsList.get(pos).getId());
         dialog.show();
     }
 
@@ -373,30 +310,23 @@ public class WLikeCkeckActivity extends BaseActivity implements GoodsRecyclerVie
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode==resultCode){
+        if (requestCode == resultCode) {
             value_Et.setFocusable(true);
             value_Et.requestFocus();
-            InputMethodManager imm = (InputMethodManager)this.getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
         }
     }
 
 
-    @Override
-    public void CardClick(int postion) {
-        setDialogInput(postion);
-    }
+//    @Override
+//    public void CardClick(int postion) {
+//        setDialogInput(postion);
+//    }
 
-    @Override
-    public void onItemClick(int position) {
-        Bundle bundle = new Bundle();
-        bundle.putString("itemnoid", goodsList.get(position).getItemnumber());
-        bundle.putString("id", goodsList.get(position).getId());
-        CommonUtils.goActivityForResult(mContext, WGoodsDetailActivity.class, bundle,0, false);
-    }
+//    @Override
+//    public void onItemClick(int position) {
+//
+//    }
 
-    @Override
-    public void onLongItemClick(int position) {
-
-    }
 }

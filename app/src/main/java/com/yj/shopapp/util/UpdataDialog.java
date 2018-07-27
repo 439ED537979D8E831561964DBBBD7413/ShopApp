@@ -1,12 +1,18 @@
 package com.yj.shopapp.util;
 
-import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
+import android.support.v4.content.FileProvider;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -18,20 +24,12 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.alibaba.fastjson.JSONObject;
-import com.squareup.okhttp.Request;
 import com.yj.shopapp.R;
-import com.yj.shopapp.config.Contants;
-import com.yj.shopapp.http.HttpHelper;
-import com.yj.shopapp.http.OkHttpResponseHandler;
 import com.yj.shopapp.ui.activity.Interface.DownloadProgressCallback;
-import com.yj.shopapp.ui.activity.ShowLog;
-import com.yj.shopapp.ui.activity.upversion.Download;
+import com.yj.shopapp.ui.activity.upversion.DownloadAppUtils;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.File;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -56,14 +54,21 @@ public class UpdataDialog extends DialogFragment {
     @BindView(R.id.progressbar_ll)
     LinearLayout progressbarLl;
     private Context mContext;
-    private boolean isDownload;
-    private boolean isDownloadComp;
     Unbinder unbinder;
+    private Activity mActivity;
+    private String apkUrl;
+    private String appVersion;
 
-    public static UpdataDialog newInstance(boolean isDownloadComp) {
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mActivity = activity;
+    }
 
+    public static UpdataDialog newInstance(String url, String versioon) {
         Bundle args = new Bundle();
-        args.putBoolean("isDownloadComp", isDownloadComp);
+        args.putString("apkUrl", url);
+        args.putString("appVersion", versioon);
         UpdataDialog fragment = new UpdataDialog();
         fragment.setArguments(args);
         return fragment;
@@ -74,7 +79,8 @@ public class UpdataDialog extends DialogFragment {
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NO_TITLE, R.style.UpdateAppDialog);
         mContext = getActivity();
-        isDownloadComp = getArguments().getBoolean("isDownloadComp", false);
+        apkUrl = getArguments().getString("apkUrl", "");
+        appVersion = getArguments().getString("appVersion", "");
     }
 
     @Override
@@ -93,26 +99,22 @@ public class UpdataDialog extends DialogFragment {
                 }
                 return false;
             });
-            Window dialogWindow = getDialog().getWindow();
-            dialogWindow.setGravity(Gravity.CENTER);
-            WindowManager.LayoutParams lp = dialogWindow.getAttributes();
-            DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
-            lp.height = (int) (displayMetrics.heightPixels * 0.8f);
-            dialogWindow.setAttributes(lp);
-        }
 
+            try {
+                Window dialogWindow = getDialog().getWindow();
+                if (dialogWindow != null) {
+                    dialogWindow.setGravity(Gravity.CENTER);
+                    WindowManager.LayoutParams lp = dialogWindow.getAttributes();
+                    DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
+                    lp.height = (int) (displayMetrics.heightPixels * 0.8f);
+                    dialogWindow.setAttributes(lp);
+                }
 
-        if (isDownloadComp) {
-            String path = PreferenceUtils.getPrefString(mContext, "ApkPath", "");
-            if (CommonUtils.fileIsExists(path)) {
-                CommonUtils.installApk(mContext, path);
-                dismiss();
-            } else {
-                cupdate(mContext);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } else {
-            cupdate(mContext);
         }
+
     }
 
     @Nullable
@@ -126,63 +128,28 @@ public class UpdataDialog extends DialogFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-    }
-
-    //是否更新新版本
-    public void cupdate(final Context context) {
-        //检测网络
-        if (!NetUtils.isNetworkAvailable(context)) {
-            Toast.makeText(context, Contants.NetStatus.NETDISABLE, Toast.LENGTH_SHORT).show();
-            return;
-        }
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("app", "");
-        HttpHelper.getInstance().post(context, Contants.appu, params, new OkHttpResponseHandler<String>(context) {
-
+        DownloadAppUtils.download(mActivity, apkUrl, appVersion, new DownloadProgressCallback() {
             @Override
-            public void onAfter() {
-                super.onAfter();
-                //    progressDialog.dismiss();
-            }
-
-            @Override
-            public void onBefore() {
-                super.onBefore();
-                //     progressDialog.show();
-            }
-
-            @Override
-            public void onResponse(Request request, String json) {
-                super.onResponse(request, json);
-                ShowLog.e(json);
-                JSONObject jsonObject = JSONObject.parseObject(json);
-                int vercode = Integer.parseInt(jsonObject.getString("version"));
-                final String appurl = jsonObject.getString("appurl");
-                isDownload = true;
-                Download.downloadForAutoInstall(mContext.getApplicationContext(), appurl, "ShopApp.apk", "版本更新");
-                Download.setCallback(callbacks);
-            }
-
-            @Override
-            public void onError(Request request, Exception e) {
-                super.onError(request, e);
-                Toast.makeText(context, Contants.NetStatus.NETDISABLEORNETWORKDISABLE, Toast.LENGTH_SHORT).show();
+            public void onProgress(int progress, int totalSize) {
+                npb.setProgress(progress);
+                Progressvalue.setText(String.format("%d%%", progress));
+                if (progress == 100) {
+//                    ShowLog.e("zhixingd100");
+//                    //安装app
+//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//                        boolean b = mActivity.getPackageManager().canRequestPackageInstalls();
+//                        if (b) {
+//                            installApk(DownloadAppUtils.downloadUpdateApkFilePath);
+//                        } else {
+//                            //请求安装未知应用来源的权限
+//                            startInstallPermissionSettingActivity(mActivity);
+//                        }
+//                    }
+                    dismiss();
+                }
             }
         });
-
     }
-
-    DownloadProgressCallback callbacks = new DownloadProgressCallback() {
-        @SuppressLint("SetTextI18n")
-        @Override
-        public void onProgress(int progress, int totalSize) {
-            npb.setProgress(progress);
-            Progressvalue.setText(progress + "%");
-            if (progress == 100) {
-                dismiss();
-            }
-        }
-    };
 
     @Override
     public void show(FragmentManager manager, String tag) {
@@ -197,11 +164,68 @@ public class UpdataDialog extends DialogFragment {
             e.printStackTrace();
         }
     }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void startInstallPermissionSettingActivity(Activity activity) {
+        Uri packageURI = Uri.parse("package:" + activity.getPackageName());
+        //注意这个是8.0新API
+        Intent intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, packageURI);
+        activity.startActivityForResult(intent, 10086);
+    }
+
+    /**
+     * 安装apk
+     */
+    private void installApk(String path) {
+        if (TextUtils.isEmpty(path)) {
+            return;
+        }
+//        if (DownloadAppUtils.downloadUpdateApkFilePath != null) {
+//            Intent i = new Intent(Intent.ACTION_VIEW);
+//            File apkFile = new File(DownloadAppUtils.downloadUpdateApkFilePath);
+//            if (UpdateAppUtils.needFitAndroidN && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//                i.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+//                Uri contentUri = FileProvider.getUriForFile(
+//                        context, context.getPackageName() + ".fileProvider", apkFile);
+//                i.setDataAndType(contentUri, "application/vnd.android.package-archive");
+//            } else {
+//                i.setDataAndType(Uri.fromFile(apkFile),
+//                        "application/vnd.android.package-archive");
+//            }
+//            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//            context.startActivity(i);
+//        }
+        File file = new File(path);
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        //判读版本是否在7.0以上安卓8.0一下
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            //provider authorities
+            Uri contentUri = FileProvider.getUriForFile(
+                    mActivity, mActivity.getPackageName() + ".fileProvider", file);
+            //Granting Temporary Permissions to a URI
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            intent.setDataAndType(contentUri, "application/vnd.android.package-archive");
+        } else {
+            intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
+        }
+        mActivity.startActivity(intent);
+        //ApkController.installSilent(apkPath);
+    }
+
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if (requestCode == 10086) {
+//            ShowLog.e("zhixingd");
+//            installApk(DownloadAppUtils.downloadUpdateApkFilePath);
+//        }
+//    }
+
     @Override
     public void onDestroyView() {
+        DownloadAppUtils.unRegister(mActivity);
         super.onDestroyView();
         unbinder.unbind();
-
     }
 
 }

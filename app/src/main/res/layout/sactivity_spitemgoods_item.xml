@@ -6,13 +6,13 @@
     android:layout_height="wrap_content"
     android:background="@color/white"
     android:descendantFocusability="blocksDescendants"
-    android:orientation="vertical"
-    android:padding="@dimen/H8dp">
+    android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/layout"
-        android:layout_width="100dp"
-        android:layout_height="100dp">
+        android:layout_width="110dp"
+        android:layout_height="110dp"
+        android:layout_margin="@dimen/H8dp">
 
         <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/simpleDraweeView"
@@ -36,9 +36,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
         android:layout_toRightOf="@+id/layout"
-        android:orientation="vertical"
-        android:paddingLeft="@dimen/H10dp">
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/orderName"
@@ -57,6 +57,16 @@
             android:text=""
             android:textColor="@color/color_999999"
             android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/goodAddress_Tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/H2dp"
+            android:text=""
+            android:textColor="@color/color_999999"
+            android:textSize="13sp"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/orderNumber"

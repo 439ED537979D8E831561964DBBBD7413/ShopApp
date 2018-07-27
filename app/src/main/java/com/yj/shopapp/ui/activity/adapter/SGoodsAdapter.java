@@ -107,7 +107,6 @@ public class SGoodsAdapter implements IRecyclerViewIntermediary {
         HomeFragmentViewHolder holder = (HomeFragmentViewHolder) viewHolder;
         Goods goods = notes.get(position);
         holder.goodsnameTv.setText(goods.getName());
-
         Glide.with(mContext).load(goods.getImgurl())
                 .apply(new RequestOptions().placeholder(R.drawable.load).override(180,180).centerCrop()).into(holder.simpleDraweeView);
 //        string is_show_price= PreferenceUtils.getPrefString(mContext, Contants.Preference.IS_SHOW_PRICE, "");

@@ -178,6 +178,7 @@ public class LimitedSale implements Parcelable {
         this.list = list;
     }
 
+
     @Override
     public int describeContents() {
         return 0;
@@ -204,6 +205,10 @@ public class LimitedSale implements Parcelable {
     }
 
     public LimitedSale() {
+    }
+
+    public LimitedSale(String id) {
+        this.id = id;
     }
 
     protected LimitedSale(Parcel in) {

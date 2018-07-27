@@ -36,10 +36,19 @@ public class HotIndex implements Parcelable {
     private String imgurl;
     private String unit;
     private String price;
-    private int unitprice;
+    private String unitprice;
     private String itemsum;
     private String msg;
     private String specialnote;
+    private String localhost;
+
+    public String getLocalhost() {
+        return localhost == null ? "" : localhost;
+    }
+
+    public void setLocalhost(String localhost) {
+        this.localhost = localhost;
+    }
 
     public String getSpecialnote() {
         return specialnote == null ? "" : specialnote;
@@ -145,11 +154,11 @@ public class HotIndex implements Parcelable {
         this.price = price;
     }
 
-    public int getUnitprice() {
+    public String getUnitprice() {
         return unitprice;
     }
 
-    public void setUnitprice(int unitprice) {
+    public void setUnitprice(String unitprice) {
         this.unitprice = unitprice;
     }
 
@@ -173,10 +182,11 @@ public class HotIndex implements Parcelable {
         dest.writeString(this.imgurl);
         dest.writeString(this.unit);
         dest.writeString(this.price);
-        dest.writeInt(this.unitprice);
+        dest.writeString(this.unitprice);
         dest.writeString(this.itemsum);
         dest.writeString(this.msg);
         dest.writeString(this.specialnote);
+        dest.writeString(this.localhost);
     }
 
     protected HotIndex(Parcel in) {
@@ -190,10 +200,11 @@ public class HotIndex implements Parcelable {
         this.imgurl = in.readString();
         this.unit = in.readString();
         this.price = in.readString();
-        this.unitprice = in.readInt();
+        this.unitprice = in.readString();
         this.itemsum = in.readString();
         this.msg = in.readString();
         this.specialnote = in.readString();
+        this.localhost = in.readString();
     }
 
     public static final Creator<HotIndex> CREATOR = new Creator<HotIndex>() {

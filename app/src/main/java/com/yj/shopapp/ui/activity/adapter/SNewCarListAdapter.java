@@ -99,12 +99,12 @@ public class SNewCarListAdapter extends Common2Adapter<CartList> {
             holder.getView(R.id.checkBoxlayout).setVisibility(View.GONE);
             holder.getCheckBox(R.id.checkBox).setButtonDrawable(R.drawable.ic_cross_grey);
             holder.getCheckBox(R.id.checkBox).setChecked(false);
-            holder.getTextView(R.id.tv_tips).setText("正在补货中");
+            holder.getTextView(R.id.tv_tips).setVisibility(View.VISIBLE);
         } else {
             holder.getView(R.id.checkBoxlayout).setVisibility(View.VISIBLE);
             holder.getCheckBox(R.id.checkBox).setButtonDrawable(R.drawable.checkbox_style);
             holder.getCheckBox(R.id.checkBox).setChecked(cartList.isChoosed());
-            holder.getTextView(R.id.tv_tips).setText("");
+            holder.getTextView(R.id.tv_tips).setVisibility(View.GONE);
         }
         holder.getTextView(R.id.shapname).setText(cartList.getName());
         holder.getTextView(R.id.Unit_Price).setText("￥" + CommonUtils.decimal(Double.parseDouble(cartList.getUnitprice())));

@@ -1,6 +1,7 @@
 package com.yj.shopapp.ui.activity.shopkeeper;
 
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.kaopiz.kprogresshud.KProgressHUD;
@@ -10,9 +11,11 @@ import com.yj.shopapp.config.Contants;
 import com.yj.shopapp.http.HttpHelper;
 import com.yj.shopapp.http.OkHttpResponseHandler;
 import com.yj.shopapp.ui.activity.base.BaseActivity;
+import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.JsonHelper;
 import com.yj.shopapp.util.NetUtils;
 import com.yj.shopapp.util.PreferenceUtils;
+import com.yj.shopapp.util.StatusBarUtils;
 import com.yj.shopapp.util.StringHelper;
 
 import java.util.HashMap;
@@ -33,6 +36,9 @@ public class SDoPasswdActivity extends BaseActivity {
     EditText passwdEt;
     @BindView(R.id.surepasswd_Et)
     EditText surepasswdEt;
+    @BindView(R.id.title_view)
+    RelativeLayout titleView;
+
     @Override
     protected int getLayoutId() {
         return R.layout.wactivity_dopasswd;
@@ -43,6 +49,14 @@ public class SDoPasswdActivity extends BaseActivity {
         title.setText("修改密码");
     }
 
+    @Override
+    protected void setStatusBar() {
+        StatusBarUtils.from(this)
+                .setActionbarView(titleView)
+                .setTransparentStatusbar(true)
+                .setLightStatusBar(false)
+                .process();
+    }
 
     private boolean checkTv() {
         if (StringHelper.isEmpty(passwdEt.getText().toString())) {
@@ -53,6 +67,19 @@ public class SDoPasswdActivity extends BaseActivity {
             showToastShort("确认密码不能为空");
             return false;
         }
+        if (passwdEt.getText().toString().length()<6) {
+
+            showToastShort("新密码长度小于6位");
+            return false;
+        }
+        if (surepasswdEt.getText().toString().length()<6) {
+            showToastShort("新密码不能为空");
+            return false;
+        }
+        if (CommonUtils.isContainChinese(surepasswdEt.getText().toString())){
+            showToastShort("确认密码包含中文");
+            return false;
+        }
         if (surepasswdEt.getText().toString().equals(passwdEt.getText().toString())) {
             return true;
         } else {
@@ -60,9 +87,6 @@ public class SDoPasswdActivity extends BaseActivity {
         }
         return false;
     }
-
-
-
 
 
     @OnClick(R.id.Definitemodification)
@@ -119,4 +143,5 @@ public class SDoPasswdActivity extends BaseActivity {
         });
 
     }
+
 }

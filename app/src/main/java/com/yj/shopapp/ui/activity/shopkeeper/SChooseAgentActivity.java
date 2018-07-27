@@ -60,7 +60,7 @@ public class SChooseAgentActivity extends BaseActivity implements BaseRecyclerVi
     @BindView(R.id.title)
     TextView title;
     @BindView(R.id.id_right_btu)
-    TextView idRightBtu;
+    ImageView idRightBtu;
     @BindView(R.id.submitTv)
     TextView submitTv;
     @BindView(R.id.value_Et)
@@ -108,7 +108,7 @@ public class SChooseAgentActivity extends BaseActivity implements BaseRecyclerVi
 
         } else {
             title.setText("我的批发商");
-            idRightBtu.setText("+");
+            //idRightBtu.setText("+");
         }
         uid = PreferenceUtils.getPrefString(mContext, Contants.Preference.UID, "");
         token = PreferenceUtils.getPrefString(mContext, Contants.Preference.TOKEN, "");
@@ -231,13 +231,7 @@ public class SChooseAgentActivity extends BaseActivity implements BaseRecyclerVi
 
         }
     }
-    @OnClick(R.id.fenbu_tv)
-    public void fenbuOnclick()
-    {
-//        Bundle bundle=new Bundle();
-//        bundle.putSerializable("sclientList",(Serializable)agentsList);
-//        CommonUtils.goActivity(mContext, MarkerClusterDemo.class,bundle);
-    }
+
 
 
     /**************************/

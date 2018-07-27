@@ -566,6 +566,7 @@ public class RegisterActivity extends BaseActivity implements CenterDialog.OnCen
                     PreferenceUtils.setPrefInt(mContext, "isVip", uinfo.getIs_vip());
                     PreferenceUtils.setPrefString(mContext, "CustomerService", uinfo.getCustomer_service_phone());
                     PreferenceUtils.setPrefString(mContext, "address", uinfo.getAddress());
+                    PreferenceUtils.setPrefBoolean(mContext, "firstMain", true);
                     uid = uinfo.getUid();
                     token = uinfo.getToken();
                     getrewardArea(uinfo.getUid(), uinfo.getToken());

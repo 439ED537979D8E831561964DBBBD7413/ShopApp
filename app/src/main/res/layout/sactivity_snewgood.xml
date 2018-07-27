@@ -6,55 +6,43 @@
     android:background="@color/white"
     android:orientation="vertical">
 
+    <include layout="@layout/titlebar" />
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/H40dp"
         android:background="@drawable/borderbg1dp"
-        android:elevation="@dimen/H3dp"
-        android:orientation="vertical">
+        android:orientation="horizontal">
 
-        <include
-            layout="@layout/base_toolbar_blue"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/title_height" />
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tab_layout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:tabIndicatorColor="@color/color_01ABFF"
+            app:tabMode="scrollable"
+            app:tabSelectedTextColor="@color/color_01ABFF"
+            app:tabTextColor="@color/color333333" />
 
         <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/H40dp"
-            android:background="@drawable/borderbg1dp">
+            android:id="@+id/screenTv"
+            android:layout_width="@dimen/H40dp"
+            android:layout_height="match_parent"
+            android:layout_margin="1px"
+            android:background="@color/tab_more_color">
 
-            <android.support.design.widget.TabLayout
-                android:id="@+id/tab_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingRight="20dp"
-                app:tabIndicatorColor="@color/color_01ABFF"
-                app:tabMode="scrollable"
-                app:tabSelectedTextColor="@color/color_01ABFF"
-                app:tabTextColor="@color/color333333" />
-
-            <RelativeLayout
-                android:id="@+id/screenTv"
-                android:layout_width="@dimen/H40dp"
+            <View
+                android:layout_width="1px"
                 android:layout_height="match_parent"
-                android:layout_alignParentRight="true"
-                android:layout_margin="1px"
-                android:background="@color/tab_more_color">
+                android:background="@color/colore7e7e7" />
 
-                <View
-                    android:layout_width="1px"
-                    android:layout_height="match_parent"
-                    android:background="@color/colore7e7e7" />
-
-                <ImageView
-                    android:id="@+id/flipping"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:src="@drawable/ic_screen" />
-            </RelativeLayout>
+            <ImageView
+                android:id="@+id/flipping"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:src="@drawable/ic_screen" />
         </RelativeLayout>
-
     </LinearLayout>
 
     <RelativeLayout

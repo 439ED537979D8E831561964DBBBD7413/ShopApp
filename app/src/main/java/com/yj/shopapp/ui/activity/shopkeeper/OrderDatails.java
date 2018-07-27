@@ -157,8 +157,8 @@ public class OrderDatails extends BaseActivity {
 
     @Override
     protected void setStatusBar() {
-        StatusBarUtil.setColor(this, getResources().getColor(R.color.white), 30);
-        StatusBarUtil.setStatusBarTextColor(getWindow(), true);
+        StatusBarUtil.setColor(this, getResources().getColor(R.color.color_4c4c4c), 0);
+        // StatusBarUtil.setStatusBarTextColor(getWindow(), true);
     }
 
     /**
@@ -208,7 +208,7 @@ public class OrderDatails extends BaseActivity {
         phone.setText(preview.getAddress().getMobile());
         Rec1eivingAddress.setText(preview.getAddress().getAddress());
         paidMoney.setText(String.format("￥%s", preview.getAllmoeny()));
-        ContinueTheOrder.setText(Html.fromHtml("应付金额：" + "<font color=red>" + "￥" + preview.getAllmoeny() + "</fong>"));
+        ContinueTheOrder.setText(Html.fromHtml("应付金额：" + "<font color=red>" + "￥" + compute(preview.getAllmoeny(), preview.getCashback()) + "</fong>"));
         discountMoney.setText(String.format("￥%s", preview.getCashback()));
         if (getList2().equals("")) {
             hotMv.setVisibility(View.GONE);
@@ -220,6 +220,12 @@ public class OrderDatails extends BaseActivity {
         if (preview.getCancel().size() > 0) {
             OutOfStockListDialog.newInstance(preview.getCancel()).show(getFragmentManager(), "outofstock");
         }
+    }
+
+    private String compute(String allmoeny, String cashback) {
+        int number1 = Integer.parseInt(cashback);
+        Double number2 = Double.valueOf(allmoeny);
+        return String.valueOf(number2 - number1);
     }
 
     private String getList() {

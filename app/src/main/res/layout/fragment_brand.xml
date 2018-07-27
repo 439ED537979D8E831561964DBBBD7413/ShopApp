@@ -1,4 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -38,7 +39,7 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"
                 android:gravity="center"
-                android:text="请输入商品名或者商品条码"
+                android:text="请输入商品名称或条码"
                 android:textColor="@color/color_999999"
                 android:textSize="13sp" />
 
@@ -48,35 +49,42 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/topRecyclerview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="80dp"
         android:background="@color/white"
-        android:elevation="@dimen/H3dp"
+        android:elevation="@dimen/H2dp"
         android:overScrollMode="never"
         android:scrollbars="none" />
 
-    <RelativeLayout
+    <ezy.ui.layout.LoadingLayout
+        android:id="@+id/loading"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/H5dp"
-        android:orientation="horizontal">
+        app:llEmptyImage="@drawable/ic_emptyimag">
 
-        <ListView
-            android:id="@+id/lift_list"
-            android:layout_width="90dp"
-            android:layout_height="match_parent"
-            android:background="@color/white"
-            android:divider="@color/all_bg"
-            android:dividerHeight="1dp"
-            android:scrollbars="none" />
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/right_recy"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="@dimen/H5dp"
-            android:layout_marginLeft="@dimen/H5dp"
-            android:layout_toRightOf="@id/lift_list"
-            android:background="@color/white" />
+            android:layout_marginTop="@dimen/H5dp"
+            android:orientation="horizontal">
 
-    </RelativeLayout>
+            <ListView
+                android:id="@+id/lift_list"
+                android:layout_width="90dp"
+                android:layout_height="match_parent"
+                android:background="@color/white"
+                android:divider="@color/all_bg"
+                android:dividerHeight="1dp"
+                android:scrollbars="none" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/right_recy"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="@dimen/H5dp"
+                android:layout_marginLeft="@dimen/H5dp"
+                android:layout_toRightOf="@id/lift_list"
+                android:background="@color/white" />
+
+        </RelativeLayout>
+    </ezy.ui.layout.LoadingLayout>
 </LinearLayout>

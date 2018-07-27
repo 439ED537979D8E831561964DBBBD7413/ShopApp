@@ -7,6 +7,9 @@ import com.yj.shopapp.ubeen.BrandGroup;
 import com.yj.shopapp.ubeen.IndustryCatelist;
 import com.yj.shopapp.ui.activity.ImgUtil.Common2Adapter;
 import com.yj.shopapp.ui.activity.ImgUtil.ViewHolder;
+import com.yj.shopapp.wbeen.Classify;
+
+import java.util.List;
 
 /**
  * Created by LK on 2018/3/1.
@@ -19,6 +22,10 @@ public class ScreenLvAdpter extends Common2Adapter {
 
     public ScreenLvAdpter(Context context) {
         super(context);
+    }
+
+    public ScreenLvAdpter(Context context, List list) {
+        super(context, list);
     }
 
     @Override
@@ -43,6 +50,14 @@ public class ScreenLvAdpter extends Common2Adapter {
                 holder.getTextView(R.id.comm_text).setSelected(false);
             }
             holder.getTextView(R.id.comm_text).setText(bean.getName());
+        } else if (list.get(position) instanceof Classify) {
+            Classify classify = (Classify) list.get(position);
+            if (position == currposition) {
+                holder.getTextView(R.id.comm_text).setSelected(true);
+            } else {
+                holder.getTextView(R.id.comm_text).setSelected(false);
+            }
+            holder.getTextView(R.id.comm_text).setText(classify.getName());
         } else {
             IndustryCatelist.DataBean.TagGroup tagGroup = (IndustryCatelist.DataBean.TagGroup) list.get(position);
             if (position == currposition) {
