@@ -1,9 +1,9 @@
 package com.yj.shopapp.dialog;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
@@ -25,21 +25,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.kaopiz.kprogresshud.KProgressHUD;
 import com.squareup.okhttp.Request;
 import com.yj.shopapp.R;
 import com.yj.shopapp.config.Contants;
 import com.yj.shopapp.http.HttpHelper;
 import com.yj.shopapp.http.OkHttpResponseHandler;
+import com.yj.shopapp.ubeen.BoughtGoods;
 import com.yj.shopapp.ubeen.Goods;
-import com.yj.shopapp.ubeen.HotIndex;
-import com.yj.shopapp.ubeen.LookItem;
-import com.yj.shopapp.ubeen.Spitem;
 import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.util.JsonHelper;
+import com.yj.shopapp.util.MessageEvent;
 import com.yj.shopapp.util.PreferenceUtils;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -88,14 +87,14 @@ public class BugGoodsV4Dialog extends DialogFragment implements TextWatcher {
     private Goods goods;
     private int number = 1;
     private String text1 = "", text2 = "";
-    private LookItem lookItem;
-    private Spitem spitem;
     private String unit;
-    private HotIndex index;
     Unbinder unbinder;
     private Double ratio;
     private KProgressHUD kProgressHUD;
-
+    @BindView(R.id.shopSplit)
+    TextView shopSplit;
+    private BoughtGoods boughtGoods;
+    private String itemId;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -106,18 +105,14 @@ public class BugGoodsV4Dialog extends DialogFragment implements TextWatcher {
         uid = PreferenceUtils.getPrefString(mContext, Contants.Preference.UID, "");
         token = PreferenceUtils.getPrefString(mContext, Contants.Preference.TOKEN, "");
         Object o = getArguments().getParcelable("goods");
-        if (o instanceof LookItem) {
-            lookItem = getArguments().getParcelable("goods");
-            unit = lookItem.getUnit();
-        } else if (o instanceof Goods) {
+        if (o instanceof Goods) {
             goods = getArguments().getParcelable("goods");
             unit = goods.getUnit();
-        } else if (o instanceof Spitem) {
-            spitem = getArguments().getParcelable("goods");
-            unit = spitem.getUnit();
-        } else {
-            index = getArguments().getParcelable("goods");
-            unit = index.getUnit();
+            itemId = goods.getId();
+        } else if (o instanceof BoughtGoods) {
+            boughtGoods = getArguments().getParcelable("goods");
+            unit = boughtGoods.getUnit();
+            itemId = boughtGoods.getId();
         }
         kProgressHUD = growProgress(Contants.Progress.SUMBIT_ING);
     }
@@ -131,26 +126,10 @@ public class BugGoodsV4Dialog extends DialogFragment implements TextWatcher {
         return fragment;
     }
 
-    public static BugGoodsV4Dialog newInstance(LookItem l) {
-        Bundle args = new Bundle();
-        args.putParcelable("goods", l);
-        BugGoodsV4Dialog fragment = new BugGoodsV4Dialog();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    public static BugGoodsV4Dialog newInstance(Spitem s) {
-        Bundle args = new Bundle();
-        args.putParcelable("goods", s);
-        BugGoodsV4Dialog fragment = new BugGoodsV4Dialog();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    public static BugGoodsV4Dialog newInstance(HotIndex h) {
+    public static BugGoodsV4Dialog newInstance(BoughtGoods boughtGoods) {
 
         Bundle args = new Bundle();
-        args.putParcelable("goods", h);
+        args.putParcelable("goods", boughtGoods);
         BugGoodsV4Dialog fragment = new BugGoodsV4Dialog();
         fragment.setArguments(args);
         return fragment;
@@ -164,31 +143,16 @@ public class BugGoodsV4Dialog extends DialogFragment implements TextWatcher {
             warningTvSuper.setVisibility(goods.getMsg().equals("") ? View.GONE : View.VISIBLE);
             warningTv.setText(goods.getMsg());
             specialNote.setText(goods.getSpecialnote());
-            Glide.with(mContext).load(goods.getImgurl()).apply(new RequestOptions().centerCrop()).into(goodsImag);
-        } else if (lookItem != null) {
-            shapname.setText(lookItem.getName());
-            shopprice.setText(String.format("￥%s", lookItem.getSprice()));
-            shopspec.setText(lookItem.getSpecs());
-            warningTvSuper.setVisibility(lookItem.getMsg().equals("") ? View.GONE : View.VISIBLE);
-            warningTv.setText(lookItem.getMsg());
-            specialNote.setText(lookItem.getSpecialnote());
-            Glide.with(mContext).load(lookItem.getImgurl()).apply(new RequestOptions().centerCrop()).into(goodsImag);
-        } else if (spitem != null) {
-            shapname.setText(spitem.getItemname());
-            shopprice.setText(String.format("￥%s", spitem.getDisstr()));
-            shopspec.setText(spitem.getSpecs());
-            warningTvSuper.setVisibility(spitem.getMsg().equals("") ? View.GONE : View.VISIBLE);
-            warningTv.setText(spitem.getMsg());
-            specialNote.setText(spitem.getSpecialnote());
-            Glide.with(mContext).load(spitem.getImgurl()).apply(new RequestOptions().centerCrop()).into(goodsImag);
-        } else {
-            shapname.setText(index.getName());
-            shopprice.setText(String.format("￥%s", index.getPrice()));
-            shopspec.setText(index.getSpecs());
-            warningTvSuper.setVisibility(index.getMsg().equals("") ? View.GONE : View.VISIBLE);
-            warningTv.setText(index.getMsg());
-            specialNote.setText(index.getSpecialnote());
-            Glide.with(mContext).load(index.getImgurl()).apply(new RequestOptions().centerCrop()).into(goodsImag);
+            Glide.with(mContext).load(goods.getImgurl()).into(goodsImag);
+        } else if (boughtGoods != null) {
+            shapname.setText(boughtGoods.getName());
+            shopprice.setText(String.format("￥%s", boughtGoods.getPrice()));
+            shopspec.setText(boughtGoods.getSpecs());
+            //warningTvSuper.setVisibility(boughtGoods.getMsg().equals("") ? View.GONE : View.VISIBLE);
+            //warningTv.setText(boughtGoods.getMsg());
+            warningTvSuper.setVisibility(View.GONE);
+            specialNote.setText(boughtGoods.getSpecialnote());
+            Glide.with(mContext).load(boughtGoods.getImgurl()).into(goodsImag);
         }
     }
 
@@ -212,7 +176,7 @@ public class BugGoodsV4Dialog extends DialogFragment implements TextWatcher {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_buggoods, container);
         getDialog().getWindow().setWindowAnimations(R.style.popuwindow_animation);
         unbinder = ButterKnife.bind(this, view);
@@ -220,7 +184,7 @@ public class BugGoodsV4Dialog extends DialogFragment implements TextWatcher {
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         countTv.addTextChangedListener(this);
         //软键盘隐藏edittext 失去焦点
@@ -252,15 +216,7 @@ public class BugGoodsV4Dialog extends DialogFragment implements TextWatcher {
                 return true;
             }
         });
-        if (goods != null) {
-            requestMinandMaxNum(goods.getId());
-        } else if (lookItem != null) {
-            requestMinandMaxNum(lookItem.getId());
-        } else if (spitem != null) {
-            requestMinandMaxNum(spitem.getId());
-        } else {
-            requestMinandMaxNum(index.getId());
-        }
+        requestMinandMaxNum();
         setDeta();
     }
 
@@ -300,7 +256,7 @@ public class BugGoodsV4Dialog extends DialogFragment implements TextWatcher {
                 if (maxnum == 0) {
                     if (number < gsum) {
                         number++;
-                        countTv.setText(number + "");
+                        countTv.setText(String.valueOf(number));
                         countTv.setSelection(this.countTv.getText().length());
                     } else {
                         Toast.makeText(mContext, "最多购买" + gsum + unit, Toast.LENGTH_SHORT).show();
@@ -308,7 +264,7 @@ public class BugGoodsV4Dialog extends DialogFragment implements TextWatcher {
                 } else {
                     if (number < maxnum) {
                         number++;
-                        countTv.setText(number + "");
+                        countTv.setText(String.valueOf(number));
                         countTv.setSelection(this.countTv.getText().length());
                     } else {
                         Toast.makeText(mContext, "最多购买" + maxnum + unit, Toast.LENGTH_SHORT).show();
@@ -320,7 +276,7 @@ public class BugGoodsV4Dialog extends DialogFragment implements TextWatcher {
                 if (minnum == 0) {
                     if (number > 1) {
                         number--;
-                        countTv.setText(number + "");
+                        countTv.setText(String.valueOf(number));
                         countTv.setSelection(this.countTv.getText().length());
                     } else {
                         try {
@@ -332,7 +288,7 @@ public class BugGoodsV4Dialog extends DialogFragment implements TextWatcher {
                 } else {
                     if (number > 1 && number > minnum) {
                         number--;
-                        countTv.setText(number + "");
+                        countTv.setText(String.valueOf(number));
                         countTv.setSelection(this.countTv.getText().length());
                     } else {
                         try {
@@ -352,7 +308,6 @@ public class BugGoodsV4Dialog extends DialogFragment implements TextWatcher {
         }
     }
 
-    @SuppressLint("SetTextI18n")
     private void judge() {
         if (gsum < minnum) {
             //editText.setFocusable(false);
@@ -380,15 +335,10 @@ public class BugGoodsV4Dialog extends DialogFragment implements TextWatcher {
         if (gsum != 0) {
 
             try {
-                if (goods != null) {
-                    shopCount.setText("库存" + gsum + goods.getUnit());
-                } else if (lookItem != null) {
-                    shopCount.setText("库存" + gsum + lookItem.getUnit());
-                } else if (spitem != null) {
-                    shopCount.setText("库存" + gsum + spitem.getUnit());
-                } else {
-                    shopCount.setText(String.format("库存%1$s%2$s", gsum, index.getUnit()));
+                if (goods != null && !goods.getSplit().equals("")) {
+                    shopSplit.setText(String.format("【%s】", goods.getSplit()));
                 }
+                shopCount.setText(String.format("库存%1$s%2$s", gsum, unit));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -402,19 +352,19 @@ public class BugGoodsV4Dialog extends DialogFragment implements TextWatcher {
                 } else if (text1.equals("") && text2.equals("")) {
                     goodtips.setText("");
                 } else if (text2.equals("")) {
-                    goodtips.setText(text1 + unit);
+                    goodtips.setText(String.format("%s%s", text1, unit));
                 } else {
-                    goodtips.setText(text2 + unit);
+                    goodtips.setText(String.format("%s%s", text2, unit));
                 }
             }
 
             if (countTv != null) {
                 if (minnum == 0) {
-                    countTv.setText(number + "");
+                    countTv.setText(String.valueOf(number));
                 } else {
                     //editText.setText("" + minnum);
-                    countTv.setText("" + minnum);
                     number = minnum;
+                    countTv.setText(String.valueOf(number));
                 }
             }
         } catch (Exception e) {
@@ -428,32 +378,25 @@ public class BugGoodsV4Dialog extends DialogFragment implements TextWatcher {
             return;
         }
         if (Integer.parseInt(countTv.getText().toString()) < minnum) {
-            goodtips.setText("商品最少购买" + minnum + "件");
+            Toast.makeText(mContext, "商品最少购买" + minnum + unit, Toast.LENGTH_SHORT).show();
+            countTv.setText(String.valueOf(minnum));
             return;
         }
         if (countTv.getText().toString().equals("0")) {
             Toast.makeText(mContext, "至少购买一件", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (goods != null) {
-            saveDolistcart(goods.getId());
-        } else if (lookItem != null) {
-            saveDolistcart(lookItem.getId());
-        } else if (spitem != null) {
-            saveDolistcart(spitem.getId());
-        } else {
-            saveDolistcart(index.getId());
-        }
+        saveDolistcart();
     }
 
     /**
      * 请求最大和最小购买数量
      */
-    private void requestMinandMaxNum(final String goodsId) {
+    private void requestMinandMaxNum() {
         Map<String, String> params = new HashMap<String, String>();
         params.put("uid", uid);
         params.put("token", token);
-        params.put("itemid", goodsId);
+        params.put("itemid", itemId);
         HttpHelper.getInstance().post(mContext, Contants.PortU.ITEMS_LIMITS, params, new OkHttpResponseHandler<String>(mContext) {
             @Override
             public void onAfter() {
@@ -488,7 +431,7 @@ public class BugGoodsV4Dialog extends DialogFragment implements TextWatcher {
         });
     }
 
-    public boolean isNumeric(String str) {
+    private boolean isNumeric(String str) {
         Pattern pattern = Pattern.compile("[0-9]*");
         Matcher isNum = pattern.matcher(str);
         if (!isNum.matches()) {
@@ -500,12 +443,12 @@ public class BugGoodsV4Dialog extends DialogFragment implements TextWatcher {
     /**
      * 保存购物车
      */
-    public void saveDolistcart(String itemid) {
+    private void saveDolistcart() {
 
         Map<String, String> params = new HashMap<String, String>();
         params.put("uid", uid);
         params.put("token", token);
-        params.put("itemid", itemid);
+        params.put("itemid", itemId);
         params.put("itemsum", countTv.getText().toString().trim());
 
         HttpHelper.getInstance().post(mContext, Contants.PortU.DOLISTCART, params, new OkHttpResponseHandler<String>(mContext) {
@@ -532,6 +475,7 @@ public class BugGoodsV4Dialog extends DialogFragment implements TextWatcher {
                 ShowLog.e(json);
                 if (JsonHelper.isRequstOK(json, mContext)) {
                     Toast.makeText(mContext, "加入购物车成功", Toast.LENGTH_SHORT).show();
+                    EventBus.getDefault().postSticky(new MessageEvent(5,""));
                     dismiss();
                 } else {
                     Toast.makeText(mContext, JsonHelper.errorMsg(json), Toast.LENGTH_SHORT).show();

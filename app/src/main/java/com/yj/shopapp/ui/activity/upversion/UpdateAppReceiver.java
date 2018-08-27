@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
-import android.support.annotation.RequiresApi;
 import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 
@@ -29,7 +28,7 @@ public class UpdateAppReceiver extends BroadcastReceiver {
     public UpdateAppReceiver() {
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
+
     @Override
     public void onReceive(Context context, Intent intent) {
         //分割线
@@ -39,14 +38,19 @@ public class UpdateAppReceiver extends BroadcastReceiver {
             String title = intent.getStringExtra("title");
 
             nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-            notifyDownloading(context, progress, 100, title);
-
-            if (progress == 100) {
-                if (nm != null) {
-                    nm.cancel(notifyId);
-                    nm.deleteNotificationChannel("1");
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                notifyDownloading(context, progress, 100, title);
+                if (progress == 100) {
+                    if (nm != null) {
+                        nm.cancel(notifyId);
+                        nm.deleteNotificationChannel("1");
+                    }
+                    //installApk(context, DownloadAppUtils.downloadUpdateApkFilePath);
                 }
-                installApk(context, DownloadAppUtils.downloadUpdateApkFilePath);
+            } else {
+                if (progress == 100) {
+                    //installApk(context, DownloadAppUtils.downloadUpdateApkFilePath);
+                }
             }
         }
     }
@@ -90,14 +94,18 @@ public class UpdateAppReceiver extends BroadcastReceiver {
         //ApkController.installSilent(apkPath);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     public void notifyDownloading(Context context, long progress, long num, String file_name) {
         Notification.Builder mBuilder;
-        mBuilder = new Notification.Builder(context, TAG);
-        NotificationChannel channel;
-        channel = new NotificationChannel(TAG, file_name, NotificationManager.IMPORTANCE_LOW);
-        channel.setShowBadge(true);
-        nm.createNotificationChannel(channel);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mBuilder = new Notification.Builder(context, TAG);
+            NotificationChannel channel;
+            channel = new NotificationChannel(TAG, file_name, NotificationManager.IMPORTANCE_LOW);
+            channel.setShowBadge(true);
+            nm.createNotificationChannel(channel);
+
+        } else {
+            mBuilder = new Notification.Builder(context);
+        }
         mBuilder.setSmallIcon(R.drawable.ic_launcher);
         mBuilder.setProgress((int) num, (int) progress, false);
         mBuilder.setOngoing(true);

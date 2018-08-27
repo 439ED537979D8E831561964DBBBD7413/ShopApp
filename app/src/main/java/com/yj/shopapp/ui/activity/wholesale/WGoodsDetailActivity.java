@@ -212,9 +212,7 @@ public class WGoodsDetailActivity extends BaseActivity {
         }
         gotoSalesRL.setVisibility(View.VISIBLE);
         progressDialog = growProgress(Contants.Progress.LOAD_ING);
-        if (isNetWork(mContext)) {
-            requsetdata();
-        }
+
 //        addHotindex.setOnCheckedChangeListener(this);
 //        addStopsale.setOnCheckedChangeListener(this);
         dialog = new CenterDialog(mContext, R.layout.dialog_barcodeview, new int[]{R.id.dialog_close, R.id.dialog_cancel, R.id.dialog_sure}, 0.8);
@@ -234,6 +232,9 @@ public class WGoodsDetailActivity extends BaseActivity {
                 isstopsels = addStopsale.isChecked() ? 1 : 0;
             }
         });
+        if (isNetWork(mContext)) {
+            requsetdata();
+        }
     }
 
 //    @Override

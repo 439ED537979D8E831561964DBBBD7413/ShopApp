@@ -25,6 +25,7 @@ import com.yj.shopapp.ubeen.OrderDatesBean;
 import com.yj.shopapp.ubeen.OrderPreview;
 import com.yj.shopapp.ui.activity.adapter.OutofstockListAdpter;
 import com.yj.shopapp.util.DDecoration;
+import com.yj.shopapp.util.StatusBarManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,8 +83,7 @@ public class OutOfStockListDialog extends DialogFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-//        StatusBarManager.getInstance().setDialogWindowStyle(getDialog().getWindow(), getResources().getColor(R.color.white));
-//        StatusBarManager.getInstance().setStatusBarTextColor(getDialog().getWindow(), true);
+        StatusBarManager.getInstance().setDialogWindowStyle(getDialog().getWindow(), getResources().getColor(R.color.color_4c4c4c));
         View rootView = inflater.inflate(R.layout.outofstocklistdialog, container);
         unbinder = ButterKnife.bind(this, rootView);
         return rootView;

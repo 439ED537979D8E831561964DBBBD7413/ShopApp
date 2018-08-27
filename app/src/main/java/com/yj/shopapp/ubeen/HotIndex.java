@@ -41,6 +41,15 @@ public class HotIndex implements Parcelable {
     private String msg;
     private String specialnote;
     private String localhost;
+    private String split;
+
+    public String getSplit() {
+        return split == null ? "" : split;
+    }
+
+    public void setSplit(String split) {
+        this.split = split;
+    }
 
     public String getLocalhost() {
         return localhost == null ? "" : localhost;
@@ -187,6 +196,7 @@ public class HotIndex implements Parcelable {
         dest.writeString(this.msg);
         dest.writeString(this.specialnote);
         dest.writeString(this.localhost);
+        dest.writeString(this.split);
     }
 
     protected HotIndex(Parcel in) {
@@ -205,6 +215,7 @@ public class HotIndex implements Parcelable {
         this.msg = in.readString();
         this.specialnote = in.readString();
         this.localhost = in.readString();
+        this.split = in.readString();
     }
 
     public static final Creator<HotIndex> CREATOR = new Creator<HotIndex>() {

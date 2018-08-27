@@ -2,18 +2,18 @@ package com.yj.shopapp.ui.activity.shopkeeper;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.view.ViewGroup;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.tencent.smtt.sdk.WebSettings;
+import com.tencent.smtt.sdk.WebView;
+import com.tencent.smtt.sdk.WebViewClient;
 import com.yj.shopapp.R;
 import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.ui.activity.base.BaseActivity;
+import com.yj.shopapp.view.X5WebView;
 
 import butterknife.BindView;
 
@@ -25,11 +25,11 @@ public class SAdActivity extends BaseActivity {
     TextView title;
     @BindView(R.id.id_right_btu)
     TextView idRightBtu;
+    @BindView(R.id.webView_container)
+    RelativeLayout webViewContainer;
+    private X5WebView webView;
+    private String url;
 
-    @BindView(R.id.webView)
-    WebView webView;
-    @BindView(R.id.activity_sad)
-    LinearLayout activitySad;
     @Override
     protected int getLayoutId() {
         return R.layout.activity_sad;
@@ -39,11 +39,11 @@ public class SAdActivity extends BaseActivity {
     protected void initData() {
         title.setText("广告详情");
         if (getIntent().hasExtra("url")) {
-            String url = getIntent().getStringExtra("url");
-            Uri uri = Uri.parse(url);
-            ShowLog.e(url+"");
-            webView.loadUrl(String.valueOf(uri));
+            url = getIntent().getStringExtra("url");
+            ShowLog.e(url + "");
         }
+        webView = new X5WebView(mContext);
+        webViewContainer.addView(webView);
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setUseWideViewPort(true);
@@ -54,7 +54,14 @@ public class SAdActivity extends BaseActivity {
                 super.onPageFinished(view, url);
                 addImageClickListner();
             }
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                view.loadUrl(url);
+                return true;
+            }
         });
+        webView.loadUrl(url);
         webView.addJavascriptInterface(new JavascriptInterface(mContext), "imagelistner");
     }
 
@@ -93,8 +100,6 @@ public class SAdActivity extends BaseActivity {
             System.out.println(img);
         }
     }
-
-
 
 
     @Override

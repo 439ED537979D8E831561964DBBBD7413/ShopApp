@@ -37,8 +37,9 @@ public class HotIndexAdpter extends Common2Adapter<HotIndex> implements View.OnC
         holder.getTextView(R.id.goodAddress_Tv).setText(String.format("位置：%s", index.getLocalhost()));
         holder.getTextView(R.id.account_tv).setText(String.format("规格：%s", index.getSpecs()));
         holder.getTextView(R.id.allprice).setText(Html.fromHtml("金额：" + "<b>" + "<font color=red>" + "￥" + index.getPrice() + "</font>" + "</b>"));
-        holder.getTextView(R.id.shopnum).setText(String.format("剩余：%1$s%2$s", index.getItemsum(), index.getUnit()));
+        holder.getTextView(R.id.shopnum).setText(String.format("库存：%1$s%2$s", index.getItemsum(), index.getUnit()));
         holder.getTextView(R.id.goCarlist).setOnClickListener(this);
+        holder.getTextView(R.id.split_tv).setText(index.getSplit().equals("")?"":String.format("【%s】",index.getSplit()));
         holder.getView(R.id.itemview).setOnClickListener(this);
         holder.getTextView(R.id.goCarlist).setTag(position);
         holder.getView(R.id.itemview).setTag(position);

@@ -85,11 +85,13 @@ public class BrandFragment extends NewBaseFragment implements AdapterView.OnItem
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void initView(View view, Bundle savedInstanceState) {
-        StatusBarUtils.from(getActivity())
-                .setActionbarView(titleLayout)
-                .setTransparentStatusbar(true)
-                .setLightStatusBar(false)
-                .process();
+        if (Contants.isNotch) {
+            StatusBarUtils.from(getActivity())
+                    .setActionbarView(titleLayout)
+                    .setTransparentStatusbar(true)
+                    .setLightStatusBar(false)
+                    .process();
+        }
         brandAdapter = new SBrandAdapter(mActivity, listBeans);
         rightRecy.setLayoutManager(new GridLayoutManager(mActivity, 4));
         rightRecy.setAdapter(brandAdapter);
@@ -336,7 +338,7 @@ public class BrandFragment extends NewBaseFragment implements AdapterView.OnItem
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }, 300);
+        }, 1000);
     }
 
     @Override

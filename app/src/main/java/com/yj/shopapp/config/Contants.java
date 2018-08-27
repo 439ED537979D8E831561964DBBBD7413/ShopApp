@@ -21,6 +21,8 @@ public class Contants {
     public static String url_3 = u + "index.php/Appuintegral/";
     //抢购
     public static String url_4 = u + "index.php/Appusales/";
+    //推荐奖励
+    public static String url_5 = u + "index.php/Appurecommend/";
 
     public static String appu = u + "index.php/Appi/cupdate";
 
@@ -217,6 +219,14 @@ public class Contants {
         public final static String SHOWRETURNHISTORY = url_2 + "showReturnHistory";
         public final static String SUM_OF_MONEY = url_2 + "sum_of_money";
         public final static String OPENNUM = url_2 + "opennum";
+        public final static String HISTORY = url_2 + "history";
+        ////////\
+        public final static String RECOMMEND_INDEX = url_5 + "index";
+        public final static String RECOMMEND_LISTS = url_5 + "lists";
+        public final static String RECOMMEND_PROFITLIST = url_5 + "profitlist";
+        public final static String RECOMMEND_ALLPROFITLIST = url_5 + "allprofitlist";
+        public final static String RECOMMEND_PROFITDETAILS = url_5 + "profitdetails";
+        public final static String RECOMMEND_MONTHLIST = url_5 + "monthlist";
 
     }
 
@@ -232,6 +242,9 @@ public class Contants {
         public final static String MONTH = url_3 + "month";
         public final static String MYCHANNGE_INFO = url_3 + "mychange_info";
         public final static String CHANNGE_INFO = url_3 + "change_info";
+        public final static String INTEGRALRULE = url_3 + "rules";
+
+
         public final static String LISTS = url_4 + "lists";
         public final static String SALES_INFO = url_4 + "sales_info";
         public final static String DO_SALES = url_4 + "do_sales";
@@ -242,6 +255,7 @@ public class Contants {
         public final static String HOT_INDEX = url_4 + "hot_index";
         public final static String SALES_NUM = url_4 + "sales_num";
         public final static String AINDEX = url_4 + "index";
+        public final static String CANCELLIST = url_4 + "cancellist";
     }
 
     public static final class LoadView {
@@ -394,4 +408,6 @@ public class Contants {
                 "4.兑换比例（1000积分＝5元人民币）\n" +
                 "5.提现过程中请输入正确的提现账号，人为疏漏造成的损失由个人承担\n";
     }
+
+    public static boolean isNotch = true;
 }

@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.yj.shopapp.R;
 import com.yj.shopapp.ui.activity.shopkeeper.BuGoodDetailsFragment;
+import com.yj.shopapp.ui.activity.shopkeeper.CancelByGoodsListFragment;
 import com.yj.shopapp.ui.activity.shopkeeper.MyBuGoodFragment;
 
 import q.rorbin.badgeview.QBadgeView;
@@ -41,6 +42,8 @@ public class BuGoodDetailsViewPager extends FragmentPagerAdapter {
                 return BuGoodDetailsFragment.newInstance(3);
             case 2:
                 return new MyBuGoodFragment();
+            case 3:
+                return new CancelByGoodsListFragment();
             default:
                 break;
         }
@@ -62,7 +65,8 @@ public class BuGoodDetailsViewPager extends FragmentPagerAdapter {
         View view = LayoutInflater.from(mContext).inflate(R.layout.tab_layout_item, null);
         TextView textView = (TextView) view.findViewById(R.id.textview);
         textView.setText(titles[position]);
-        new QBadgeView(mContext).bindTarget(textView).setBadgeGravity(Gravity.CENTER | Gravity.END).setBadgeTextSize(9, true).setBadgeNumber(size);
+       // ((TextView) view.findViewById(R.id.brand_view)).setText(String.valueOf(size));
+        new QBadgeView(mContext).bindTarget(textView).setBadgeGravity(Gravity.CENTER | Gravity.END).setBadgeTextSize(8, true).setBadgeNumber(size);
         return view;
     }
 

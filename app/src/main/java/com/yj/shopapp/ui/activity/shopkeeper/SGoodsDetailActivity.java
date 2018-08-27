@@ -11,8 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -25,6 +23,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.kaopiz.kprogresshud.KProgressHUD;
 import com.squareup.okhttp.Request;
+import com.tencent.smtt.sdk.WebView;
 import com.yj.shopapp.R;
 import com.yj.shopapp.config.Contants;
 import com.yj.shopapp.dialog.BugGoodsDialog;
@@ -38,6 +37,7 @@ import com.yj.shopapp.util.DialogUtils;
 import com.yj.shopapp.util.JsonHelper;
 import com.yj.shopapp.util.StatusBarUtil;
 import com.yj.shopapp.util.StringHelper;
+import com.yj.shopapp.view.X5WebView;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -93,6 +93,8 @@ public class SGoodsDetailActivity extends BaseActivity {
     LinearLayout warningTvSuper;
     @BindView(R.id.backTv)
     ImageView backTv;
+    @BindView(R.id.shopSplit)
+    TextView shopSplit;
     private boolean Collect = false;
     private boolean isRequesting = false;//标记，是否正在刷新
     String checkGoods = "";
@@ -101,7 +103,7 @@ public class SGoodsDetailActivity extends BaseActivity {
     @BindView(R.id.htmlView)
     FrameLayout htmlView;
     String unitTvStr;
-    private WebView mWebView;
+    private X5WebView mWebView;
     public InputMethodManager imm;
 
     //    @OnClick(R.id.good_back)
@@ -130,6 +132,7 @@ public class SGoodsDetailActivity extends BaseActivity {
                 finish();
                 break;
             case R.id.maek_re:
+                if (lookItem == null) return;
                 if (lookItem.getBookmark().equals("0")) {
                     requestMark();
                 } else {
@@ -196,12 +199,12 @@ public class SGoodsDetailActivity extends BaseActivity {
         imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
         goodsId = getIntent().getExtras().getString("goodsId");
         Collect = getIntent().getExtras().getBoolean("Collect");
-        mWebView = new WebView(mContext);
+        mWebView = new X5WebView(mContext);
         htmlView.addView(mWebView);
-        mWebView.setWebViewClient(new WebViewClient() {
+        mWebView.setWebViewClient(new com.tencent.smtt.sdk.WebViewClient() {
             @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                view.loadUrl(url);
+            public boolean shouldOverrideUrlLoading(WebView webView, String s) {
+                webView.loadUrl(s);
                 return true;
             }
         });
@@ -368,6 +371,7 @@ public class SGoodsDetailActivity extends BaseActivity {
             className.setText(lookItem.getClass_name());
             goodsNum.setText(lookItem.getItemnoid());
             shopStock.setText(String.format("库存：%1$s%2$s", lookItem.getStock(), lookItem.getUnit()));
+            shopSplit.setText(lookItem.getSplit().equals("") ? "" : String.format("【%s】", lookItem.getSplit()));
             shopDetails.setText("该商品暂无详情");
             shopDetails.setVisibility(lookItem.getBrochure().equals("") ? View.VISIBLE : View.GONE);
             if (lookItem.getBookmark().equals("1")) {
@@ -380,7 +384,10 @@ public class SGoodsDetailActivity extends BaseActivity {
             }
             add.setBackgroundResource(lookItem.getSale_status().equals("0") ? R.color.qianhui : R.color.red);
             add.setClickable(!lookItem.getSale_status().equals("0"));
-            mWebView.loadDataWithBaseURL(null, getHtmlData(lookItem.getBrochure()), "text/html", "utf-8", null);
+            if (null != lookItem && !lookItem.getBrochure().equals("")) {
+                mWebView.loadDataWithBaseURL(null, getHtmlData(lookItem.getBrochure()), "text/html", "utf-8", null);
+                htmlView.setVisibility(View.VISIBLE);
+            }
         }
     }
 

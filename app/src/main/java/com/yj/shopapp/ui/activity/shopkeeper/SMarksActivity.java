@@ -26,7 +26,6 @@ import com.yj.shopapp.http.HttpHelper;
 import com.yj.shopapp.http.OkHttpResponseHandler;
 import com.yj.shopapp.ubeen.Goods;
 import com.yj.shopapp.ui.activity.Interface.GoodsItemListenter;
-import com.yj.shopapp.ui.activity.Interface.OnViewScrollListenter;
 import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.ui.activity.adapter.SNewGoodsAdpter;
 import com.yj.shopapp.ui.activity.base.BaseActivity;
@@ -99,13 +98,13 @@ public class SMarksActivity extends BaseActivity implements GoodsItemListenter, 
         if (recyclerView != null) {
             recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
             recyclerView.addItemDecoration(new DDecoration(mContext));
-            recyclerView.addOnScrollListener(new OnViewScrollListenter() {
-                @Override
-                public void onBottom() {
-                    mCurrentPage++;
-                    refreshRequest();
-                }
-            });
+//            recyclerView.addOnScrollListener(new OnViewScrollListenter() {
+//                @Override
+//                public void onBottom() {
+//                    mCurrentPage++;
+//                    refreshRequest();
+//                }
+//            });
             recyclerView.setAdapter(GoodAdpter);
         }
         Refresh();
@@ -253,6 +252,7 @@ public class SMarksActivity extends BaseActivity implements GoodsItemListenter, 
         for (Goods g : goodsList) {
             if (!g.isSelected()) {
                 choose.setChecked(false);
+                isAllChoose = false;
                 return;
             }
         }
@@ -293,6 +293,7 @@ public class SMarksActivity extends BaseActivity implements GoodsItemListenter, 
                     swipeRefreshLayout.finishLoadMore(true);
                 }
                 isRequesting = false;
+                isAllSelected();
             }
 
             @Override
@@ -378,7 +379,7 @@ public class SMarksActivity extends BaseActivity implements GoodsItemListenter, 
                 //choose.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_shopcart_unhook));
                 if (JsonHelper.isRequstOK(json, mContext)) {
                     showToastShort("删除成功");
-                    if (swipeRefreshLayout!=null){
+                    if (swipeRefreshLayout != null) {
                         swipeRefreshLayout.autoRefresh();
                     }
                 } else {
@@ -405,6 +406,9 @@ public class SMarksActivity extends BaseActivity implements GoodsItemListenter, 
     public void onRefresh(@NonNull RefreshLayout refreshLayout) {
         goodsList.clear();
         mCurrentPage = 1;
+        choose.setChecked(false);
+        isAllChoose = false;
+        countMoney();
         refreshRequest();
         if (swipeRefreshLayout != null) {
             swipeRefreshLayout.setNoMoreData(false);

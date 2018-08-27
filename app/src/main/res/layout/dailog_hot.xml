@@ -2,10 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:layout_marginBottom="50dp"
     android:background="@drawable/layout_bg_shape"
-    android:minHeight="300dp"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -50,8 +49,7 @@
             <TextView
                 android:id="@+id/hot_context"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="wrap_content"
                 android:lineSpacingExtra="5dp"
                 android:paddingTop="@dimen/default_padding"
                 android:text=""
@@ -71,7 +69,7 @@
             <com.yj.shopapp.view.X5WebView
                 android:id="@+id/webView"
                 android:layout_width="match_parent"
-                android:layout_height="450dp"
+                android:layout_height="wrap_content"
                 android:visibility="gone" />
 
         </LinearLayout>

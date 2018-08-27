@@ -62,6 +62,17 @@ public class LookItem implements Parcelable {
     private String gift;
     private String msg;
     private String bookmark;
+    private String split;
+
+    public String getSplit() {
+        return split == null ? "" : split;
+    }
+
+    public void setSplit(String split) {
+        this.split = split;
+    }
+
+
     public String getBookmark() {
         return bookmark == null ? "" : bookmark;
     }
@@ -306,6 +317,7 @@ public class LookItem implements Parcelable {
         dest.writeString(this.gift);
         dest.writeString(this.msg);
         dest.writeString(this.bookmark);
+        dest.writeString(this.split);
     }
 
     protected LookItem(Parcel in) {
@@ -335,6 +347,7 @@ public class LookItem implements Parcelable {
         this.gift = in.readString();
         this.msg = in.readString();
         this.bookmark = in.readString();
+        this.split = in.readString();
     }
 
     public static final Creator<LookItem> CREATOR = new Creator<LookItem>() {

@@ -49,7 +49,6 @@ import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import ezy.ui.layout.LoadingLayout;
 
@@ -215,7 +214,7 @@ public class SSPitemActivity extends BaseActivity implements SSPitemAdapter.OnVi
                 mCurrentPage = 1;
                 price = "";
                 tabLayout.getTabAt(position).select();
-                refreshRequest();
+                //refreshRequest();
             }
         });
         screenLvAdpter2 = new ScreenLvAdpter(mContext);
@@ -396,10 +395,4 @@ public class SSPitemActivity extends BaseActivity implements SSPitemAdapter.OnVi
         }
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // TODO: add setContentView(...) invocation
-        ButterKnife.bind(this);
-    }
 }

@@ -88,11 +88,11 @@ public class AuthenticationActivity extends BaseActivity {
             public void onResponse(Request request, String json) {
                 super.onResponse(request, json);
                 ShowLog.e(json);
+                timer.start();
                 if (JsonHelper.isRequstOK(json, mContext)) {
                     showToastShort("验证码已发送");
-                    timer.start();
                 } else {
-                    showToastShort("发送验证码失败！");
+                    showToastShort("验证码60秒只能发送一次");
                 }
             }
 

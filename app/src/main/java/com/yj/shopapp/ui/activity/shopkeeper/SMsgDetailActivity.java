@@ -38,7 +38,7 @@ public class SMsgDetailActivity extends BaseActivity {
     RelativeLayout titleView;
     private Context context = this;
     private List<Notice> notlist = new ArrayList<Notice>();
-    private int id;
+    private int id=0;
     private NotContentAdapter adapter;
 
     @Override

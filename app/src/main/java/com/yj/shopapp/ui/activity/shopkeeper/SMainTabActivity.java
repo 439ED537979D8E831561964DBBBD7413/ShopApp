@@ -155,12 +155,11 @@ public class SMainTabActivity extends BaseTabActivity implements RadioGroup.OnCh
 
     public void exit() {
         if (backPressedToExitOnce) {
-            AppManager.getAppManager().finishAllActivity();
+            AppManager.getAppManager().AppExit(mContext);
         } else {
             this.backPressedToExitOnce = true;
             Toast.makeText(mContext, "再按一次「返回键」退出", Toast.LENGTH_SHORT).show();
             new Handler().postDelayed(new Runnable() {
-
                 @Override
                 public void run() {
                     backPressedToExitOnce = false;

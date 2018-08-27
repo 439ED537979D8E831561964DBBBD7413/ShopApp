@@ -22,7 +22,8 @@
         android:background="@color/white"
         app:tabIndicatorColor="@color/red"
         app:tabSelectedTextColor="@color/red"
-        app:tabTextColor="@color/black" />
+        app:tabTextColor="@color/black"
+        app:tabMode="fixed"/>
 
     <com.yj.shopapp.view.CustomViewPager
         android:id="@+id/my_viewpager"

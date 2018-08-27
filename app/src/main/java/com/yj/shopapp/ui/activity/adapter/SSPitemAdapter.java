@@ -32,9 +32,10 @@ public class SSPitemAdapter extends CommonAdapter<Spitem> implements View.OnClic
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Spitem spitem = list.get(position);
-        holder.getTextView(R.id.orderNumber).setText(String.format("数量：%s件", spitem.getItemsum()));
+        holder.getTextView(R.id.orderNumber).setText(String.format("库存：%s件", spitem.getItemsum()));
         holder.getTextView(R.id.orderName).setText(spitem.getItemname());
         holder.getTextView(R.id.goodAddress_Tv).setText(String.format("位置：%s", spitem.getLocalhost()));
+        holder.getTextView(R.id.split_tv).setText(spitem.getSplit().equals("")?"":String.format("【%s】", spitem.getSplit()));
         holder.getTextView(R.id.startDate).setText(DateUtils.timed(spitem.getTime1()) + " - " + DateUtils.timed(spitem.getTime2()));
         if (spitem.getSales().equals("1")) {
             str = "满" + spitem.getDisstr() + "送" + spitem.getGift();

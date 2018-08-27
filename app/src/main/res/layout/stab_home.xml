@@ -232,6 +232,7 @@
                     android:orientation="horizontal">
 
                     <LinearLayout
+                        android:id="@+id/hot_view"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_marginRight="3dp"

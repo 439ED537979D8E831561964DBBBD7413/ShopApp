@@ -24,13 +24,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.kaopiz.kprogresshud.KProgressHUD;
 import com.squareup.okhttp.Request;
 import com.yj.shopapp.R;
 import com.yj.shopapp.config.Contants;
 import com.yj.shopapp.http.HttpHelper;
 import com.yj.shopapp.http.OkHttpResponseHandler;
+import com.yj.shopapp.ubeen.BoughtGoods;
 import com.yj.shopapp.ubeen.Goods;
 import com.yj.shopapp.ubeen.HotIndex;
 import com.yj.shopapp.ubeen.LookItem;
@@ -81,6 +81,8 @@ public class BugGoodsDialog extends DialogFragment implements TextWatcher {
     LinearLayout warningTvSuper;
     @BindView(R.id.special_note)
     TextView specialNote;
+    @BindView(R.id.shopSplit)
+    TextView shopSplit;
     private Context mContext;
     private int minnum, maxnum, gsum;
     private String uid, token;
@@ -94,7 +96,7 @@ public class BugGoodsDialog extends DialogFragment implements TextWatcher {
     Unbinder unbinder;
     private Double ratio;
     private KProgressHUD kProgressHUD;
-
+    private String itemId;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -108,15 +110,19 @@ public class BugGoodsDialog extends DialogFragment implements TextWatcher {
         if (o instanceof LookItem) {
             lookItem = getArguments().getParcelable("goods");
             unit = lookItem.getUnit();
+            itemId = lookItem.getId();
         } else if (o instanceof Goods) {
             goods = getArguments().getParcelable("goods");
             unit = goods.getUnit();
+            itemId = goods.getId();
         } else if (o instanceof Spitem) {
             spitem = getArguments().getParcelable("goods");
             unit = spitem.getUnit();
-        } else {
+            itemId = spitem.getId();
+        } else if (o instanceof HotIndex) {
             index = getArguments().getParcelable("goods");
             unit = index.getUnit();
+            itemId = index.getId();
         }
         kProgressHUD = growProgress(Contants.Progress.SUMBIT_ING);
     }
@@ -155,6 +161,15 @@ public class BugGoodsDialog extends DialogFragment implements TextWatcher {
         return fragment;
     }
 
+    public static BugGoodsDialog newInstance(BoughtGoods b) {
+
+        Bundle args = new Bundle();
+        args.putParcelable("goods", b);
+        BugGoodsDialog fragment = new BugGoodsDialog();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     private void setDeta() {
         if (goods != null) {
             shapname.setText(goods.getName());
@@ -163,15 +178,19 @@ public class BugGoodsDialog extends DialogFragment implements TextWatcher {
             warningTvSuper.setVisibility(goods.getMsg().equals("") ? View.GONE : View.VISIBLE);
             warningTv.setText(goods.getMsg());
             specialNote.setText(goods.getSpecialnote());
-            Glide.with(mContext).load(goods.getImgurl()).apply(new RequestOptions().centerCrop()).into(goodsImag);
+            Glide.with(mContext).load(goods.getImgurl()).into(goodsImag);
         } else if (lookItem != null) {
             shapname.setText(lookItem.getName());
-            shopprice.setText(String.format("￥%s", lookItem.getSprice()));
+            if (lookItem.getDisstr().equals("")) {
+                shopprice.setText(String.format("￥%s", lookItem.getSprice()));
+            } else {
+                shopprice.setText(String.format("￥%s", lookItem.getDisstr()));
+            }
             shopspec.setText(lookItem.getSpecs());
             warningTvSuper.setVisibility(lookItem.getMsg().equals("") ? View.GONE : View.VISIBLE);
             warningTv.setText(lookItem.getMsg());
             specialNote.setText(lookItem.getSpecialnote());
-            Glide.with(mContext).load(lookItem.getImgurl()).apply(new RequestOptions().centerCrop()).into(goodsImag);
+            Glide.with(mContext).load(lookItem.getImgurl()).into(goodsImag);
         } else if (spitem != null) {
             shapname.setText(spitem.getItemname());
             shopprice.setText(String.format("￥%s", spitem.getDisstr()));
@@ -179,15 +198,15 @@ public class BugGoodsDialog extends DialogFragment implements TextWatcher {
             warningTvSuper.setVisibility(spitem.getMsg().equals("") ? View.GONE : View.VISIBLE);
             warningTv.setText(spitem.getMsg());
             specialNote.setText(spitem.getSpecialnote());
-            Glide.with(mContext).load(spitem.getImgurl()).apply(new RequestOptions().centerCrop()).into(goodsImag);
-        } else {
+            Glide.with(mContext).load(spitem.getImgurl()).into(goodsImag);
+        } else if (index != null) {
             shapname.setText(index.getName());
             shopprice.setText(String.format("￥%s", index.getPrice()));
             shopspec.setText(index.getSpecs());
             warningTvSuper.setVisibility(index.getMsg().equals("") ? View.GONE : View.VISIBLE);
             warningTv.setText(index.getMsg());
             specialNote.setText(index.getSpecialnote());
-            Glide.with(mContext).load(index.getImgurl()).apply(new RequestOptions().centerCrop()).into(goodsImag);
+            Glide.with(mContext).load(index.getImgurl()).into(goodsImag);
         }
     }
 
@@ -251,15 +270,18 @@ public class BugGoodsDialog extends DialogFragment implements TextWatcher {
                 return true;
             }
         });
-        if (goods != null) {
-            requestMinandMaxNum(goods.getId());
-        } else if (lookItem != null) {
-            requestMinandMaxNum(lookItem.getId());
-        } else if (spitem != null) {
-            requestMinandMaxNum(spitem.getId());
-        } else {
-            requestMinandMaxNum(index.getId());
-        }
+//        if (goods != null) {
+//            requestMinandMaxNum(goods.getId());
+//        } else if (lookItem != null) {
+//            requestMinandMaxNum(lookItem.getId());
+//        } else if (spitem != null) {
+//            requestMinandMaxNum(spitem.getId());
+//        } else if (index != null) {
+//            requestMinandMaxNum(index.getId());
+//        } else {
+//            requestMinandMaxNum(boughtGoods.getId());
+//        }
+        requestMinandMaxNum();
         setDeta();
     }
 
@@ -299,7 +321,7 @@ public class BugGoodsDialog extends DialogFragment implements TextWatcher {
                 if (maxnum == 0) {
                     if (number < gsum) {
                         number++;
-                        countTv.setText(number + "");
+                        countTv.setText(String.valueOf(number));
                         countTv.setSelection(this.countTv.getText().length());
                     } else {
                         Toast.makeText(mContext, "最多购买" + gsum + unit, Toast.LENGTH_SHORT).show();
@@ -307,7 +329,7 @@ public class BugGoodsDialog extends DialogFragment implements TextWatcher {
                 } else {
                     if (number < maxnum) {
                         number++;
-                        countTv.setText(number + "");
+                        countTv.setText(String.valueOf(number));
                         countTv.setSelection(this.countTv.getText().length());
                     } else {
                         Toast.makeText(mContext, "最多购买" + maxnum + unit, Toast.LENGTH_SHORT).show();
@@ -319,7 +341,7 @@ public class BugGoodsDialog extends DialogFragment implements TextWatcher {
                 if (minnum == 0) {
                     if (number > 1) {
                         number--;
-                        countTv.setText(number + "");
+                        countTv.setText(String.valueOf(number));
                         countTv.setSelection(this.countTv.getText().length());
                     } else {
                         try {
@@ -331,7 +353,7 @@ public class BugGoodsDialog extends DialogFragment implements TextWatcher {
                 } else {
                     if (number > 1 && number > minnum) {
                         number--;
-                        countTv.setText(number + "");
+                        countTv.setText(String.valueOf(number));
                         countTv.setSelection(this.countTv.getText().length());
                     } else {
                         try {
@@ -378,15 +400,17 @@ public class BugGoodsDialog extends DialogFragment implements TextWatcher {
         if (gsum != 0) {
 
             try {
-                if (goods != null) {
-                    shopCount.setText("库存" + gsum + goods.getUnit());
-                } else if (lookItem != null) {
-                    shopCount.setText("库存" + gsum + lookItem.getUnit());
-                } else if (spitem != null) {
-                    shopCount.setText("库存" + gsum + spitem.getUnit());
-                } else {
-                    shopCount.setText(String.format("库存%1$s%2$s", gsum, index.getUnit()));
+                if (goods != null && !goods.getSplit().equals("")) {
+                    shopSplit.setText(String.format("【%s】", goods.getSplit()));
+                } else if (lookItem != null && !lookItem.getSplit().equals("")) {
+                    shopSplit.setText(String.format("【%s】", lookItem.getSplit()));
+                } else if (spitem != null && !spitem.getSplit().equals("")) {
+                    shopSplit.setText(String.format("【%s】", spitem.getSplit()));
+                } else if (index != null && !index.getSplit().equals("")) {
+                    shopSplit.setText(String.format("【%s】", index.getSplit()));
                 }
+                shopCount.setText(String.format("库存%1$s%2$s", gsum, unit));
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -394,25 +418,26 @@ public class BugGoodsDialog extends DialogFragment implements TextWatcher {
         try {
 
             if (goodtips != null) {
-                ShowLog.e("text1"+text1+"text2"+text2);
+                ShowLog.e("text1" + text1 + "text2" + text2);
                 if (!text1.equals("") && !text2.equals("")) {
-                    goodtips.setText(text1 + unit +" "+ text2 + unit);
-                } else if (text1.equals("")&&text2.equals("")) {
+                    goodtips.setText(text1 + unit + " " + text2 + unit);
+                } else if (text1.equals("") && text2.equals("")) {
                     goodtips.setText("");
                 } else if (text2.equals("")) {
-                    goodtips.setText(text1 + unit);
+                    goodtips.setText(String.format("%s%s", text1, unit));
                 } else {
-                    goodtips.setText(text2 + unit);
+                    goodtips.setText(String.format("%s%s", text2, unit));
                 }
             }
 
             if (countTv != null) {
                 if (minnum == 0) {
-                    countTv.setText(number + "");
+                    countTv.setText(String.valueOf(number));
                 } else {
                     //editText.setText("" + minnum);
-                    countTv.setText("" + minnum);
+
                     number = minnum;
+                    countTv.setText(String.valueOf(number));
                 }
             }
         } catch (Exception e) {
@@ -426,32 +451,34 @@ public class BugGoodsDialog extends DialogFragment implements TextWatcher {
             return;
         }
         if (Integer.parseInt(countTv.getText().toString()) < minnum) {
-            Toast.makeText(mContext, "商品最少购买" + minnum + "件", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, "商品最少购买" + minnum + unit, Toast.LENGTH_SHORT).show();
+            countTv.setText(String.valueOf(minnum));
             return;
         }
         if (countTv.getText().toString().equals("0")) {
             Toast.makeText(mContext, "至少购买一件", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (goods != null) {
-            saveDolistcart(goods.getId());
-        } else if (lookItem != null) {
-            saveDolistcart(lookItem.getId());
-        } else if (spitem != null) {
-            saveDolistcart(spitem.getId());
-        } else {
-            saveDolistcart(index.getId());
-        }
+//        if (goods != null) {
+//            saveDolistcart(goods.getId());
+//        } else if (lookItem != null) {
+//            saveDolistcart(lookItem.getId());
+//        } else if (spitem != null) {
+//            saveDolistcart(spitem.getId());
+//        } else {
+//            saveDolistcart(index.getId());
+//        }
+        saveDolistcart();
     }
 
     /**
      * 请求最大和最小购买数量
      */
-    private void requestMinandMaxNum(final String goodsId) {
+    private void requestMinandMaxNum() {
         Map<String, String> params = new HashMap<String, String>();
         params.put("uid", uid);
         params.put("token", token);
-        params.put("itemid", goodsId);
+        params.put("itemid", itemId);
         HttpHelper.getInstance().post(mContext, Contants.PortU.ITEMS_LIMITS, params, new OkHttpResponseHandler<String>(mContext) {
             @Override
             public void onAfter() {
@@ -481,7 +508,7 @@ public class BugGoodsDialog extends DialogFragment implements TextWatcher {
             @Override
             public void onError(Request request, Exception e) {
                 super.onError(request, e);
-                Toast.makeText(mContext, Contants.NetStatus.NETDISABLEORNETWORKDISABLE, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(mContext, Contants.NetStatus.NETDISABLEORNETWORKDISABLE, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -498,12 +525,12 @@ public class BugGoodsDialog extends DialogFragment implements TextWatcher {
     /**
      * 保存购物车
      */
-    public void saveDolistcart(String itemid) {
+    public void saveDolistcart() {
 
         Map<String, String> params = new HashMap<String, String>();
         params.put("uid", uid);
         params.put("token", token);
-        params.put("itemid", itemid);
+        params.put("itemid", itemId);
         params.put("itemsum", countTv.getText().toString().trim());
 
         HttpHelper.getInstance().post(mContext, Contants.PortU.DOLISTCART, params, new OkHttpResponseHandler<String>(mContext) {

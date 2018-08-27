@@ -477,9 +477,11 @@ public class SSecondActivity extends BaseActivity implements AdapterView.OnItemC
                 @Override
                 public void run() {
                     // tabLayout.setScrollPosition(0, 0, false);
-                    tabLayout.getTabAt(0).select();
+                    if (tabLayout != null && tabLayout.getTabCount() > 0) {
+                        tabLayout.getTabAt(0).select();
+                    }
                 }
-            }, 30);
+            }, 50);
             ((LinearLayoutManager) recyclerView.getLayoutManager()).scrollToPositionWithOffset(0, 0);
             currposition = 0;
             classifyposition = 0;
@@ -501,7 +503,7 @@ public class SSecondActivity extends BaseActivity implements AdapterView.OnItemC
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }, 200);
+        }, 1000);
     }
 
     @Override

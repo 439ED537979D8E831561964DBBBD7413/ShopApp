@@ -136,11 +136,13 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
 
     @Override
     protected void initView(View view, Bundle savedInstanceState) {
-        StatusBarUtils.from(getActivity())
-                .setActionbarView(titleView)
-                .setTransparentStatusbar(true)
-                .setLightStatusBar(false)
-                .process();
+        if (Contants.isNotch) {
+            StatusBarUtils.from(getActivity())
+                    .setActionbarView(titleView)
+                    .setTransparentStatusbar(true)
+                    .setLightStatusBar(false)
+                    .process();
+        }
         title.setText("购物车");
         kProgressHUD = growProgress("正在修改中");
         adapter = new SNewCarListAdapter(mActivity);
@@ -198,7 +200,7 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
         }
     }
 
-    @OnClick({R.id.id_del_btu, R.id.submit_order, R.id.my_checkbox})
+    @OnClick({R.id.id_del_btu, R.id.submit_order, R.id.my_checkbox, R.id.bought_shop_tv})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.id_del_btu:
@@ -224,6 +226,10 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
                 statisticalData();
                 isAllCheck();
                 adapter.notifyDataSetChanged();
+                break;
+            case R.id.bought_shop_tv:
+                //买过的商品
+                CommonUtils.goActivity(mActivity, BoughtGoodsActivity.class, null);
                 break;
             default:
                 break;
@@ -355,7 +361,9 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
         if (isSubmitgoods && isShowToast) {
             showToast("暂无可提交商品!");
         }
-        myCheckbox.setChecked(isSelect);
+        if (myCheckbox != null) {
+            myCheckbox.setChecked(isSelect);
+        }
 
         if (myCheckbox.isChecked()) {
             alltabbg();
@@ -376,9 +384,9 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
                 TabLayout.Tab t = tabLayout.getTabAt(i);
                 ((TextView) t.getCustomView().findViewById(R.id.tab_name)).setTextColor(getResources().getColor(R.color.black));
                 ((TextView) t.getCustomView().findViewById(R.id.tab_money)).setTextColor(getResources().getColor(R.color.black));
-                if (tabLayout.getSelectedTabPosition() == i) {
-                    tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.black));
-                }
+//                if (tabLayout.getSelectedTabPosition() == i) {
+//                    tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.black));
+//                }
             }
 
         }
@@ -480,7 +488,7 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
             @Override
             public void onAfter() {
                 super.onAfter();
-
+                addEmptyView();
             }
 
             @Override
@@ -509,14 +517,17 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
                             }
                         }
                     }
-                    loading.showContent();
+                    if (loading != null) {
+                        loading.showContent();
+                    }
                 } else {
-                    loading.showEmpty();
+                    if (loading != null) {
+                        loading.showEmpty();
+                    }
                 }
                 adapter.setList(cartLists);
                 statisticalData();
                 isAllCheck();
-                addEmptyView();
                 setTablayoutSelect();
             }
 
@@ -553,7 +564,7 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }, 300);
+        }, 1000);
     }
 
     private List<CartList> c3 = new ArrayList<>();
@@ -616,7 +627,9 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
                 totalPrice += Double.parseDouble(c.getMoneysum());
             }
         }
-        totalNum.setText(Html.fromHtml("合计：" + "<font color=red >" + "￥" + df.format(totalPrice) + "</font>"));
+        if (totalNum != null) {
+            totalNum.setText(Html.fromHtml("合计：" + "<font color=red >" + "￥" + df.format(totalPrice) + "</font>"));
+        }
     }
 
     public void refreshRequest() {
@@ -779,8 +792,10 @@ public class SNewCartListActivity extends NewBaseFragment implements shopcartlis
                     public void onClick(View v) {
                         int position = (int) view.getTag();
                         tabPosition = position;
-                        //这里就可以根据业务需求处理点击事件了。
-                        ((LinearLayoutManager) myRecyclerView.getLayoutManager()).scrollToPositionWithOffset(classname.get(position).getPage(), 0);
+                        if (position < classname.size()) {
+                            //这里就可以根据业务需求处理点击事件了。
+                            ((LinearLayoutManager) myRecyclerView.getLayoutManager()).scrollToPositionWithOffset(classname.get(position).getPage(), 0);
+                        }
                     }
                 });
             } catch (Exception e) {

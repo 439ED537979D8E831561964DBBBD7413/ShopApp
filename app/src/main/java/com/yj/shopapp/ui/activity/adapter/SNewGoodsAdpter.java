@@ -56,7 +56,7 @@ public class SNewGoodsAdpter extends CommonAdapter<Goods> implements View.OnClic
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, final int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         final Goods goods = list.get(position);
         holder.getTextView(R.id.addcartTv).setOnClickListener(this);
         holder.getTextView(R.id.addcartTv).setTag(position);
@@ -64,8 +64,9 @@ public class SNewGoodsAdpter extends CommonAdapter<Goods> implements View.OnClic
         holder.getTextView(R.id.specsTv).setText("规格：" + goods.getSpecs());
         holder.getView(R.id.itemview).setOnClickListener(this);
         holder.getView(R.id.itemview).setTag(position);
-        holder.getTextView(R.id.shopnum).setText(String.format("数量：%1$s%2$s", goods.getItemsum(), goods.getUnit()));
+        holder.getTextView(R.id.shopnum).setText(String.format("库存：%1$s%2$s", goods.getItemsum(), goods.getUnit()));
         holder.getTextView(R.id.goodAddress_Tv).setText(String.format("位置：%s", goods.getLocalhost()));
+        holder.getTextView(R.id.split_tv).setText(goods.getSplit().equals("")?"":String.format("【%s】", goods.getSplit()));
         Glide.with(context).load(goods.getImgurl()).apply(new RequestOptions().placeholder(R.drawable.load).centerCrop()).into(holder.getSimpleDraweeView(R.id.simpleDraweeView));
 
         if (!(goods.getIs_show_price().equals(""))) {

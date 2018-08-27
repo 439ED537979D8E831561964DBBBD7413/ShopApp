@@ -28,6 +28,15 @@ public class Industry implements Parcelable {
     private String sort;
     private String remark;
     private String result;
+    private Integer rebate;
+
+    public Integer getRebate() {
+        return rebate;
+    }
+
+    public void setRebate(Integer rebate) {
+        this.rebate = rebate;
+    }
 
     public int getResult() {
         return Integer.parseInt(result);
@@ -93,6 +102,9 @@ public class Industry implements Parcelable {
         this.remark = remark;
     }
 
+    public Industry() {
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -108,9 +120,7 @@ public class Industry implements Parcelable {
         dest.writeString(this.sort);
         dest.writeString(this.remark);
         dest.writeString(this.result);
-    }
-
-    public Industry() {
+        dest.writeValue(this.rebate);
     }
 
     protected Industry(Parcel in) {
@@ -122,9 +132,10 @@ public class Industry implements Parcelable {
         this.sort = in.readString();
         this.remark = in.readString();
         this.result = in.readString();
+        this.rebate = (Integer) in.readValue(Integer.class.getClassLoader());
     }
 
-    public static final Parcelable.Creator<Industry> CREATOR = new Parcelable.Creator<Industry>() {
+    public static final Creator<Industry> CREATOR = new Creator<Industry>() {
         @Override
         public Industry createFromParcel(Parcel source) {
             return new Industry(source);

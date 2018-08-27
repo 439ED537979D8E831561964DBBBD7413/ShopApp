@@ -16,7 +16,7 @@
             android:layout_centerInParent="true"
             android:layout_margin="15dp"
             android:gravity="center"
-            android:text="请输入数量"
+            android:text="请选择领取方式"
             android:textColor="@color/color_01ABFF"
             android:textSize="16sp" />
 
@@ -43,7 +43,8 @@
         android:inputType="number"
         android:padding="12dp"
         android:textColorHint="#d3d3d3"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        android:visibility="gone" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -65,15 +66,13 @@
                 android:src="@drawable/cb_addshop_select" />
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="@dimen/H100dp"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:background="@drawable/dialog_buyment_filletborder"
                 android:gravity="center"
                 android:orientation="vertical"
                 android:paddingBottom="@dimen/H5dp"
-                android:paddingLeft="@dimen/H15dp"
-                android:paddingRight="@dimen/H15dp"
                 android:paddingTop="@dimen/H5dp">
 
                 <TextView
@@ -112,15 +111,13 @@
                 android:visibility="gone" />
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="@dimen/H100dp"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:background="@drawable/dialog_buyment_filletborder"
                 android:gravity="center"
                 android:orientation="vertical"
                 android:paddingBottom="@dimen/H5dp"
-                android:paddingLeft="@dimen/H15dp"
-                android:paddingRight="@dimen/H15dp"
                 android:paddingTop="@dimen/H5dp">
 
                 <TextView

@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.controller.BaseControllerListener;
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
@@ -112,8 +111,7 @@ public class SNewCarListAdapter extends Common2Adapter<CartList> {
         holder.getTextView(R.id.allprice).setText(String.format("小计￥%s", CommonUtils.decimal(Double.parseDouble(cartList.getMoneysum()))));
         holder.getTextView(R.id.num).setText(cartList.getItemcount());
         if (cartList.getSale_status().equals("1")) {
-            Glide.with(context).load(cartList.getImgurl()).apply(new RequestOptions().centerCrop())
-                    .into(holder.getSimpleDraweeView(R.id.itemimag));
+            Glide.with(context).load(cartList.getImgurl()).into(holder.getSimpleDraweeView(R.id.itemimag));
         } else {
             setImg(holder.getSimpleDraweeView(R.id.itemimag), cartList.getImgurl());
         }

@@ -46,7 +46,7 @@ public class my_Recommenduser extends BaseFragment implements RecommendAdpter.Ca
     private List<Extend> list;
     private RecommendAdpter adpter;
     private List<Integer> showControl = new ArrayList<>();
-    private int position=0;
+    private int position = 0;
 
     @Override
     public void init(Bundle savedInstanceState) {
@@ -87,6 +87,7 @@ public class my_Recommenduser extends BaseFragment implements RecommendAdpter.Ca
             showToastShort("网络不给力");
         }
     }
+
     public void fresh() {
         swipeRefreshLayout.setRefreshing(true);
         refreshRequest();
@@ -111,7 +112,10 @@ public class my_Recommenduser extends BaseFragment implements RecommendAdpter.Ca
             @Override
             public void onAfter() {
                 super.onAfter();
-                swipeRefreshLayout.setRefreshing(false);
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+
             }
 
             @Override

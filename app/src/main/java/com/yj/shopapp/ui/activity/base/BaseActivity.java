@@ -74,7 +74,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         setContentView(getLayoutId());
         unbinder = ButterKnife.bind(this);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && Contants.isNotch) {
             setStatusBar();
         }
         mContext = this;

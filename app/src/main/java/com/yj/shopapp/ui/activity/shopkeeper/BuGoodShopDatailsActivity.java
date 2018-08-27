@@ -122,6 +122,9 @@ public class BuGoodShopDatailsActivity extends BaseActivity {
             isStartsales = false;
         }
         addressId = PreferenceUtils.getPrefString(mContext, "addressId", "");
+        if (isNetWork(mContext)) {
+            getShopDatails();
+        }
     }
 
     private void fontLarger(String test, TextView textView) {
@@ -129,14 +132,6 @@ public class BuGoodShopDatailsActivity extends BaseActivity {
         builder.setSpan(new RelativeSizeSpan(1.8f), 1, test.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         if (textView != null) {
             textView.setText(builder);
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (isNetWork(mContext)) {
-            getShopDatails();
         }
     }
 

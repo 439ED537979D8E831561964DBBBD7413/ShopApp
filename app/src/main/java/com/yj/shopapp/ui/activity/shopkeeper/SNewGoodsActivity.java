@@ -185,6 +185,9 @@ public class SNewGoodsActivity extends BaseActivity implements OnRefreshListener
                 mCurrentPage = 1;
                 loading.showLoading();
                 refreshRequest();
+                if (recyclerView != null) {
+                    ((LinearLayoutManager) recyclerView.getLayoutManager()).scrollToPositionWithOffset(0, 0);
+                }
             }
 
             @Override

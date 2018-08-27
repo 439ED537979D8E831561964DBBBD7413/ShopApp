@@ -12,7 +12,6 @@ import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.FileProvider;
-import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -134,21 +133,43 @@ public class UpdataDialog extends DialogFragment {
                 npb.setProgress(progress);
                 Progressvalue.setText(String.format("%d%%", progress));
                 if (progress == 100) {
-//                    ShowLog.e("zhixingd100");
-//                    //安装app
-//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//                        boolean b = mActivity.getPackageManager().canRequestPackageInstalls();
-//                        if (b) {
-//                            installApk(DownloadAppUtils.downloadUpdateApkFilePath);
-//                        } else {
-//                            //请求安装未知应用来源的权限
-//                            startInstallPermissionSettingActivity(mActivity);
-//                        }
-//                    }
-                    dismiss();
+                    installProcess();
+                    //dismiss();
                 }
             }
         });
+    }
+
+    //安装应用的流程
+    private void installProcess() {
+        boolean haveInstallPermission;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            //先获取是否有安装未知来源应用的权限
+            haveInstallPermission = mActivity.getPackageManager().canRequestPackageInstalls();
+            if (!haveInstallPermission) {//没有权限
+                startInstallPermissionSettingActivity();
+                return;
+            }
+        }
+        //有权限，开始安装应用程序
+        installApk(new File(DownloadAppUtils.downloadUpdateApkFilePath));
+    }
+
+    //安装应用
+    private void installApk(File apk) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            intent.setDataAndType(Uri.fromFile(apk), "application/vnd.android.package-archive");
+        } else {//Android7.0之后获取uri要用contentProvider
+            Uri uri = FileProvider.getUriForFile(
+                    mActivity, mActivity.getPackageName() + ".fileProvider", apk);
+            intent.setDataAndType(uri, "application/vnd.android.package-archive");
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        }
+
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mActivity.startActivity(intent);
+        dismiss();
     }
 
     @Override
@@ -166,60 +187,20 @@ public class UpdataDialog extends DialogFragment {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private void startInstallPermissionSettingActivity(Activity activity) {
-        Uri packageURI = Uri.parse("package:" + activity.getPackageName());
+    private void startInstallPermissionSettingActivity() {
+        Uri packageURI = Uri.parse("package:" + mActivity.getPackageName());
         //注意这个是8.0新API
         Intent intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, packageURI);
-        activity.startActivityForResult(intent, 10086);
+        mActivity.startActivityForResult(intent, 10086);
     }
 
-    /**
-     * 安装apk
-     */
-    private void installApk(String path) {
-        if (TextUtils.isEmpty(path)) {
-            return;
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 10086) {
+            installProcess();//再次执行安装流程，包含权限判等
         }
-//        if (DownloadAppUtils.downloadUpdateApkFilePath != null) {
-//            Intent i = new Intent(Intent.ACTION_VIEW);
-//            File apkFile = new File(DownloadAppUtils.downloadUpdateApkFilePath);
-//            if (UpdateAppUtils.needFitAndroidN && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-//                i.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-//                Uri contentUri = FileProvider.getUriForFile(
-//                        context, context.getPackageName() + ".fileProvider", apkFile);
-//                i.setDataAndType(contentUri, "application/vnd.android.package-archive");
-//            } else {
-//                i.setDataAndType(Uri.fromFile(apkFile),
-//                        "application/vnd.android.package-archive");
-//            }
-//            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//            context.startActivity(i);
-//        }
-        File file = new File(path);
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        //判读版本是否在7.0以上安卓8.0一下
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            //provider authorities
-            Uri contentUri = FileProvider.getUriForFile(
-                    mActivity, mActivity.getPackageName() + ".fileProvider", file);
-            //Granting Temporary Permissions to a URI
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            intent.setDataAndType(contentUri, "application/vnd.android.package-archive");
-        } else {
-            intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
-        }
-        mActivity.startActivity(intent);
-        //ApkController.installSilent(apkPath);
     }
-
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if (requestCode == 10086) {
-//            ShowLog.e("zhixingd");
-//            installApk(DownloadAppUtils.downloadUpdateApkFilePath);
-//        }
-//    }
 
     @Override
     public void onDestroyView() {

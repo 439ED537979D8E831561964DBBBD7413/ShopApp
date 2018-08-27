@@ -20,6 +20,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.alibaba.fastjson.JSONException;
+import com.alibaba.fastjson.JSONObject;
 import com.squareup.okhttp.Request;
 import com.yj.shopapp.R;
 import com.yj.shopapp.config.Contants;
@@ -37,9 +39,6 @@ import com.yj.shopapp.util.JsonHelper;
 import com.yj.shopapp.util.NetUtils;
 import com.yj.shopapp.util.PreferenceUtils;
 import com.yj.shopapp.util.StatusBarUtils;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -91,7 +90,7 @@ public class SMyInfoActivity extends NewBaseFragment implements CenterDialog.OnC
     private static final int REQUEST_CODE = 1;
     private List<Address> notes = new ArrayList<Address>();
     private String cameraPath;
-       private final int REQUEST_CODEC = 0x1001;
+    private final int REQUEST_CODEC = 0x1001;
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
@@ -106,14 +105,12 @@ public class SMyInfoActivity extends NewBaseFragment implements CenterDialog.OnC
 
     @Override
     protected void initView(View view, Bundle savedInstanceState) {
-        StatusBarUtils.from(getActivity())
-                .setActionbarView(bgView)
-                .setTransparentStatusbar(true)
-                .setLightStatusBar(false)
-                .process();
-        int index = PreferenceUtils.getPrefInt(mActivity, Contants.Preference.CHECKNUM, 0);
-        if (index == 1) {
-            Recommender.setVisibility(View.VISIBLE);
+        if (Contants.isNotch) {
+            StatusBarUtils.from(getActivity())
+                    .setActionbarView(bgView)
+                    .setTransparentStatusbar(true)
+                    .setLightStatusBar(false)
+                    .process();
         }
         String account = PreferenceUtils.getPrefString(mActivity, Contants.Preference.USER_NAME, "");
         accountTv.setText(account);
@@ -144,6 +141,7 @@ public class SMyInfoActivity extends NewBaseFragment implements CenterDialog.OnC
         super.onResume();
         if (NetUtils.isNetworkConnected(mActivity)) {
             refreshRequest();
+            check_extend();
         } else {
             showToast("无网络");
         }
@@ -335,6 +333,34 @@ public class SMyInfoActivity extends NewBaseFragment implements CenterDialog.OnC
     }
 
     /**
+     * 7、验证是否可以填写推荐人
+     */
+    private void check_extend() {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("uid", uid);
+        params.put("token", token);
+        HttpHelper.getInstance().post(mActivity, Contants.PortU.CHECK_EXTEND, params, new OkHttpResponseHandler<String>(mActivity) {
+            @Override
+            public void onError(Request request, Exception e) {
+                super.onError(request, e);
+            }
+
+            @Override
+            public void onResponse(Request request, String json) {
+                super.onResponse(request, json);
+                ShowLog.e(json);
+                if (JsonHelper.isRequstOK(json, mActivity)) {
+                    JSONObject object = JSONObject.parseObject(json);
+                    //PreferenceUtils.setPrefInt(mActivity, Contants.Preference.CHECKNUM, object.getInteger("status"));
+                    if (Recommender != null && object.getInteger("status") != null) {
+                        Recommender.setVisibility(object.getInteger("status") == 0 ? View.GONE : View.VISIBLE);
+                    }
+                }
+            }
+        });
+    }
+
+    /**
      * 填写推荐人
      */
     @OnClick(R.id.Recommender)
@@ -369,13 +395,13 @@ public class SMyInfoActivity extends NewBaseFragment implements CenterDialog.OnC
                 ShowLog.e(json);
                 if (JsonHelper.isRequstOK(json, mActivity)) {
                     try {
-                        JSONObject object = new JSONObject(json);
+                        JSONObject object = JSONObject.parseObject(json);
                         ShowLog.e(object.getString("info"));
                         if (object.getString("status").equals("1")) {
                             centerDialog.dismiss();
                             Recommender.setVisibility(View.GONE);
+                            PreferenceUtils.setPrefInt(mActivity, Contants.Preference.CHECKNUM, 0);
                         }
-
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

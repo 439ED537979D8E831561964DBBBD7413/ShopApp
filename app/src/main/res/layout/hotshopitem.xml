@@ -34,9 +34,9 @@
             android:layout_height="wrap_content"
             android:padding="@dimen/H2dp"
             android:text=""
-            android:visibility="gone"
             android:textColor="@color/color_999999"
-            android:textSize="13sp" />
+            android:textSize="13sp"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/account_tv"
@@ -47,14 +47,30 @@
             android:textColor="@color/color_999999"
             android:textSize="13sp" />
 
-        <TextView
-            android:id="@+id/shopnum"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="@dimen/H2dp"
-            android:text=""
-            android:textColor="@color/color_999999"
-            android:textSize="13sp" />
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/shopnum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/H2dp"
+                android:text=""
+                android:textColor="@color/color_999999"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/split_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/H10dp"
+                android:layout_marginStart="@dimen/H10dp"
+                android:padding="@dimen/H2dp"
+                android:textColor="@color/color_999999"
+                android:textSize="13sp" />
+        </LinearLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"

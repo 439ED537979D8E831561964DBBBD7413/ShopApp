@@ -75,10 +75,10 @@ public class BuGoodDetails extends BaseActivity {
                 finish();
             }
         });
-        buGoodDetailsViewPager = new BuGoodDetailsViewPager(mContext, getSupportFragmentManager(), new String[]{"正在疯抢", "即将开抢", "我的抢购"});
+        buGoodDetailsViewPager = new BuGoodDetailsViewPager(mContext, getSupportFragmentManager(), new String[]{"正在疯抢", "即将开抢", "我的抢购", "已取消"});
         myViewpager.setAdapter(buGoodDetailsViewPager);
         myViewpager.setOpenAnimation(false);
-        myViewpager.setOffscreenPageLimit(2);
+        myViewpager.setOffscreenPageLimit(3);
         tabLayout.setupWithViewPager(myViewpager);
         rightTv.setText("规则");
         getRule();
@@ -86,7 +86,7 @@ public class BuGoodDetails extends BaseActivity {
     }
 
     public void setUpTabBadge(int position, int size) {
-
+        if (tabLayout == null) return;
         TabLayout.Tab tab = tabLayout.getTabAt(position); // 更新Badge前,先remove原来的customView,否则Badge无法更新
         View customView = tab.getCustomView();
         if (customView != null) {
@@ -187,12 +187,14 @@ public class BuGoodDetails extends BaseActivity {
             public void onResponse(Request request, String response) {
                 super.onResponse(request, response);
                 ShowLog.e(response);
-                JSONObject object = JSONObject.parseObject(response);
-                if (!object.getString("start_num").equals("")) {
-                    setUpTabBadge(0, Integer.parseInt(object.getString("start_num")));
-                }
-                if (!object.getString("nostart_num").equals("")) {
-                    setUpTabBadge(1, Integer.parseInt(object.getString("nostart_num")));
+                if (JsonHelper.isRequstOK(response, mContext)) {
+                    JSONObject object = JSONObject.parseObject(response);
+                    if (!object.getString("start_num").equals("")) {
+                        setUpTabBadge(0, Integer.parseInt(object.getString("start_num")));
+                    }
+                    if (!object.getString("nostart_num").equals("")) {
+                        setUpTabBadge(1, Integer.parseInt(object.getString("nostart_num")));
+                    }
                 }
             }
 

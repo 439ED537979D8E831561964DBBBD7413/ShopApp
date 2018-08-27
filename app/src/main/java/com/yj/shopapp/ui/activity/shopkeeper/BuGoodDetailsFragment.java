@@ -144,7 +144,7 @@ public class BuGoodDetailsFragment extends NewBaseFragment implements OnRefreshL
                 buffer.append(",");
             }
         } else {
-            ShowLog.e(topPosition + "位置为" + bottomPosition);
+//            ShowLog.e(topPosition + "位置为" + bottomPosition);
             for (int i = topPosition; i <= bottomPosition; i++) {
                 buffer.append(limitedSaleList.get(i).getId());
                 buffer.append(",");
@@ -152,7 +152,7 @@ public class BuGoodDetailsFragment extends NewBaseFragment implements OnRefreshL
         }
 
         buffer.delete(buffer.length() - 1, buffer.length());
-        ShowLog.e(buffer.toString());
+        //ShowLog.e(buffer.toString());
         refreshData(buffer.toString());
     }
 

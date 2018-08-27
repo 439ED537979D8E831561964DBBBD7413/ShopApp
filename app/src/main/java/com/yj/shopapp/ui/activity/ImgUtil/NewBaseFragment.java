@@ -177,7 +177,9 @@ public abstract class NewBaseFragment extends Fragment {
             mToast.show();
         }
     }
-
+    protected String getAddressId() {
+        return PreferenceUtils.getPrefString(mActivity, "addressId", "");
+    }
     protected void hintKbTwo() {
         InputMethodManager imm = (InputMethodManager) mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm.isActive() && mActivity.getCurrentFocus() != null) {

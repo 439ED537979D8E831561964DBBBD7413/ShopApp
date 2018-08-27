@@ -97,7 +97,6 @@ public abstract class BaseTabActivity extends FinalFragmentActivity {
 
     //是否更新新版本
     public void cupdate() {
-        ShowLog.e("更新版本");
         Map<String, String> params = new HashMap<String, String>();
         params.put("app", "");
         HttpHelper.getInstance().post(mContext, Contants.appu, params, new OkHttpResponseHandler<String>(mContext) {

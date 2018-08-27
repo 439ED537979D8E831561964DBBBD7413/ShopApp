@@ -67,7 +67,7 @@ public class NoticeDialog extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mContext = getActivity();
+        mContext = getActivity().getApplicationContext();
         setStyle(DialogFragment.STYLE_NO_TITLE, R.style.UpdateAppDialog);
         noticeLists = getArguments().getParcelableArrayList("noticelist");
     }
@@ -81,7 +81,6 @@ public class NoticeDialog extends DialogFragment {
         Display display = windowManager.getDefaultDisplay();
         WindowManager.LayoutParams lp = window.getAttributes();
         lp.width = display.getWidth() * 9 / 10; // 设置dialog宽度
-        lp.y = -100;
         window.setAttributes(lp);
         getDialog().setCanceledOnTouchOutside(false);
 
@@ -95,7 +94,7 @@ public class NoticeDialog extends DialogFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.dailog_hot, container);
+        View rootView = inflater.inflate(R.layout.dailog_hot, container,false);
         unbinder = ButterKnife.bind(this, rootView);
         return rootView;
     }
@@ -136,9 +135,7 @@ public class NoticeDialog extends DialogFragment {
             hotContext.setVisibility(View.GONE);
             hotTime.setVisibility(View.GONE);
             webView.setVisibility(View.VISIBLE);
-
             webView.loadUrl(notice.getUrl());
-
         }
     }
 

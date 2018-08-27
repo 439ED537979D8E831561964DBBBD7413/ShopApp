@@ -14,10 +14,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -45,6 +42,7 @@ import com.yj.shopapp.ubeen.NotMfData;
 import com.yj.shopapp.ubeen.Notice;
 import com.yj.shopapp.ubeen.Userinfo;
 import com.yj.shopapp.ui.activity.ImgUtil.NewBaseFragment;
+import com.yj.shopapp.ui.activity.Interface.OnItemChildViewOnClickListener;
 import com.yj.shopapp.ui.activity.ShowLog;
 import com.yj.shopapp.ui.activity.adapter.SRecyclerAdapter;
 import com.yj.shopapp.util.CommonUtils;
@@ -63,7 +61,6 @@ import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.bingoogolapple.bgabanner.BGABanner;
@@ -73,7 +70,7 @@ import q.rorbin.badgeview.QBadgeView;
 /**
  * Created by jm on 2016/4/25.
  */
-public class SHomeActivity extends NewBaseFragment implements SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemClickListener {
+public class SHomeActivity extends NewBaseFragment implements SwipeRefreshLayout.OnRefreshListener, OnItemChildViewOnClickListener {
 
 
     @BindView(R.id.classi_gv)
@@ -193,7 +190,7 @@ public class SHomeActivity extends NewBaseFragment implements SwipeRefreshLayout
      * @param view
      */
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    @OnClick({R.id.id_right_btu, R.id.salesPromotion_lin, R.id.lowBtn, R.id.search2Btn, R.id.searchBtn, R.id.integral_rl, R.id.search_rl, R.id.reward, R.id.service_imag, R.id.limitBuGood, R.id.goto_sales, R.id.goto_hot})
+    @OnClick({R.id.id_right_btu, R.id.salesPromotion_lin, R.id.lowBtn, R.id.search2Btn, R.id.searchBtn, R.id.integral_rl, R.id.search_rl, R.id.reward, R.id.service_imag, R.id.limitBuGood, R.id.goto_sales, R.id.goto_hot, R.id.hot_view})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.id_right_btu:
@@ -229,7 +226,8 @@ public class SHomeActivity extends NewBaseFragment implements SwipeRefreshLayout
                 break;
 
             case R.id.reward:
-                CommonUtils.goActivity(mActivity, Recommend.class, null, false);
+                //CommonUtils.goActivity(mActivity, Recommend.class, null, false);
+                CommonUtils.goActivity(mActivity, RecommendedRewardActivity.class, null);
                 break;
             case R.id.service_imag:
                 //ShowLog.e(object.getInteger("status") + "");
@@ -252,6 +250,11 @@ public class SHomeActivity extends NewBaseFragment implements SwipeRefreshLayout
                     showToast("暂无商品，敬请期待");
                 }
                 break;
+            case R.id.hot_view:
+                Bundle bundle1 = new Bundle();
+                bundle1.putParcelableArrayList("notice", notices);
+                CommonUtils.goActivity(mActivity, SMsgDetailActivity.class, bundle1);
+                break;
             default:
                 break;
         }
@@ -264,11 +267,13 @@ public class SHomeActivity extends NewBaseFragment implements SwipeRefreshLayout
 
     @Override
     protected void initView(View view, Bundle savedInstanceState) {
-        StatusBarUtils.from(getActivity())
-                .setActionbarView(titleView)
-                .setTransparentStatusbar(true)
-                .setLightStatusBar(false)
-                .process();
+        if (Contants.isNotch) {
+            StatusBarUtils.from(getActivity())
+                    .setActionbarView(titleView)
+                    .setTransparentStatusbar(true)
+                    .setLightStatusBar(false)
+                    .process();
+        }
         checksum = PreferenceUtils.getPrefInt(mActivity, "reward_area", -1);
         imagurl = PreferenceUtils.getPrefString(mActivity, "check_open", "");
         object = JSONObject.parseObject(imagurl);
@@ -307,7 +312,7 @@ public class SHomeActivity extends NewBaseFragment implements SwipeRefreshLayout
             classiGv.setLayoutManager(new GridLayoutManager(mActivity, 5));
             classiGv.setNestedScrollingEnabled(false);
             classiGv.setAdapter(adapter);
-            adapter.setOnItemClickListener(this);
+            adapter.setListener(this);
         }
     }
 
@@ -367,7 +372,6 @@ public class SHomeActivity extends NewBaseFragment implements SwipeRefreshLayout
         getAdvinfo();
         //getrewardArea();
         refreshRequest();
-        check_extend();
         loadImag();
         // Change_Switch();
         getNotice();
@@ -385,50 +389,10 @@ public class SHomeActivity extends NewBaseFragment implements SwipeRefreshLayout
         getNewsCount();
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        if (mdatas.size() == 0) return;
-        if (0 == mdatas.get(position).getResult()) {
-            showToast(mdatas.get(position).getName() + "暂未开放，敬请期待！");
-        } else {
-            Bundle bundle = new Bundle();
-            bundle.putString("CId", mdatas.get(position).getId());
-            bundle.putString("Name", mdatas.get(position).getName());
-            CommonUtils.goActivity(mActivity, SSecondActivity.class, bundle);
-        }
-    }
-
     private void loadImag() {
         if (null != object) {
             Glide.with(mActivity).load(object.getString("imgurl")).into(serviceImag);
         }
-    }
-
-
-    /**
-     * 7、验证是否可以填写推荐人
-     */
-    private void check_extend() {
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("uid", uid);
-        params.put("token", token);
-        HttpHelper.getInstance().post(mActivity, Contants.PortU.CHECK_EXTEND, params, new OkHttpResponseHandler<String>(mActivity) {
-            @Override
-            public void onError(Request request, Exception e) {
-                super.onError(request, e);
-            }
-
-            @Override
-            public void onResponse(Request request, String json) {
-                super.onResponse(request, json);
-                ShowLog.e(json);
-                if (JsonHelper.isRequstOK(json, mActivity)) {
-                    JSONObject object = JSONObject.parseObject(json);
-                    PreferenceUtils.setPrefInt(mActivity, Contants.Preference.CHECKNUM, object.getInteger("status"));
-
-                }
-            }
-        });
     }
 
     private void openDialogNum() {
@@ -446,17 +410,17 @@ public class SHomeActivity extends NewBaseFragment implements SwipeRefreshLayout
                 super.onResponse(request, response);
                 ShowLog.e(response);
                 JSONObject object = JSONObject.parseObject(response);
-                String yestday = PreferenceUtils.getPrefString(mActivity, "open" + uid, "");
+                String yestday = PreferenceUtils.getPrefString(mActivity, "open" + uid, "0");
                 String today = DateUtils.getNowDate();
-                if (!yestday.equals(today)) {
-                    PreferenceUtils.setPrefInt(mActivity, "openNum", object.getInteger("num"));
+                if (!yestday.equals(today) && object.getInteger("num") != null) {
+                    PreferenceUtils.setPrefInt(mActivity, "openNum" + uid, object.getInteger("num"));
                     PreferenceUtils.setPrefString(mActivity, "open" + uid, today);
                 }
-                int openNum = PreferenceUtils.getPrefInt(mActivity, "openNum", 1);
+                int openNum = PreferenceUtils.getPrefInt(mActivity, "openNum" + uid, 1);
                 if (openNum > 0 && PreferenceUtils.getPrefBoolean(mActivity, "firstMain", false)) {
                     --openNum;
                     noticeSwitchList();
-                    PreferenceUtils.setPrefInt(mActivity, "openNum", openNum);
+                    PreferenceUtils.setPrefInt(mActivity, "openNum" + uid, openNum);
                     PreferenceUtils.setPrefBoolean(mActivity, "firstMain", false);
                 }
             }
@@ -530,6 +494,7 @@ public class SHomeActivity extends NewBaseFragment implements SwipeRefreshLayout
 
     private void setHotListData(List<HotIndex> listData) {
         int size = listData.size();
+        if (mActivity == null) return;
         if (size == 0) {
             hotGoodsBg.setVisibility(View.VISIBLE);
         } else if (size > 1) {
@@ -660,9 +625,8 @@ public class SHomeActivity extends NewBaseFragment implements SwipeRefreshLayout
     private void setLimitedsaleData(List<LimitedSale> limitedsaleData) {
         int size = limitedsaleData.size();
         if (size == 0) {
-            return;
         } else if (size > 1) {
-
+            if (mActivity == null) return;
             rightItem.setVisibility(View.VISIBLE);
             Glide.with(mActivity).load(limitedsaleData.get(0).getImgurl()).into(goodImg);
             Glide.with(mActivity).load(limitedsaleData.get(1).getImgurl()).into(image2);
@@ -673,6 +637,7 @@ public class SHomeActivity extends NewBaseFragment implements SwipeRefreshLayout
             priceTv2.setText(String.format("%s", limitedsaleData.get(1).getPrice()));
             priceTv2.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
         } else {
+            if (mActivity == null) return;
             Glide.with(mActivity).load(limitedsaleData.get(0).getImgurl()).into(goodImg);
             shopprice.setText(String.format("￥%s", limitedsaleData.get(0).getUnitprice()));
             priceTv.setText(String.format("%s", limitedsaleData.get(0).getPrice()));
@@ -987,7 +952,7 @@ public class SHomeActivity extends NewBaseFragment implements SwipeRefreshLayout
 //                    JsonHelper<Industry> jsonHelper = new JsonHelper<Industry>(Industry.class);
 //                    mdatas.addAll(jsonHelper.getDatas(response));
                     seveurl();
-                    adapter.setList(mdatas);
+                    adapter.setIndustries(mdatas);
                 } else {
                     showToast(JsonHelper.errorMsg(response));
                 }
@@ -1048,17 +1013,16 @@ public class SHomeActivity extends NewBaseFragment implements SwipeRefreshLayout
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // TODO: inflate a fragment view
-        View rootView = super.onCreateView(inflater, container, savedInstanceState);
-        unbinder = ButterKnife.bind(this, rootView);
-        return rootView;
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        unbinder.unbind();
+    public void onChildViewClickListener(View view, int position) {
+        if (mdatas.size() == 0) return;
+        if (0 == mdatas.get(position).getResult()) {
+            showToast(mdatas.get(position).getName() + "暂未开放，敬请期待！");
+        } else {
+            Bundle bundle = new Bundle();
+            bundle.putString("CId", mdatas.get(position).getId());
+            bundle.putString("Name", mdatas.get(position).getName());
+            CommonUtils.goActivity(mActivity, SSecondActivity.class, bundle);
+        }
     }
 
 //    public void foundGoods(String itemnoid, final int type, final String checkgoods) {

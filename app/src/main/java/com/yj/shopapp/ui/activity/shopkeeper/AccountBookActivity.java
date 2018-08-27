@@ -106,7 +106,7 @@ public class AccountBookActivity extends BaseActivity implements OnRefreshListen
         swipeRefreshLayout.setDisableContentWhenRefresh(true);//是否在刷新的时候禁止列表的操作
         swipeRefreshLayout.setDisableContentWhenLoading(true);//是否在加载的时候禁止列表的操作
         swipeRefreshLayout.setEnableFooterFollowWhenLoadFinished(true);
-        swipeRefreshLayout.setEnableLoadMoreWhenContentNotFull(false);
+       // swipeRefreshLayout.setEnableLoadMoreWhenContentNotFull(false);
     }
 
     @Override

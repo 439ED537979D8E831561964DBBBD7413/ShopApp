@@ -31,7 +31,6 @@ import com.yj.shopapp.R;
 import com.yj.shopapp.ubeen.OutOfStork;
 import com.yj.shopapp.ui.activity.adapter.OutOfStorkAdpter;
 import com.yj.shopapp.util.CommonUtils;
-import com.yj.shopapp.util.StatusBarManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,7 +97,7 @@ public class OrderSubmitComplete extends DialogFragment implements DialogInterfa
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        StatusBarManager.getInstance().setStatusBar(getDialog().getWindow(), getResources().getColor(R.color.color_01ABFF));
+        //StatusBarManager.getInstance().setStatusBar(getDialog().getWindow(), getResources().getColor(R.color.color_01ABFF));
         View rootView = inflater.inflate(R.layout.fragment_order_submit_complete, container);
         unbinder = ButterKnife.bind(this, rootView);
         this.getDialog().setOnKeyListener(this);

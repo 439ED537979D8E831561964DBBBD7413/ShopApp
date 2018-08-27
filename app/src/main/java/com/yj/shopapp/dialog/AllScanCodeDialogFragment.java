@@ -27,6 +27,7 @@ import com.yj.shopapp.ui.activity.shopkeeper.SGoodsDetailActivity;
 import com.yj.shopapp.util.CommonUtils;
 import com.yj.shopapp.util.DDecoration;
 import com.yj.shopapp.util.JsonHelper;
+import com.yj.shopapp.util.NetUtils;
 import com.yj.shopapp.util.PreferenceUtils;
 import com.yj.shopapp.view.ClearEditText;
 
@@ -206,14 +207,21 @@ public class AllScanCodeDialogFragment extends BaseV4DialogFragment {
                 break;
             case R.id.search2Btn:
                 //搜索按钮
-                if (!"".equals(valueEt.getText().toString())) {
-                    hideImm(valueEt);
-                    keyword = valueEt.getText().toString();
-                    page = 1;
-                    goodsList.clear();
-                    requestData();
+                if (NetUtils.isNetworkConnected(mActivity)) {
+                    if (!"".equals(valueEt.getText().toString())) {
+                        hideImm(valueEt);
+                        keyword = valueEt.getText().toString();
+                        page = 1;
+                        goodsList.clear();
+                        requestData();
+                    } else {
+                        valueEt.setError("输入不能为空");
+                    }
                 } else {
-                    valueEt.setError("输入不能为空");
+                    if (loading!=null){
+                        loading.showError();
+                    }
+                    Toast.makeText(mActivity, "无网络连接", Toast.LENGTH_SHORT).show();
                 }
                 break;
         }

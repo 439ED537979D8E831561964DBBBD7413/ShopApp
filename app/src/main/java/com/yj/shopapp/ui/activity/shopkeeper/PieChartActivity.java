@@ -117,6 +117,7 @@ public class PieChartActivity extends BaseActivity {
             public void onResponse(Request request, String json) {
                 super.onResponse(request, json);
                 ShowLog.e(json);
+                listBeans.clear();
                 if (json.startsWith("{")) {
                     chart = JSONObject.parseObject(json, OrderChart.class);
                     if (screenData != null) {
@@ -142,21 +143,6 @@ public class PieChartActivity extends BaseActivity {
                 }
             }
 
-            @Override
-            public void onAfter() {
-                super.onAfter();
-            }
-
-            @Override
-            public void onError(Request request, Exception e) {
-                super.onError(request, e);
-            }
-
-            @Override
-            public void onBefore() {
-                super.onBefore();
-                listBeans.clear();
-            }
         });
     }
 
@@ -178,8 +164,7 @@ public class PieChartActivity extends BaseActivity {
                         screentext.setText(String.format("%1$d-%2$02d", year, month + 1));
                         onRequstData();
                     }
-                }
-                        , mYear, mMonth, mDay); //上下文，点击回调,Calendar年月日
+                }, mYear, mMonth, mDay); //上下文，点击回调,Calendar年月日
                 if (!datePicker.isHasNoDay()) {
                     datePicker.setHasNoDay(true);
                 }

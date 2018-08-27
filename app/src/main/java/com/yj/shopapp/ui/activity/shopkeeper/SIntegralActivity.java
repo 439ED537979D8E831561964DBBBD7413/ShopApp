@@ -11,7 +11,6 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.RelativeSizeSpan;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -84,6 +83,8 @@ public class SIntegralActivity extends BaseActivity implements IntegraAdapter.On
     TextView currentIntegral;
     @BindView(R.id.redeemed_integral)
     TextView redeemedIntegral;
+    @BindView(R.id.available_intagral)
+    TextView availableIntagral;
     private Activity mContext = this;
     private KProgressHUD kProgressHUD;
     //private String IntegralRule;
@@ -97,6 +98,7 @@ public class SIntegralActivity extends BaseActivity implements IntegraAdapter.On
     private CenterDialog dialog;
     private String withdrawalsType;
     private UserAccount account;
+    private String Rule;
 //    @Override
 //    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 //        super.onActivityResult(requestCode, resultCode, data);
@@ -112,11 +114,13 @@ public class SIntegralActivity extends BaseActivity implements IntegraAdapter.On
 
     @Override
     protected void initData() {
-        StatusBarUtils.from(this)
-                .setActionbarView(bgView)
-                .setTransparentStatusbar(true)
-                .setLightStatusBar(false)
-                .process();
+        if (Contants.isNotch) {
+            StatusBarUtils.from(this)
+                    .setActionbarView(bgView)
+                    .setTransparentStatusbar(true)
+                    .setLightStatusBar(false)
+                    .process();
+        }
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setNavigationOnClickListener(v -> finish());
@@ -124,7 +128,7 @@ public class SIntegralActivity extends BaseActivity implements IntegraAdapter.On
         kProgressHUD = growProgress(Contants.Progress.LOAD_ING);
 //        if (PreferenceUtils.getPrefInt(mContext, "isVip", 0) == 0) {
 //            returnIntegral.setVisibility(View.GONE);
-            Glide.with(mContext).load(R.drawable.ic_vip).apply(new RequestOptions().optionalTransform(new GrayscaleTransformation())).into(vipImag);
+        Glide.with(mContext).load(R.drawable.ic_vip).apply(new RequestOptions().optionalTransform(new GrayscaleTransformation())).into(vipImag);
         //}
         adapter = new IntegraAdapter(mContext, this);
         recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
@@ -147,6 +151,7 @@ public class SIntegralActivity extends BaseActivity implements IntegraAdapter.On
         if (NetUtils.isNetworkConnected(mContext)) {
             requestData();
             getShopList();
+            getIntegralRule();
             getRule();
         } else {
             showToastShort("无网络");
@@ -192,6 +197,7 @@ public class SIntegralActivity extends BaseActivity implements IntegraAdapter.On
                     }
                     currentIntegral.setText(object.getString("integral"));
                     redeemedIntegral.setText(String.format("已兑换%s积分", object.getString("change_integral")));
+                    availableIntagral.setText(object.getString("do_integral"));
 
                 }
             }
@@ -297,6 +303,22 @@ public class SIntegralActivity extends BaseActivity implements IntegraAdapter.On
         });
     }
 
+    private void getIntegralRule() {
+        Map<String, String> params = new HashMap<>();
+        params.put("uid", uid);
+        params.put("token", token);
+        HttpHelper.getInstance().post(this, Contants.PortS.INTEGRALRULE, params, new OkHttpResponseHandler<String>(this) {
+            @Override
+            public void onResponse(Request request, String response) {
+                super.onResponse(request, response);
+                ShowLog.e(response);
+                if (JsonHelper.isRequstOK(response, mContext)) {
+                    Rule = JSONObject.parseObject(response).getString("rules");
+                }
+            }
+        });
+    }
+
     private void showModifyNumberDialog(int position) {
         dialog.show();
 
@@ -305,10 +327,10 @@ public class SIntegralActivity extends BaseActivity implements IntegraAdapter.On
         ((TextView) dialog.findViewById(R.id.zhifubao_account)).setText(account.getData().getZfb());
         ((TextView) dialog.findViewById(R.id.weixin_account)).setText(account.getData().getWx());
         if (account.getData().getZfb().equals("")) {
-            dialog.findViewById(R.id.zhifubao_rl).setVisibility(View.GONE);
+            dialog.findViewById(R.id.zhifubao_rl).setVisibility(View.INVISIBLE);
         }
         if (account.getData().getWx().equals("")) {
-            dialog.findViewById(R.id.weixin_rl).setVisibility(View.GONE);
+            dialog.findViewById(R.id.weixin_rl).setVisibility(View.INVISIBLE);
         }
         if (account.getData().getType().equals("1")) {
             dialog.findViewById(R.id.weixin_select).setVisibility(View.VISIBLE);
@@ -320,8 +342,8 @@ public class SIntegralActivity extends BaseActivity implements IntegraAdapter.On
             dialog.findViewById(R.id.weixin_select).setVisibility(View.GONE);
             withdrawalsType = "2";
         }
-        EditText valueTv = dialog.findViewById(R.id.ecit_phone);
-        showKeyBoard(valueTv);
+        //EditText valueTv = dialog.findViewById(R.id.ecit_phone);
+        //showKeyBoard(valueTv);
         dialog.setOnCenterItemClickListener(new CenterDialog.OnCenterItemClickListener() {
             @Override
             public void OnCenterItemClick(CenterDialog dialog, View view) {
@@ -330,7 +352,7 @@ public class SIntegralActivity extends BaseActivity implements IntegraAdapter.On
                         dialog.dismiss();
                         break;
                     case R.id.dialog_sure:
-                        goodnumber = valueTv.getText().toString();
+                        // goodnumber = 1;
                         changeGoods(goods.getData().get(position).getId());
                         dialog.dismiss();
                         break;
@@ -378,16 +400,16 @@ public class SIntegralActivity extends BaseActivity implements IntegraAdapter.On
         });
     }
 
-    private void showRuleDialog() {
+    private void showRuleDialog(String title, String content) {
         new MaterialDialog.Builder(mContext)
-                .title(integralRule.getTitle())
-                .content(integralRule.getContents())
+                .title(title)
+                .content(content)
                 .positiveText("我知道了")
                 .show();
     }
 
 
-    @OnClick({R.id.more, R.id.exchangeshop, R.id.exchangeRecord, R.id.integraldatails, R.id.my_Vip, R.id.shopmore})
+    @OnClick({R.id.more, R.id.exchangeshop, R.id.exchangeRecord, R.id.integraldatails, R.id.my_Vip, R.id.shopmore, R.id.integral_rule_tv})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.more:
@@ -407,12 +429,16 @@ public class SIntegralActivity extends BaseActivity implements IntegraAdapter.On
 //                if (NOVip) {
 //                    CommonUtils.goActivity(mContext, VipActivity.class, null);
 //                } else {
-                showRuleDialog();
+                showRuleDialog(integralRule.getTitle(), integralRule.getContents());
                 // }
 
                 break;
             case R.id.shopmore:
                 CommonUtils.goActivity(mContext, IntegralBuGoodsFragment.class, null);
+                break;
+            case R.id.integral_rule_tv:
+                //规则
+                showRuleDialog("积分规则", Rule);
                 break;
             default:
                 break;
@@ -465,7 +491,7 @@ public class SIntegralActivity extends BaseActivity implements IntegraAdapter.On
         params.put("uid", uid);
         params.put("token", token);
         params.put("goods_id", gid);
-        params.put("num", goodnumber);
+        params.put("num", "1");
         params.put("type", withdrawalsType); //类型
         params.put("username", withdrawalsType.equals("2") ? account.getData().getZfb_name() : account.getData().getWx_name()); //支付宝账号
         params.put("nickname", withdrawalsType.equals("2") ? account.getData().getZfb() : account.getData().getWx()); //支付宝昵称
@@ -506,4 +532,5 @@ public class SIntegralActivity extends BaseActivity implements IntegraAdapter.On
         requestData();
         getShopList();
     }
+
 }

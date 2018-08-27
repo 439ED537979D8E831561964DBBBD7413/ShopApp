@@ -14,6 +14,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.yj.shopapp.R;
+import com.yj.shopapp.config.Contants;
 import com.yj.shopapp.ui.activity.ImgUtil.NewBaseFragment;
 import com.yj.shopapp.ui.activity.adapter.OrderViewPageAdpter;
 import com.yj.shopapp.util.CommonUtils;
@@ -48,11 +49,13 @@ public class SOrderActivity extends NewBaseFragment {
 
     @Override
     protected void initView(View view, Bundle savedInstanceState) {
-        StatusBarUtils.from(getActivity())
-                .setActionbarView(titleView)
-                .setTransparentStatusbar(true)
-                .setLightStatusBar(false)
-                .process();
+        if (Contants.isNotch) {
+            StatusBarUtils.from(getActivity())
+                    .setActionbarView(titleView)
+                    .setTransparentStatusbar(true)
+                    .setLightStatusBar(false)
+                    .process();
+        }
         adpter = new OrderViewPageAdpter(getFragmentManager(), status);
         viewpager.setOpenAnimation(false);
         viewpager.setScanScroll(false);
@@ -108,6 +111,7 @@ public class SOrderActivity extends NewBaseFragment {
         pw.showAsDropDown(orderRecord, 0, 20);
         pw.setOnDismissListener(() -> backgroundAlpha(1f));
     }
+
     public void backgroundAlpha(float bgAlpha) {
         WindowManager.LayoutParams lp = mActivity.getWindow().getAttributes();
         lp.alpha = bgAlpha; //0.0-1.0

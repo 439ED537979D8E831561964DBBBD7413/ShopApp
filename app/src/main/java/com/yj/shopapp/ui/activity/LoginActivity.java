@@ -211,8 +211,9 @@ public class LoginActivity extends BaseActivity {
             return;
         }
         //显示ProgressDialog
-
-        login(username, userpwd);
+        if (isNetWork(mContext)) {
+            login(username, userpwd);
+        }
     }
 
     private void login(final String userName, final String userPwd) {

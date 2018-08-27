@@ -58,7 +58,7 @@ public class SNewOrderAdpter extends Common2Adapter<NewOrder> {
     public void onBindViewHolder(ViewHolder holder, int position) {
         final NewOrder order = list.get(position);
         if (isBuGoodsOrder(position)) {
-            holder.getTextView(R.id.orderNumber).setText(String.format("订单：%s", order.getIteminfo().getItemnumber()));
+            holder.getTextView(R.id.orderNumber).setText(String.format("订单：%s", order.getOid()));
             holder.getTextView(R.id.order_status).setText(Contants.OrderStadus[Integer.parseInt(order.getStatus())]);
             holder.getTextView(R.id.bgoodsname).setText(order.getIteminfo().getName());
             holder.getTextView(R.id.bgoodsspesc).setText(String.format("规格：%1$s%2$s", order.getIteminfo().getSpecs(), order.getIteminfo().getUnit()));

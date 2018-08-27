@@ -162,6 +162,7 @@ public class HotGoodActivity extends BaseActivity implements OnRefreshListener, 
 
     @Override
     public void onChildViewClickListener(View view, int position) {
+        if (hotIndexList.size() <= 0) return;
         switch (view.getId()) {
             case R.id.itemview:
                 Bundle bundle = new Bundle();
@@ -169,6 +170,7 @@ public class HotGoodActivity extends BaseActivity implements OnRefreshListener, 
                 CommonUtils.goActivity(mContext, SGoodsDetailActivity.class, bundle);
                 break;
             case R.id.goCarlist:
+
                 if (hotIndexList.get(position).getSale_status().equals("0")) {
                     Bundle bundle1 = new Bundle();
                     bundle1.putString("goodsId", hotIndexList.get(position).getId());

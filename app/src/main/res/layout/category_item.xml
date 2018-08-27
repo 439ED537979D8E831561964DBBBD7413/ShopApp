@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:background="@color/white"
-              android:orientation="vertical">
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical">
 
     <RelativeLayout
+        android:id="@+id/itemview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="3dp">
@@ -16,8 +17,8 @@
             android:layout_height="45dp"
             android:layout_alignParentTop="true"
             android:layout_centerInParent="true"
-            android:layout_margin="5dp"
-            android:layout_gravity="center_vertical"/>
+            android:layout_gravity="center_vertical"
+            android:layout_margin="5dp" />
 
         <TextView
             android:id="@+id/name_tv"
@@ -27,7 +28,7 @@
             android:layout_centerHorizontal="true"
             android:text=""
             android:textColor="@color/text_black"
-            android:textSize="12sp"/>
+            android:textSize="12sp" />
 
         <ImageView
             android:id="@+id/edit_img"
@@ -36,7 +37,8 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:background="@drawable/ic_shanjian"
-            android:visibility="gone"/>
+            android:visibility="gone" />
+
     </RelativeLayout>
 
 </LinearLayout>
